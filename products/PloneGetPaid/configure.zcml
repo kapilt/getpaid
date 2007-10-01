@@ -37,6 +37,9 @@
 
 <include zcml:condition="installed getpaid.nullpayment"
 	 package="getpaid.nullpayment" />
+	 
+<include zcml:condition="installed getpaid.ups"
+	 package="getpaid.ups" />
 
 <!-- Inject Plone with the nesc interfaces / local site -->
 

@@ -192,6 +192,11 @@ class IGetPaidManagementShippingOptions( igetpaid.IPersistentOptions ):
     shipping_method = schema.Choice( title = _(u"Shipping Method"),
                                      required = True,
                                      source = "getpaid.shipping_methods" )
+                                     
+    shipping_rate_service = schema.Choice( title = _(u"Shipping Rates Service"),
+                                    required = True,
+                                    source = "getpaid.shipping_rate_services",
+                                    description = _(u"Select a service to automatically retrieve shipping rates.") )
 
 class IGetPaidManagementPaymentOptions( igetpaid.IPersistentOptions ):
     """
