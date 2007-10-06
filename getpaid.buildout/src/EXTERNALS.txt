@@ -4,8 +4,14 @@
 # core
 getpaid.core https://getpaid.googlecode.com/svn/ups-integration/getpaid.core
 
+# import / export 
+getpaid.io https://getpaid.googlecode.com/svn/ups-integration/getpaid.io
+
 # various viewlet conviences 
 ore.viewlet https://svn.objectrealms.net/svn/public/ore.viewlet/ups-integration
+
+# python xml object marshalling
+ore.xd https://svn.objectrealms.net/svn/public/ore.xd/trunk
 
 # integer object references
 five.intid https://svn.plone.org/svn/collective/five.intid/ups-integration
