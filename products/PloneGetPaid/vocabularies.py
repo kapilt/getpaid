@@ -54,6 +54,7 @@ def ShippingMethods( context ):
 def ShippingRateServices( context ):
     adapters = component.getAdapters( (context.context,), interfaces.IShippingRateService )
     shipping_rate_services = set( map(unicode, [ n for n,a in adapters]) )
+    shipping_rate_services.add(u"None")
     return vocabulary.SimpleVocabulary.fromValues( shipping_rate_services )
 
 def CreditCards( context ):

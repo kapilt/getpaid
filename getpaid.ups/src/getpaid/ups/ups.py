@@ -15,9 +15,7 @@ class UPSRateService( object ):
     
     def __init__( self, context ):
         self.context = context
-    
-    # def getCost(order):
-    #     pass
+
 
 class ups_access:
     """Temporary holder for the access info, keep it only if you like!"""

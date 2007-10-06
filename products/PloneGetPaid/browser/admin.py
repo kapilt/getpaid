@@ -79,6 +79,38 @@ class ShippingOptions( BaseSettingsForm ):
     get paid management interface
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementShippingOptions)
+    
+class ShippingRateServices( BaseSettingsForm ):
+    """
+    get paid management interface, slightly different because our form fields
+    are dynamically set based on the store's setting for a shipping rate service.
+    """
+    
+    form_fields = form.Fields()
+
+    def __call__( self ):
+        self.setupServices()
+        return super( ShippingRateServices, self).__call__()
+        
+    def setupServices( self ):
+        manage_options = interfaces.IGetPaidManagementShippingOptions( self.context )
+        
+        service_name = manage_options.shipping_rate_service
+        if not service_name:
+            self.status = _(u"Please Select a Shipping Rate Serivce in Shipping Options")
+            return
+
+        #NOTE: if a processor name is saved in the configuration but the corresponding payment method package
+        # doesn't exist anymore, a corresponding adapter will not be found.
+        try:
+            rate_service = component.getAdapter( self.context,
+                                              igetpaid.IShippingRateService,
+                                              service_name )
+        except:
+            self.status = _(u"The currenly configured Shipping Rate Service cannot be found; please check if the corresponding package is installed correctly.")
+            return
+        
+        self.form_fields = form.Fields( rate_service.options_interface )
 
 class PaymentOptions( BaseSettingsForm ):
     """

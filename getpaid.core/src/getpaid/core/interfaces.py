@@ -223,6 +223,14 @@ class IShippingMethod( Interface ):
         """ get the shipping cost for an order
         """
 
+class IShippingRateService( Interface ):
+    """ a service that automatically fetches shipping rates from a carrier
+    """
+
+class IShippingRateServiceOptions( Interface ):
+    """ options for a particular shipping rate service
+    """
+
 #################################
 # Tax Utility
 

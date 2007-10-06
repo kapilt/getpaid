@@ -6,4 +6,8 @@ TRANSIENT_ERROR = 'TransientError'
 HARD_ERROR = 'HardError'
 WARNING_ERROR = 'Warning'
 
+UPS_SERVICES =  { "UPS Next Day Air" : "01", 
+                    "UPS Second Day Air" : "02",
+                }
+
 
