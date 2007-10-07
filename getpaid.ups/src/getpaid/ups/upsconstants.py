@@ -17,7 +17,7 @@ UPS_SERVICES =  {
 # }
 
 UPS_PICKUP_TYPES = {
-    'Daily Pickup':'01': ,
+    'Daily Pickup':'01',
     'Customer Counter':'03',
 }
 
