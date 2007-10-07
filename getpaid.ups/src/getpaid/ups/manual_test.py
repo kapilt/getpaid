@@ -1,20 +1,6 @@
-try: 
-    from lxml import etree
-except ImportError:
-    pass
+from lxml import etree
 from StringIO import StringIO
 import upsconstants
-
-from interfaces import IUPSRateService, IUPSRateServiceOptions
-from zope import component
-from zope import interface
-
-class UPSRateService( object ):
-    interface.implements( IUPSRateService )
-    options_interface = IUPSRateServiceOptions
-    
-    def __init__( self, context ):
-        self.context = context
 
 
 class ups_access:
@@ -24,6 +10,11 @@ class ups_access:
 	self.user_id = user_id
 	self.psswrd = psswrd
 
+class UpsRatingServiceResponse:
+    """An object representing a response from UPS...will contain status/error info and possibly a list of shipments"""
+
+class RatedShipment:
+    """A response can send back a list of many shipping options...this is one of them"""
 
 def SendRequest(url, request):
     from urllib2 import Request, urlopen, URLError
@@ -39,8 +30,7 @@ def SendRequest(url, request):
 	    print 'The server couldn\'t fulfill the request.'
 	    print 'Error code: ', e.code
     else:
-	pass #Everything went through
-
+	    pass #Everything went through
     return response
 	
 
@@ -68,8 +58,8 @@ def CreateServiceRequest(request_option, shipper, shipto, pickup_type_code='01',
     customercontext = etree.SubElement(trans_reference, "CustomerContext").text = 'Rating and Service'
     xpciversion = etree.SubElement(trans_reference, "XpciVersion").text = "1.0"
     
-    etree.SubElement(request, "RequestAction").text = "Rate"
-    etree.SubElement(request, "RequestOption").text = request_option #Rate or Shop
+    etree.SubElement(request, "RequestAction").text = "rate"
+    etree.SubElement(request, "RequestOption").text = request_option #'Rate' or 'Shop'
     
     #pickup type
     pickup_types = { '01': 'daily pickup', '03': 'customer counter', '06': 'one time pickup', '07': 'on call air', '11':'suggested retail rates', '19':'letter center', '20':'air service center' }
@@ -138,8 +128,9 @@ def CreateServiceRequest(request_option, shipper, shipto, pickup_type_code='01',
     etree.SubElement(shipfrom_address, "CountryCode").text = shipper.countrycode
     
     #Service Code
-    shipment_service = etree.SubElement(shipment, "Service")
-    etree.SubElement(shipment_service, "Code").text = str(65)
+    if request_option == "Rate":
+        shipment_service = etree.SubElement(shipment, "Service")
+        etree.SubElement(shipment_service, "Code").text = str(65)
     
 
     #payment information
@@ -152,10 +143,10 @@ def CreateServiceRequest(request_option, shipper, shipto, pickup_type_code='01',
     etree.SubElement(package_type, "Code").text = '04'
     etree.SubElement(package_type, "Description").text = "UPS 25KG Box"
     
-    etree.SubElement(package, "Description").text = "Rate"
+    etree.SubElement(package, "Description").text = "Shop"
     package_weight = etree.SubElement(package, "PackageWeight")
     package_weight_unit = etree.SubElement(package_weight, "UnitOfMeasurement")
-    etree.SubElement(package_weight_unit, "Code").text = "KGS"
+    etree.SubElement(package_weight_unit, "Code").text = "LBS"
     etree.SubElement(package_weight, "Weight").text = str(23)
 
     etree.SubElement(shipment, "ShipmentServiceOptions")
@@ -170,17 +161,115 @@ def CreateRequest(ups_user, rate_or_shop, shipper, shipto, pretty=False):
     servicereq = CreateServiceRequest(rate_or_shop, shipper, shipto)
     xml_text = '<?xml version="1.0"?>' + etree.tostring(accessreq, pretty_print=pretty) + '<?xml version="1.0"?>' + etree.tostring(servicereq, pretty_print=pretty)
     return xml_text
-    
-def ParseResponse( resp ):
+
+def ParseResponse( tree ):
     """check the etree returned for the status of the request."""
-    return result
+    ups_response = UpsRatingServiceResponse()
+    root = tree.getroot()
+    ups_response.shipments = []
+    if root.tag != "RatingServiceSelectionResponse":
+        print 'error...RatingServiceSelectionResponse'
+        return
+    for elem in root:
+        if elem.tag == "Response":
+            for child in elem:
+                if child.tag == "ResponseStatusCode":
+                    ups_response.status_code = child.text
+                elif child.tag == "ResponseStatusDescription":
+                    ups_response.status_desc = child.text
+                elif child.tag == "Error":
+                    for child2 in child:
+                        if child2.tag == "ErrorSeverity":
+                            ups_response.error_severity = child2.text
+                        elif child2.tag == "ErrorCode":
+                            ups_response.error_code = child2.text
+                        elif child2.tag == "ErrorDescription":
+                            ups_response.error_desc = child2.text
+                        elif child2.tag == "MinimumRetrySeconds":
+                            ups_response.minimum_retry_seconds = child2.text
+                        elif child2.tag == "ErrorLocation":
+                            for child3 in child2:
+                                if child3.tag == "ErrorLocationElementName":
+                                    ups_response.error_locaction_elem_name = child3.text
+                                elif child3.tag == "ErrorLocationElementReference":
+                                    ups_response.error_location_elem_ref = child3.text
+                                elif child3.tag == "ErrorLocationAttributeName":
+                                    ups_response.error_location_atrr_name = child3.text
+                        elif child2.tag == "ErrorDigest":
+                            ups_response.error_digest = child2.text
+        elif elem.tag == "RatedShipment":
+            ParseShipment( ups_response.shipments, elem )
+    
+    PrintResponse( ups_response )
 
-
-#start 
+def ParseShipment( shipments, elem ):
+    """grab the info for a single shipment within a response, and add that shipment to the list of all shipments"""
+    current_shipment = RatedShipment()
+    for child in elem:
+        if child.tag == "Service":
+            for child2 in child:
+                if child2.tag == "Code":
+                    current_shipment.service_code = child2.text
+                elif child2.tag == "Description":
+                    current_shipment.service_desc = child2.text
+        elif child.tag == "BillingWeight":
+            for child2 in child:
+                if child2.tag == "UnitOfMeasurement":
+                    current_shipment.unit = child2[0].text
+                elif child2.tag == "Weight":
+                    current_shipment.weight = child2.text
+        elif child.tag == "TransportationCharges":
+            for child2 in child:
+                if child2.tag == "CurrencyCode":
+                    current_shipment.transport_charge_currency = child2.text
+                elif child2.tag == "MonetaryValue":
+                    current_shipment.transport_charge_value = child2.text
+        elif child.tag == "ServiceOptionsCharges":
+            for child2 in child:
+                if child2.tag == "CurrencyCode":
+                    current_shipment.service_charge_currency = child2.text
+                elif child2.tag == "MonetaryValue":
+                    current_shipment.service_charge_value = child2.text
+        elif child.tag == "HandlingChargeAmount":
+            for child2 in child:
+                if child2.tag == "CurrencyCode":
+                    current_shipment.handling_charge_currency = child2.text
+                elif child2.tag == "MonetaryValue":
+                    current_shipment.handling_charge_value = child2.text
+        elif child.tag == "TotalCharges":
+            for child2 in child:
+                if child2.tag == "CurrencyCode":
+                    current_shipment.total_charge_currency = child2.text
+                elif child2.tag == "MonetaryValue":
+                    current_shipment.total_charge_value = child2.text
+        elif child.tag == "GuaranteedDaysToDelivery":
+            current_shipment.days_to_delivery = child.text
+        elif child.tag == "ScheduledDeliveryTime":
+            current_shipment.delivery_time = child.text
+            
+    shipments.append(current_shipment)
+    
+def PrintResponse( response ):
+    print 'Response Status Code: %s' % response.status_code
+    print 'Response Status Description: %s' % response.status_desc
+    if hasattr( response, 'error_code' ):
+        print 'Error...severity: %(severity)s, code: %(code)s, description: %(desc)s' % \
+        {'severity' : response.error_severity, 'code' : response.error_code, 'desc' : response.error_desc }
+    for shipment in response.shipments:
+        print 'Service Code: %s' % shipment.service_code
+        if hasattr(shipment, 'service_desc'):
+            print 'Service Description %s' % shipment.service_desc
+        print 'Shipment unit of measurement: %s' % shipment.unit
+        print 'Shipment weight: %s' % shipment.weight
+        print 'Currency Code: %s' % shipment.total_charge_currency
+        print 'Total Charge: %s' % shipment.total_charge_value
+        print 'Days to Delivery: %s' % shipment.days_to_delivery
+        print 'Delivery Time: %s' % shipment.delivery_time
 
 if __name__ == '__main__':
     #get your own user info from http://www.ups.com/e_comm_access/gettools_index?loc=en_US
-    ups_user = ups_access('AC0D1E830968BAC8', 'godavemon', 'password')
+    ups_user = ups_access('AC0D1E830968BAC8', 'godavemon', 'password') #correct/original
+    #ups_user = ups_access('AC0D1E830248BAC8', 'godavemon', 'password') #incorrect for testing
 
     #Example Data
     class user:
@@ -188,41 +277,39 @@ if __name__ == '__main__':
     
     shipper = user()
     shipper.name = "Dave Fowler"
-    shipper.phone = "3057449002"
-    shipper.AddressLine1 = "Southam Rd"
+    shipper.phone = "5102928662"
+    shipper.AddressLine1 = "120 Pierce St. #6"
     shipper.AddressLine2 = ""
-    shipper.city = "Dunchurch"
-    shipper.state = "Warwickshire"
-    shipper.postalcode = "CV226PD"
-    shipper.countrycode = "GB"
+    shipper.city = "San Francisco"
+    shipper.state = "CA"
+    shipper.postalcode = "94117"
+    shipper.countrycode = "US"
     shipper.attentionname = ""
     shipper.faxnumber = ""
     shipper.shippernumber = ""
     
     shipto = user()
-    shipto.name = "Belgium"
-    shipto.phone = "4568193849"
-    shipto.AddressLine1 = "5, rue de la Bataille"
+    shipto.name = "MakingThings"
+    shipto.phone = "4152558329"
+    shipto.AddressLine1 = "1020 Mariposa St. #2"
     shipto.AddressLine2 = ""
-    shipto.city = "Neufchateau"
-    shipto.postalcode = "6840"
-    shipto.state = ""
-    shipto.countrycode = "BE"
+    shipto.city = "San Francisco"
+    shipto.postalcode = "94107"
+    shipto.state = "CA"
+    shipto.countrycode = "US"
     shipto.attentionname = ""
     shipto.faxnumber = ""
     shipto.shippernumber = ""
     
-    request = CreateRequest(ups_user, "Rate", shipper, shipto)
+    request = CreateRequest(ups_user, "Shop", shipper, shipto)
 
-    response = SendRequest( upsconstants.SANDBOX_URL, request).read()
+    response = SendRequest( upsconstants.SANDBOX_URL, request ).read()
     
-    #print response.get("StatusCode")
+    #print response
 
     resp = etree.parse( StringIO(response))
-    #resp = etree.fromstring(response)
-    
-    
-    print resp.findall('ResponseStatusCode')
+    ParseResponse(resp)
+
     
     
     
