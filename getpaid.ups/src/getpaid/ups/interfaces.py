@@ -1,7 +1,6 @@
-
 from getpaid.core import interfaces
 from zope import schema
-import upsconstants
+from upsconstants import UPS_SERVICES
 
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('getpaid.ups')
@@ -25,13 +24,12 @@ class IUPSRateServiceOptions( interfaces.IShippingRateServiceOptions ):
     
     ups_services = schema.List( title = _(u"UPS Services"),
                                 required = True,
+                                default = [],
                                 description = _(u"The services to offer in your store."),
-                                value_type = schema.Choice( title=u"ups_services",
-                                vocabulary=schema.vocabulary.SimpleVocabulary.fromValues(upsconstants.UPS_SERVICES.keys() ) ) )
-    
-    ups_account_number = schema.ASCIILine( title = _(u"UPS Account Number"), 
-            required = True,
-            description = _(u"Your six-digit UPS account number."))
+                                value_type = schema.Choice( title=u"ups_services_choice",
+                                                            source=schema.vocabulary.SimpleVocabulary.fromValues( UPS_SERVICES.keys() )
+                                                            )
+                                )
     
     ups_username = schema.ASCIILine( title = _(u"UPS User Name"),
         required = True,

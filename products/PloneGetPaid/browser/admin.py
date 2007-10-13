@@ -87,7 +87,7 @@ class ShippingRateServices( BaseSettingsForm ):
     """
     
     form_fields = form.Fields()
-
+    
     def __call__( self ):
         self.setupServices()
         return super( ShippingRateServices, self).__call__()
@@ -100,7 +100,7 @@ class ShippingRateServices( BaseSettingsForm ):
             self.status = _(u"Please Select a Shipping Rate Serivce in Shipping Options")
             return
 
-        #NOTE: if a processor name is saved in the configuration but the corresponding payment method package
+        #NOTE: if a service name is saved in the configuration but the corresponding service package
         # doesn't exist anymore, a corresponding adapter will not be found.
         try:
             rate_service = component.getAdapter( self.context,
@@ -111,6 +111,8 @@ class ShippingRateServices( BaseSettingsForm ):
             return
         
         self.form_fields = form.Fields( rate_service.options_interface )
+        if service_name == "UPS Rates Service":
+            self.form_fields['ups_services'].custom_widget = SelectWidgetFactory
 
 class PaymentOptions( BaseSettingsForm ):
     """

@@ -14,5 +14,5 @@
         for="Products.CMFCore.interfaces.ISiteRoot"
         provides=".interfaces.IUPSRateServiceOptions"
         factory=".UPSRateServiceOptions" />
-     
+
 </configure>
