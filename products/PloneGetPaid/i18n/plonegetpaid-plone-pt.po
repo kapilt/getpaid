@@ -1,0 +1,25 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# Eurotux Development Team <udp@eurotux.com>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2007-08-25 15:18+0000\n"
+"PO-Revision-Date: 2007-08-25 16:18+0200\n"
+"Last-Translator: Ricardo Alves <rsa@eurotux.com>\n"
+"Language-Team: Eurotux Development Team <udp@eurotux.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: pt\n"
+"Language-Name: Portuguese\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: plone\n"
+
+msgid "Manage Cart"
+msgstr "Modificar Carrinho"
+
+msgid "Order History"
+msgstr "Histórico de Pedidos"
+
