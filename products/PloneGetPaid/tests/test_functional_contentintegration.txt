@@ -1,0 +1,61 @@
+==============================================================================
+Doctest generated Sun Oct 14 2007 01:45:55 GMT+0200 (CEST)
+created by cjj
+==============================================================================
+
+Create the browser object we'll be using.
+
+    >>> from zope.testbrowser import Browser
+    >>> browser = Browser()
+    >>> browser.open('http://localhost/pgp')
+
+Testing process of configuring Plone content for "buyable" states of donation, buyable and shippable. Depends on options that were set in the admin functional tests. 
+
+    >>> browser.getLink('Actions').click()
+    >>> browser.getLink('Make this a Donation').click()
+    >>> browser.getControl('Price').value = '10'
+    >>> browser.getControl('Donation Description').value = 'Test donation description'
+    >>> browser.getControl('Activate').click()
+    >>> 'Test donation description' in browser.contents
+    True
+
+Testing that description field was properly set and displays in portlet. 
+
+    >>> '10.00' in browser.contents
+    True
+
+Test that price displays on the page, and displays with 2 decimal points for the integer value entered. Displays in portlet. 
+
+    >>> browser.getLink('View').click()
+    >>> browser.getLink('Add to folder').click()
+    >>> browser.getLink('Image').click()
+    >>> browser.getControl('Title').value = 'Test image buyable'
+    >>> browser.getControl('Description').value = 'buyable image'
+    >>> browser.getControl(name='image_file').value = '/home/cjohnson/ifpeople-new/marketing-sales/graphics/branded/ifpeople_logo-en.png'
+    >>> browser.getControl('Save').click()
+    >>> browser.getLink('Actions').click()
+    >>> browser.getLink('Make Shippable Product').click()
+    >>> browser.getControl('Price').value = '1'
+    >>> browser.getControl('Dimensions').value = '1 lb'
+    >>> browser.getControl('Product SKU').value = '1234'
+    >>> browser.getControl('Activate').click()
+    >>> browser.getLink('View').click()
+    >>> 'buyable image' in browser.contents
+    True
+    >>> '1.00' in browser.contents
+    True
+    >>> browser.getLink('Add to folder').click()
+    >>> browser.getLink('News Item').click()
+    >>> browser.getControl('Title').value = 'Test news item'
+    >>> browser.getControl('Description').value = 'test'
+    >>> browser.getControl('Save').click()
+    >>> browser.getLink('Actions').click()
+    >>> browser.getLink('Make Buyable').click()
+    >>> browser.getControl('Price').value = '10'
+    >>> browser.getControl('Activate').click()
+    >>> browser.getLink('View').click()
+    >>> 'test' in browser.contents
+    True
+    >>> '10.00' in browser.contents
+    True
+
