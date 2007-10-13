@@ -7,8 +7,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore import permissions as cmf_perms
 from Products.PloneGetPaid import _GETPAID_DEPENDENCIES_
 from Products.Five.site.localsite import enableLocalSiteHook
-from Products.Five.utilities import marker
 
+from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.component.interfaces import ISiteManager
 from zope.app.component.hooks import setSite, getSite
 from zope.app.component.interfaces import ISite, IPossibleSite
@@ -141,11 +141,13 @@ def setup_site( self ):
 
 def setup_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
-    marker.mark( portal, IStore )
+    import pdb; pdb
+    alsoProvides(portal, IStore)
 
 def teardown_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
-    marker.erase( portal, IStore )    
+    directlyProvides(portal, directlyProvidedBy(portal) - IStore)
+#    marker.erase( portal, IStore )    
 
 def setup_order_manager( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()

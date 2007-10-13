@@ -10,6 +10,7 @@ from zope.interface import alsoProvides
 class testAdminInterface(PloneGetPaidTestCase):
     
     def afterSetUp(self):
+        super(testAdminInterface, self).afterSetUp()
         self.manage_options = interfaces.IGetPaidManagementOptions( self.portal )
         self.setRoles(('Manager',))
 
@@ -40,7 +41,7 @@ class testAdminInterface(PloneGetPaidTestCase):
     def testSetupShipping( self ):
         """Test setting a shipping method."""
         our_shipping_method = "UPS"
-        self.manage_options.shipping = [our_shipping_method]
+        self.manage_options.shipping_method = [our_shipping_method]
         #test to see if it was set properly
         self.failUnless(our_shipping_method in self.manage_options.shipping_method)
 

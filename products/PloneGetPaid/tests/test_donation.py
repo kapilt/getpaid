@@ -15,15 +15,16 @@ class TestCreateDonation(PloneGetPaidTestCase):
 
     def testHaveFields(self):
         """ Set and check IDonatableMarker schema """
-        for f in ('productCode', 'price', 'donationText', 'madePayableBy'):
+        for f in ('product_code', 'price', 'donation_text', 'made_payable_by'):
             self.failUnless(f in getFieldNames(igetpaid.IDonationContent))
 
         #sample for one field
         donatable_fields = getFields(igetpaid.IDonationContent)        
-        fieldDonationText = donatable_fields['donationText']
+        fieldDonationText = donatable_fields['donation_text']
         self.assertRaises(RequiredMissing, fieldDonationText.validate, None)
         
     def testDonationProcess(self):
+        from zope.interface import alsoProvides
         from Products.Five.utilities.marker import mark
         from Products.PloneGetPaid.interfaces import IDonatableMarker
         from getpaid.core.interfaces import IDonationContent
@@ -32,18 +33,18 @@ class TestCreateDonation(PloneGetPaidTestCase):
         self.setRoles(('Manager',))
         id = self.portal.invokeFactory('Document', 'page-to-donate')
         donation = self.portal.restrictedTraverse('page-to-donate')
+        alsoProvides(donation, IDonatableMarker)
         
-        mark( donation, IDonatableMarker)
         #request = TestRequest()
         payable = IDonationContent( donation ) 
 
-        payable.setProperty('donationText','description')
-        self.failUnless(payable.donationText == 'description')
+        payable.setProperty('donation_text','description')
+        self.failUnless(payable.donation_text == 'description')
 
         # XXX how do we test validation and required?
         #   for example, price should only accept a float
         payable.setProperty('price','description')
-        self.failUnless(payable.donationText == 'description')
+        self.failUnless(payable.donation_text == 'description')
 
 def test_suite():
     from unittest import TestSuite, makeSuite
