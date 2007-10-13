@@ -1,0 +1,60 @@
+
+==============================================================================
+Doctest generated Sat Oct 13 2007 18:39:12 GMT+0200 (CEST)
+created by cjj
+==============================================================================
+
+Create the browser object we'll be using.
+
+    >>> from zope.testbrowser import Browser
+    >>> browser = Browser()
+    >>> browser.open('http://localhost/pgp')
+
+Testing the setup aspects of GetPaid. Setting required settings. 
+    >>> browser.getLink('Site Setup').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Site Profile').click()
+    >>> browser.getControl('Contact Email').value = 'info@plonegetpaid.com'
+    >>> browser.getControl('Contact Company').value = 'Test Company'
+    >>> browser.getControl('Contact State/Province').value = 'US-HI'
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('Up to GetPaid Setup').click()
+    >>> browser.getLink('Content Types').click()
+    >>> browser.getControl(name='form.buyable_types.from').value = 'Event'
+    >>> browser.getControl(name='form.buyable_types.from').value = 'Event'
+    >>> browser.getControl(name='form.buyable_types.from').value = 'Event'
+    >>> browser.getControl(name='form.buyable_types.from').value = 'Event'
+    >>> browser.getControl(name='form.buyable_types.from').value = 'Event'
+    >>> browser.getControl(name='form.buyable_types.from').value = 'Event'
+    >>> browser.getControl(name='form.buyable_types.from').value = 'Event'
+    >>> browser.getControl(name='form.donate_types.from').value = 'Event'
+    >>> browser.getControl(name='form.donate_types.from').value = 'Event'
+    >>> browser.getControl(name='form.donate_types.from').value = 'Event'
+    >>> browser.getControl(name='form.donate_types.from').value = 'Event'
+    >>> browser.getControl(name='form.donate_types.from').value = 'Event'
+    >>> browser.getControl(name='form.shippable_types.from').value = 'File'
+    >>> browser.getControl(name='form.shippable_types.from').value = 'File'
+    >>> browser.getControl(name='form.shippable_types.from').value = 'File'
+    >>> browser.getControl(name='form.shippable_types.from').value = 'File'
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('Up to GetPaid Setup').click()
+    >>> browser.getLink('Payment Options').click()
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('Settings').click()
+    >>> browser.getLink('Payment Processor Settings').click()
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('Up to GetPaid Setup').click()
+    >>> browser.getLink('Email Notifications').click()
+    >>> browser.getControl('Merchant Email Notifications').value = 'Do not send merchant email notification of a completed transaction'
+    >>> browser.getControl('Customer Email Notifications').value = 'Do not send customer email notification of a completed transaction'
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('Up to GetPaid Setup').click()
+    >>> browser.getLink('Legal Disclaimers').click()
+    >>> browser.getControl('Disclaimer').value = 'Test disclaimer'
+    >>> browser.getControl('Privacy Policy').value = 'Test privacy policy'
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('Settings').click()
+    >>> 'Test store name' in browser.contents
+    True
+
+Check to make sure the settings we put in Site Profile appear on this page. 
