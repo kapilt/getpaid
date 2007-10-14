@@ -4,9 +4,6 @@
               handler="Products.PloneGetPaid.setuphandlers.setupVarious"
               title="PloneGetPaid setupVarious">
   Setup various things that are not handled by GS import/export handlers
-  <dependency step="controlpanel"/>
-  <dependency step="actions"/>
-  <dependency step="actionicons"/>
  </import-step>
 </import-steps>
 
