@@ -190,7 +190,7 @@ msgstr "Código de Pedido inválido"
 
 #: ./interfaces.py:34
 msgid "Made Payable By"
-msgstr "Pagamento realizado por"
+msgstr "Tornado adquirível por"
 
 #: ./interfaces.py:150
 msgid "Name"
