@@ -17,119 +17,6 @@ from five.intid.site import add_intids
 from getpaid.core.interfaces import IOrderManager, IStore
 from getpaid.core.order import OrderManager
 
-
-coci_actions = [
-
-       ( dict(  id = 'getpaid_make_buyable',
-                name = 'Make Buyable',
-                action = 'string:$object_url/@@activate-buyable',
-                category ='object_buttons',
-                permission = "Modify portal content",
-                condition = "python:path('object/@@getpaid_control').allowMakeBuyable()",
-                visible = True ),
-         "user.gif" ),
-
-       ( dict(  id = 'getpaid_make_shippable',
-                 name = 'Make Shippable Product',
-                 action = 'string:$object_url/@@activate-shippable',
-                 category ='object_buttons',
-                 permission = "Modify portal content",
-                 condition = "python:path('object/@@getpaid_control').allowMakeShippable()",
-                 visible = True ),
-          "user.gif" ),
-
-##       ( dict(  id = 'getpaid_make_premium',
-##                 name = 'Make Premium Members Only',
-##                 action = 'string:$object_url/@@activate-premium-content',
-##                 category ='object_buttons',
-##                 permission = "Modify portal content",
-##                 condition = "python:path('object/@@getpaid_control').allowMakePremiumContent()",
-##                 visible = True ),
-##          "user.gif" ),
-
-     ( dict(  id = 'getpaid_make_donatable',
-              name = 'Make this a Donation',
-              action = 'string:$object_url/@@activate-donate',
-              category ='object_buttons',
-              permission = "Modify portal content",
-              condition = "python:path('object/@@getpaid_control').allowMakeDonatable()",
-              visible = True ),
-       "user.gif" ),
-
-
-       ( dict(  id = 'getpaid_make_not_buyable',
-                name = 'Make Not Buyable',
-                action = 'string:$object_url/@@deactivate-buyable',
-                category ='object_buttons',
-                permission = "Modify portal content",
-                condition = "python:path('object/@@getpaid_control').allowMakeNotBuyable()",
-                visible = True ),
-         "user.gif" ),
-
-      ( dict(  id = 'getpaid_make_not_shippable',
-                name = 'Make Not Shippable Product',
-                action = 'string:$object_url/@@deactivate-shippable',
-                category ='object_buttons',
-                permission = "Modify portal content",
-                condition = "python:path('object/@@getpaid_control').allowMakeNotShippable()",
-                visible = True ),
-         "user.gif" ),
-
-      ( dict(  id = 'getpaid_make_not_premium',
-                name = 'Make Not Premium Members Only',
-                action = 'string:$object_url/@@deactivate-premium-content',
-                category ='object_buttons',
-                permission = "Modify portal content",
-                condition = "python:path('object/@@getpaid_control').allowMakeNotPremiumContent()",
-                visible = True ),
-         "user.gif" ),
-
-     ( dict(  id = 'getpaid_make_not_donatable',
-              name = 'Make this not a Donation',
-              action = 'string:$object_url/@@deactivate-donate',
-              category ='object_buttons',
-              permission = "Modify portal content",
-              condition = "python:path('object/@@getpaid_control').allowMakeNotDonatable()",
-              visible = True ),
-       "user.gif" ),
-
-      ( dict(  id = 'getpaid_manage_cart',
-                name = 'Manage Cart',
-                action = 'string:$object_url/@@getpaid-cart',
-                category ='user',
-                permission = "View",
-                condition = "python:path('object/@@getpaid_control').showManageCart()",
-                visible = True ),
-         None ),
-
-     ( dict(  id = 'getpaid_order_history',
-               name = 'Order History',
-               action = 'string:$portal_url/@@getpaid-order-history',
-               category ='user',
-               permission = "View",
-               condition = "python:path('object/@@getpaid_control').showOrderHistory()",
-               visible = True ),
-        None ),
-
-
-        ]
-
-def setup_actions( self ):
-    actions = getToolByName( self, 'portal_actions')
-    action_icons = getToolByName( self, 'portal_actionicons')
-    
-    for action, image in coci_actions:
-        actions.addAction( **action )
-
-        if not image:
-            continue
-        
-        if action_icons.queryActionIcon( action['category'], action['id'], None) is None:
-            action_icons.addActionIcon( action['category'],
-                                        action['id'],
-                                        image,
-                                        action['name'] )
-
 def setup_site( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()    
     
@@ -226,7 +113,7 @@ def uninstall_contentwidget_portlet( self ):
 def install( self ):
     out = StringIO()
 
-    # Run all import steps for ItalianSkin
+    # Run all import steps for getPaid
     portal = getToolByName(self, 'portal_url').getPortalObject()
     setup_tool = getToolByName(portal, 'portal_setup')
     setup_tool.setImportContext('profile-Products.PloneGetPaid:default')
@@ -241,9 +128,6 @@ def install( self ):
 
     print >> out, "Installing Content Widget Portlet"
     install_contentwidget_portlet( self )
-
-    print >> out, "Installing Actions"
-    setup_actions( self )
 
     print >> out, "Installing Local Site"
     setup_site( self )
