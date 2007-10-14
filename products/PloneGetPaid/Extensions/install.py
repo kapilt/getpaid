@@ -47,26 +47,6 @@ def setup_intid( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
     add_initids( portal ) 
 
-def install_control_panel( self ):
-
-    manage_ui= getToolByName( self, 'portal_controlpanel')
-
-    manage_ui.addAction(
-        id = "getpaid",
-        name = "GetPaid",
-        action = "string:${portal_url}/@@manage-getpaid-overview",
-        appId = "PloneGetPaid",
-        imageUrl = "++resource++getpaid.png",
-        description = "Management Access to Commerce Backend",
-        category = "Products",
-        permission=cmf_perms.ManagePortal
-        
-        )
-
-def uninstall_control_panel( self ):
-    manage_ui= getToolByName( self, 'portal_controlpanel')
-    manage_ui.unregisterApplication( "PloneGetPaid" )
-
 def install_dependencies( self ):
     quickinstaller = self.portal_quickinstaller
     for dependency in _GETPAID_DEPENDENCIES_:
@@ -120,9 +100,6 @@ def install( self ):
     setup_tool.runAllImportSteps()
     setup_tool.setImportContext('profile-CMFPlone:plone')
     
-    print >> out, "Installing Control Panel"
-    install_control_panel( self  )
-
     print >> out, "Installing Cart Portlet"
     install_cart_portlet( self )
 
