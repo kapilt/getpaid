@@ -28,13 +28,11 @@ def setup_site( self ):
 
 def setup_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
-    import pdb; pdb
     alsoProvides(portal, IStore)
 
 def teardown_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
     directlyProvides(portal, directlyProvidedBy(portal) - IStore)
-#    marker.erase( portal, IStore )    
 
 def setup_order_manager( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()

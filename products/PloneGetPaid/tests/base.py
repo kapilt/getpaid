@@ -12,6 +12,8 @@ from Testing import ZopeTestCase
 ZopeTestCase.installProduct('CMFonFive')
 ZopeTestCase.installProduct('PloneGetPaid')
 
+
+
 # Import PloneTestCase - this registers more products with Zope as a side effect
 from Products.PloneTestCase.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
@@ -20,6 +22,15 @@ from Products.PloneTestCase.PloneTestCase import setupPloneSite
 # Set up a Plone site.
 
 setupPloneSite()
+
+## Reed O'Brien -- 2007-10-14 --
+## Five is installed here to prevent 500 internal Error
+## in Five.testbrowser, when FIve isn't found in
+## the Plone Control Panel. The error is raised in
+## MigrationTool.py because cp.Products.Five isn't
+## there. I don't know if this would be a MigrationTool
+## bug or Five.testbrowser...
+ZopeTestCase.installProduct('Five')
 
 class PloneGetPaidTestCase(PloneTestCase):
     """Base class for integration tests for the 'PloneGetPaid' product. This may
@@ -38,6 +49,7 @@ class PloneGetPaidTestCase(PloneTestCase):
         # I moved here so that doctests work ok without needing to add PloneGetPaid
         #   and so we don't need to add this line to all our unit tests
         self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
+        
         
 class PloneGetPaidFunctionalTestCase(FunctionalTestCase):
     """Base class for functional integration tests for the 'PloneGetPaid' product. 

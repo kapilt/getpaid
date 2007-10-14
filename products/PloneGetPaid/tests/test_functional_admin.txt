@@ -6,12 +6,26 @@ created by cjj
 
 Create the browser object we'll be using.
 
-    >>> from zope.testbrowser import Browser
+    >>> from Products.Five.testbrowser import Browser
     >>> browser = Browser()
-    >>> browser.open('http://localhost/pgp')
+    >>> browser.handleErrors = False
+    >>> browser.open(portal.absolute_url())
+    >>> 'Welcome to Plone' in browser.contents
+    True
+     >>> membership = self.portal.portal_membership
+     >>> membership.addMember('testmanager', 'secret',
+     ...		     ['Member', 'Manager'], [])
+
+     >>> browser.getLink('Log in').click()
+     >>> browser.getControl('Login Name').value = 'testmanager'
+     >>> browser.getControl('Password').value = 'secret'
+     >>> browser.getControl('Log in').click()
+     >>> browser.getLink('Home').click()
 
 Testing the setup aspects of GetPaid. Setting required settings. 
+
     >>> browser.getLink('Site Setup').click()
+    >>> print browser.contents
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Site Profile').click()
     >>> browser.getControl('Contact Email').value = 'info@plonegetpaid.com'

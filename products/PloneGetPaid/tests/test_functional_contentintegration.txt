@@ -5,9 +5,20 @@ created by cjj
 
 Create the browser object we'll be using.
 
-    >>> from zope.testbrowser import Browser
+    >>> from Products.Five.testbrowser import Browser
     >>> browser = Browser()
-    >>> browser.open('http://localhost/pgp')
+    >>> browser.open(self.portal.absolute_url())
+    >>> 'Welcome to Plone' in browser.contents
+    True
+     >>> membership = self.portal.portal_membership
+     >>> membership.addMember('testmanager', 'secret',
+     ...		     ['Member', 'Manager'], [])
+
+     >>> browser.getLink('Log in').click()
+     >>> browser.getControl('Login Name').value = 'testmanager'
+     >>> browser.getControl('Password').value = 'secret'
+     >>> browser.getControl('Log in').click()
+     >>> browser.getLink('Home').click()
 
 Testing process of configuring Plone content for "buyable" states of donation, buyable and shippable. Depends on options that were set in the admin functional tests. 
 
