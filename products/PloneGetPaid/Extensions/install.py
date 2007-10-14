@@ -91,6 +91,9 @@ def uninstall_contentwidget_portlet( self ):
 def install( self ):
     out = StringIO()
 
+    print >> out, "Installing Dependencies"
+    install_dependencies(self)
+
     # Run all import steps for getPaid
     portal = getToolByName(self, 'portal_url').getPortalObject()
     setup_tool = getToolByName(portal, 'portal_setup')

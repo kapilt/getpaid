@@ -25,9 +25,6 @@ def setupVarious(context):
     logger = context.getLogger("PloneGetPaid")
     out = StringIO()
 
-    print >> out, "Installing Dependencies"
-    install_dependencies(site)
-
     print >> out, "Installing Cart Portlet"
     install_cart_portlet(site)
 
