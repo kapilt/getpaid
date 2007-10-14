@@ -221,7 +221,7 @@ msgstr "Termos de Uso Legal"
 #. Default: "Mailing Address"
 #: ./browser/templates/checkout-address.pt:35
 msgid "Mailing Address"
-msgstr "Endereço de Email"
+msgstr "Endereço de Envio"
 
 #: ./browser/checkout.py:441
 msgid "Make Payment"
