@@ -68,6 +68,10 @@ class PayableCreation( PayableForm ):
             event.PayableCreationEvent( self.context, self.adapters[ igetpaid.IPayable ], self.interface )
             )
 
+        # redirect to view
+        message = self.context.utranslate(u'Changes saved.', domain='plone').encode(self.context.getCharset())
+        self.request.response.redirect( '%s/?portal_status_message=%s' % (self.context.absolute_url(), message) )
+
 ##     # formlib has serious issues do something as simple as a cancel button in our version of zope
 ##     # lame, seriously lame - kapilt
 ##     @form.action("Cancel")
