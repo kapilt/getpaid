@@ -100,24 +100,6 @@ def install( self ):
     setup_tool.runAllImportSteps()
     setup_tool.setImportContext('profile-CMFPlone:plone')
     
-    print >> out, "Installing Cart Portlet"
-    install_cart_portlet( self )
-
-    print >> out, "Installing Content Widget Portlet"
-    install_contentwidget_portlet( self )
-
-    print >> out, "Installing Local Site"
-    setup_site( self )
-
-    print >> out, "Installing Store Marker Interface"
-    setup_store( self )
-    
-    print >> out, "Installing Order Local Utility"
-    setup_order_manager( self )
-
-    print >> out, "Installing IntId Utility"
-    add_intids( self )
-    
     return out.getvalue()
 
 def uninstall( self ):
