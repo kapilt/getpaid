@@ -32,6 +32,9 @@ class PloneGetPaidTestCase(PloneTestCase):
         from Products.Five import pythonproducts
         pythonproducts.setupPythonProducts(None)
         
+        # Set up sessioning objects
+        ZopeTestCase.utils.setupCoreSessions(self.app)
+
         # I moved here so that doctests work ok without needing to add PloneGetPaid
         #   and so we don't need to add this line to all our unit tests
         self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
