@@ -24,8 +24,9 @@ from Products.PloneTestCase.PloneTestCase import setupPloneSite
 setupPloneSite()
 
 ## Reed O'Brien -- 2007-10-14 --
+## FIXME
 ## Five is installed here to prevent 500 internal Error
-## in Five.testbrowser, when FIve isn't found in
+## in Five.testbrowser; when Five isn't found in
 ## the Plone Control Panel. The error is raised in
 ## MigrationTool.py because cp.Products.Five isn't
 ## there. I don't know if this would be a MigrationTool
