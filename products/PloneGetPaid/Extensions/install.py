@@ -96,6 +96,7 @@ def install( self ):
 
     # Run all import steps for getPaid
     portal = getToolByName(self, 'portal_url').getPortalObject()
+    # TODO: we have to check the current profile and set another setImportContext (now we assume that is CMFPlone)
     setup_tool = getToolByName(portal, 'portal_setup')
     setup_tool.setImportContext('profile-Products.PloneGetPaid:default')
     setup_tool.runAllImportSteps()
