@@ -492,9 +492,8 @@ msgstr "Informações Gerais"
 
 #. Default: "GetPaid Setup"
 #: ./browser/templates/settings-template.pt:37
-#, fuzzy
 msgid "heading_getpaid_setup"
-msgstr "Outros Pedidos do Site"
+msgstr "Configuração do GetPaid"
 
 #. Default: "new state"
 #: ./browser/templates/order-workflow-log.pt:9
