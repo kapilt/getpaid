@@ -168,11 +168,11 @@ msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For 
 msgstr ""
 
 #: ./order.py:395
-msgid "Fufillment"
+msgid "Fulfillment"
 msgstr ""
 
 #: ./interfaces.py:397
-msgid "Fufillment State"
+msgid "Fulfillment State"
 msgstr ""
 
 #: ./interfaces.py:283

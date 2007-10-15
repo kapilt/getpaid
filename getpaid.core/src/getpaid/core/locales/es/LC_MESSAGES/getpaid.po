@@ -171,11 +171,11 @@ msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For 
 msgstr "Para MC, Visa, y DC, es un numero de tres digitos que se encuentra en la parte de atras de la tarjeta. Para AmEx, es un numero de cuatro digitos en el frente de la misma."
 
 #: ./order.py:395
-msgid "Fufillment"
+msgid "Fulfillment"
 msgstr "Despacho"
 
 #: ./interfaces.py:397
-msgid "Fufillment State"
+msgid "Fulfillment State"
 msgstr "Estado del Envío"
 
 #: ./interfaces.py:283
