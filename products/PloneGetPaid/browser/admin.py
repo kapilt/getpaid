@@ -60,6 +60,7 @@ class Identification( BaseSettingsForm ):
     form_fields = form.Fields(interfaces.IGetPaidManagementIdentificationOptions)
     form_fields['contact_country'].custom_widget = CountrySelectionWidget
     form_fields['contact_state'].custom_widget = StateSelectionWidget
+    form_name = _(u'Site Profile')
 
 class ContentTypes( BaseSettingsForm ):
     """
@@ -67,6 +68,7 @@ class ContentTypes( BaseSettingsForm ):
     """
     form_fields = form.Fields( interfaces.IGetPaidManagementContentTypes )
     form_fields = form_fields.omit('premium_types')
+    form_name = _(u'Content Types')
     
     form_fields['buyable_types'].custom_widget = SelectWidgetFactory
     #form_fields['premium_types'].custom_widget = SelectWidgetFactory
@@ -79,6 +81,7 @@ class ShippingOptions( BaseSettingsForm ):
     get paid management interface
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementShippingOptions)
+    form_name = _(u'Shipping Options')
 
 class PaymentOptions( BaseSettingsForm ):
     """
@@ -86,6 +89,7 @@ class PaymentOptions( BaseSettingsForm ):
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementPaymentOptions)
 #    form_fields['accepted_credit_cards'].custom_widget = SelectWidgetFactory
+    form_name = _(u'Payment Options')
 
 class PaymentProcessor( BaseSettingsForm ):
     """
@@ -94,6 +98,7 @@ class PaymentProcessor( BaseSettingsForm ):
     """
     
     form_fields = form.Fields()
+    form_name = _(u'Payment Processor Settings')
 
     def __call__( self ):
         self.setupProcessorOptions()
@@ -149,6 +154,7 @@ class SalesTax( BaseSettingsForm ):
     get paid management interface
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementSalesTaxOptions)
+    form_name = _(u'Sales Tax Configuration')
                 
 #Currency        
 class Currency( BaseSettingsForm ):
@@ -163,6 +169,7 @@ class Email( BaseSettingsForm ):
     get paid management interface
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementEmailOptions)
+    form_name = _(u'Email Notifications')
 
 #Customize Header/Footer        
 class LegalDisclaimers( BaseSettingsForm ):
@@ -170,6 +177,7 @@ class LegalDisclaimers( BaseSettingsForm ):
     get paid management interface
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementLegalDisclaimerOptions)
+    form_name = _(u'Legal Disclaimers')
         
         
        
