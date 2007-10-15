@@ -53,7 +53,7 @@
            />
   -->
       <tal:loop tal:repeat="action view/availableActions">
-		<input type="submit" class="button"
+		<input type="submit" class="button context"
 			   id="" name="" value=""
 			   tal:attributes="id action/__name__;
 			   				   name action/__name__;

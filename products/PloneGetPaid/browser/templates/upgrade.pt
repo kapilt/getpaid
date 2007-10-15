@@ -32,7 +32,7 @@
           </div>
           
           <form action="" tal:attributes="action request/URL0">
-             <input class="input" type="submit" name="upgrade" value="Upgrade to Latest">
+             <input class="input context" type="submit" name="upgrade" value="Upgrade to Latest">
           </form>
 
           </fieldset>
