@@ -41,12 +41,6 @@ class TestNotification(PloneGetPaidTestCase):
         ...     def __init__(self, *args, **kwargs):
         ...         for k, v in kwargs.items(): setattr(self, k, v)
 
-        >>> order = Mock( user_id='testmanager',
-        ...               getTotalPrice=lambda: 10,
-        ...               order_id=1,
-        ...               shopping_cart=Mock(values=lambda: ['abc', 'def'])
-        ...               )
-
         >>> from getpaid.core.interfaces import workflow_states
         >>> finance = workflow_states.order.finance
         >>> event = Mock( source=finance.REVIEWING,
@@ -62,7 +56,20 @@ class TestNotification(PloneGetPaidTestCase):
 
         Call sendNotification with the mockups
 
+        >>> from getpaid.core.tests.base import createOrders
         >>> from Products.PloneGetPaid.notifications import sendNotification
+        >>> order = createOrders(how_many=2).next()
+        >>> order.user_id = 'testmanager'
+        >>> sendNotification( order, event)
+
+        Now we overwrite the send method to raise an exception
+
+        >>> def send_failing( self, msg):
+        ...     raise Exception("This should be printed as an error message.")
+        >>> self.portal.MailHost.send = send_failing
+
+        And try again
+
         >>> sendNotification( order, event)
         """
 

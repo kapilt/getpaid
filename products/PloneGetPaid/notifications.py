@@ -9,29 +9,27 @@ import interfaces
 
 from DocumentTemplate.DT_HTML import HTML
 
+from interfaces import _
+from zope.i18n import translate
 
-customer_new_order_template = HTML('''\
-To: <dtml-var to_email>
-From: "<dtml-var "store_settings.store_name">" <<dtml-var from_email>>
+customer_new_order_template = '''\
+To: ${to_email}
+From: "${from_name}" ${from_email}
 Subject: New Order Notification
 
 Thank you for you order.
 
-Total Amount to be Charged : <dtml-var "order.getTotalPrice()" fmt="%0.2f">
+Total Amount to be Charged : ${total_price}
 
 You can view the status of your order here
 
-<dtml-var store_url>/@@getpaid-order/<dtml-var "order.order_id">
+${store_url}/@@getpaid-order/${order_id}
 
 Order Contents
 
-<dtml-in "order.shopping_cart.values()">
- <dtml-with sequence-item>
-   <dtml-var "resolve().Title()"> <dtml-var cost fmt="%0.2f"> <dtml-var quantity>
-  </dtml-with>
-</dtml-in>
+${order_contents}
 
-''')
+'''
 
 class CustomerOrderNotificationTemplate( object ):
 
@@ -39,28 +37,28 @@ class CustomerOrderNotificationTemplate( object ):
 
     __call__ = customer_new_order_template
 
+    def __call__( self, **kwargs):
+        msg = _(customer_new_order_template, mapping=kwargs)
+        return translate(msg)
+
     def __init__( self, order ):
         self.order = order
 
 merchant_new_order_template = HTML('''\
-To: <dtml-var to_email>
-From: "<dtml-var "store_settings.store_name">" <<dtml-var from_email>>
+To: ${to_email}
+From: "${from_name}" ${from_email}
 Subject: New Order Notification
 
 A New Order has been created
 
-Total Cost: <dtml-var "order.getTotalPrice()" fmt="%0.2f">
+Total Cost: ${total_price}
 
-To continue processing the order this order follow this link.
-<dtml-var store_url>/@@admin-manage-order/<dtml-var "order.order_id">/@@admin
+To continue processing the order follow this link:
+${store_url}/@@admin-manage-order/${order_id}/@@admin
 
 Order Contents
 
-<dtml-in "order.shopping_cart.values()">
- <dtml-with sequence-item>
-   <dtml-var "resolve().Title()"> <dtml-var cost fmt="%0.2f"> <dtml-var quantity>
-  </dtml-with>
-</dtml-in>
+${order_contents}
 
 ''')
 
@@ -95,17 +93,24 @@ def sendNotification( order, event ):
     settings = interfaces.IGetPaidManagementOptions( portal )
 
     store_url = portal.absolute_url()
+
+    order_contents = [u' '.join((cart_item.name, 
+                                 u"%0.2f" % (cart_item.cost,),
+                                 str(cart_item.quantity),
+                               )) for cart_item in order.shopping_cart.values()]
     
     if settings.merchant_email_notification == 'notification' \
        and settings.contact_email:
 
         template = component.getAdapter(  order, interfaces.INotificationMailTemplate, "merchant-new-order")
         message = template( to_email = settings.contact_email,
+                            from_name = settings.store_name,
                             from_email = settings.contact_email,
-                            store_settings = settings,
+                            total_price = order.getTotalPrice(),
                             store_url = store_url,
-                            order = order )
-        
+                            order_id = order.order_id,
+                            order_contents = order_contents,
+                            )
         try:
             mailer.send( str(message) )
         except:
@@ -124,10 +129,13 @@ def sendNotification( order, event ):
         if member.getProperty('email'):
             template = component.getAdapter( order, interfaces.INotificationMailTemplate, "customer-new-order")
             message = template( to_email = member.getProperty('email'),
+                                from_name = settings.store_name,
                                 from_email = settings.contact_email,
-                                store_settings = settings,
+                                total_price = order.getTotalPrice(),
                                 store_url = store_url,
-                                order = order )
+                                order_id = order.order_id,
+                                order_contents = order_contents,
+                                )
             try:
                 mailer.send( str(message) )
             except:
