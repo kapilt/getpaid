@@ -24,6 +24,8 @@ from widgets import PriceWidget
 
 from Products.PloneGetPaid.i18n import _
 
+from urllib import urlencode
+
 class PayableFormView( BaseFormView ):
 
     adapters = None
@@ -69,8 +71,9 @@ class PayableCreation( PayableForm ):
             )
 
         # redirect to view
-        message = self.context.utranslate(u'Changes saved.', domain='plone').encode(self.context.getCharset())
-        self.request.response.redirect( '%s/?portal_status_message=%s' % (self.context.absolute_url(), message) )
+        translated_message = self.context.utranslate(u'Changes saved.', domain='plone').encode(self.context.getCharset())
+        encoded_message = urlencode({'portal_status_message' : translated_message})
+        self.request.response.redirect( '%s/?%s' % (self.context.absolute_url(), encoded_message) )
 
 ##     # formlib has serious issues do something as simple as a cancel button in our version of zope
 ##     # lame, seriously lame - kapilt
