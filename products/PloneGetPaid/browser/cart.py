@@ -26,7 +26,7 @@ from Products.CMFCore.utils import getToolByName
 
 from Products.PloneGetPaid.interfaces import PayableMarkers, IGetPaidCartViewletManager
 from Products.PloneGetPaid.i18n import _
-
+from Products.CMFPlone.utils import safe_unicode
 
 #################################
 # Shopping Cart Views
@@ -137,7 +137,7 @@ class LineItemColumn( object ):
         return value
 
 def lineItemURL( item, formatter ):
-    return '<a href="reference_catalog/lookupObject?uuid=%s">%s</a>'  % (item.item_id, item.name)
+    return '<a href="reference_catalog/lookupObject?uuid=%s">%s</a>'  % (item.item_id, safe_unicode(item.name))
 
 def lineItemTotal( item, formatter ):
     return "%0.2f" % (item.quantity * item.cost)
