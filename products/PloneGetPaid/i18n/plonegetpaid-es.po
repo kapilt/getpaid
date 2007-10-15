@@ -208,7 +208,7 @@ msgid "Flat Rate Shipping"
 msgstr "Tarifa plana de envío"
 
 #: ./browser/admin_order.py:86
-msgid "Fufillment"
+msgid "Fulfillment"
 msgstr "Despacho"
 
 #: ./browser/admin_order.py:572
