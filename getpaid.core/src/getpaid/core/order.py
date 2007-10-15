@@ -1,6 +1,7 @@
 """
 order utility implementation
 """
+import random
 
 from zope.interface import implements
 from zope.app.container.btree import BTreeContainer
@@ -62,6 +63,19 @@ class Order( Persistent ):
 
     def __init__( self ):
         self.creation_date = datetime.datetime.now()
+
+    @staticmethod
+    def newOrderId():
+        """
+        Return an order id that has some kind of guarantee that it
+        hasn't been used for an order before.
+        """
+        order_manager = component.getUtility( interfaces.IOrderManager )
+        while 1:
+            order_id = str( random.randint( 2**10, 2**30 ) )
+            if order_manager.get( order_id ) is None:
+                break
+        return order_id
 
     def getOrderId( self ):
         return self._order_id
