@@ -346,7 +346,7 @@ msgstr "O seu nome"
 
 #: ./interfaces.py:261
 msgid "Zip Code"
-msgstr "CEP"
+msgstr "Código Postal"
 
 #: ./interfaces.py:249
 msgid "Zip/Postal Code"
