@@ -17,16 +17,16 @@ class TestNotification(PloneGetPaidTestCase):
 
         >>> from Products.PloneGetPaid import interfaces
         >>> from Products.PloneGetPaid import notifications
-        
+
         >>> membership = self.portal.portal_membership
         >>> membership.addMember('testmanager', 'secret',
         ...                     ['Member', 'Manager'], [])
 
-        >>> component.provideAdapter( notifications.CustomerOrderNotificationTemplate, 
+        >>> component.provideAdapter( notifications.CustomerOrderNotificationTemplate,
         ...                          (interface.Interface, ),
         ...                           interfaces.INotificationMailTemplate,
         ...                          'customer-new-order')
-        >>> component.provideAdapter( notifications.MerchantOrderNotificationTemplate, 
+        >>> component.provideAdapter( notifications.MerchantOrderNotificationTemplate,
         ...                          (interface.Interface, ),
         ...                           interfaces.INotificationMailTemplate,
         ...                          'merchant-new-order')
