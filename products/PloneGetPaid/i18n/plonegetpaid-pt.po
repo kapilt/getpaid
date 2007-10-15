@@ -456,7 +456,7 @@ msgstr "Política de Privacidade"
 #. Default: "Thank you for your order"
 #: ./browser/templates/checkout-thank-you.pt:7
 msgid "heading_checkout_thank_you"
-msgstr "Obrigado pelo teu Pedido"
+msgstr "Obrigado pelo seu Pedido"
 
 #. Default: "comment"
 #: ./browser/templates/order-workflow-log.pt:10
