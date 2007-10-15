@@ -77,7 +77,9 @@ class MerchantOrderNotificationTemplate( object ):
 def sendNotification( order, event ):
     """ sends out email notifications to merchants and clients based on settings.
 
-    for now we only send out notifications when an order initially becomes chargeable
+    For now we only send out notifications when an order initially becomes
+    chargeable. We may not raise or pass exceptions: the payment has already
+    happened and everything else is our, not the customer's fault.
     """
     site = component.getSiteManager()
     portal = site.context
@@ -104,7 +106,15 @@ def sendNotification( order, event ):
                             store_url = store_url,
                             order = order )
         
-        mailer.send( str(message) )
+        try:
+            mailer.send( str(message) )
+        except:
+            # Something happened and most probably we weren't able to send the
+            # message. That's bad, but we got the money already and really
+            # should do the shipment
+            # XXX: somebody should be notified about that
+            pass
+
 
     if settings.customer_email_notification == 'notification' \
        and order.user_id:
@@ -118,7 +128,14 @@ def sendNotification( order, event ):
                                 store_settings = settings,
                                 store_url = store_url,
                                 order = order )
-            mailer.send( str(message) )
+            try:
+                mailer.send( str(message) )
+            except:
+                # Something happened and most probably we weren't able to send the
+                # message. That's bad, but we got the money already and really
+                # should do the shipment
+                # XXX: somebody should be notified about that
+                pass
 
     
     
