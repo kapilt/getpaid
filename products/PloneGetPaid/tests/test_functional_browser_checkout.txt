@@ -1,0 +1,118 @@
+==============================================================================
+Doctest generated Mon Oct 15 2007 12:36:37 GMT+0200 (CEST)
+by cjj
+==============================================================================
+
+Create the browser object we'll be using.
+
+    >>> from zope.testbrowser import Browser
+    >>> browser = Browser()
+    >>> browser.open('http://localhost/pgp')
+
+Testing checkout process for authenticated user (in this case, admin)
+
+
+Test donation checkout, which should go directly to checkout screen from the portlet. 
+
+    >>> browser.getLink('Donate!').click()
+    >>> browser.getControl('Your Name').value = 'Test'
+    >>> browser.getControl('Phone Number').value = '1234567'
+    >>> browser.getControl('Phone Number').value = '12345678'
+    >>> browser.getControl('Email').value = 'test@test.com'
+    >>> browser.getControl('First Line').value = 'Test'
+    >>> browser.getControl('City').value = 'Test'
+    >>> browser.getControl('State').value = 'US-HI'
+    >>> browser.getControl('Zip Code').value = '12345'
+    >>> browser.getControl('First Line').value = 'Test'
+    >>> browser.getControl('City').value = 'Test'
+    >>> browser.getControl('State').value = 'US-HI'
+    >>> browser.getControl('Zip Code').value = '12345'
+
+Test popup for privacy policy
+
+    >>> browser.getLink('Privacy Policy').click()
+
+Test popup of disclaimer
+
+    >>> browser.getLink('Disclaimer').click()
+    >>> browser.getControl('Continue').click()
+    >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
+    >>> browser.getControl(name='form.cc_expiration_month').value = '02'
+    >>> browser.getControl(name='form.cc_expiration_year').value = '2009'
+
+Use real test credit card numbers, available from http://developer.authorize.net/faqs/#7429
+
+    >>> browser.getControl('Credit Card Verfication Number').value = '1234'
+    >>> browser.getControl('Credit Card Number').value = '4007000000027'
+
+Retest privacy and disclaimer for this screen
+
+    >>> browser.getLink('Privacy Policy').click()
+    >>> browser.getLink('Disclaimer').click()
+    >>> browser.getControl('Make Payment').click()
+
+Donation checkout completed. Now check order
+
+    >>> browser.getLink('here').click()
+
+Verify order was for what we checked out.
+
+    >>> browser.open('http://localhost/pgp/@@getpaid-order/1072548714')
+    >>> 'Welcome to Plone' in browser.contents
+    True
+    >>> 'CHARGED' in browser.contents
+    True
+
+This completes test of donation checkout. Verified that item was listed on order for user. 
+
+    >>> browser.open('http://localhost/pgp')
+
+Now test add to cart and checkout process. 
+
+    >>> browser.getLink('Test image buyable').click()
+    >>> browser.getLink('Add to Cart').click()
+    >>> 'Test image buyable' in browser.contents
+    True
+
+Check contents of cart for item added
+
+    >>> browser.getControl('Continue Shopping').click()
+    >>> browser.getLink('Test news item').click()
+    >>> 'Contains 1 Items' in browser.contents
+    True
+
+One item already in cart. Add another. 
+
+    >>> browser.getLink('Add to Cart').click()
+    >>> 'Test news item' in browser.contents
+    True
+
+Check that new item is in cart
+
+    >>> browser.getControl('Checkout').click()
+    >>> browser.getControl('Your Name').value = 'test'
+    >>> browser.getControl('State').value = 'US-HI'
+    >>> browser.getControl('State').value = 'US-HI'
+    >>> browser.getControl('Continue').click()
+    >>> browser.getControl(name='form.cc_expiration_month').value = '02'
+    >>> browser.getControl(name='form.cc_expiration_year').value = '2009'
+    >>> browser.getControl('Make Payment').click()
+    >>> 'CHARGED' in browser.contents
+    True
+
+Check order
+
+    >>> browser.getLink('here').click()
+    >>> '739542411' in browser.contents
+    True
+    >>> browser.open('http://localhost/pgp/@@getpaid-order/739542411')
+    >>> 'Test image buyable' in browser.contents
+    True
+    >>> 'Test news item' in browser.contents
+    True
+    >>> 'CHARGED' in browser.contents
+    True
+
+Finish verification
+
+
