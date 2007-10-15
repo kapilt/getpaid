@@ -9,7 +9,7 @@ from base import PloneGetPaidTestCase
 
 class TestNotification(PloneGetPaidTestCase):
 
-    def mySetup():
+    def sendNotification():
         """
         First some mockup:
 
@@ -34,11 +34,7 @@ class TestNotification(PloneGetPaidTestCase):
         >>> settings = interfaces.IGetPaidManagementOptions( self.portal)
         >>> settings.merchant_email_notification = 'notification'
         >>> settings.contact_email = 'merchant@foo.bar'
-        """
-        
 
-    def sendNotification():
-        """
         >>> from zope import interface
         >>> class Mock(object):
         ...     interface.implements(interface.Interface)
@@ -47,7 +43,9 @@ class TestNotification(PloneGetPaidTestCase):
 
         >>> order = Mock( user_id='testmanager',
         ...               getTotalPrice=lambda: 10,
-        ...               order_id=1)
+        ...               order_id=1,
+        ...               shopping_cart=Mock(values=lambda: ['abc', 'def'])
+        ...               )
 
         >>> from getpaid.core.interfaces import workflow_states
         >>> finance = workflow_states.order.finance
@@ -56,6 +54,7 @@ class TestNotification(PloneGetPaidTestCase):
         ...               object=self.portal
         ...               )
         >>> from Products.PloneGetPaid.notifications import sendNotification
+
         >>> sendNotification( order, event)
         """
 
