@@ -440,9 +440,8 @@ msgstr "modificado por"
 
 #. Default: "Checkout"
 #: ./browser/templates/checkout-address.pt:4
-#, fuzzy
 msgid "heading_checkout"
-msgstr "Fechar compras"
+msgstr "Fechar Compras"
 
 #. Default: "Disclaimer"
 #: ./browser/templates/disclaimer.pt:5
@@ -456,7 +455,6 @@ msgstr "Política de Privacidade"
 
 #. Default: "Thank you for your order"
 #: ./browser/templates/checkout-thank-you.pt:7
-#, fuzzy
 msgid "heading_checkout_thank_you"
 msgstr "Obrigado pelo teu Pedido"
 
@@ -562,9 +560,8 @@ msgstr "Nome da Organização/Loja"
 
 #. Default: "Up to GetPaid Setup"
 #: ./browser/templates/settings-template.pt:40
-#, fuzzy
 msgid "label_up_to_getpaid_setup"
-msgstr "Voltar para a Administração de Pedidos"
+msgstr "Voltar para a configuração do GetPaid"
 
 #. Default: "Your Cart Contents"
 #: ./browser/templates/cart-listing.pt:4
@@ -666,9 +663,8 @@ msgstr "Número do Pedido"
 
 #. Default: "Price: $ ${value_price}"
 #: ./browser/templates/portlet-content-buyable.pt:33
-#, fuzzy
 msgid "text_price"
-msgstr "Preço: R$ ${value_price}"
+msgstr "Preço: $ ${value_price}"
 
 #. Default: "Product Details"
 #: ./browser/templates/portlet-content-buyable.pt:12
