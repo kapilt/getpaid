@@ -695,3 +695,7 @@ msgstr "O estado das suas finanças é"
 msgid "your_order_id"
 msgstr "O identificador do seu pedido é"
 
+#. Default: "No orders found for your filter."
+#: ./browser/admin_order.py:1000
+msgid "No orders found for your filter."
+msgstr "Não foram encontrados pedidos para o seu filtro."

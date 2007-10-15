@@ -694,3 +694,7 @@ msgstr ""
 msgid "your_order_id"
 msgstr ""
 
+#. Default: "No orders found for your filter."
+#: ./browser/admin_order.py:1000
+msgid "No orders found for your filter."
+msgstr ""

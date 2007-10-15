@@ -96,6 +96,9 @@ class OrderListingComponent( core.EventViewlet ):
     def listing( self ):
         columns = self.columns
         values = self.manager.get('orders-search').results
+        if not values:
+            message = u'No orders found for your filter.'
+            return self.context.utranslate(msgid=message, default=message, domain='plonegetpaid')
         
         formatter = BatchingFormatter( self.context,
                                       self.request,
