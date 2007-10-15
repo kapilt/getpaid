@@ -37,6 +37,11 @@ of shipment:
   >>> cart = ShoppingCart()
   >>> cart[ item.item_id ] = item
 
+we can ask the cart how many items it has:
+
+  >>> cart.size()
+  5
+
 Let's attach our cart to the order:
 
   >>> order.shopping_cart = cart

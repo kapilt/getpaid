@@ -226,6 +226,11 @@ class IShoppingCartUtility( Interface ):
 class IShoppingCart( ILineItemContainer ):
     """ A Shopping Cart 
     """
+    def size( ):
+        """
+        Count the number of items in the cart (*not* the number of line
+        items)
+        """
 
 
 #################################

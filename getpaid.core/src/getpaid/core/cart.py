@@ -14,4 +14,5 @@ class ShoppingCart( OrderedContainer ):
     """
     implements( interfaces.IShoppingCart )
 
-
+    def size( self ):
+        return sum(i.quantity for i in self.values())

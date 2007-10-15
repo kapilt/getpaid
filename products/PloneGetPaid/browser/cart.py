@@ -56,7 +56,7 @@ class ShoppingCart( BrowserView ):
     def size( self ):
         if self.cart is None:
             return 0
-        return len( self.cart )
+        return self.cart.size()
 
 class ShoppingCartAddItem( ShoppingCart ):
     """
