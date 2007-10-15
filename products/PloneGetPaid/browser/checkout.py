@@ -174,7 +174,6 @@ class BaseCheckoutForm( formbase.EditForm, BaseView ):
             return ""
         return super( BaseCheckoutForm, self).render()
 
-
 ##############################
 # Some Property Bags - transient adapters
 
@@ -203,10 +202,20 @@ class ImmutableBag( object ):
         return self
 
 
+class OrderIdManagerMixin( object ):
+    def getOrderId( self ):
+        """ get the current order id out of the request,
+            or generate a new one if it's not there yet."""
+        order_id = self.request.get('order_id', None)
+        if order_id is None and 'cur_step' not in self.request:
+            # you're at the first step. Ok, have a new Id then
+            order_id = Order.newOrderId()
+        return order_id
+
 WIZARD_NEXT_STEP = object()
 WIZARD_PREVIOUS_STEP = object()
 
-class CheckoutWizard( BrowserView ):
+class CheckoutWizard( OrderIdManagerMixin, BrowserView ):
     """
     a bidirectional checkout wizard.
     
@@ -259,17 +268,20 @@ class CheckoutWizard( BrowserView ):
         
         current = self.context.restrictedTraverse('@@%s'%current_step)
         current.wizard = self
-        current.hidden_form_vars = dict( cur_step = current_step )                        #         
+        current.hidden_form_vars = dict( cur_step = current_step,
+                                         order_id = self.getOrderId() )
         current.update()
         
         if current._next_url == WIZARD_NEXT_STEP:
             assert next_step, "No Next Step Or Redirect"
             current = self.context.restrictedTraverse('@@%s'%next_step )
-            current.hidden_form_vars = dict( cur_step = next_step )                        
+            current.hidden_form_vars = dict( cur_step = next_step,
+                                             order_id = self.getOrderId() )
         elif current._next_url == WIZARD_PREVIOUS_STEP:
             assert previous_step, "No Previous Step Or Redirect"            
             current = self.context.restrictedTraverse('@@%s'%previous_step)
-            current.hidden_form_vars = dict( cur_step = previous_step )            
+            current.hidden_form_vars = dict( cur_step = previous_step,
+                                             order_id = self.getOrderId() )
         else:
             # finish processing current step
             return current.render()
@@ -352,7 +364,7 @@ class CheckoutAddress( BaseCheckoutForm ):
     def handle_cancel( self, action, data):
         return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
 
-class CheckoutReviewAndPay( BaseCheckoutForm ):
+class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
     
     form_fields = form.Fields( interfaces.IUserPaymentInformation )
     passed_fields = form.Fields( interfaces.IBillingAddress ) + \
@@ -508,7 +520,7 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
 
         order.contact_information = ImmutableBag().initfrom( self.adapters[ interfaces.IUserContactInformation ],
                                                          interfaces.IUserContactInformation )
-        order.order_id = order.newOrderId()
+        order.order_id = self.getOrderId()
         order.user_id = getSecurityManager().getUser().getId()
         notify( ObjectCreatedEvent( order ) )
         
