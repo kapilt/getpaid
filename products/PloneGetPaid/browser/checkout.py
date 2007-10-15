@@ -44,7 +44,7 @@ carry hidden to force transition to required, allow linear links to be used thou
 
 """
 
-import random, sys
+import sys
 from cPickle import loads, dumps
 
 
@@ -508,11 +508,7 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
 
         order.contact_information = ImmutableBag().initfrom( self.adapters[ interfaces.IUserContactInformation ],
                                                          interfaces.IUserContactInformation )
-        while 1:
-            order_id = str( random.randint( 2**10, 2**30 ) )
-            if order_manager.get( order_id ) is None:
-                break
-        order.order_id = order_id
+        order.order_id = order.newOrderId()
         order.user_id = getSecurityManager().getUser().getId()
         notify( ObjectCreatedEvent( order ) )
         
