@@ -9,11 +9,12 @@ import datetime
 
 from persistent.dict import PersistentDict
 from zope.app.container.btree import BTreeContainer
-from zope.app.intids.interfaces import IIntIds
+from zope.app.intid.interfaces import IIntIds
+from zope import component
 
 from BTrees.IFBTree import weightedIntersection, intersection
 
-class ResultSet:
+class ResultSet(object):
     """Lazily accessed set of objects."""
 
     def __init__(self, uids, storage):
@@ -25,7 +26,7 @@ class ResultSet:
 
     def __iter__(self):
         for uid in self.uids:
-            yield self.storage[ str( uid ) ]
+            yield self.storage[ unicode( uid ) ]
 
 class IndexedRecords( BTreeContainer ):
 
@@ -33,15 +34,15 @@ class IndexedRecords( BTreeContainer ):
     # 
     #index_map = { 'index_name' : ( Factory, query_method )}
 
+    index_map = {}
 
-    
     def __init__( self ):
         super( IndexedRecords, self).__init__()
         self.indexes = PersistentDict()
-        self.setupIndexes()
-        
+        self.setupCatalog()
+
     def setupCatalog( self):
-        for index_name, (factory, query) in self.index_map:
+        for index_name, (factory, query) in self.index_map.items():
             self.indexes[ index_name ] = factory
         
     def query( self, **args ):
@@ -84,10 +85,10 @@ class IndexedRecords( BTreeContainer ):
             self.index( order )
 
     def reindex( self, key ):
+        object = self[ unicode(key) ]
         self.unindex( key )
-        object = self[ key ]
         self.index( key, object )
-            
+
     def index( self, key, object ):
         doc_id = int( key )
         for attr, index in self.indexes.items():
@@ -104,7 +105,7 @@ class IndexedRecords( BTreeContainer ):
         
     def __delitem__( self, key ):
         super( IndexedRecords, self).__delitem__( key )
-        self.unindex( key )
+        self.unindex( self[key] )
 
     #################################
     # junk for z2.9 / f 1.4
@@ -175,7 +176,7 @@ class RecordQuery( object ):
         """ used to actualize results from ifsets to 
         """
         intids = cls.getIntIds()
-        return ResultSet( results, intitds )
+        return ResultSet( results, intids )
 
     @classmethod
     def getIntIds( self ):

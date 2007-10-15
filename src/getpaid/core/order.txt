@@ -37,11 +37,6 @@ of shipment:
   >>> cart = ShoppingCart()
   >>> cart[ item.item_id ] = item
 
-we can ask the cart how many items it has:
-
-  >>> cart.size()
-  5
-
 Let's attach our cart to the order:
 
   >>> order.shopping_cart = cart
@@ -123,6 +118,124 @@ synchronous processor api.
 Managing Collections of Orders
 ==============================
 
+We have an Order manager with a storage. This storage is an Order catalog
+which store the different order and index some part of the order.
+
+  >>> from getpaid.core.cart import ShoppingCart
+  >>> cart = ShoppingCart()
+  >>> item = LineItem()
+  >>> item.item_id = "event-devtalk-2007-1"
+  >>> item.name = "Event Registration"
+  >>> item.cost = 25.00
+  >>> item.quantity = 5
+  >>> item.description = "Development Talk"
+  >>> cart[ item.item_id ] = item
+  >>> from getpaid.core.order import Order
+  >>> order1 = Order()
+  >>> order1.order_id = '12'
+  >>> order1.user_id = 'John'
+  >>> order1.shopping_cart = cart
+  >>> order1.getSubTotalPrice()
+  Decimal("125.0")
+  >>> from getpaid.core.order import OrderManager
+  >>> from getpaid.core.interfaces import IOrderManager
+  >>> from zope.component import getUtility
+  >>> manager = getUtility(IOrderManager)
+  >>> manager.store(order1)
+  >>> manager.get('12')
+  <getpaid.core.order.Order object ...>
+  >>> manager.get('0') is None
+  True
+  >>> orders = manager.query(user_id='John')
+  >>> len(orders)
+  1
+  >>> order = orders[0]
+  >>> order
+  <getpaid.core.order.Order object ...>
+  >>> order.order_id
+  '12'
+
+Let's try to add another order and try to get a sorted list:
+
+  >>> cart = ShoppingCart()
+  >>> item = LineItem()
+  >>> item.item_id = "event-devtalk-2007-1"
+  >>> item.name = "Event Registration"
+  >>> item.cost = 25.00
+  >>> item.quantity = 5
+  >>> item.description = "Development Talk"
+  >>> cart[ item.item_id ] = item
+  >>> order2 = Order()
+  >>> order2.order_id = '156'
+  >>> order2.user_id = 'John'
+  >>> order2.shopping_cart = cart
+  >>> order2.getSubTotalPrice()
+  Decimal("125.0")
+  >>> manager.store(order2)
+  >>> orders = manager.query(user_id='John')
+  >>> len(orders)
+  2
+  >>> order = orders[1]
+  >>> order
+  <getpaid.core.order.Order object ...>
+  >>> order.order_id
+  '12'
+  >>> orders = manager.query(user_id='John', no_sort=True)
+  >>> len(orders)
+  2
+  >>> order = list(orders)[1]
+  >>> order
+  <getpaid.core.order.Order object ...>
+  >>> order.order_id
+  '156'
+
+Let's try to change the price of an order. The price should be the same as
+before in the order manager:
+  >>> cart = ShoppingCart()
+  >>> item = LineItem()
+  >>> item.item_id = "event-devtalk-2007-1"
+  >>> item.name = "Event Registration"
+  >>> item.cost = 45.00
+  >>> item.quantity = 5
+  >>> item.description = "Development Talk"
+  >>> cart[ item.item_id ] = item
+  >>> order3 = Order()
+  >>> order3.order_id = '164'
+  >>> order3.user_id = 'John'
+  >>> order3.shopping_cart = cart
+  >>> order3.getSubTotalPrice()
+  Decimal("225.0")
+  >>> manager.store(order3)
+  >>> orders = manager.query(user_id='John')
+  >>> len(orders)
+  3
+  >>> [order.order_id for order in orders]
+  ['164', '156', '12']
+  >>> order = orders[2]
+  >>> order.order_id
+  '12'
+  >>> order.getSubTotalPrice()
+  Decimal("125.0")
+
+Let's try a new order with a different user:
+
+  >>> item.cost = 45.00
+  >>> cart = ShoppingCart()
+  >>> item = LineItem()
+  >>> item.item_id = "event-devtalk-2007-1"
+  >>> item.name = "Event Registration"
+  >>> item.cost = 25.00
+  >>> item.quantity = 5
+  >>> item.description = "Development Talk"
+  >>> cart[ item.item_id ] = item
+  >>> order3 = Order()
+  >>> order3.order_id = '167'
+  >>> order3.user_id = 'Alice'
+  >>> order3.shopping_cart = cart
+  >>> manager.store(order3)
+  >>> orders = manager.query(user_id='Alice')
+  >>> len(orders)
+  1
 
 Querying Orders
 ===============
@@ -247,34 +360,6 @@ the testorder object as we cannot transition back from DELIVERED state.
    WILL_NOT_DELIVER
 
 
-Order Id Management
-===================
 
-Each order needs an Id with a strong requirement on it being unique
-and non-guessable. You can get a new, nonguessable id with a
-reasonable guarantee of it being unique by calling newOrderId().
 
-   >>> from zope import component
-   >>> from getpaid.core import interfaces
-   >>> from getpaid.core.order import Order
-   >>> order_manager = component.getUtility( interfaces.IOrderManager )
-   >>> order = Order()
-   >>> order.order_id = order.newOrderId()
-   >>> order_manager.store( order )
-
-now that the order is stored, no amount of calling newOrderId should
-return the same id. I can't actually test for uniqueness or
-nonguessability, can I?
-
-   >>> for i in xrange(10000):
-   ...    assert(order.newOrderId() != order.order_id)
-
-but on the other hand, I *can* test that if I create an order with the
-same id as an existing order, things will fail:
-
-   >>> new_order = Order()
-   >>> new_order.order_id = order.order_id
-   >>> order_manager.store( new_order )
-   Traceback (most recent call last):
-      ...
-   DuplicationError: ...
+   

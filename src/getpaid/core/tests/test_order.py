@@ -40,10 +40,10 @@ class OrderQueryTests( base.GetPaidTestCase ):
         
     def testDateQuery( self ):
         self.orders[0].creation_date = datetime.datetime.now() - datetime.timedelta( 30 )
-        self.manager.storage.reindex( self.orders[0] )
-        
+        self.manager.storage.reindex(self.orders[0].order_id)
+
         self.orders[1].creation_date = datetime.datetime.now() - datetime.timedelta( 120 )
-        self.manager.storage.reindex( self.orders[1] )
+        self.manager.storage.reindex(self.orders[1].order_id)
 
         # find orders in the last week
         results = order.query.search( creation_date = datetime.timedelta(7)  )
@@ -60,17 +60,17 @@ class OrderQueryTests( base.GetPaidTestCase ):
         self.orders[0].finance_workflow.fireTransition('create')
         self.orders[0].finance_workflow.fireTransition('authorize')
 
-        self.manager.storage.reindex( self.orders[0] )        
+        self.manager.storage.reindex( self.orders[0].order_id )
 
         self.orders[1].finance_workflow.fireTransition('create')        
         self.orders[1].finance_workflow.fireTransition('authorize')
         self.orders[1].finance_workflow.fireTransition('cancel-chargeable')        
-        self.manager.storage.reindex( self.orders[1] )
+        self.manager.storage.reindex( self.orders[1].order_id )
 
         self.orders[2].finance_workflow.fireTransition('create')        
         self.orders[2].finance_workflow.fireTransition('authorize')
         self.orders[2].finance_workflow.fireTransition('charge-chargeable') 
-        self.manager.storage.reindex( self.orders[2] )
+        self.manager.storage.reindex( self.orders[2].order_id )
         
         self.assertEqual( len( order.query.search( finance_state = workflow_states.order.finance.CHARGEABLE ) ), 1 )
         self.assertEqual( len( order.query.search( finance_state = workflow_states.order.finance.CANCELLED ) ), 1 )
@@ -80,7 +80,7 @@ class OrderQueryTests( base.GetPaidTestCase ):
         self.orders[0].finance_workflow.fireTransition('create')
         self.orders[0].finance_workflow.fireTransition('authorize')
         self.orders[0].creation_date = created = datetime.datetime.now() - datetime.timedelta( 30 )
-        self.manager.storage.reindex( self.orders[0] )
+        self.manager.storage.reindex(self.orders[0].order_id)
         self.assertEqual( len( order.query.search( finance_state = workflow_states.order.finance.CHARGEABLE,
                                                    creation_date = ( created - datetime.timedelta(1),
                                                                      created + datetime.timedelta(1) )

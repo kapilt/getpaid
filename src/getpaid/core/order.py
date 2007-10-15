@@ -1,10 +1,8 @@
 """
 order utility implementation
 """
-import random
 
 from zope.interface import implements
-from zope.app.container.btree import BTreeContainer
 
 from zope import component
 from zope.schema.fieldproperty import FieldProperty
@@ -13,18 +11,17 @@ from zope.index.field import FieldIndex
 from zope.index.keyword  import KeywordIndex
 from persistent import Persistent
 from persistent.list import PersistentList
-from persistent.dict import PersistentDict
 from zope.app.annotation.interfaces import IAttributeAnnotatable, IAnnotations
 
-from BTrees.IFBTree import weightedIntersection, intersection
+from BTrees.IFBTree import intersection
 from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo
 
 import decimal, datetime
 
 from getpaid.core import interfaces
+from getpaid.core.catalog import IndexedRecords, ResultSet
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('getpaid')
-
 
 try:
     from AccessControl import getSecurityManager
@@ -32,7 +29,7 @@ except ImportError:
     getSecurityManager = None
 
 class workflow_state( object ):
-    
+
     def __init__(self, workflow_name ):
         self.workflow_name = workflow_name
         self.__doc__ = "workflow state %s"%workflow_name
@@ -63,19 +60,6 @@ class Order( Persistent ):
 
     def __init__( self ):
         self.creation_date = datetime.datetime.now()
-
-    @staticmethod
-    def newOrderId():
-        """
-        Return an order id that has some kind of guarantee that it
-        hasn't been used for an order before.
-        """
-        order_manager = component.getUtility( interfaces.IOrderManager )
-        while 1:
-            order_id = str( random.randint( 2**10, 2**30 ) )
-            if order_manager.get( order_id ) is None:
-                break
-        return order_id
 
     def getOrderId( self ):
         return self._order_id
@@ -138,8 +122,11 @@ class OrderManager( Persistent ):
         self.storage = OrderStorage()
 
     def store( self, order ):
-        self.storage[ order.order_id ] = order
-    
+        order_id = order.order_id
+        if order_id in self.storage.keys():
+            raise AttributeError, 'Order with the id %s already exists in the order manager'
+        self.storage[ order_id ] = order
+
     def query( self, **kw ):
         return query.search( **kw )
 
@@ -215,7 +202,7 @@ class OrderQuery( object ):
 
     @staticmethod
     def sort( results, attribute, reverse=False ):
-        results = list( results )
+        results = list(results)
         results.sort( lambda x,y: cmp( getattr( x, attribute ), getattr( y, attribute ) ) )
         if reverse:
             results.reverse()
@@ -261,98 +248,20 @@ class OrderQuery( object ):
     @staticmethod
     def user_id( value ):
         manager = component.getUtility( interfaces.IOrderManager )
-        return manager.storage.apply( {'user_id':( value, value ) } )                
+        return manager.storage.apply( {'user_id':( value, value ) } )
 
 query = OrderQuery
 
-class ResultSet:
-    """Lazily accessed set of objects."""
+class OrderStorage( IndexedRecords ):
 
-    def __init__(self, uids, storage):
-        self.uids = uids or []
-        self.storage = storage
-
-    def __len__(self):
-        return len(self.uids)
-
-    def __iter__(self):
-        for uid in self.uids:
-            yield self.storage[ str( uid ) ]
-
-class OrderStorage( BTreeContainer ):
-
-    def __init__( self ):
-        super( OrderStorage, self).__init__()
-        self.indexes = PersistentDict( {
-            'products' : KeywordIndex(),
-            'user_id'  : FieldIndex(),
-            'processor_order_id' : FieldIndex(),
-            'finance_state'   : FieldIndex(),
-            'fufillment_state' : FieldIndex(),
-            'creation_date' : FieldIndex() 
-            } )
-        
-    def query( self, **args ):
-        results = self.apply( args )
-        return ResultSet( results, self )
-
-    def apply(self, query):
-        results = []
-        for index_name, index_query in query.items():
-            index = self.indexes[index_name]
-            r = index.apply(index_query)
-            if r is None:
-                continue
-            if not r:
-                # empty results
-                return r
-            results.append((len(r), r))
-
-        if not results:
-            # no applicable indexes, so catalog was not applicable
-            return None
-
-        results.sort() # order from smallest to largest
-
-        _, result = results.pop(0)
-        for _, r in results:
-            _, result = weightedIntersection(result, r)
-
-        return result
-    
-    def __setitem__( self, key, object):
-        super( OrderStorage, self ).__setitem__( key, object )
-        self.index( object )
-
-    def reset_index( self ):
-        # reindex all orders
-        for index in self.indexes.values():
-            index.clear()
-        for order in self.values():
-            self.index( order )
-
-    def reindex( self, object ):
-        self.unindex( object.order_id )
-        self.index( object )
-            
-    def index( self, object ):
-        doc_id = int( object.order_id )
-        for attr, index in self.indexes.items():
-            value = getattr( object, attr, None)
-            if callable( value ):
-                value = value()
-            if value is None:
-                continue
-            index.index_doc( doc_id, value )
-
-    def unindex( self, order_id ):
-        for index in self.indexes.values():
-            index.unindex_doc( int( order_id ) )
-        
-    def __delitem__( self, key ):
-        super( OrderStorage, self).__delitem__( key )
-        doc_id = int( key )
-        self.unindex( doc_id )
+    index_map = {
+            'products' : (KeywordIndex(), 'key'),
+            'user_id'  : (FieldIndex(), 'field'),
+            'processor_order_id' : (FieldIndex(), 'field'),
+            'finance_state'   : (FieldIndex(), 'field'),
+            'fufillment_state' : (FieldIndex(), 'field'),
+            'creation_date' : (FieldIndex(), 'field'),
+            }
 
 class OrderWorkflowRecord( Persistent ):
 
