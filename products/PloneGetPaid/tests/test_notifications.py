@@ -53,8 +53,16 @@ class TestNotification(PloneGetPaidTestCase):
         ...               destination=finance.CHARGEABLE,
         ...               object=self.portal
         ...               )
-        >>> from Products.PloneGetPaid.notifications import sendNotification
 
+        Extensions/install.py takes already care, that there is a LocalSite.
+        However, setHooks still needs to be called - normally done by Five.
+
+        >>> from zope.app.component.hooks import setHooks
+        >>> setHooks()
+
+        Call sendNotification with the mockups
+
+        >>> from Products.PloneGetPaid.notifications import sendNotification
         >>> sendNotification( order, event)
         """
 
