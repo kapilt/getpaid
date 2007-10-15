@@ -81,7 +81,7 @@ def sendNotification( order, event ):
     chargeable. We may not raise or pass exceptions: the payment has already
     happened and everything else is our, not the customer's fault.
     """
-    site = component.getSiteManager()
+    site = component.getSiteManager(event.object)
     portal = site.context
     mailer = portal.MailHost
     
