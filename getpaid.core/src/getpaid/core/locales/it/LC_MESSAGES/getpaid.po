@@ -30,11 +30,11 @@ msgstr "Autorizza"
 
 #: ./interfaces.py:302
 msgid "Can we contact you regarding new offers?"
-msgstr ""
+msgstr "Vuoi ricevere informazioni sulle nostre offerte?"
 
 #: ./interfaces.py:301
 msgid "Can we contact you with offers"
-msgstr ""
+msgstr "Vuoi ricevere informazioni sulle nostre offerte?"
 
 #: ./workflow/item.py:109
 msgid "Cancel"
@@ -54,7 +54,7 @@ msgstr "Data dell'ultima modifica"
 
 #: ./interfaces.py:449
 msgid "Change Kind"
-msgstr ""
+msgstr "Cambia tipo"
 
 #: ./interfaces.py:447
 msgid "Changed By"
@@ -82,7 +82,7 @@ msgstr "Commento"
 
 #: ./interfaces.py:297
 msgid "Contact Information"
-msgstr ""
+msgstr "Contatti"
 
 #: ./interfaces.py:152
 msgid "Cost"
@@ -142,19 +142,19 @@ msgstr "Spedizione via mail/download"
 
 #: ./interfaces.py:296
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: ./interfaces.py:306
 msgid "Email Format"
-msgstr ""
+msgstr "Formato email"
 
 #: ./interfaces.py:318
 msgid "Enter the full name, as it appears on the card. "
-msgstr ""
+msgstr "Inserisci il nome del titolare esattamente come appare sulla carta."
 
 #: ./order.py:393
 msgid "Finance"
-msgstr ""
+msgstr "Pagamento"
 
 #: ./interfaces.py:396
 msgid "Finance State"
@@ -166,11 +166,11 @@ msgstr "Prima linea"
 
 #: ./interfaces.py:337
 msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "
-msgstr ""
+msgstr "Per MasterCard, Visa e Diners Card, è il numero di 3 cifre sul retro della carta. Per American Express, è il codice a 4 cifre sopra al numero della carta."
 
 #: ./order.py:395
 msgid "Fulfillment"
-msgstr ""
+msgstr "Completamento"
 
 #: ./interfaces.py:397
 msgid "Fulfillment State"
@@ -178,11 +178,11 @@ msgstr "Stato della spedizione"
 
 #: ./interfaces.py:283
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: ./fields.py:11
 msgid "Invalid Credit Card Number."
-msgstr ""
+msgstr "Numero di carta invalido."
 
 #: ./order.py:55
 msgid "Invalid Order Id"
@@ -202,19 +202,19 @@ msgstr "Nuovo stato"
 
 #: ./interfaces.py:277
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: ./fields.py:8
 msgid "Only digit character allowed."
-msgstr ""
+msgstr "Sono permessi solo caratteri numerici."
 
 #: ./interfaces.py:293
 msgid "Only digits allowed - e.g. 3334445555 and not 333-444-5555 "
-msgstr ""
+msgstr "Sono permessi solo caratteri numerici - per esempio 3334445555 e non 333-444-5555 "
 
 #: ./interfaces.py:331
 msgid "Only digits allowed - e.g. 4444555566667777 and not 4444-5555-6666-7777 "
-msgstr ""
+msgstr "Sono permessi solo caratteri numerici - per esempio 4444555566667777 e non 4444-5555-6666-7777 "
 
 #: ./workflow/shipment.py:93
 msgid "Order Charged"
@@ -246,11 +246,11 @@ msgstr "Numero di telefono"
 
 #: ./interfaces.py:283
 msgid "Plain Text"
-msgstr ""
+msgstr "Solo testo"
 
 #: ./interfaces.py:242
 msgid "Please Enter Your Address"
-msgstr ""
+msgstr "Inserisci il tuo indirizzo"
 
 #: ./interfaces.py:452
 msgid "Previous State"
@@ -266,15 +266,15 @@ msgstr "Processa ordine"
 
 #: ./workflow/order.py:138
 msgid "Processor Cancel"
-msgstr ""
+msgstr "Pagamento annullato"
 
 #: ./workflow/order.py:100
 msgid "Processor Charged"
-msgstr ""
+msgstr "Pagamento processato"
 
 #: ./workflow/order.py:94
 msgid "Processor Declined"
-msgstr ""
+msgstr "Pagamento respinto"
 
 #: ./interfaces.py:398
 msgid "Processor Order Id"
@@ -286,7 +286,7 @@ msgstr "Codice del prodotto"
 
 #: ./interfaces.py:73
 msgid "Product SKU"
-msgstr "SKU del prodotto"
+msgstr "Codice SKU del prodotto"
 
 #: ./interfaces.py:153
 msgid "Quantity"
@@ -310,7 +310,7 @@ msgstr "Seconda linea"
 
 #: ./interfaces.py:334
 msgid "Select month and year"
-msgstr ""
+msgstr "Seleziona mese e anno"
 
 #: ./workflow/item.py:133
 msgid "Ship"
@@ -322,7 +322,7 @@ msgstr "Provincia"
 
 #: ./interfaces.py:149
 msgid "Unique Item Id"
-msgstr ""
+msgstr "Identificativo del prodotto"
 
 #: ./interfaces.py:49
 msgid "Very brief 50 character text (that shows up in portlet)"
@@ -334,15 +334,15 @@ msgstr "Non verrà spedito"
 
 #: ./interfaces.py:307
 msgid "Would you prefer to receive rich html emails or only plain text"
-msgstr ""
+msgstr "Desideri ricevere email in formato html o solo testo?"
 
 #: ./interfaces.py:277
 msgid "Yes"
-msgstr ""
+msgstr "Sì"
 
 #: ./interfaces.py:290
 msgid "Your Name"
-msgstr ""
+msgstr "Il tuo nome"
 
 #: ./interfaces.py:261
 msgid "Zip Code"
@@ -350,7 +350,7 @@ msgstr "C.A.P."
 
 #: ./interfaces.py:249
 msgid "Zip/Postal Code"
-msgstr ""
+msgstr "C.A.P."
 
 #: ./locales/empty.pt:3
 msgid "do_not_translate"
