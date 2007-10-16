@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: PloneGetPaid VERSION\n"
 "POT-Creation-Date: 2007-10-02 19:24+0000\n"
 "PO-Revision-Date: 2007-10-13 17:00+0000\n"
-"Last-Translator: Giuseppe Masili <giuseppe.masili@redomino.com>\n"
+"Last-Translator: Fabio Corneti <info@corneti.com>\n"
 "Language-Team: Italiano <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -31,7 +31,7 @@ msgstr "Lista degli anni"
 
 #: ./browser/content.py:61
 msgid "Activate"
-msgstr "Attivo"
+msgstr "Attiva"
 
 #: ./interfaces.py:202
 msgid "Allow Anonymous Checkout"
@@ -49,7 +49,7 @@ msgstr "Indietro"
 #. Default: "Billing Address"
 #: ./browser/templates/checkout-address.pt:28
 msgid "Billing Address"
-msgstr "Indirizzo al quale effettuare il pagamento"
+msgstr "Indirizzo di fatturazione"
 
 #: ./interfaces.py:161
 msgid "Buyable Content delivered through the web/virtually"
@@ -98,7 +98,7 @@ msgstr "Numero di fax"
 #. Default: "Contact Information"
 #: ./browser/templates/checkout-address.pt:20
 msgid "Contact Information"
-msgstr ""
+msgstr "Contatti"
 
 #: ./interfaces.py:99
 msgid "Contact Name"
@@ -121,7 +121,7 @@ msgstr "Tipi di contenuto acquistabili"
 
 #: ./interfaces.py:177
 msgid "Content Types available for donation"
-msgstr "Tipi di contenuto disponibili per effettuare donazioni"
+msgstr "Tipi di contenuto associabili a donazioni"
 
 #: ./interfaces.py:169
 msgid "Content Types only available to premium memberships"
@@ -157,7 +157,7 @@ msgstr "Id Cliente"
 
 #: ./browser/io.py:17
 msgid "Data File to Import"
-msgstr ""
+msgstr "File per l'importazione"
 
 #: ./interfaces.py:277
 msgid "Decimal Symbol"
@@ -178,18 +178,18 @@ msgstr "Condizioni di vendita"
 
 #: ./vocabularies.py:78
 msgid "Do not send customer email notification of a completed transaction"
-msgstr "Non è possibile notificare al cliente via email se non si conclude la transazione"
+msgstr "Non inviare al cliente notifiche relative al completamento di una transazione"
 
 #: ./vocabularies.py:69
 msgid "Do not send merchant email notification of a completed transaction"
-msgstr "Non è possibile notificare al cliente via email se non si conclude la transazione"
+msgstr "Non inviare al venditore notifiche relative al completamento di una transazione"
 
 #: ./interfaces.py:174
 msgid "Donatable Content Types"
 msgstr "Tipi di contenuto per le donazioni"
 
 msgid "Email Notifications"
-msgstr "Email per le notifiche"
+msgstr "Notifiche via email"
 
 #: ./browser/io.py:64
 msgid "Export"
@@ -205,18 +205,18 @@ msgstr "Filtra"
 
 #: ./vocabularies.py:55
 msgid "Flat Rate Shipping"
-msgstr ""
+msgstr "Spedizione a tariffa fissa"
 
 #: ./browser/admin_order.py:86
 msgid "Fufillment"
-msgstr ""
+msgstr "Completamento"
 
 #: ./browser/admin_order.py:572
 msgid "Item Id"
-msgstr "Id dell'oggetto"
+msgstr "Identificativo del prodotto"
 
 msgid "Legal Disclaimers"
-msgstr "Disclaimers"
+msgstr "Condizioni di vendita"
 
 #. Default: "Mailing Address"
 #: ./browser/templates/checkout-address.pt:35
@@ -225,7 +225,7 @@ msgstr "Indirizzo postale"
 
 #: ./browser/checkout.py:441
 msgid "Make Payment"
-msgstr ""
+msgstr "Effettua il pagamento"
 
 #: ./interfaces.py:296
 msgid "Merchant Email Notifications"
@@ -233,7 +233,7 @@ msgstr "Notifiche al venditore via email"
 
 #: ./browser/admin_order.py:506
 msgid "N/A"
-msgstr "Non inserito"
+msgstr "Non disponibile"
 
 #: ./browser/admin_order.py:573
 msgid "Name"
@@ -253,30 +253,30 @@ msgstr "Numero massimo di cifre raggruppate"
 
 #: ./interfaces.py:145
 msgid "Only digits allowed"
-msgstr ""
+msgstr "Sono permessi solo caratteri numerici"
 
 #: ./browser/order.py:115
 msgid "Order Details"
-msgstr ""
+msgstr "Dettagli dell'ordine"
 
 #: ./browser/admin_order.py:83
 msgid "Order Id"
-msgstr "Ordina per Id"
+msgstr "Identificativo ordine"
 
 #. Default: "Payment Details"
 #: ./browser/templates/checkout-review-pay.pt:42
 msgid "Payment Details"
-msgstr "dettagli sui pagamenti"
+msgstr "Dettagli sul pagamento"
 
 msgid "Payment Options"
 msgstr "Seleziona un metodo di pagamento"
 
 #: ./interfaces.py:199
 msgid "Payment Processor"
-msgstr "Metodi di pagamento"
+msgstr "Metodo di pagamento"
 
 msgid "Payment Processor Settings"
-msgstr "Opzioni sulla transazione "
+msgstr "Configurazione del processore per i pagamenti"
 
 #: ./browser/admin.py:107
 msgid "Please Select Payment Processor in Payment Options Settings"
@@ -288,7 +288,7 @@ msgstr "Formato di valuta positiva"
 
 #: ./vocabularies.py:61
 msgid "Pounds"
-msgstr ""
+msgstr "Sterline"
 
 #: ./interfaces.py:166
 msgid "Premium Content Types"
@@ -317,11 +317,11 @@ msgstr "Seleziona un metodo di tassazione"
 
 #: ./vocabularies.py:79
 msgid "Send customer email notification of a completed transaction"
-msgstr "Notifica al cliente via email la transazione completata"
+msgstr "Invia una notifica via email al cliente al completamento di una transazione."
 
 #: ./vocabularies.py:70
 msgid "Send merchant email notification when a transaction happens"
-msgstr ""
+msgstr "Invia una notifica via email al venditore per ogni transazione."
 
 #: ./interfaces.py:235
 msgid "Session Timeout"
@@ -345,7 +345,7 @@ msgstr "Impostazioni per la spedizione"
 #. Default: "Shopping Cart"
 #: ./browser/templates/checkout-review-pay.pt:35
 msgid "Shopping Cart"
-msgstr ""
+msgstr "Carrello"
 
 #: ./interfaces.py:237
 msgid "Shopping cart session timeout (in seconds)"
@@ -368,7 +368,7 @@ msgstr "Metodo di tassazione"
 
 #: ./browser/admin.py:117
 msgid "The currenly configured Payment Processor cannot be found; please check if the corresponding package is installed correctly."
-msgstr ""
+msgstr "Il processore dei pagamenti attivo non è stato trovato; controlla se il package corrispondente è stato installato."
 
 #: ./interfaces.py:346
 msgid "The list of months"
@@ -406,7 +406,7 @@ msgstr "nazioni"
 #. Default: "Documentation on GetPaid can be found at ${label_plone_documentation} ."
 #: ./browser/templates/admin-overview.pt:17
 msgid "description_getpaid_setup_documentation"
-msgstr ""
+msgstr "La documentazione di GetPaid può essere consultata all'indirizzo ${label_plone_documentation} ."
 
 #. Default: "To view and manage orders in the site, click on the Orders tab above."
 #: ./browser/templates/admin-overview.pt:18
@@ -416,12 +416,12 @@ msgstr "Gestione ordini"
 #. Default: "Use the links below to configure GetPaid."
 #: ./browser/templates/admin-overview.pt:20
 msgid "description_getpaid_setup_overview"
-msgstr ""
+msgstr "Usa i link sotto per configurare GetPaid."
 
 #. Default: "Your Cart is Empty"
 #: ./browser/templates/cart-empty.pt:5
 msgid "heading_cart_empty"
-msgstr ""
+msgstr "Il carrello è vuoto"
 
 #. Default: "Your Shopping Cart"
 #: ./browser/templates/cart-manage.pt:4
@@ -431,7 +431,7 @@ msgstr "contenuto del carrello"
 #. Default: "change date"
 #: ./browser/templates/order-workflow-log.pt:6
 msgid "heading_change_date"
-msgstr "modifica data"
+msgstr "ultima modifica"
 
 #. Default: "changed by"
 #: ./browser/templates/order-workflow-log.pt:5
@@ -447,12 +447,12 @@ msgstr "Acquista"
 #. Default: "Disclaimer"
 #: ./browser/templates/disclaimer.pt:5
 msgid "heading_checkout_disclaimer"
-msgstr ""
+msgstr "Condizioni di vendita"
 
 #. Default: "Privacy Policy"
 #: ./browser/templates/privacy-policy.pt:5
 msgid "heading_checkout_privacy_policy"
-msgstr ""
+msgstr "Informativa sul trattamento dei dati personali"
 
 #. Default: "Thank you for your order"
 #: ./browser/templates/checkout-thank-you.pt:7
@@ -494,7 +494,7 @@ msgstr "Informazioni generali"
 #: ./browser/templates/settings-template.pt:37
 #, fuzzy
 msgid "heading_getpaid_setup"
-msgstr "Ordini"
+msgstr "Configurazione di GetPaid"
 
 #. Default: "new state"
 #: ./browser/templates/order-workflow-log.pt:9
@@ -565,7 +565,7 @@ msgstr "Nome del negozio/società:"
 #: ./browser/templates/settings-template.pt:40
 #, fuzzy
 msgid "label_up_to_getpaid_setup"
-msgstr "Torna alla gestione degli ordini"
+msgstr "Torna alla configurazione di GetPaid"
 
 #. Default: "Your Cart Contents"
 #: ./browser/templates/cart-listing.pt:4
@@ -619,7 +619,7 @@ msgstr "Riepilogo"
 
 #: ./interfaces.py:345
 msgid "months"
-msgstr ""
+msgstr "mesi"
 
 #: ./interfaces.py:339
 msgid "states"
@@ -633,7 +633,7 @@ msgstr "Contiene ${size} prodotti"
 #. Default: "The Context ${portal} Does Not Support this Operation."
 #: ./browser/templates/payable-form.pt:25
 msgid "text_context_does_not_support_operation"
-msgstr ""
+msgstr "L'oggetto ${portal} non supporta questa operazione."
 
 #. Default: "Creation Date"
 #: ./browser/templates/order-summary.pt:14
@@ -648,7 +648,7 @@ msgstr "Stato corrente"
 #. Default: "Customer Id"
 #: ./browser/templates/order-summary.pt:10
 msgid "text_customer_id"
-msgstr "Identificativo cliente"
+msgstr "Id cliente"
 
 #. Default: "Finance Status"
 #: ./browser/templates/order-summary.pt:18
@@ -658,7 +658,7 @@ msgstr "Stato del pagamento"
 #. Default: "Fulfillment Status"
 #: ./browser/templates/order-summary.pt:22
 msgid "text_fulfillment_status"
-msgstr ""
+msgstr "Stato di completamento"
 
 #. Default: "Order Id"
 #: ./browser/templates/order-summary.pt:6
@@ -688,7 +688,7 @@ msgstr "Carrello"
 
 #: ./interfaces.py:349
 msgid "years"
-msgstr ""
+msgstr "anni"
 
 #. Default: "Your finance state is"
 #: ./browser/templates/checkout-thank-you.pt:11
@@ -698,5 +698,5 @@ msgstr ""
 #. Default: "Your order id is"
 #: ./browser/templates/checkout-thank-you.pt:17
 msgid "your_order_id"
-msgstr ""
+msgstr "Il numero identificativo del tuo ordine è"
 
