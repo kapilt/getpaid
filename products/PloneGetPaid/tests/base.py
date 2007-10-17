@@ -31,6 +31,11 @@ setupPloneSite()
 ## MigrationTool.py because cp.Products.Five isn't
 ## there. I don't know if this would be a MigrationTool
 ## bug or Five.testbrowser...
+##
+## Maurits van Rees -- 2007-10-17 --
+## installProduct('Five') is evil:
+## http://bfhammer.blogspot.com/2006_08_01_archive.html
+## So it should probably be removed, but I do not dare yet.
 ZopeTestCase.installProduct('Five')
 
 class PloneGetPaidTestCase(PloneTestCase):
