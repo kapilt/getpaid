@@ -1,7 +1,15 @@
 """
 $Id$
 """
-from zope.app.annotation import IAnnotations
+try:
+    import zope.annotation
+except ImportError:
+    # BBB for Zope 2.9
+    import zope.app.annotation
+    import sys
+    sys.modules['zope.annotation'] = zope.app.annotation
+
+from zope.annotation import IAnnotations
 from persistent.dict import PersistentDict
 from persistent import Persistent
 from zope import schema

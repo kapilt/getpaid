@@ -88,7 +88,10 @@ marker interfaces and corresponding compnent registration, we can
 specialize adapation of orders to workflows, payment processing as
 appropriate for a given order. 
 
-  >>> from zope.app.event.objectevent import ObjectCreatedEvent
+  >>> try:
+  ...     from zope.lifecycleevent import ObjectCreatedEvent
+  ... except ImportError:
+  ...     from zope.app.event.objectevent import ObjectCreatedEvent
   >>> from zope.event import notify
   >>> notify( ObjectCreatedEvent( order ))
   >>> 

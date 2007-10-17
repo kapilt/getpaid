@@ -14,7 +14,16 @@ from zope.index.keyword  import KeywordIndex
 from persistent import Persistent
 from persistent.list import PersistentList
 from persistent.dict import PersistentDict
-from zope.app.annotation.interfaces import IAttributeAnnotatable, IAnnotations
+
+try:
+    import zope.annotation.interfaces
+except ImportError:
+    # BBB for Zope 2.9
+    import zope.app.annotation.interfaces
+    import sys
+    sys.modules['zope.annotation.interfaces'] = zope.app.annotation.interfaces
+
+from zope.annotation.interfaces import IAttributeAnnotatable, IAnnotations
 
 from BTrees.IFBTree import weightedIntersection, intersection
 from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo

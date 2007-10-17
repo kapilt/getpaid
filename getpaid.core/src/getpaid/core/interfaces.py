@@ -4,7 +4,11 @@ $Id$
 
 from zope.interface import Interface, Attribute, classImplements
 from zope import schema
-from zope.app.event.interfaces import IObjectEvent
+try:
+    from zope.component.interfaces import IObjectEvent
+except ImportError:
+    # BBB for Zope 2.9
+    from zope.app.event.interfaces import IObjectEvent
 from zope.app.container.interfaces import IContainer
 from zope.schema.interfaces import ITextLine
 from zope.schema.vocabulary import SimpleVocabulary
