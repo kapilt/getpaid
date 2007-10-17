@@ -1,8 +1,11 @@
-<configure xmlns="http://namespaces.zope.org/zope">
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:zcml="http://namespaces.zope.org/zcml">
+
   <!-- we style errors in templates, we just want i18n error messages raw -->
   <!-- In Plone 3.0 this conflicts with plone/app/form/overrides.zcml,
-       so we should not load this then. -->
+       so do not load this then. -->
   <view
+      zcml:condition="installed Products.CMFonFive"
       type="zope.publisher.interfaces.browser.IBrowserRequest"
       for="zope.app.form.interfaces.IWidgetInputError"
       provides="zope.app.form.browser.interfaces.IWidgetInputErrorView"
