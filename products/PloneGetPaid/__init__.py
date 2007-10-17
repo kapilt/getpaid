@@ -2,7 +2,13 @@
 $Id$
 """
 
-_GETPAID_DEPENDENCIES_ = [ 'CMFonFive' ]
+from config import PLONE3
+# CMFonFive has been integrated in CMFCore since version 2.0, so in
+# Plone 3.0 we do not depend on it anymore.
+if PLONE3:
+    _GETPAID_DEPENDENCIES_ = [ ]
+else:
+    _GETPAID_DEPENDENCIES_ = [ 'CMFonFive' ]
 
 import os, sys
 from Globals import package_home
@@ -13,6 +19,7 @@ pkg_home = package_home( globals() )
 lib_path = os.path.join( pkg_home, 'lib' )
 if os.path.exists( lib_path ):
     sys.path.append( lib_path )
+
 
 # These imports of zope.annotation are needed needed to get
 # annotations to work on Zope 2.9 and 2.10 at the same time.  They are

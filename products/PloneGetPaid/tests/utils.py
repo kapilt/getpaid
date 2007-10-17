@@ -1,6 +1,7 @@
 import doctest
 from zope.app.tests import placelesssetup
 from zope.configuration.xmlconfig import XMLConfig
+from Products.PloneGetPaid.config import PLONE3
 
 # Standard options for DocTests
 optionflags =  (doctest.ELLIPSIS |
@@ -18,7 +19,8 @@ def configurationSetUp(self):
     # Also ensure the Five directives and permissions are available
     
     import Products.Five
-    import Products.CMFonFive
+    if not PLONE3:
+        import Products.CMFonFive
     import Products.PloneGetPaid
     
     XMLConfig('configure.zcml', Products.Five)()

@@ -53,7 +53,10 @@ def install_dependencies( self ):
 def install_cart_portlet( self, uninstall=False ):
     slot = 'here/@@portlet-shopping-cart/index/macros/portlet'
     portal = self.portal_url.getPortalObject()
-    right_slots = portal.getProperty('right_slots')
+    right_slots = portal.getProperty('right_slots', None)
+    if right_slots is None:
+        # Plone 3 does not use left/right_slots so bail out here.
+        return
     if isinstance( right_slots, str):
         right_slots = right_slots.split('\n')
     else:
@@ -69,7 +72,10 @@ def install_cart_portlet( self, uninstall=False ):
 def install_contentwidget_portlet( self, uninstall=False ):
     slot = 'here/@@portlet-contentwidget'
     portal = self.portal_url.getPortalObject()
-    right_slots = portal.getProperty('right_slots')
+    right_slots = portal.getProperty('right_slots', None)
+    if right_slots is None:
+        # Plone 3 does not use left/right_slots so bail out here.
+        return
     if isinstance( right_slots, str):
         right_slots = right_slots.split('\n')
     else:

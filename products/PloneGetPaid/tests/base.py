@@ -9,7 +9,9 @@ from Testing import ZopeTestCase
 
 # Let Zope know about the products we require above-and-beyond a basic
 # Plone install (PloneTestCase takes care of these).
-ZopeTestCase.installProduct('CMFonFive')
+from Products.PloneGetPaid.config import PLONE3
+if not PLONE3:
+    ZopeTestCase.installProduct('CMFonFive')
 ZopeTestCase.installProduct('PloneGetPaid')
 
 
@@ -46,8 +48,12 @@ class PloneGetPaidTestCase(PloneTestCase):
     def afterSetUp( self ):
         # XXX monkey patch everytime (until we figure out the problem where
         #   monkeypatch gets overwritten somewhere) 
-        from Products.Five import pythonproducts
-        pythonproducts.setupPythonProducts(None)
+        try:
+            from Products.Five import pythonproducts
+            pythonproducts.setupPythonProducts(None)
+        except ImportError:
+            # Not needed in Plone 3
+            pass
         
         # Set up sessioning objects
         ZopeTestCase.utils.setupCoreSessions(self.app)
