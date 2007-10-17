@@ -39,7 +39,12 @@ def setup_order_manager( self ):
     sm = portal.getSiteManager()
     is_already_registered = [u for u in sm.getUtilitiesFor(IOrderManager)]
     if not len(is_already_registered):
-        sm.registerUtility( IOrderManager, OrderManager() )
+        manager = OrderManager()
+        try:
+            sm.registerUtility(component=manager, provided=IOrderManager)
+        except TypeError:
+            # BBB for Zope 2.9
+            sm.registerUtility(interface=IOrderManager, utility=manager)
 
 def setup_intid( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
