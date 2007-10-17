@@ -25,20 +25,6 @@ from Products.PloneTestCase.PloneTestCase import setupPloneSite
 
 setupPloneSite()
 
-## Reed O'Brien -- 2007-10-14 --
-## FIXME
-## Five is installed here to prevent 500 internal Error
-## in Five.testbrowser; when Five isn't found in
-## the Plone Control Panel. The error is raised in
-## MigrationTool.py because cp.Products.Five isn't
-## there. I don't know if this would be a MigrationTool
-## bug or Five.testbrowser...
-##
-## Maurits van Rees -- 2007-10-17 --
-## installProduct('Five') is evil:
-## http://bfhammer.blogspot.com/2006_08_01_archive.html
-## So it should probably be removed, but I do not dare yet.
-ZopeTestCase.installProduct('Five')
 
 class PloneGetPaidTestCase(PloneTestCase):
     """Base class for integration tests for the 'PloneGetPaid' product. This may
@@ -46,6 +32,9 @@ class PloneGetPaidTestCase(PloneTestCase):
     methods.
     """
     def afterSetUp( self ):
+        # This looks like a safe place to install Five.
+        ZopeTestCase.installProduct('Five')
+
         # XXX monkey patch everytime (until we figure out the problem where
         #   monkeypatch gets overwritten somewhere) 
         try:
