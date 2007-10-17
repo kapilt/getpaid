@@ -8,7 +8,7 @@
 <!-- Dependencies -->
 <include package="getpaid.core" />
 <include package="getpaid.io" />
-<include package="zope.app.annotation" />
+<include package="zope.annotation" />
 
 <!-- using five.intid ... introduces subscribers for all persistent objects .. -->
 <include package="five.intid"/>
