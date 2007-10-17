@@ -120,8 +120,9 @@ def uninstall( self ):
 
     print >> out, "Removing GetPaid"
 
-    print >> out, "Uninstalling Control Panels Actions"
-    uninstall_control_panel( self )
+    # This is not defined anywhere.
+    #print >> out, "Uninstalling Control Panels Actions"
+    #uninstall_control_panel( self )
 
     print >> out, "Uninstalling Cart Portlets"
     uninstall_cart_portlet( self )
