@@ -26,27 +26,33 @@ from Products.PloneTestCase.PloneTestCase import setupPloneSite
 setupPloneSite()
 
 
+def baseAfterSetUp( self ):
+    """Code that is needed is the afterSetUp of both test cases.
+    """
+
+    # This looks like a safe place to install Five.
+    ZopeTestCase.installProduct('Five')
+
+    # XXX monkey patch everytime (until we figure out the problem where
+    #   monkeypatch gets overwritten somewhere) 
+    try:
+        from Products.Five import pythonproducts
+        pythonproducts.setupPythonProducts(None)
+    except ImportError:
+        # Not needed in Plone 3
+        pass
+        
+    # Set up sessioning objects
+    ZopeTestCase.utils.setupCoreSessions(self.app)
+
+
 class PloneGetPaidTestCase(PloneTestCase):
     """Base class for integration tests for the 'PloneGetPaid' product. This may
     provide specific set-up and tear-down operations, or provide convenience
     methods.
     """
     def afterSetUp( self ):
-        # This looks like a safe place to install Five.
-        ZopeTestCase.installProduct('Five')
-
-        # XXX monkey patch everytime (until we figure out the problem where
-        #   monkeypatch gets overwritten somewhere) 
-        try:
-            from Products.Five import pythonproducts
-            pythonproducts.setupPythonProducts(None)
-        except ImportError:
-            # Not needed in Plone 3
-            pass
-        
-        # Set up sessioning objects
-        ZopeTestCase.utils.setupCoreSessions(self.app)
-
+        baseAfterSetUp(self)
         # I moved here so that doctests work ok without needing to add PloneGetPaid
         #   and so we don't need to add this line to all our unit tests
         self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
@@ -58,6 +64,9 @@ class PloneGetPaidFunctionalTestCase(FunctionalTestCase):
     convenience methods.
     """
     
+    def afterSetUp( self ):
+        baseAfterSetUp(self)
+
     class Session(dict):
         def set(self, key, value):
             self[key] = value
