@@ -1,6 +1,3 @@
 # Bundle For PloneGetPaid and Plone 2.5.2
 
-# Five 1.4
-Five svn://svn.zope.org/repos/main/Products.Five/tags/1.4.2
-
 CMFonFive http://codespeak.net/svn/z3/CMFonFive/trunk/
