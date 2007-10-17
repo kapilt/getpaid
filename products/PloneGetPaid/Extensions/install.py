@@ -43,7 +43,7 @@ def setup_order_manager( self ):
 
 def setup_intid( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
-    add_initids( portal ) 
+    add_intids( portal ) 
 
 def install_dependencies( self ):
     quickinstaller = self.portal_quickinstaller
