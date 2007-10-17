@@ -3,7 +3,7 @@
 
   <!-- Wire up default storage of workflow state -->
   <adapter
-     for="zope.app.annotation.interfaces.IAttributeAnnotatable"
+     for="zope.annotation.interfaces.IAttributeAnnotatable"
      provides="hurry.workflow.interfaces.IWorkflowState"
      factory="hurry.workflow.workflow.WorkflowState"/>
 
