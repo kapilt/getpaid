@@ -9,13 +9,10 @@ from zope.interface import implements
 from zope import component
 
 try:
-    import zope.annotation.interfaces
+    from zope.annotation.interfaces import IAttributeAnnotatable
 except ImportError:
     # BBB for Zope 2.9
-    import zope.app.annotation.interfaces
-    import sys
-    sys.modules['zope.annotation.interfaces'] = zope.app.annotation.interfaces
-from zope.annotation.interfaces import IAttributeAnnotatable
+    from zope.app.annotation.interfaces import IAttributeAnnotatable
 from zope.app.intid.interfaces import IIntIds
 
 from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo

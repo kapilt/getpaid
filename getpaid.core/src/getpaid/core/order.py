@@ -16,14 +16,12 @@ from persistent.list import PersistentList
 from persistent.dict import PersistentDict
 
 try:
-    import zope.annotation.interfaces
+    from zope.annotation.interfaces import IAttributeAnnotatable
+    from zope.annotation.interfaces import IAnnotations
 except ImportError:
     # BBB for Zope 2.9
-    import zope.app.annotation.interfaces
-    import sys
-    sys.modules['zope.annotation.interfaces'] = zope.app.annotation.interfaces
-
-from zope.annotation.interfaces import IAttributeAnnotatable, IAnnotations
+    from zope.app.annotation.interfaces import IAttributeAnnotatable
+    from zope.app.annotation.interfaces import IAnnotations
 
 from BTrees.IFBTree import weightedIntersection, intersection
 from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo

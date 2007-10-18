@@ -1,9 +1,18 @@
-
-<configure xmlns="http://namespaces.zope.org/zope">
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:zcml="http://namespaces.zope.org/zcml">
 
   <!-- Wire up default storage of workflow state -->
+  <!-- zope.annotation is used in Zope 2.10 -->
   <adapter
+     zcml:condition="installed zope.annotation"
      for="zope.annotation.interfaces.IAttributeAnnotatable"
+     provides="hurry.workflow.interfaces.IWorkflowState"
+     factory="hurry.workflow.workflow.WorkflowState"/>
+  <!-- zope.app.annotation is used in Zope 2.9
+       We know that zope.app.annotation.tests is only installed there. -->
+  <adapter
+     zcml:condition="installed zope.app.annotation.tests"
+     for="zope.app.annotation.interfaces.IAttributeAnnotatable"
      provides="hurry.workflow.interfaces.IWorkflowState"
      factory="hurry.workflow.workflow.WorkflowState"/>
 

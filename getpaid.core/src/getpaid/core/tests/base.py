@@ -9,17 +9,12 @@ from zope.testing.doctestunit import DocFileSuite
 from zope.app.testing import placelesssetup, ztapi
 
 try:
-    import zope.annotation
+    from zope.annotation import interfaces as annotation_interfaces
+    from zope.annotation import attribute
 except ImportError:
     # BBB for Zope 2.9
-    import zope.app.annotation
-    import zope.app.annotation.interfaces
-    import sys
-    sys.modules['zope.annotation'] = zope.app.annotation
-    sys.modules['zope.annotation.interfaces'] = zope.app.annotation.interfaces
-
-from zope.annotation import interfaces as annotation_interfaces
-from zope.annotation import attribute
+    from zope.app.annotation import interfaces as annotation_interfaces
+    from zope.app.annotation import attribute
 
 from hurry.workflow import interfaces
 
