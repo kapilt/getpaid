@@ -1,0 +1,5 @@
+#
+# Apply this file: svn propset svn:externals -F EXTERNALS.txt .
+#
+
+PloneGetPaid https://getpaid.googlecode.com/svn/trunk/products/PloneGetPaid
