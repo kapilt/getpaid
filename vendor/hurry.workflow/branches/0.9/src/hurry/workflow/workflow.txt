@@ -12,13 +12,10 @@ Let's first make a content object that can go into a workflow::
    >>> from zope.interface import implements, Attribute
  
    >>> try:
-   ...     import zope.annotation.interfaces
+   ...     from zope.annotation.interfaces import IAttributeAnnotatable
    ... except ImportError:
    ...     # BBB for Zope 2.9
-   ...     import zope.app.annotation.interfaces
-   ...     import sys
-   ...     sys.modules['zope.annotation.interfaces'] = zope.app.annotation.interfaces
-   >>> from zope.annotation.interfaces import IAttributeAnnotatable
+   ...     from zope.app.annotation.interfaces import IAttributeAnnotatable
    >>> class IDocument(IAttributeAnnotatable):
    ...    title = Attribute('Title')
    >>> class Document(object):

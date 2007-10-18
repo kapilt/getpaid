@@ -4,14 +4,12 @@ from zope.testing import doctest
 from zope.app.testing import placelesssetup, ztapi
 
 try:
-    import zope.annotation
+    from zope.annotation import interfaces as annotation_interfaces
+    from zope.annotation import attribute
 except ImportError:
     # BBB for Zope 2.9
-    import zope.app.annotation
-    import sys
-    sys.modules['zope.annotation'] = zope.app.annotation
-from zope.annotation import interfaces as annotation_interfaces
-from zope.annotation import attribute
+    from zope.app.annotation import interfaces as annotation_interfaces
+    from zope.app.annotation import attribute
 from hurry.workflow import interfaces, workflow
 
 class WorkflowVersions(workflow.WorkflowVersions):
