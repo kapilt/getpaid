@@ -11,4 +11,12 @@
       addview=".ship.AddForm"
       />
 
+  <plone:portlet
+      name="getpaid.buyable"
+      interface=".buy.IBuyablePortlet"
+      assignment=".buy.Assignment"
+      renderer=".buy.Renderer"
+      addview=".buy.AddForm"
+      />
+
 </configure>

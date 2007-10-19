@@ -4,4 +4,9 @@
       title="Shippable portlet"
       description="A portlet that handles shippable items"
       />
+  <portlet
+      addview="getpaid.buyable"
+      title="Buyable portlet"
+      description="A portlet that handles buyable items"
+      />
 </portlets>
