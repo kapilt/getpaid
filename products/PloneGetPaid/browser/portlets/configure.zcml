@@ -19,4 +19,20 @@
       addview=".buy.AddForm"
       />
 
+  <plone:portlet
+      name="getpaid.donatable"
+      interface=".donate.IDonatablePortlet"
+      assignment=".donate.Assignment"
+      renderer=".donate.Renderer"
+      addview=".donate.AddForm"
+      />
+
+  <plone:portlet
+      name="getpaid.premium"
+      interface=".premium.IPremiumPortlet"
+      assignment=".premium.Assignment"
+      renderer=".premium.Renderer"
+      addview=".premium.AddForm"
+      />
+
 </configure>
