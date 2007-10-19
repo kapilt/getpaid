@@ -26,6 +26,24 @@ from Products.PloneGetPaid.i18n import _
 
 from urllib import urlencode
 
+
+def view_url(context):
+    """Last part of the url for viewing this context.
+
+    By default: for Images and Files, redirect to .../view
+
+    Code taken from CMFPlone/skins/plone_scripts/livesearch_reply.py
+    """
+    portalProperties = getToolByName(context, 'portal_properties')
+    siteProperties = getattr(portalProperties, 'site_properties', None)
+    useViewAction = []
+    if siteProperties is not None:
+        useViewAction = siteProperties.getProperty('typesUseViewActionInListings', [])
+    extra = ''
+    if context.portal_type in useViewAction:
+        extra = '/view'
+    return extra
+
 class PayableFormView( BaseFormView ):
 
     adapters = None
@@ -73,7 +91,9 @@ class PayableCreation( PayableForm ):
         # redirect to view
         translated_message = self.context.utranslate(u'Changes saved.', domain='plone').encode(self.context.getCharset())
         encoded_message = urlencode({'portal_status_message' : translated_message})
-        self.request.response.redirect( '%s/?%s' % (self.context.absolute_url(), encoded_message) )
+
+        extra = view_url(self.context)
+        self.request.response.redirect( '%s%s?%s' % (self.context.absolute_url(), extra, encoded_message) )
 
 ##     # formlib has serious issues do something as simple as a cancel button in our version of zope
 ##     # lame, seriously lame - kapilt
@@ -86,8 +106,8 @@ class PayableDestruction( BrowserView ):
 
     def __call__(self):
         marker.erase( self.context, self.marker )
-        self.request.RESPONSE.redirect( self.context.absolute_url() )
-
+        extra = view_url(self.context)
+        self.request.response.redirect( '%s%s' % (self.context.absolute_url(), extra) )
 
 class BuyableForm( PayableForm ):
     form_fields = form.Fields( igetpaid.IBuyableContent )
