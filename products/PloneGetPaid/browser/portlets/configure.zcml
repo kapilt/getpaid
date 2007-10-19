@@ -1,0 +1,14 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:plone="http://namespaces.plone.org/plone">
+
+  <include package="plone.app.portlets" />
+
+  <plone:portlet
+      name="getpaid.shippable"
+      interface=".ship.IShippablePortlet"
+      assignment=".ship.Assignment"
+      renderer=".ship.Renderer"
+      addview=".ship.AddForm"
+      />
+
+</configure>

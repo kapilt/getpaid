@@ -1,0 +1,7 @@
+<portlets>
+  <portlet
+      addview="getpaid.shippable"
+      title="Shippable portlet"
+      description="A portlet that handles shippable items"
+      />
+</portlets>
