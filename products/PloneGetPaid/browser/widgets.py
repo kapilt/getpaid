@@ -15,8 +15,11 @@ class WithTemplateWidget(SimpleInputWidget):
         # by default please fix me.
         envadapter = IUserPreferredCharsets( self.request)
         charsets = envadapter.getPreferredCharsets() or ['utf-8']
-        value = decode._decode( self.template(), charsets )
+        value = self.template()
+        if not isinstance(value, unicode):
+            value = decode._decode( self.template(), charsets )
         return value
+    
 
 class CountrySelectionWidget(WithTemplateWidget):
     template = ViewPageTemplateFile('templates/country-selection-widget.pt')
