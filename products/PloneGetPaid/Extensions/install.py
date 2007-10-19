@@ -7,6 +7,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore import permissions as cmf_perms
 from Products.PloneGetPaid import _GETPAID_DEPENDENCIES_
 from Products.Five.site.localsite import enableLocalSiteHook
+from Products.Archetypes.utils import shasattr
 
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.component.interfaces import ISiteManager
@@ -106,12 +107,18 @@ def install( self ):
     install_dependencies(self)
 
     # Run all import steps for getPaid
-    portal = getToolByName(self, 'portal_url').getPortalObject()
-    setup_tool = getToolByName(portal, 'portal_setup')
-    old_context = setup_tool.getImportContextID()
-    setup_tool.setImportContext('profile-Products.PloneGetPaid:default')
-    setup_tool.runAllImportSteps()
-    setup_tool.setImportContext(old_context)
+    setup_tool = getToolByName(self, 'portal_setup')
+    if shasattr(setup_tool, 'runAllImportStepsFromProfile'):
+        # Plone 3
+        setup_tool.runAllImportStepsFromProfile('profile-Products.PloneGetPaid:default')
+    else:
+        # Plone 2.5.  Would work on 3.0 too, but then it gives tons of
+        # DeprecationWarnings when running the tests, causing failures
+        # to drown in the noise.
+        old_context = setup_tool.getImportContextID()
+        setup_tool.setImportContext('profile-Products.PloneGetPaid:default')
+        setup_tool.runAllImportSteps()
+        setup_tool.setImportContext(old_context)
     
     return out.getvalue()
 
