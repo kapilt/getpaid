@@ -19,4 +19,9 @@
       title="Premium portlet"
       description="A portlet that handles premium items"
       />
+  <portlet
+      addview="getpaid.cart"
+      title="Cart portlet"
+      description="A portlet that shows the shopping cart"
+      />
 </portlets>

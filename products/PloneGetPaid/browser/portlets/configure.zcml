@@ -35,4 +35,12 @@
       addview=".premium.AddForm"
       />
 
+  <plone:portlet
+      name="getpaid.cart"
+      interface=".cart.ICartPortlet"
+      assignment=".cart.Assignment"
+      renderer=".cart.Renderer"
+      addview=".cart.AddForm"
+      />
+
 </configure>
