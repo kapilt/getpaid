@@ -4,16 +4,13 @@ $Id$
 from StringIO import StringIO
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore import permissions as cmf_perms
 from Products.PloneGetPaid import _GETPAID_DEPENDENCIES_
 from Products.Five.site.localsite import enableLocalSiteHook
 from Products.Archetypes.utils import shasattr
 
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
-from zope.component.interfaces import ISiteManager
-from zope.app.component.hooks import setSite, getSite
-from zope.app.component.interfaces import ISite, IPossibleSite
-from zope.app.intid.interfaces import IIntIds
+from zope.app.component.hooks import setSite
+from zope.app.component.interfaces import ISite
 from five.intid.site import add_intids
 from getpaid.core.interfaces import IOrderManager, IStore
 from getpaid.core.order import OrderManager
