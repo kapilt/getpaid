@@ -17,8 +17,7 @@ from Products.PloneGetPaid.interfaces import ICountriesStates, IMonthsAndYears
 
 from Products.CMFCore.utils import getToolByName
 
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory('plonegetpaid')
+from Products.PloneGetPaid.i18n import _
 
 def PaymentMethods( context ):
     # context is the portal config options, whose context is the portal

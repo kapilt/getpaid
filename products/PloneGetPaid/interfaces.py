@@ -11,8 +11,7 @@ from getpaid.core.fields import PhoneNumber
 import getpaid.core.interfaces as igetpaid
 import zope.viewlet.interfaces
 
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory('plonegetpaid')
+from Products.PloneGetPaid.i18n import _
 
 class IBeforeCheckoutEvent( IObjectEvent ):
     """
