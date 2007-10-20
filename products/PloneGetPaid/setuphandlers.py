@@ -7,6 +7,8 @@ from Products.PloneGetPaid.Extensions.install import setup_site
 from Products.PloneGetPaid.Extensions.install import setup_store
 from Products.PloneGetPaid.Extensions.install import setup_order_manager
 from Products.PloneGetPaid.Extensions.install import add_intids
+from Products.PloneGetPaid.Extensions.install import install_plone3_portlets
+from Products.PloneGetPaid.config import PLONE3
 
 def setupVarious(context):
     """Import steps that are not handled by GS import/export handlers can be
@@ -30,6 +32,10 @@ def setupVarious(context):
 
     print >> out, "Installing Content Widget Portlet"
     install_contentwidget_portlet(site)
+
+    if PLONE3:
+        print >> out, "Installing Plone 3 Portlets"
+        install_plone3_portlets(site)
 
     print >> out, "Installing Local Site"
     setup_site(site)

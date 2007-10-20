@@ -4,6 +4,7 @@ from zope.component import getUtility
 
 from getpaid.core.interfaces import IOrderManager, IStore
 from Products.PloneGetPaid import _GETPAID_DEPENDENCIES_
+from Products.PloneGetPaid.config import PLONE3
 
 from base import PloneGetPaidTestCase
 
@@ -35,13 +36,35 @@ class TestProductInstall(PloneGetPaidTestCase):
         for dep in _GETPAID_DEPENDENCIES_:
             self.assert_(dep in installed)
 
-    def test_portlets_are_installed(self):
+    def test_old_portlets_are_installed(self):
+        if PLONE3:
+            # Run test_plone3_portlets_are_installed instead
+            return
         right_slots = self.portal.getProperty('right_slots')
         if not isinstance( right_slots, str):
             right_slots = "\n".join(list(right_slots))
         self.assert_('portlet-shopping-cart' in right_slots)
         self.assert_('portlet-contentwidget' in right_slots)
         
+    def test_plone3_portlets_are_installed(self):
+        if not PLONE3:
+            # Run test_old_portlets_are_installed instead
+            return
+        from zope.component import getUtility, getMultiAdapter
+        from plone.portlets.interfaces import IPortletManager, IPortletAssignmentMapping
+
+        # Get some definitions.
+        column = getUtility(IPortletManager, name="plone.rightcolumn", context=self.portal)
+        manager = getMultiAdapter((self.portal, column), IPortletAssignmentMapping)
+        portletnames = [v.title for v in manager.values()]
+
+        self.failUnless(u'Shopping Cart' in portletnames)
+        self.failUnless(u'Buyable' in portletnames)
+        self.failUnless(u'Donatable' in portletnames)
+        self.failUnless(u'Shippable' in portletnames)
+        self.failUnless(u'Premium' in portletnames)
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()

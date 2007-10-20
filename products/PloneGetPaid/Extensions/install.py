@@ -11,6 +11,7 @@ from Products.Archetypes.utils import shasattr
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.app.component.hooks import setSite
 from zope.app.component.interfaces import ISite
+from Products.PloneGetPaid.config import PLONE3
 from five.intid.site import add_intids
 from getpaid.core.interfaces import IOrderManager, IStore
 from getpaid.core.order import OrderManager
@@ -77,7 +78,6 @@ def install_contentwidget_portlet( self, uninstall=False ):
     portal = self.portal_url.getPortalObject()
     right_slots = portal.getProperty('right_slots', None)
     if right_slots is None:
-        # Plone 3 does not use left/right_slots so bail out here.
         return
     if isinstance( right_slots, str):
         right_slots = right_slots.split('\n')
@@ -97,6 +97,56 @@ def uninstall_cart_portlet( self ):
 def uninstall_contentwidget_portlet( self ):
     install_contentwidget_portlet (self, True )
     
+def install_plone3_portlets(self):
+    """Add all portlets to the right column in the portal root.
+
+    Other variations are possible:
+
+    - At least do this for the cart portlet as that one always makes
+      sense.
+
+    - Assign the one correct portlet for an object at the moment that
+      we make it buyable, donatable, etc.
+
+    - When setting a content type as payable in the control panel,
+      assign the correct portlet to that content type.
+    """
+    if not PLONE3:
+        return
+
+    # Do the imports here, as we only need them here and this only
+    # gets run on Plone 3.0.
+    from zope.app.container.interfaces import INameChooser
+    from zope.component import getUtility, getMultiAdapter
+    from plone.portlets.interfaces import IPortletManager, IPortletAssignmentMapping
+    from Products.PloneGetPaid.browser import portlets
+
+    # Get some definitions.
+    portal = self.portal_url.getPortalObject()
+    column = getUtility(IPortletManager, name="plone.rightcolumn", context=portal)
+    manager = getMultiAdapter((portal, column), IPortletAssignmentMapping)
+    chooser = INameChooser(manager)
+
+    # Cart portlet
+    assignment = portlets.cart.Assignment()
+    manager[chooser.chooseName(None, assignment)] = assignment
+
+    # Buyable portlet
+    assignment = portlets.buy.Assignment()
+    manager[chooser.chooseName(None, assignment)] = assignment
+
+    # Donatable portlet
+    assignment = portlets.donate.Assignment()
+    manager[chooser.chooseName(None, assignment)] = assignment
+
+    # Shippable portlet
+    assignment = portlets.ship.Assignment()
+    manager[chooser.chooseName(None, assignment)] = assignment
+
+    # Premium portlet
+    assignment = portlets.premium.Assignment()
+    manager[chooser.chooseName(None, assignment)] = assignment
+
 def install( self ):
     out = StringIO()
 
