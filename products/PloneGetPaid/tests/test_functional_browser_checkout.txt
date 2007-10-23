@@ -97,11 +97,11 @@ Test donation checkout, which should go directly to checkout screen from the por
     >>> browser.getControl(name='form.email').value = 'test@test.com'
     >>> browser.getControl(name='form.bill_first_line').value = 'Test'
     >>> browser.getControl(name='form.bill_city').value = 'Test'
-    >>> browser.getControl(name='form.bill_state').value = ('US-HI',)
+    >>> browser.getControl(name='form.bill_state').value = 'US-HI'
     >>> browser.getControl(name='form.bill_postal_code').value = '12345'
     >>> browser.getControl(name='form.ship_first_line').value = 'Test'
     >>> browser.getControl(name='form.ship_city').value = 'Test'
-    >>> browser.getControl(name='form.ship_state').value = ('US-HI',)
+    >>> browser.getControl(name='form.ship_state').value = 'US-HI'
     >>> browser.getControl(name='form.ship_postal_code').value = '12345'
 
 Test popup for privacy policy
