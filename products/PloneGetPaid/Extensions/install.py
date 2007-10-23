@@ -125,27 +125,21 @@ def install_plone3_portlets(self):
     portal = self.portal_url.getPortalObject()
     column = getUtility(IPortletManager, name="plone.rightcolumn", context=portal)
     manager = getMultiAdapter((portal, column), IPortletAssignmentMapping)
+    portletnames = [v.title for v in manager.values()]
     chooser = INameChooser(manager)
 
-    # Cart portlet
-    assignment = portlets.cart.Assignment()
-    manager[chooser.chooseName(None, assignment)] = assignment
+    assignments = [
+        portlets.cart.Assignment(),
+        portlets.buy.Assignment(),
+        portlets.donate.Assignment(),
+        portlets.ship.Assignment(),
+        portlets.premium.Assignment(),
+        ]
 
-    # Buyable portlet
-    assignment = portlets.buy.Assignment()
-    manager[chooser.chooseName(None, assignment)] = assignment
-
-    # Donatable portlet
-    assignment = portlets.donate.Assignment()
-    manager[chooser.chooseName(None, assignment)] = assignment
-
-    # Shippable portlet
-    assignment = portlets.ship.Assignment()
-    manager[chooser.chooseName(None, assignment)] = assignment
-
-    # Premium portlet
-    assignment = portlets.premium.Assignment()
-    manager[chooser.chooseName(None, assignment)] = assignment
+    for assignment in assignments:
+        title = assignment.title
+        if title not in portletnames:
+            manager[chooser.chooseName(title, assignment)] = assignment
 
 def install( self ):
     out = StringIO()
