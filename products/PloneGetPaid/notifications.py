@@ -4,6 +4,7 @@ email notifications for store admins and customers.
 
 from zope import component, interface
 from getpaid.core.interfaces import workflow_states
+from Products.CMFCore.utils import getToolByName
 
 import interfaces
 
@@ -80,8 +81,12 @@ def sendNotification( order, event ):
     happened and everything else is our, not the customer's fault.
     """
     site = component.getSiteManager()
-    portal = site.context
-    mailer = portal.MailHost
+    try:
+        portal = getToolByName(site, 'portal_url').getPortalObject()
+    except AttributeError:
+        # BBB for Zope 2.9
+        portal = site.context
+    mailer = getToolByName(portal, 'MailHost')
     
     if event.destination != workflow_states.order.finance.CHARGEABLE:
         return
