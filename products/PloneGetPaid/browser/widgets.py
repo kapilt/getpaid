@@ -36,9 +36,8 @@ class StateSelectionWidget(SimpleInputWidget):
         else:
             value = self._getFormValue()
         return """<div id="%s_container">
-                  <select name="%s" id="%s">
-                    <option value="%s" selected="selected">Selected</option>
-                  </select>
+                  <input name="%s" id="%s"
+                   value="%s" size="7" maxlength="30" type="text">
                   </div>""" % (self.name, self.name, self.name, value)
 
 class CCExpirationDateWidget(WithTemplateWidget,DateWidget):
