@@ -83,7 +83,7 @@ class OrderListingComponent( core.EventViewlet ):
         column.GetterColumn( title=_(u"Order Id"), getter=renderOrderId ),
         column.GetterColumn( title=_(u"Customer Id"), getter=AttrColumn("user_id" ) ),        
         column.GetterColumn( title=_(u"Status"), getter=AttrColumn("finance_state") ),
-        column.GetterColumn( title=_(u"Fufillment"), getter=AttrColumn("fulfillment_state") ),
+        column.GetterColumn( title=_(u"Fulfillment"), getter=AttrColumn("fulfillment_state") ),
         column.GetterColumn( title=_(u"Price"), getter=PriceColumn("getTotalPrice") ),
         column.GetterColumn( title=_(u"Created"), getter=DateColumn("creation_date") )
         ]
@@ -174,7 +174,7 @@ class OrderSearchComponent( core.ComponentViewlet ):
         schema.Choice( **define( title=u"Created", __name__=u"creation_date",
                                  values=( [ d[0] for d in date_search_order ] ) ) ),
         schema.Choice( **define( title=u"Status", __name__=u"finance_state", values= _finance_values ) ),
-        schema.Choice( **define( title=u"Fufillment", __name__=u"fulfillment_state", values= _fulfillment_values ) ),
+        schema.Choice( **define( title=u"Fulfillment", __name__=u"fulfillment_state", values= _fulfillment_values ) ),
         schema.TextLine( **define( title=u"User Id", __name__=u"user_id") ),
         )
 
