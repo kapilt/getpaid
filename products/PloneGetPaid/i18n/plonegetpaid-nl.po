@@ -1,13 +1,14 @@
 # Contributors:
 # 
 # Jean-Paul Ladage <j.ladage@zestsoftware.nl>, 2007.
+# Maurits van Rees <m.van.rees@zestsoftware.nl>, 2007.
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: PloneGetPaid VERSION\n"
 "POT-Creation-Date: 2007-10-24 16:37+0000\n"
-"PO-Revision-Date: 2007-10-01 11:56+0000\n"
-"Last-Translator: Jean-Paul Ladage <j.ladage@zestsoftware.nl>\n"
+"PO-Revision-Date: 2007-10-24 16:45+0000\n"
+"Last-Translator: Maurits van Rees <m.van.rees@zestsoftware.nl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -17,6 +18,7 @@ msgstr ""
 "Language-Name: Nederlands\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: plonegetpaid\n"
+"X-Is-Fallback-For: nl-be\n"
 
 #: ./interfaces.py:335
 msgid "A list of countries"
@@ -32,7 +34,7 @@ msgstr "Een lijst met jaartallen"
 
 #: ./browser/content.py:81
 msgid "Activate"
-msgstr ""
+msgstr "Activeer"
 
 #: ./interfaces.py:201
 msgid "Allow Anonymous Checkout"
@@ -49,11 +51,11 @@ msgstr "Terug"
 #. Default: "Billing Address"
 #: ./browser/templates/checkout-address.pt:28
 msgid "Billing Address"
-msgstr ""
+msgstr "Adres voor Rekening"
 
 #: ./browser/portlets/buy.py:22
 msgid "Buyable"
-msgstr ""
+msgstr "Te koop"
 
 #: ./interfaces.py:160
 msgid "Buyable Content delivered through the web/virtually"
@@ -69,7 +71,7 @@ msgstr "Annuleren"
 
 #: ./browser/cart.py:217
 msgid "Checkout"
-msgstr ""
+msgstr "Afrekenen"
 
 #: ./interfaces.py:113
 msgid "Contact Address"
@@ -102,7 +104,7 @@ msgstr "Contact fax"
 #. Default: "Contact Information"
 #: ./browser/templates/checkout-address.pt:20
 msgid "Contact Information"
-msgstr ""
+msgstr "Contact informatie"
 
 #: ./interfaces.py:98
 msgid "Contact Name"
@@ -142,7 +144,7 @@ msgstr "Verder"
 
 #: ./browser/cart.py:205
 msgid "Continue Shopping"
-msgstr ""
+msgstr "Ga door met winkelen"
 
 #: ./browser/admin_order.py:88
 msgid "Created"
@@ -162,11 +164,11 @@ msgstr "Klantcode"
 
 #: ./browser/io.py:18
 msgid "Data File to Import"
-msgstr ""
+msgstr "Gegevensbestand om te importeren"
 
 #: ./browser/io.py:83
 msgid "Data Imported"
-msgstr ""
+msgstr "Gegevens geïmporteerd"
 
 #: ./interfaces.py:276
 msgid "Decimal Symbol"
@@ -174,7 +176,7 @@ msgstr "Decimal symbool"
 
 # Delete button
 msgid "Delete"
-msgstr ""
+msgstr "Verwijder"
 
 #: ./interfaces.py:266
 msgid "Digit Grouping Symbol"
@@ -187,15 +189,15 @@ msgstr "Disclaimer"
 
 #: ./vocabularies.py:77
 msgid "Do not send customer email notification of a completed transaction"
-msgstr ""
+msgstr "Stuur de klant geen notificatie via e-mail over een afgeronde transactie."
 
 #: ./vocabularies.py:68
 msgid "Do not send merchant email notification of a completed transaction"
-msgstr ""
+msgstr "Stuur de verkoper geen notificatie via e-mail over een afgeronde transactie."
 
 #: ./browser/portlets/donate.py:22
 msgid "Donatable"
-msgstr ""
+msgstr "Doneerbaar"
 
 #: ./interfaces.py:173
 msgid "Donatable Content Types"
@@ -207,7 +209,7 @@ msgstr "E-mail notificatie"
 
 #: ./browser/io.py:65
 msgid "Export"
-msgstr ""
+msgstr "Exporteer"
 
 #: ./browser/admin_order.py:124
 msgid "Export Search"
@@ -227,7 +229,7 @@ msgstr "Order"
 
 #: ./browser/io.py:77
 msgid "Import"
-msgstr ""
+msgstr "Importeer"
 
 #: ./browser/admin_order.py:575
 msgid "Item Id"
@@ -240,7 +242,7 @@ msgstr "Disclaimers"
 #. Default: "Mailing Address"
 #: ./browser/templates/checkout-address.pt:35
 msgid "Mailing Address"
-msgstr ""
+msgstr "Postadres"
 
 #: ./browser/checkout.py:454
 msgid "Make Payment"
@@ -285,7 +287,7 @@ msgstr "Ordernummer"
 #. Default: "Payment Details"
 #: ./browser/templates/checkout-review-pay.pt:42
 msgid "Payment Details"
-msgstr ""
+msgstr "Betalingsdetails"
 
 #: ./browser/admin.py:92
 msgid "Payment Options"
@@ -309,7 +311,7 @@ msgstr "Positieve valuta formaat"
 
 #: ./vocabularies.py:60
 msgid "Pounds"
-msgstr ""
+msgstr "Ponden"
 
 #: ./browser/portlets/premium.py:22
 msgid "Premium"
@@ -343,11 +345,11 @@ msgstr "BTW configuratie"
 
 #: ./vocabularies.py:78
 msgid "Send customer email notification of a completed transaction"
-msgstr ""
+msgstr "Stuur de klant notificatie via e-mail over een afgeronde transactie."
 
 #: ./vocabularies.py:69
 msgid "Send merchant email notification when a transaction happens"
-msgstr ""
+msgstr "Stuur de verkoper notificatie via e-mail wanneer een transactie plaatsvindt."
 
 #: ./interfaces.py:234
 msgid "Session Timeout"
@@ -359,7 +361,7 @@ msgstr "Instellingen"
 
 #: ./browser/portlets/ship.py:22
 msgid "Shippable"
-msgstr ""
+msgstr "Verzendbaar"
 
 #: ./interfaces.py:181
 msgid "Shippable Product Types"
@@ -376,7 +378,7 @@ msgstr "Verzendopties"
 #. Default: "Shopping Cart"
 #: ./browser/templates/checkout-review-pay.pt:35
 msgid "Shopping Cart"
-msgstr ""
+msgstr "Winkelwagen"
 
 #: ./interfaces.py:236
 msgid "Shopping cart session timeout (in seconds)"
@@ -420,7 +422,7 @@ msgstr ""
 
 #: ./browser/cart.py:176
 msgid "Update"
-msgstr ""
+msgstr "Bijwerken"
 
 #: ./interfaces.py:227
 msgid "Weight Units"
@@ -428,9 +430,8 @@ msgstr "Gewichtseenheid"
 
 #. Default: "You can check the status of your order ${status_url}"
 #: ./browser/templates/checkout-thank-you.pt:26
-#, fuzzy
 msgid "box_order_status_url_description"
-msgstr "U kunt de status van uw order controleren"
+msgstr "U kunt de status van uw order controleren ${status_url}"
 
 #: ./interfaces.py:334
 msgid "countries"
@@ -523,9 +524,8 @@ msgstr "Algemene informatie"
 
 #. Default: "Site Orders"
 #: ./browser/templates/orders-template.pt:44
-#, fuzzy
 msgid "heading_getpaid_setup"
-msgstr "GetPaid instellingen"
+msgstr "Site Bestellingen"
 
 #. Default: "new state"
 #: ./browser/templates/order-workflow-log.pt:9
@@ -565,7 +565,7 @@ msgstr "Uw orders"
 #. Default: "here"
 #: ./browser/templates/checkout-thank-you.pt:27
 msgid "here"
-msgstr ""
+msgstr "hier"
 
 #. Default: "Add to Cart"
 #: ./browser/templates/portlet-content-shippable.pt:40
@@ -722,10 +722,10 @@ msgstr "jaren"
 #. Default: "Your finance state is"
 #: ./browser/templates/checkout-thank-you.pt:11
 msgid "your_finance_state_is"
-msgstr ""
+msgstr "Uw financiële status is"
 
 #. Default: "Your order id is"
 #: ./browser/templates/checkout-thank-you.pt:17
 msgid "your_order_id"
-msgstr ""
+msgstr "Uw order id is"
 
