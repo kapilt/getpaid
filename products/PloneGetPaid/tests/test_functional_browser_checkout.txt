@@ -91,6 +91,26 @@ Setup Donatable
 Test donation checkout, which should go directly to checkout screen from the portlet. 
 
     >>> browser.getLink('Donate!').click()
+
+This page should have a link to the privacy policy, which shows in a
+popup.  We need to return to the current page after testing, so we
+safe the current url first.
+
+    >>> saved_url = browser.url
+    >>> browser.getLink('Privacy Policy').click()
+    >>> 'Test privacy policy' in browser.contents
+    True
+
+Test popup of disclaimer
+
+    >>> browser.open(saved_url)
+    >>> browser.getLink('Disclaimer').click()
+    >>> 'Test disclaimer' in browser.contents
+    True
+
+Continue where we left of after clicking Donate.
+
+    >>> browser.open(saved_url)
     >>> browser.getControl('Your Name').value = 'Test'
     >>> browser.getControl('Phone Number').value = '1234567'
     >>> browser.getControl('Phone Number').value = '12345678'
@@ -104,13 +124,8 @@ Test donation checkout, which should go directly to checkout screen from the por
     >>> browser.getControl(name='form.ship_state').value = 'US-HI'
     >>> browser.getControl(name='form.ship_postal_code').value = '12345'
 
-Test popup for privacy policy
+Now go to the next form.
 
-    >>> browser.getLink('Privacy Policy').click()
-
-Test popup of disclaimer
-
-    >>> browser.getLink('Disclaimer').click()
     >>> browser.getControl('Continue').click()
     >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
     >>> browser.getControl(name='form.cc_expiration_month').value = '02'
