@@ -243,6 +243,11 @@ msgstr "Nome"
 msgid "Negative Currency Format"
 msgstr "Formato di valuta negativa"
 
+#. Default: "No orders found for your filter."
+#: ./browser/admin_order.py:1000
+msgid "No orders found for your filter."
+msgstr "Nessun ordine trovato per le opzioni specificate."
+
 #: ./interfaces.py:282
 msgid "Number of Digits After Decimal"
 msgstr "Numero massimo di cifre decimali"
@@ -297,7 +302,7 @@ msgstr "Tipi di contenuto a pagamento"
 #. Default: "Premium not implemented yet"
 #: ./browser/templates/portlet-content-premium.pt:30
 msgid "Premium not implemented yet"
-msgstr ""
+msgstr "I contenuti premium non sono stati implementati in questa release."
 
 #: ./browser/admin_order.py:87
 msgid "Price"
@@ -410,8 +415,8 @@ msgstr "La documentazione di GetPaid può essere consultata all'indirizzo ${labe
 
 #. Default: "To view and manage orders in the site, click on the Orders tab above."
 #: ./browser/templates/admin-overview.pt:18
-msgid "Orders"
-msgstr "Gestione ordini"
+msgid "description_getpaid_setup_orders_link"
+msgstr "Per vedere e gestire gli ordini, clicca sul tab Ordini sopra."
 
 #. Default: "Use the links below to configure GetPaid."
 #: ./browser/templates/admin-overview.pt:20
@@ -544,7 +549,7 @@ msgstr "Aggiungi al carrello"
 #. Default: "Donate!"
 #: ./browser/templates/portlet-content-donatable.pt:40
 msgid "label_donate!"
-msgstr ""
+msgstr "Dona!"
 
 #. Default: "GetPaid Version:"
 #: ./browser/templates/admin-overview.pt:38
@@ -643,7 +648,7 @@ msgstr "Data di creazione"
 #. Default: "Current Status"
 #: ./browser/templates/order-fulfillment.pt:5
 msgid "text_current_status"
-msgstr "Stato corrente"
+msgstr "Stato attuale"
 
 #. Default: "Customer Id"
 #: ./browser/templates/order-summary.pt:10
@@ -693,7 +698,7 @@ msgstr "anni"
 #. Default: "Your finance state is"
 #: ./browser/templates/checkout-thank-you.pt:11
 msgid "your_finance_state_is"
-msgstr ""
+msgstr "Lo stato del pagamento è"
 
 #. Default: "Your order id is"
 #: ./browser/templates/checkout-thank-you.pt:17
