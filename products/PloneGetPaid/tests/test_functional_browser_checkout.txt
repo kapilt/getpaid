@@ -72,7 +72,7 @@ Here we are setting the buyable types for use in the following tests
   
     >>> from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
     >>> options = IGetPaidManagementOptions(self.portal)
-    >>> options.buyable_types = ['Document']
+    >>> options.buyable_types = ['Link', 'Event']
     >>> options.donate_types = ['Document']
     >>> options.shippable_types = ['Document']
 
@@ -167,35 +167,64 @@ This completes test of donation checkout. Verified that item was
 listed on order for user.
 
 Now test add to cart and checkout process. 
+Create the browser object we'll be using.
 
     >>> browser.open('http://nohost/plone')
-    >>> browser.getLink('Test image buyable').click()
+    >>> browser.getLink('Link').click()
+    >>> browser.getControl('Title').value = 'Test Link'
+    >>> browser.getControl('URL').value = 'http://plonegetpaid.com/'
+    >>> browser.getControl('Save').click()
+
+Make it buyable.
+
+    >>> browser.getLink('Make Buyable').click()
+    >>> browser.getControl('Price').value = '12.50'
+    >>> browser.getControl('Activate').click()
+
+Add it to my cart.
+
     >>> browser.getLink('Add to Cart').click()
-    >>> 'Test image buyable' in browser.contents
-    True
-
-Check contents of cart for item added
-
     >>> browser.getControl('Continue Shopping').click()
-    >>> browser.getLink('Test news item').click()
-    >>> 'Contains 1 Items' in browser.contents
+    >>> 'Contains <span>1</span> Items' in browser.contents
     True
 
-One item already in cart. Add another. 
+Add a buyable event.
 
+    >>> browser.open('http://nohost/plone/createObject?type_name=Event')
+    >>> browser.getControl('Title').value = 'It is payday!'
+    >>> browser.getControl('Save').click()
+    >>> browser.open('http://nohost/plone/it-is-payday/@@activate-buyable')
+    >>> browser.getControl('Product Code').value = 'PAY-ME'
+    >>> browser.getControl('Price').value = '42.17'
+    >>> browser.getControl('Activate').click()
+
+We wants it so we buys it.
+
+    >>> browser.open(portal.absolute_url() + '/folder_contents')
+    >>> browser.getLink('It is payday!').click()
+
+XXX FIXME.  Now why does this fail with an InvalidObjectReference????
+The link "Add to Cart" is there when you check browser.contents...
+
+    >>> 'Add to Cart' in browser.contents
+    True
     >>> browser.getLink('Add to Cart').click()
-    >>> 'Test news item' in browser.contents
-    True
-
-Check that new item is in cart
-
     >>> browser.getControl('Checkout').click()
     >>> browser.getControl('Your Name').value = 'test'
-    >>> browser.getControl('State').value = ('US-HI',)
-    >>> browser.getControl('State').value = ('US-HI',)
-    >>> browser.getControl('Continue').click()
-    >>> browser.getControl(name='form.cc_expiration_month').value = '02'
-    >>> browser.getControl(name='form.cc_expiration_year').value = '2009'
+    >>> browser.getControl('Phone Number').value = '12345678'
+    >>> browser.getControl(name='form.email').value = 'test@test.com'
+    >>> browser.getControl(name='form.bill_first_line').value = 'Test'
+    >>> browser.getControl(name='form.bill_city').value = 'Test'
+    >>> browser.getControl(name='form.bill_state').value = 'US-HI'
+    >>> browser.getControl(name='form.bill_postal_code').value = '12345'
+
+Note: we are only buying something, not shipping it, so maybe these
+controls are not available here (or they are but they should not be).
+
+    >>> browser.getControl(name='form.ship_first_line').value = 'Test'
+    >>> browser.getControl(name='form.ship_city').value = 'Test'
+    >>> browser.getControl(name='form.ship_state').value = 'US-HI'
+    >>> browser.getControl(name='form.ship_postal_code').value = '12345'
     >>> browser.getControl('Make Payment').click()
     >>> 'CHARGED' in browser.contents
     True
@@ -203,16 +232,14 @@ Check that new item is in cart
 Check order
 
     >>> browser.getLink('here').click()
-    >>> '739542411' in browser.contents
+    >>> browser.url.startswith('http://nohost/plone/@@getpaid-order-history?searchterm=')
     True
-    >>> browser.open('http://nohost/plone/@@getpaid-order/739542411')
-    >>> 'Test image buyable' in browser.contents
-    True
-    >>> 'Test news item' in browser.contents
-    True
+
+Verify order was for what we checked out.  Well, that is not listed
+actually.  We may want to follow the link that is displayed.  But for
+me (Maurits) the tests never come this far, so it is hard to say...
+
     >>> 'CHARGED' in browser.contents
     True
 
-Finish verification
-
-
+Finished verification.
