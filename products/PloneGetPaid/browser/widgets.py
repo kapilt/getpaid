@@ -60,7 +60,7 @@ class CCExpirationDateWidget(WithTemplateWidget,DateWidget):
         return ('%s-%s'%(self.getFormYear(),self.getFormMonth()))
 
     def _toFieldValue(self,input):
-        return super(DateWidget, self)._toFieldValue(input)
+        return super(CCExpirationDateWidget, self)._toFieldValue(input)
 
     def hasInput(self):
         return self.getFormMonth() and self.getFormYear()
