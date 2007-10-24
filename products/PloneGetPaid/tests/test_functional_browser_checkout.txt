@@ -129,20 +129,19 @@ Now go to the next form.
     >>> browser.getControl('Continue').click()
 
 
-Retest privacy and disclaimer for this screen
+Retest privacy and disclaimer for this screen.  But we only check that
+the links are there, not how those pages look.  When we do the same
+trick as above with saving the current url and returning to it after
+checking the popups, we would land on the first form, with states,
+countries, etcetera.
 
-    >>> saved_url = browser.url
-    >>> browser.getLink('Privacy Policy').click()
-    >>> 'Test privacy policy' in browser.contents
-    True
-    >>> browser.open(saved_url)
-    >>> browser.getLink('Disclaimer').click()
-    >>> 'Test disclaimer' in browser.contents
-    True
+    >>> browser.getLink('Privacy Policy')
+    <Link text='Privacy Policy' url='http://nohost/plone/@@privacy-policy'>
+    >>> browser.getLink('Disclaimer')
+    <Link text='Disclaimer' url='http://nohost/plone/@@disclaimer'>
 
 Continue filling in the current form.
 
-    >>> browser.open(saved_url)
     >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
     >>> browser.getControl(name='form.cc_expiration_month').value = ('02',)
     >>> browser.getControl(name='form.cc_expiration_year').value = ('2009',)
