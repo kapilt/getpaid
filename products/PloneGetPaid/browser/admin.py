@@ -119,7 +119,7 @@ class PaymentProcessor( BaseSettingsForm ):
                                               igetpaid.IPaymentProcessor,
                                               processor_name )
         except:
-            self.status = _(u"The currenly configured Payment Processor cannot be found; please check if the corresponding package is installed correctly.")
+            self.status = _(u"The currently configured Payment Processor cannot be found; please check if the corresponding package is installed correctly.")
             return
         
         self.form_fields = form.Fields( processor.options_interface )

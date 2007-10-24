@@ -1,7 +1,7 @@
 # Contributors:
-#
+# 
 # Jean-Paul Ladage <j.ladage@zestsoftware.nl>, 2007.
-#
+# 
 # never generate this file with i18ndude, it is managed manual
 msgid ""
 msgstr ""
@@ -22,20 +22,20 @@ msgstr ""
 msgid "Make Buyable"
 msgstr "Zet te koop"
 
+msgid "Make Not Buyable"
+msgstr "Zet niet te koop (als fysiek product)"
+
+msgid "Make Not Premium Members Only"
+msgstr "Niet Premium maken"
+
+msgid "Make Not Shippable Product"
+msgstr "Zet niet te koop"
+
 msgid "Make Shippable Product"
 msgstr "Zet te koop (als fysiek product)"
 
 msgid "Make this a Donation"
 msgstr "Doneren toestaan"
-
-msgid "Make Not Buyable"
-msgstr "Zet niet te koop (als fysiek product)"
-
-msgid "Make Not Shippable Product"
-msgstr "Zet niet te koop"
-
-msgid "Make Not Premium Members Only"
-msgstr "Niet Premium maken"
 
 msgid "Make this not a Donation"
 msgstr "Doneren niet toestaan"
@@ -46,8 +46,12 @@ msgstr "Winkelwagen beheren"
 msgid "Order History"
 msgstr "Order geschiedenis"
 
+msgid "Orders"
+msgstr "Orders"
+
+msgid "Payable"
+msgstr ""
+
 msgid "Settings"
 msgstr "Instellingen"
 
-msgid "Orders"
-msgstr "Orders"

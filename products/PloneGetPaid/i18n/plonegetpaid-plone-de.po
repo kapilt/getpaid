@@ -21,20 +21,20 @@ msgstr ""
 msgid "Make Buyable"
 msgstr "Kaufbar machen"
 
+msgid "Make Not Buyable"
+msgstr "Nicht Kaufbar machen"
+
+msgid "Make Not Premium Members Only"
+msgstr "Nur nicht Premium Member erstellen"
+
+msgid "Make Not Shippable Product"
+msgstr "Nicht zustellbares Produkt erstellen"
+
 msgid "Make Shippable Product"
 msgstr "Zustellbares Produkt erstellen"
 
 msgid "Make this a Donation"
 msgstr "Spenden"
-
-msgid "Make Not Buyable"
-msgstr "Nicht Kaufbar machen"
-
-msgid "Make Not Shippable Product"
-msgstr "Nicht zustellbares Produkt erstellen"
-
-msgid "Make Not Premium Members Only"
-msgstr "Nur nicht Premium Member erstellen"
 
 msgid "Make this not a Donation"
 msgstr "Spende zurückziehen"
@@ -45,11 +45,12 @@ msgstr "Warenkorb verarbeiten"
 msgid "Order History"
 msgstr "Frühere Bestellungen"
 
-msgid "Settings"
-msgstr "Einstellungen"
-
 msgid "Orders"
 msgstr "Bestellungen"
 
 msgid "Payable"
 msgstr "Zahlbar"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
