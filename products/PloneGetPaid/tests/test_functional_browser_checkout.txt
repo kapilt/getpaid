@@ -128,8 +128,8 @@ Now go to the next form.
 
     >>> browser.getControl('Continue').click()
     >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
-    >>> browser.getControl(name='form.cc_expiration_month').value = '02'
-    >>> browser.getControl(name='form.cc_expiration_year').value = '2009'
+    >>> browser.getControl(name='form.cc_expiration_month').value = ('02',)
+    >>> browser.getControl(name='form.cc_expiration_year').value = ('2009',)
 
 Use real test credit card numbers, available from http://developer.authorize.net/faqs/#7429
 
