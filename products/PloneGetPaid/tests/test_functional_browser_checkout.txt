@@ -127,6 +127,22 @@ Continue where we left of after clicking Donate.
 Now go to the next form.
 
     >>> browser.getControl('Continue').click()
+
+
+Retest privacy and disclaimer for this screen
+
+    >>> saved_url = browser.url
+    >>> browser.getLink('Privacy Policy').click()
+    >>> 'Test privacy policy' in browser.contents
+    True
+    >>> browser.open(saved_url)
+    >>> browser.getLink('Disclaimer').click()
+    >>> 'Test disclaimer' in browser.contents
+    True
+
+Continue filling in the current form.
+
+    >>> browser.open(saved_url)
     >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
     >>> browser.getControl(name='form.cc_expiration_month').value = ('02',)
     >>> browser.getControl(name='form.cc_expiration_year').value = ('2009',)
@@ -135,11 +151,6 @@ Use real test credit card numbers, available from http://developer.authorize.net
 
     >>> browser.getControl('Credit Card Verfication Number').value = '1234'
     >>> browser.getControl('Credit Card Number').value = '4007000000027'
-
-Retest privacy and disclaimer for this screen
-
-    >>> browser.getLink('Privacy Policy').click()
-    >>> browser.getLink('Disclaimer').click()
     >>> browser.getControl('Make Payment').click()
 
 Donation checkout completed. Now check order
