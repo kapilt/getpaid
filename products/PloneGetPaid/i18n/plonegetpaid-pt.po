@@ -53,7 +53,7 @@ msgstr "Endereço de Cobrança"
 
 #: ./browser/portlets/buy.py:22
 msgid "Buyable"
-msgstr ""
+msgstr "Adquirível"
 
 #: ./interfaces.py:160
 msgid "Buyable Content delivered through the web/virtually"
@@ -166,7 +166,7 @@ msgstr "Ficheiro de Dados para Importar"
 
 #: ./browser/io.py:83
 msgid "Data Imported"
-msgstr ""
+msgstr "Dados Importados"
 
 #: ./interfaces.py:276
 msgid "Decimal Symbol"
@@ -195,7 +195,7 @@ msgstr "Não enviar notificação por email para o comerciante de uma transacç�
 
 #: ./browser/portlets/donate.py:22
 msgid "Donatable"
-msgstr ""
+msgstr "Doável"
 
 #: ./interfaces.py:173
 msgid "Donatable Content Types"
@@ -223,11 +223,11 @@ msgstr "Envio com Taxa Fixa."
 
 #: ./browser/admin_order.py:86
 msgid "Fulfillment"
-msgstr ""
+msgstr "Preenchimento"
 
 #: ./browser/io.py:77
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 #: ./browser/admin_order.py:575
 msgid "Item Id"
@@ -313,7 +313,7 @@ msgstr "Libras"
 
 #: ./browser/portlets/premium.py:22
 msgid "Premium"
-msgstr ""
+msgstr "Premium"
 
 #: ./interfaces.py:165
 msgid "Premium Content Types"
@@ -359,7 +359,7 @@ msgstr "Configurações"
 
 #: ./browser/portlets/ship.py:22
 msgid "Shippable"
-msgstr ""
+msgstr "Enviável"
 
 #: ./interfaces.py:181
 msgid "Shippable Product Types"
@@ -400,7 +400,7 @@ msgstr "Método do Imposto"
 
 #: ./browser/admin.py:122
 msgid "The currently configured Payment Processor cannot be found; please check if the corresponding package is installed correctly."
-msgstr ""
+msgstr "O processador de pagamentos actualmente configurado não pode ser encontrado. Por favor confirme se o produto está instalado correctamente."
 
 #: ./interfaces.py:345
 msgid "The list of months"
