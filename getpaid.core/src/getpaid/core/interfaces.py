@@ -494,7 +494,7 @@ class ICreditCardTypeEnumerator(Interface):
         """ Lists the accepted credit card types. """
 
     def allCreditCardTypes(self):
-        """ List al credit card types. """
+        """ List all credit card types. """
 
 class keys:
     """ public annotation keys and static variables
