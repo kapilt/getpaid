@@ -180,6 +180,11 @@ class BaseCheckoutForm( formbase.EditForm, BaseView ):
 class BillingInfo( options.PropertyBag ):
     title = "Billing Information"
 
+    def __init__(self, context):
+        # need a context to be able to get the current available credit
+        # cards.
+        self.context = context
+
 class ShipAddressInfo( options.PropertyBag ):
     title = "Shipping Information"
 
@@ -387,7 +392,7 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
         self.adapters[ interfaces.IUserContactInformation ] = ContactInfo()        
         self.adapters[ interfaces.IBillingAddress ] = BillAddressInfo()
         self.adapters[ interfaces.IShippingAddress ] = ShipAddressInfo()
-        self.adapters[ interfaces.IUserPaymentInformation ] = BillingInfo()
+        self.adapters[ interfaces.IUserPaymentInformation ] = BillingInfo(self.context)
 
         # extract data that was passed through in the request, using edit widgets
         # for marshalling value extraction. we'll basically throw an error here

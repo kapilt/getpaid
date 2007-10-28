@@ -64,7 +64,7 @@ class testAdminInterface(PloneGetPaidTestCase):
         our_credit_card = "VISA"
         self.manage_options.credit_cards = [our_credit_card]
         #test to see if it was set properly
-        self.failUnless(our_credit_card in self.manage_options.credit_cards)
+        self.assertEqual([our_credit_card], self.manage_options.credit_cards)
 
 def test_suite():
     suite = TestSuite()

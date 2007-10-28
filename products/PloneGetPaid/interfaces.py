@@ -201,12 +201,12 @@ class IGetPaidManagementPaymentOptions( igetpaid.IPersistentOptions ):
     allow_anonymous_checkout = schema.Bool( title=_(u"Allow Anonymous Checkout"), default=False)
                                     
 
-##     accepted_credit_cards = schema.List( title = _(u"Accepted Credit Cards"),
-##                                          required = False,
-##                                          default = [],
-##                                          description = _(u"Credit cards accepted for payment"),
-##                                          value_type = schema.Choice( title=u"accepted_credit_cards", source="getpaid.credit_cards" )
-##                                        )    
+    accepted_credit_cards = schema.List( title = _(u"Accepted Credit Cards"),
+                                        required = False,
+                                        default = [],
+                                        description = _(u"Credit cards accepted for payment"),
+                                        value_type = schema.Choice( title=u"accepted_credit_cards", source="getpaid.core.credit_card_types" )
+                                        )    
 
 # Order Management
 class IGetPaidManagementCustomerInformation( igetpaid.IPersistentOptions ):

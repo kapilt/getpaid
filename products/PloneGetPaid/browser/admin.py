@@ -89,7 +89,7 @@ class PaymentOptions( BaseSettingsForm ):
     get paid management interface
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementPaymentOptions)
-#    form_fields['accepted_credit_cards'].custom_widget = SelectWidgetFactory
+    form_fields['accepted_credit_cards'].custom_widget = SelectWidgetFactory
     form_name = _(u'Payment Options')
 
 class PaymentProcessor( BaseSettingsForm ):

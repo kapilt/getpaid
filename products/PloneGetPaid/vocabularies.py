@@ -53,8 +53,8 @@ def TaxMethods( context ):
 def ShippingMethods( context ):
     return vocabulary.SimpleVocabulary.fromValues( (u"None", _(u"Flat Rate Shipping")))
 
-def CreditCards( context ):
-    return vocabulary.SimpleVocabulary.fromValues( (u"Visa", u"Mastercard", u"Discover", u"American Express") )
+#def CreditCards( context ):
+#    return vocabulary.SimpleVocabulary.fromValues( (u"Visa", u"Mastercard", u"Discover", u"American Express") )
 
 def WeightUnits( context ):
     return vocabulary.SimpleVocabulary.fromValues( (_(u"Pounds"),) )

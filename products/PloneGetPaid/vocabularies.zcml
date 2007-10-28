@@ -34,10 +34,10 @@
       />
   
   <!-- Credit Cards -->
-  <vocabulary
+  <!--vocabulary
       name="getpaid.credit_cards"
       factory=".vocabularies.CreditCards"
-      />   
+      /-->   
   
   <!-- Payment Methods -->
   <vocabulary
