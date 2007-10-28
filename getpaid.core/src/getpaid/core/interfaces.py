@@ -353,10 +353,7 @@ class IUserPaymentInformation( Interface ):
 
     # DONT STORED PERSISTENTLY
     credit_card_type = schema.Choice( title = _(u"Credit Card Type"),
-                                      values = ( u"Visa",
-                                                 u"MasterCard",
-                                                 u"Discover",
-                                                 u"American Express" ) )
+                                      source = "getpaid.core.accepted_credit_card_types",)
 
     credit_card = CreditCardNumber( title = _(u"Credit Card Number"),
                                     description = _(u"Only digits allowed - e.g. 4444555566667777 and not 4444-5555-6666-7777 "))
@@ -490,6 +487,14 @@ class ICreditCardNumber(ITextLine):
     """A Text line field that handles credit card input."""
 classImplements(CreditCardNumber,ICreditCardNumber)
 
+class ICreditCardTypeEnumerator(Interface):
+    """Responsible for listing credit card types. """
+
+    def acceptedCreditCardTypes(self):
+        """ Lists the accepted credit card types. """
+
+    def allCreditCardTypes(self):
+        """ List al credit card types. """
 
 class keys:
     """ public annotation keys and static variables

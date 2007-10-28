@@ -39,6 +39,23 @@
      factory=".order.OrderWorkflowLog"
      />
 
+  <!-- Credit card types -->
+  <adapter
+    for="*"
+    provides=".interfaces.ICreditCardTypeEnumerator"
+    factory=".payment.CreditCardTypeEnumerator"
+    />
+
+  <vocabulary
+    name="getpaid.core.credit_card_types"
+    factory=".vocabularies.CreditCardTypes"
+    />
+
+  <vocabulary
+    name="getpaid.core.accepted_credit_card_types"
+    factory=".vocabularies.AcceptedCreditCardTypes"
+    />
+
   <!-- Reports -->
   <adapter
 	 for=".interfaces.IStore"
