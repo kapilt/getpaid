@@ -1,6 +1,8 @@
 from zope.app import zapi
 from zope.app.form.browser import FloatWidget
 from zope.app.form.browser.widget import SimpleInputWidget
+from zope.app.form.browser.objectwidget import ObjectWidgetView as ObjectWidgetViewBase
+from zope.app.form.browser.objectwidget import ObjectWidget as ObjectWidgetBase
 from zope.app.form.browser.textwidgets import DateWidget
 from zope.app.form.browser.itemswidgets import OrderedMultiSelectWidget as BaseSelection
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
@@ -9,6 +11,19 @@ from Products.PloneGetPaid.interfaces import IMonthsAndYears
 
 from Products.Five.browser import decode
 
+class ObjectWidgetView( ObjectWidgetViewBase ):    
+    template = ViewPageTemplateFile('templates/objectwidget.pt')
+
+class ObjectWidget( ObjectWidgetBase ):    
+    def __init__( self, *args, **kw):
+        super( ObjectWidget, self).__init__( *args, **kw )
+        self.view = ObjectWidgetView( self, self.request)
+
+class SequenceObjectWidget( ObjectWidgetBase ):
+    def __init__( self, context, value_type, request, factory, **kw):
+        super( ObjectWidget, self).__init__( context, request, factory, **kw )
+        self.view = ObjectWidgetView( self, self.request)    
+        
 class WithTemplateWidget(SimpleInputWidget):
     def __call__( self ):
         # XXX dirty hack to make the values coming out of here encoded properly,
