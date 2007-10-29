@@ -75,7 +75,17 @@ class INotificationMailTemplate( Interface ):
         """
         return a rendered template suitable for passing to a mailhost.send
         """
-        
+class IDonationLevel( Interface ):
+    
+    title = schema.TextLine( title=_(u"Donation Level Name"))
+    amount = schema.Int( title=_(u"Amount"))
+    
+class IEnhancedDonation( igetpaid.IDonationContent ):    
+    
+    donation_levels  = schema.List( title=_(u"Donation Levels"),
+                                    value_type=schema.Object(IDonationLevel),
+                                    required=False,
+                                    default=list() )
 
 PayableMarkers = [ IBuyableMarker, IPremiumMarker, IShippableMarker, IDonatableMarker ]
 
@@ -84,7 +94,7 @@ PayableMarkerMap = dict(
       (IBuyableMarker, igetpaid.IBuyableContent),
       (IPremiumMarker, igetpaid.IPremiumContent),
       (IShippableMarker, igetpaid.IShippableContent),
-      (IDonatableMarker, igetpaid.IDonationContent),
+      (IDonatableMarker, igetpaid.IDonationContent)
     )
 )    
 

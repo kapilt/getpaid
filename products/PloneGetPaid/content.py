@@ -38,7 +38,7 @@ from zope.app.intid.interfaces import IIntIds
 from getpaid.core import interfaces, item
 from getpaid.core import options
 
-from interfaces import PayableMarkerMap
+from interfaces import PayableMarkerMap, IDonationLevel
 
 class LineItemFactory( object ):
     """
@@ -139,7 +139,14 @@ class PremiumContentAdapter( PremiumContentStorage ):
 """
 """
 
-DonatableContentStorage = options.PersistentOptions.wire( "DonatableContentStorage", "getpaid.content.donate", interfaces.IDonationContent )
+DonatableContentStorage = options.PersistentOptions.wire( "DonatableContentStorage", "getpaid.content.donate", interface.IDonationContent )
+
+class DonationLevel( object ):
+
+    interface.implements( IDonationLevel )
+
+    title = ''
+    amount = 0
 
 class DonatableContentAdapter( DonatableContentStorage ):
     """

@@ -11,21 +11,25 @@ from zope.formlib import form
 from zope import component
 from zope.event import notify
 
+#from zope.app.form import CustomWidgetFactory
+#from zope.app.form.browser.sequencewidget import ListSequenceWidget
+
 from AccessControl import getSecurityManager
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
+
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.Five.formlib import formbase
 from Products.Five.utilities import marker
-from Products.PloneGetPaid import interfaces
+from Products.PloneGetPaid import interfaces, content
 
 from base import BaseFormView
-from widgets import PriceWidget
+
+import widgets
 
 from Products.PloneGetPaid.i18n import _
 
 from urllib import urlencode
-
 
 def view_url(context):
     """Last part of the url for viewing this context.
@@ -111,7 +115,7 @@ class PayableDestruction( BrowserView ):
 
 class BuyableForm( PayableForm ):
     form_fields = form.Fields( igetpaid.IBuyableContent )
-    form_fields['price'].custom_widget = PriceWidget
+    form_fields['price'].custom_widget = widgets.PriceWidget
     interface = igetpaid.IBuyableContent
     marker = interfaces.IBuyableMarker
 
@@ -127,7 +131,7 @@ class BuyableDestruction( PayableDestruction ):
 class ShippableForm( PayableForm ):
     """ shippable content operations """
     form_fields = form.Fields( igetpaid.IShippableContent )
-    form_fields['price'].custom_widget = PriceWidget
+    form_fields['price'].custom_widget = widgets.PriceWidget
     interface = igetpaid.IShippableContent
     marker = interfaces.IShippableMarker
 
@@ -154,12 +158,17 @@ class PremiumDestruction( PayableDestruction ):
     marker = interfaces.IPremiumMarker
 
 
+#DonationLevelObjectWidget = CustomWidgetFactory( ObjectWidget, content.DonationLevel )
+#DonationLevelSequenceWidget = CustomWidgetFactory(ListSequenceWidget, subwidget=DonationLevelObjectWidget )
+
 class DonateForm( PayableForm ):
     """ donation operations """
-    form_fields = form.Fields( igetpaid.IDonationContent )
-    form_fields['price'].custom_widget = PriceWidget
-    interface = igetpaid.IDonationContent
+    form_fields = form.Fields( igetpaids.IDonationContent )
+    form_fields['price'].custom_widget = widgets.PriceWidget
+    #form_fields['donation_levels'].custom_widget = DonationLevelSequenceWidget
+    interface = interfaces.IEnhancedDonation
     marker = interfaces.IDonatableMarker
+    
 
 class DonateCreation( DonateForm, PayableCreation ):
     actions = PayableCreation.actions

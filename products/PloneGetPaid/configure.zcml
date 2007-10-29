@@ -8,6 +8,7 @@
 <!-- Dependencies -->
 <include package="getpaid.core" />
 <include package="getpaid.io" />
+
 <!-- zope.annotation is used in Zope 2.10 -->
 <include
     zcml:condition="installed zope.annotation"
@@ -105,9 +106,9 @@
    />
 
 <adapter
-  for="Products.CMFCore.interfaces.IContentish"
-  provides="getpaid.core.interfaces.IDonationContent"
-  factory=".content.DonatableContentAdapter"
+   for="Products.CMFCore.interfaces.IContentish"
+   provides="getpaid.core.interfaces.IDonationContent"
+   factory=".content.DonatableContentAdapter"
   />
 
 <!-- Content to Line Item Adapter -->

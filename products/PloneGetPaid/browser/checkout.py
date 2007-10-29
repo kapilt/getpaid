@@ -60,7 +60,7 @@ from zope import component
 
 from zc.table import table, column
 
-from getpaid.core import interfaces, options
+from getpaid.core import interfaces, options, payment
 from getpaid.core.order import Order
 
 from AccessControl import getSecurityManager
@@ -514,17 +514,15 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
         order = Order()
         
         shopping_cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
+        
         # shopping cart is attached to the session, but we want to switch the storage to the persistent
         # zodb, we pickle to get a clean copy to store.
         
         order.shopping_cart = loads( dumps( shopping_cart ) )
-        order.shipping_address = ImmutableBag().initfrom( self.adapters[ interfaces.IShippingAddress ],
-                                                          interfaces.IShippingAddress )
-        order.billing_address = ImmutableBag().initfrom( self.adapters[ interfaces.IBillingAddress ],
-                                                         interfaces.IBillingAddress )
+        order.shipping_address = payment.ShippingAddress.frominstance( self.adapters[ interfaces.IShippingAddress ] )
+        order.billing_address = payment.BillingAddress.frominstance( self.adapters[ interfaces.IBillingAddress ] )
+        order.contact_information = payment.ContactInformation.frominstance( self.adapters[ interfaces.IUserContactInformation ] )
 
-        order.contact_information = ImmutableBag().initfrom( self.adapters[ interfaces.IUserContactInformation ],
-                                                         interfaces.IUserContactInformation )
         order.order_id = self.getOrderId()
         order.user_id = getSecurityManager().getUser().getId()
         notify( ObjectCreatedEvent( order ) )
