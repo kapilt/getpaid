@@ -163,7 +163,7 @@ class PremiumDestruction( PayableDestruction ):
 
 class DonateForm( PayableForm ):
     """ donation operations """
-    form_fields = form.Fields( igetpaids.IDonationContent )
+    form_fields = form.Fields( igetpaid.IDonationContent )
     form_fields['price'].custom_widget = widgets.PriceWidget
     #form_fields['donation_levels'].custom_widget = DonationLevelSequenceWidget
     interface = interfaces.IEnhancedDonation

@@ -139,7 +139,7 @@ class PremiumContentAdapter( PremiumContentStorage ):
 """
 """
 
-DonatableContentStorage = options.PersistentOptions.wire( "DonatableContentStorage", "getpaid.content.donate", interface.IDonationContent )
+DonatableContentStorage = options.PersistentOptions.wire( "DonatableContentStorage", "getpaid.content.donate", interfaces.IDonationContent )
 
 class DonationLevel( object ):
 
