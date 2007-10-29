@@ -1,3 +1,11 @@
+"""
+original source (zope 2.9.x) didn't match against normalized headers, which caused issues
+between different template engines (z2/z3) stomping over each other's response header.
+
+might still be applicable in zope 2.10
+
+this patch should be filed as bug and go upstream into zope.
+"""
 
 from ZPublisher.HTTPResponse import HTTPResponse
 
