@@ -19,8 +19,11 @@
     zcml:condition="installed zope.app.annotation.tests"
     package="zope.app.annotation" />
 
-<!-- using five.intid ... introduces subscribers for all persistent objects .. -->
-<include package="five.intid"/>
+<!-- using five.intid ... by default this
+     introduces subscribers for all persistent 
+     objects. -->
+<include package="five.intid" file="base.zcml"/>
+<include file="intid.zcml" />
 
 <!-- Commenting on Orders 
 <include package="zc.comment" />
