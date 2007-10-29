@@ -209,7 +209,7 @@ class ShoppingCartActions( FormViewlet ):
         # to the portal base url, it is better than nothing
         last_item = getattr(self.__parent__.cart,'last_item',None)
         if not last_item:
-            payable = self.request.get('came_from',None) or  getToolByName(self.context, 'portal_url')
+            payable = getToolByName(self.context, 'portal_url').getPortalObject()
         else:
             payable = getToolByName( self.context, 'reference_catalog').lookupObject( last_item )
         return self.request.RESPONSE.redirect(payable.absolute_url()+'/view')
