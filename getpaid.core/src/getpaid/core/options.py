@@ -44,9 +44,9 @@ class PropertyBag( object ):
     # post initialziation class method
     @classmethod
     def frominstance( cls, instance):
-        assert self.schema.providedBy( instance )
+        assert cls.schema.providedBy( instance )
         d = {}
-        for field_name, field in schema.getFieldsInOrder( self.schema ):
+        for field_name, field in schema.getFieldsInOrder( cls.schema ):
             d[field_name] = field.get(instance)
         return cls( **d )
         
