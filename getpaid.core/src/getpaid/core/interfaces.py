@@ -418,7 +418,7 @@ class IOrder( Interface ):
     contact_information = schema.Object( IUserContactInformation, required=False )
     shopping_cart = schema.Object( IShoppingCart )
     finance_state = schema.TextLine( title = _(u"Finance State"), readonly=True)
-    fulfillment_state = schema.TextLine( title = _(u"Fufillment State"), readonly=True)
+    fulfillment_state = schema.TextLine( title = _(u"Fulfillment State"), readonly=True)
     processor_order_id = schema.ASCIILine( title = _(u"Processor Order Id") )
     processor_id = schema.ASCIILine( readonly=True )
 

@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: getpaid.core VERSION\n"
-"POT-Creation-Date: 2007-11-01 22:18+0000\n"
+"POT-Creation-Date: 2007-11-01 22:53+0000\n"
 "PO-Revision-Date: 2007-08-16 12:46-0300\n"
 "Last-Translator: Fabio Corneti <info@corneti.com>\n"
 "Language-Team: Fabio Corneti <info@corneti.com>\n"
@@ -169,11 +169,11 @@ msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For 
 msgstr "Per MasterCard, Visa e Diners Card, è il numero di 3 cifre sul retro della carta. Per American Express, è il codice a 4 cifre sopra al numero della carta."
 
 #: ./order.py:430
-msgid "Fufillment"
+msgid "Fulfillment"
 msgstr ""
 
 #: ./interfaces.py:421
-msgid "Fufillment State"
+msgid "Fulfillment State"
 msgstr ""
 
 #: ./interfaces.py:314

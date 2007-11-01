@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GetPaid VERSION\n"
-"POT-Creation-Date: 2007-11-01 22:18+0000\n"
+"POT-Creation-Date: 2007-11-01 22:53+0000\n"
 "PO-Revision-Date: 2007-10-04 13:22+0000\n"
 "Last-Translator: Maurits van Rees <m.van.rees@zestsoftware.nl>\n"
 "Language-Team: Zest Software\n"
@@ -168,11 +168,11 @@ msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For 
 msgstr "Voor MasterCard, Visa en DC is dit een getal van 3 cijfers op de achterkant van de kaart.  Voor AmEx is dit een code van 4 cijfers op de voorkant van de kaart. "
 
 #: ./order.py:430
-msgid "Fufillment"
+msgid "Fulfillment"
 msgstr ""
 
 #: ./interfaces.py:421
-msgid "Fufillment State"
+msgid "Fulfillment State"
 msgstr ""
 
 #: ./interfaces.py:314

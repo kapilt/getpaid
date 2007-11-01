@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: getpaid.core VERSION\n"
-"POT-Creation-Date: 2007-11-01 22:18+0000\n"
+"POT-Creation-Date: 2007-11-01 22:53+0000\n"
 "PO-Revision-Date: 2007-10-13 17:05+0200\n"
 "Last-Translator: Ricardo Alves <rsa@eurotux.com>\n"
 "Language-Team: Eurotux Development Team <udp@eurotux.com>\n"
@@ -169,11 +169,11 @@ msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For 
 msgstr ""
 
 #: ./order.py:430
-msgid "Fufillment"
+msgid "Fulfillment"
 msgstr "Preenchimento"
 
 #: ./interfaces.py:421
-msgid "Fufillment State"
+msgid "Fulfillment State"
 msgstr "Estado da Preenchimento"
 
 #: ./interfaces.py:314

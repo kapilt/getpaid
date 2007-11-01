@@ -156,7 +156,7 @@ payment processor for an order.
 because we can process workflows asynchronously, we can get pretty
 good at synchronization / integration with other systems.
 
-an order has both a finance workflow and a fufillment workflow
+an order has both a finance workflow and a fulfillment workflow
 dependent on its contained items. the finance workflow models things
 like cc authorization for an order, and capture/charging an order.
 

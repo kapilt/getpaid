@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2007-11-01 22:18+0000\n"
+"POT-Creation-Date: 2007-11-01 22:53+0000\n"
 "PO-Revision-Date: 2007-10-15 12:35+0100\n"
 "Last-Translator: Andreas Schmid <a.schmid00@gmail.com>\n"
 "Language-Team: Silva i18n team <walco@infrae.com>\n"
@@ -169,11 +169,11 @@ msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For 
 msgstr "Bei MC, Visa und DC finden Sie eine 3-stellige Zahl auf der Rückseite ihrer Karte.Für AmEx, ist es ein 4-stelliger code auf der Vorderseite der Karte."
 
 #: ./order.py:430
-msgid "Fufillment"
+msgid "Fulfillment"
 msgstr ""
 
 #: ./interfaces.py:421
-msgid "Fufillment State"
+msgid "Fulfillment State"
 msgstr ""
 
 #: ./interfaces.py:314

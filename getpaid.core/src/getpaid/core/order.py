@@ -258,7 +258,7 @@ class OrderQuery( object ):
     @staticmethod
     def fulfillment_state( value ):
         manager = component.getUtility( interfaces.IOrderManager )
-        return manager.storage.apply( {'fufillment_state':( value, value ) } )        
+        return manager.storage.apply( {'fulfillment_state':( value, value ) } )        
 
     @staticmethod
     def products( *products ):
@@ -295,7 +295,7 @@ class OrderStorage( BTreeContainer ):
             'user_id'  : FieldIndex(),
             'processor_order_id' : FieldIndex(),
             'finance_state'   : FieldIndex(),
-            'fufillment_state' : FieldIndex(),
+            'fulfillment_state' : FieldIndex(),
             'creation_date' : FieldIndex() 
             } )
         
@@ -427,7 +427,7 @@ def recordOrderWorkflow( order, event ):
     if order.finance_state == event.destination:
         data['change_kind'] = _(u'Finance')
     else:
-        data['change_kind'] = _(u'Fufillment')
+        data['change_kind'] = _(u'Fulfillment')
         
     audit_log = interfaces.IOrderWorkflowLog( event.object )
     audit_log.add( OrderWorkflowRecord( **data ) )
