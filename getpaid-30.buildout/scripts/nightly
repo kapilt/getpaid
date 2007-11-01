@@ -58,9 +58,11 @@ def main( ):
     root = path( script_dir ).parent
 
     tmp_dir = make_temp_dir( root )
+    # Development packages:
     pkg_src_dir = root.to( 'src' )
+    # Our main product:
     src_wc_dir = root.to('develop-products', 'PloneGetPaid')
-    
+
     assembled_wc = assemble_working_copy( tmp_dir, src_wc_dir, pkg_src_dir )
     support_products = copy_support_products( root, tmp_dir )
     
@@ -84,15 +86,12 @@ def make_temp_dir( root, location="tmp"):
     return tmp_dir
 
 def copy_support_products( root, tmp_dir ):
-    five = copy_working_copy( root.to('develop-products', 'Five' ), tmp_dir )
-    remove_svn_dirs( five )
-    clean( five )
+    """Copy support products.
 
-    cmfonfive = copy_working_copy( root.to('develop-products', 'CMFonFive'), tmp_dir)
-    remove_svn_dirs( cmfonfive )
-    clean( cmfonfive )
-    
-    return five, cmfonfive
+    This used to have Five 1.4.2 and CMFonFive, but these are not
+    needed with Plone 3.0.
+    """
+    return []
 
 def copy_working_copy( src_wc, target_wc_root ):
     target_wc = target_wc_root.to( src_wc.name )
@@ -107,9 +106,13 @@ def assemble_working_copy( working_copy_root, src_wc_directory, source_directory
     with the extracted source of packages from a buildout.
     """
 
-    working_copy = copy_working_copy( src_wc_directory, working_copy_root)
+    products_dir = working_copy_root.to( 'Products' )
+    products_dir.exists() or products_dir.mkdir()
+    working_copy = copy_working_copy( src_wc_directory, products_dir)
 
-    lib_dir = working_copy.to( 'lib' )
+    lib_dir = working_copy_root.to( 'lib' )
+    lib_dir.exists() or lib_dir.mkdir()
+    lib_dir = lib_dir.to( 'python' )
     lib_dir.exists() or lib_dir.mkdir()
     
     extract_scm_packages( lib_dir, source_directory )
@@ -118,7 +121,7 @@ def assemble_working_copy( working_copy_root, src_wc_directory, source_directory
     clean( working_copy )
     
     # for releases and nightlies..
-    remove_svn_dirs( working_copy )
+    remove_svn_dirs( working_copy_root )
 
     
     return working_copy
