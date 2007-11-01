@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GetPaid VERSION\n"
-"POT-Creation-Date: 2007-10-04 13:44+0000\n"
+"POT-Creation-Date: 2007-11-01 22:18+0000\n"
 "PO-Revision-Date: 2007-10-04 13:22+0000\n"
 "Last-Translator: Maurits van Rees <m.van.rees@zestsoftware.nl>\n"
 "Language-Team: Zest Software\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Domain: getpaid\n"
 "X-Is-Fallback-For: nl-be\n"
 
-#: ./interfaces.py:345
+#: ./interfaces.py:373
 msgid "Accepted"
 msgstr "Geaccepteerd"
 
-#: ./interfaces.py:40
+#: ./interfaces.py:66
 msgid "An organization's unique product identifier (not required since shopping cart uses content UID internally)"
 msgstr "De unieke productidentificatie van een organisatie (niet verplicht, want de winkelwagen gebruikt intern de UID van de inhoud)"
 
@@ -27,11 +27,11 @@ msgstr "De unieke productidentificatie van een organisatie (niet verplicht, want
 msgid "Authorize"
 msgstr "Autoriseer"
 
-#: ./interfaces.py:302
+#: ./interfaces.py:333
 msgid "Can we contact you regarding new offers?"
 msgstr "Mogen we u benaderen over nieuwe aanbiedingen?"
 
-#: ./interfaces.py:301
+#: ./interfaces.py:332
 msgid "Can we contact you with offers"
 msgstr "Mogen we u benaderen met aanbiedingen?"
 
@@ -43,19 +43,19 @@ msgstr "Annuleer"
 msgid "Cancel Order"
 msgstr "Annuleer bestelling"
 
-#: ./interfaces.py:317
+#: ./interfaces.py:348
 msgid "Card Holder Name"
-msgstr "Naam kaardhouder"
+msgstr "Naam kaarthouder"
 
-#: ./interfaces.py:448
+#: ./interfaces.py:472
 msgid "Change Date"
 msgstr "Wijzigingsdatum"
 
-#: ./interfaces.py:449
+#: ./interfaces.py:473
 msgid "Change Kind"
 msgstr "Soort wijziging"
 
-#: ./interfaces.py:447
+#: ./interfaces.py:471
 msgid "Changed By"
 msgstr "Gewijzigd door"
 
@@ -71,23 +71,23 @@ msgstr "Breng bestelling in rekening"
 msgid "Charged"
 msgstr "In rekening gebracht"
 
-#: ./interfaces.py:244
+#: ./interfaces.py:275
 msgid "City"
 msgstr "Stad"
 
-#: ./interfaces.py:450
+#: ./interfaces.py:474
 msgid "Comment"
 msgstr "Opmerking"
 
-#: ./interfaces.py:297
+#: ./interfaces.py:328
 msgid "Contact Information"
 msgstr "Contact Informatie"
 
-#: ./interfaces.py:152
+#: ./interfaces.py:176
 msgid "Cost"
 msgstr "Prijs"
 
-#: ./interfaces.py:245
+#: ./interfaces.py:276
 msgid "Country"
 msgstr "Land"
 
@@ -95,123 +95,127 @@ msgstr "Land"
 msgid "Create"
 msgstr "Creëer"
 
-#: ./interfaces.py:333
+#: ./interfaces.py:361
 msgid "Credit Card Expiration Date"
 msgstr "Afloopdatum credit card"
 
-#: ./interfaces.py:330
+#: ./interfaces.py:358
 msgid "Credit Card Number"
 msgstr "Credit card nummer"
 
-#: ./interfaces.py:324
+#: ./interfaces.py:355
 msgid "Credit Card Type"
 msgstr "Credit card type"
 
-#: ./interfaces.py:336
+#: ./interfaces.py:364
 msgid "Credit Card Verfication Number"
 msgstr "Credit card controlenummer"
 
-#: ./interfaces.py:390
+#: ./interfaces.py:414
 msgid "Customer Id"
-msgstr ""
+msgstr "Klant Id"
 
-#: ./interfaces.py:346
+#: ./interfaces.py:374
 msgid "Declined"
-msgstr ""
+msgstr "Afgewezen"
 
 #: ./workflow/shipment.py:109
 msgid "Delivered"
-msgstr ""
+msgstr "Afgeleverd"
 
-#: ./interfaces.py:151
+#: ./interfaces.py:175
 msgid "Description"
-msgstr ""
+msgstr "Omschrijving"
 
-#: ./interfaces.py:72
+#: ./interfaces.py:98
 msgid "Dimensions"
-msgstr ""
+msgstr "Afmetingen"
 
-#: ./interfaces.py:48
+#: ./interfaces.py:74
 msgid "Donation Description"
-msgstr ""
+msgstr "Omschrijving Donatie"
 
 #: ./workflow/item.py:100
 msgid "Electronic Delivery"
-msgstr ""
+msgstr "Elektronische aflevering"
 
-#: ./interfaces.py:296
+#: ./interfaces.py:327
 msgid "Email"
-msgstr ""
-
-#: ./interfaces.py:306
-msgid "Email Format"
-msgstr ""
-
-#: ./interfaces.py:318
-msgid "Enter the full name, as it appears on the card. "
-msgstr ""
-
-#: ./order.py:393
-msgid "Finance"
-msgstr ""
-
-#: ./interfaces.py:396
-msgid "Finance State"
-msgstr ""
-
-#: ./interfaces.py:242
-msgid "First Line"
-msgstr ""
+msgstr "E-mail"
 
 #: ./interfaces.py:337
+msgid "Email Format"
+msgstr "E-mail formaat"
+
+#: ./interfaces.py:349
+msgid "Enter the full name, as it appears on the card. "
+msgstr "Vul de volledige naam in zoals die vermeld staat op de kaart. "
+
+#: ./order.py:428
+msgid "Finance"
+msgstr "Financieel"
+
+#: ./interfaces.py:420
+msgid "Finance State"
+msgstr "Financiële status"
+
+#: ./interfaces.py:273
+msgid "First Line"
+msgstr "Eerste regel"
+
+#: ./interfaces.py:365
 msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "
+msgstr "Voor MasterCard, Visa en DC is dit een getal van 3 cijfers op de achterkant van de kaart.  Voor AmEx is dit een code van 4 cijfers op de voorkant van de kaart. "
+
+#: ./order.py:430
+msgid "Fufillment"
 msgstr ""
 
-#: ./order.py:395
-msgid "Fulfillment"
+#: ./interfaces.py:421
+msgid "Fufillment State"
 msgstr ""
 
-#: ./interfaces.py:397
-msgid "Fulfillment State"
-msgstr ""
-
-#: ./interfaces.py:283
+#: ./interfaces.py:314
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
+
+#: ./interfaces.py:199
+msgid "Integer Id for a Product"
+msgstr "Geheel getal Id voor een Product"
 
 #: ./fields.py:11
 msgid "Invalid Credit Card Number."
-msgstr ""
+msgstr "Ongeldig Credit Card nummer"
 
-#: ./order.py:55
+#: ./order.py:94
 msgid "Invalid Order Id"
-msgstr ""
+msgstr "Ongeldige Bestelling Id"
 
-#: ./interfaces.py:34
+#: ./interfaces.py:60
 msgid "Made Payable By"
-msgstr ""
+msgstr "Betaalbaar gesteld door"
 
-#: ./interfaces.py:150
+#: ./interfaces.py:174
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
-#: ./interfaces.py:451
+#: ./interfaces.py:475
 msgid "New State"
-msgstr ""
+msgstr "Nieuwe status"
 
-#: ./interfaces.py:277
+#: ./interfaces.py:308
 msgid "No"
-msgstr ""
+msgstr "Nee"
 
 #: ./fields.py:8
 msgid "Only digit character allowed."
 msgstr ""
 
-#: ./interfaces.py:293
+#: ./interfaces.py:324
 msgid "Only digits allowed - e.g. 3334445555 and not 333-444-5555 "
 msgstr ""
 
-#: ./interfaces.py:331
+#: ./interfaces.py:359
 msgid "Only digits allowed - e.g. 4444555566667777 and not 4444-5555-6666-7777 "
 msgstr ""
 
@@ -219,7 +223,7 @@ msgstr ""
 msgid "Order Charged"
 msgstr ""
 
-#: ./order.py:53
+#: ./order.py:92
 msgid "Order Id already set"
 msgstr ""
 
@@ -231,31 +235,31 @@ msgstr ""
 msgid "Payment Declined"
 msgstr ""
 
-#: ./interfaces.py:344
+#: ./interfaces.py:372
 msgid "Payment Status"
 msgstr ""
 
-#: ./interfaces.py:181
+#: ./interfaces.py:207
 msgid "Period as a timedelta"
 msgstr ""
 
-#: ./interfaces.py:292
+#: ./interfaces.py:323
 msgid "Phone Number"
 msgstr ""
 
-#: ./interfaces.py:283
+#: ./interfaces.py:314
 msgid "Plain Text"
 msgstr ""
 
-#: ./interfaces.py:242
+#: ./interfaces.py:273
 msgid "Please Enter Your Address"
 msgstr ""
 
-#: ./interfaces.py:452
+#: ./interfaces.py:476
 msgid "Previous State"
 msgstr ""
 
-#: ./interfaces.py:43
+#: ./interfaces.py:69
 msgid "Price"
 msgstr ""
 
@@ -275,19 +279,19 @@ msgstr ""
 msgid "Processor Declined"
 msgstr ""
 
-#: ./interfaces.py:398
+#: ./interfaces.py:422
 msgid "Processor Order Id"
 msgstr ""
 
-#: ./interfaces.py:39
+#: ./interfaces.py:65
 msgid "Product Code"
 msgstr ""
 
-#: ./interfaces.py:73
+#: ./interfaces.py:99
 msgid "Product SKU"
 msgstr ""
 
-#: ./interfaces.py:153
+#: ./interfaces.py:177
 msgid "Quantity"
 msgstr ""
 
@@ -299,15 +303,15 @@ msgstr ""
 msgid "Refund Processed"
 msgstr ""
 
-#: ./interfaces.py:347
+#: ./interfaces.py:375
 msgid "Refunded"
 msgstr ""
 
-#: ./interfaces.py:243
+#: ./interfaces.py:274
 msgid "Second Line"
 msgstr ""
 
-#: ./interfaces.py:334
+#: ./interfaces.py:362
 msgid "Select month and year"
 msgstr ""
 
@@ -315,15 +319,23 @@ msgstr ""
 msgid "Ship"
 msgstr ""
 
-#: ./interfaces.py:247
+#: ./interfaces.py:39
+msgid "Shipping Method"
+msgstr ""
+
+#: ./interfaces.py:278
 msgid "State"
 msgstr ""
 
-#: ./interfaces.py:149
+#: ./interfaces.py:43
+msgid "Store/Organization Name"
+msgstr ""
+
+#: ./interfaces.py:173
 msgid "Unique Item Id"
 msgstr ""
 
-#: ./interfaces.py:49
+#: ./interfaces.py:75
 msgid "Very brief 50 character text (that shows up in portlet)"
 msgstr ""
 
@@ -331,23 +343,23 @@ msgstr ""
 msgid "Will Not Deliver"
 msgstr ""
 
-#: ./interfaces.py:307
+#: ./interfaces.py:338
 msgid "Would you prefer to receive rich html emails or only plain text"
 msgstr ""
 
-#: ./interfaces.py:277
+#: ./interfaces.py:308
 msgid "Yes"
 msgstr ""
 
-#: ./interfaces.py:290
+#: ./interfaces.py:321
 msgid "Your Name"
 msgstr ""
 
-#: ./interfaces.py:261
+#: ./interfaces.py:292
 msgid "Zip Code"
 msgstr ""
 
-#: ./interfaces.py:249
+#: ./interfaces.py:280
 msgid "Zip/Postal Code"
 msgstr ""
 
