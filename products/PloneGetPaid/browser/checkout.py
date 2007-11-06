@@ -163,6 +163,7 @@ class BaseCheckoutForm( formbase.EditForm, BaseView ):
         step = self.hidden_form_vars.get('cur_step', self.wizard.start_step )
         c, n, p = self.wizard.getSteps( step )
         return p != None
+
     def hasNextStep( self, *args ):
         step = self.hidden_form_vars.get('cur_step', self.wizard.start_step )
         c, n, p = self.wizard.getSteps( step )
@@ -213,8 +214,9 @@ class OrderIdManagerMixin( object ):
             or generate a new one if it's not there yet."""
         order_id = self.request.get('order_id', None)
         if order_id is None and 'cur_step' not in self.request:
-            # you're at the first step. Ok, have a new Id then
-            order_id = Order.newOrderId()
+            # you're at the first step. Ok, have a new Id then            
+            order_manager = component.getUtility( interfaces.IOrderManager )
+            order_id = order_manager.newOrderId()
         return order_id
 
 WIZARD_NEXT_STEP = object()
