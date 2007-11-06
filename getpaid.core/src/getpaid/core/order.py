@@ -71,19 +71,6 @@ class Order( Persistent ):
     def __init__( self ):
         self.creation_date = datetime.datetime.now()
 
-    @staticmethod
-    def newOrderId():
-        """
-        Return an order id that has some kind of guarantee that it
-        hasn't been used for an order before.
-        """
-        order_manager = component.getUtility( interfaces.IOrderManager )
-        while 1:
-            order_id = str( random.randint( 2**10, 2**30 ) )
-            if order_manager.get( order_id ) is None:
-                break
-        return order_id
-
     def getOrderId( self ):
         return self._order_id
 
@@ -152,6 +139,18 @@ class OrderManager( Persistent ):
 
     def get( self, order_id ):
         return self.storage.get( order_id )
+
+    def newOrderId( self ):
+        """
+        Return an order id that has some kind of guarantee that it
+        hasn't been used for an order before.
+        """
+        while 1:
+            order_id = str( random.randint( 2**10, 2**30 ) )
+            if self.get( order_id ) is None:
+                break
+        return order_id
+
 
     #################################
     # junk for z2.9 / f 1.4

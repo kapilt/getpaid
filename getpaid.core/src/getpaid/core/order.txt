@@ -262,7 +262,7 @@ reasonable guarantee of it being unique by calling newOrderId().
    >>> from getpaid.core.order import Order
    >>> order_manager = component.getUtility( interfaces.IOrderManager )
    >>> order = Order()
-   >>> order.order_id = order.newOrderId()
+   >>> order.order_id = order_manager.newOrderId()
    >>> order_manager.store( order )
 
 now that the order is stored, no amount of calling newOrderId should
@@ -270,7 +270,7 @@ return the same id. I can't actually test for uniqueness or
 nonguessability, can I?
 
    >>> for i in xrange(10000):
-   ...    assert(order.newOrderId() != order.order_id)
+   ...    assert(order_manager.newOrderId() != order.order_id)
 
 but on the other hand, I *can* test that if I create an order with the
 same id as an existing order, things will fail:
