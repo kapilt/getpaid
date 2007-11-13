@@ -36,10 +36,6 @@ Testing the setup aspects of GetPaid. Setting required settings.
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Content Types').click()
     >>> browser.getLink('GetPaid').click()
-    >>> browser.getLink('Shipping Options').click()
-    >>> browser.getControl(name='form.shipping_method').displayValue = ['Flat Rate Shipping']
-    >>> browser.getControl('Apply').click()
-    >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Payment Options').click()
     >>> browser.getControl(name = 'form.payment_processor').displayValue = ['Testing Processor']
     >>> browser.getControl(name = 'form.allow_anonymous_checkout.used').value = 'on'
