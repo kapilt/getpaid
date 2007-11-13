@@ -15,7 +15,7 @@ from zope.i18n import translate
 
 customer_new_order_template = '''\
 To: ${to_email}
-From: "${from_name}" ${from_email}
+From: "${from_name}" <${from_email}>
 Subject: New Order Notification
 
 Thank you for you order.
@@ -47,7 +47,7 @@ class CustomerOrderNotificationTemplate( object ):
 
 merchant_new_order_template = HTML('''\
 To: ${to_email}
-From: "${from_name}" ${from_email}
+From: "${from_name}" <${from_email}>
 Subject: New Order Notification
 
 A New Order has been created
