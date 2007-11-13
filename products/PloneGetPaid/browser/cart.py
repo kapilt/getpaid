@@ -81,7 +81,9 @@ class ShoppingCartAddItemAndGoToCheckout(ShoppingCartAddItem):
         super(ShoppingCartAddItemAndGoToCheckout, self).addToCart()
         portal = getToolByName( self.context, 'portal_url').getPortalObject()
         url = portal.absolute_url()
-        if getSecurityManager().getUser().getId() is not None:
+        # check if anonymous checkout is allowed
+        if IGetPaidManagementOptions(portal).allow_anonymous_checkout or \
+            getSecurityManager().getUser().getId() is not None:
             url = url + '/@@getpaid-checkout-wizard'
         else:
             url = "%s/%s?%s"%( url,
