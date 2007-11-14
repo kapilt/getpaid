@@ -25,6 +25,7 @@ from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
 from Products.PloneGetPaid.interfaces import PayableMarkers, IGetPaidCartViewletManager
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
 from Products.PloneGetPaid.i18n import _
 from Products.CMFPlone.utils import safe_unicode
 
