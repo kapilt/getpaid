@@ -1,20 +1,20 @@
-GetPaid for Plone
+**GetPaid for Plone**
 
-Product Description: Version 0.1.1
+*Product Description: Version 0.3 (Red Ochre Release)*
 
-Congratulations - you have installed GetPaid for Plone! GetPaid provides you basic commerce functionality (donations, shopping cart, checkout) out of the box while providing a flexible framework for creating custom ecommerce applications. 
+Congratulations - you have installed GetPaid for Plone! GetPaid provides you basic commerce functionality (donations, shopping cart, checkout) and order management out of the box while providing a flexible framework for creating custom ecommerce applications. 
 
 You can find more information about this project at
 
-  - "www.plonegetpaid.com":http://www.plonegetpaid.com (public web site, general information, sponsorship opportunities, blog)
+- "www.plonegetpaid.com":http://www.plonegetpaid.com (public web site, general information, sponsorship opportunities, blog)
 
-  - "Google Code":http://code.google.com/p/getpaid (issue tracker, wiki, browse and checkout source code)
+- "Google Code":http://code.google.com/p/getpaid (issue tracker, wiki, browse and checkout source code)
 
-  - "Plone Products":http://plone.org/products/getpaid (release plans, official documentation, release code tarballs)
+- "Plone Products":http://plone.org/products/getpaid (release plans, official documentation, release code tarballs)
 
 How to Start Using GetPaid:
 
-  GetPaid allows you to make any existing content in your site "buyable" (ie can be added to a cart and then purchased in the checkout). 
+  GetPaid allows you to make any existing content in your site "buyable" (ie can be added to a cart and then purchased in the checkout). For a full explanation of setting up GetPaid, please see "GetPaid Setup":http://plone.org/products/getpaid/documentation/tutorial/setting-up-getpaid . The following is an abbreviated version of how to get started (bare essentials).
 
  - Install:  From the Plone Quick Installer, install PloneGetPaid. This will also add other tools that GetPaid needs. 
 
@@ -24,11 +24,11 @@ How to Start Using GetPaid:
 
 Payment Processors:
 
-  GetPaid currently has two working payment processors: Authorize.net and a Test Processor (so you can experience the features before setting up your account). Other payment processors are also being integrated (GoogleCheckout, PayPal, currently). It is not the intent of this document to answer all your questions about payment processors. We suggest you ask on the development mailing list (see below) for more questions if you are unfamiliar with payment processors. 
+  GetPaid currently has two working payment processors: Authorize.net and a Test Processor (so you can experience the features before setting up/activating your account). Authorize.net requires you to have a US-based merchant account. Other payment processors are also being integrated (Ogone - which allows European-based merchant accounts, Paymentech, PayPal, GoogleCheckout). It is not the intent of this document to answer all your questions about payment processors, payment gateways, and merchant accounts. We suggest you ask on the development mailing list (see below) for more questions if you are unfamiliar with these. 
 
 How to Customize Functionality:
 
-  Most functionality and features of GetPaid can be easily customized. To do so, you should be familiar with the Zope 3 Component Architecture. By writing your own adapters for GetPaid, you use a custom way of storing member data (ie a relational database), handling pricing (to implement specific discounting options, for example), introducing new payment processors, and much more. 
+  Most functionality and features of GetPaid can be easily customized. To do so, you should be familiar with the Zope 3 Component Architecture. By writing your own adapters for GetPaid, you use a custom way of storing member data (ie a relational database), handling pricing (to implement specific discounting options, for example), introducing new payment processors, and much more. Documentation on GetPaid customization best practices is available here: http://plone.org/products/getpaid/documentation/how-to/best-practices-for-customizing-getpaid
 
 Where to Find More Information:
 
@@ -50,12 +50,11 @@ Credits:
 
   Project leaders: Kapil Thangavelu is the chief architect and author of the product. Christopher Johnson is the project organizer. Jon Stahl is the project's NGO Liason.
 
-  Lots of people have contributed to this project through our sprints. Thanks to all those who participated in the BBQSprint, Google DocComm Sprint, and i18n Sprint. 
+  Lots of people have contributed to this project through our sprints. Thanks to all those who participated in the BBQSprint, Google DocComm Sprint, and i18n Sprint. For more complete list of credits, please see "GetPaid Credits":http://plonegetpaid.com/about/credits/
 
   Special thanks to our sponsors that helped us "social source" this project!
 
   "ObjectRealms":http://objectrealms.net | "ifPeople":http://www.ifpeople.net | "One/Northwest":http://onenw.org | "Contextual Corporation":http://contextualcorp.com | "Trees for Life":http://treesforlife.org | "Totsie.com":http://totsie.com
- 
 
 
 
