@@ -1,6 +1,7 @@
 
 from getpaid.core import options, interfaces
 from Products.PloneGetPaid.i18n import _
+from Products.CMFPlone.utils import getSiteEncoding
 
 class ContactInfo( options.PropertyBag ):
     title = _("Contact Information")
@@ -24,7 +25,11 @@ def memberContactInformation( user ):
     email = member.getProperty('email')
     name  = member.getProperty('fullname')
 
+    # get the site encoding
+    encoding = getSiteEncoding(store)
+
     info = ContactInfo()
-    info.email = email
-    info.name = name
+    info.email = unicode(email, encoding)
+    info.name = unicode(name, encoding)
     return info
+
