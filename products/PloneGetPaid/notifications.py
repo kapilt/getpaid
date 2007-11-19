@@ -69,7 +69,11 @@ class MerchantOrderNotificationTemplate( object ):
     interface.implements( interfaces.INotificationMailTemplate )
 
     __call__ = merchant_new_order_template
-                                   
+    
+    def __call__( self, **kwargs):
+        msg = _(merchant_new_order_template, mapping=kwargs)
+        return translate(msg)
+    
     def __init__( self, order ):
         self.order = order
         
