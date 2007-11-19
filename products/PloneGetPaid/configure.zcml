@@ -51,6 +51,9 @@
 <include zcml:condition="installed getpaid.paypal"
 	 package="getpaid.paypal" />
 
+<include zcml:condition="installed getpaid.ogone"
+	 package="getpaid.ogone" />
+
 <include zcml:condition="installed getpaid.nullpayment"
 	 package="getpaid.nullpayment" />
 

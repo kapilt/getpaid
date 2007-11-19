@@ -12,4 +12,8 @@
       factory=".browser.exception.WidgetInputErrorView"
       permission="zope.Public"
       />
+
+  <includeOverrides zcml:condition="installed getpaid.ogone"
+      package="getpaid.ogone" />
+
 </configure>
