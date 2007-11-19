@@ -126,14 +126,11 @@ def sendNotification( order, event ):
             pass
 
 
-    if settings.customer_email_notification == 'notification' \
-       and order.user_id:
-        
-        member = portal.portal_membership.getMemberById( order.user_id )
-
-        if member.getProperty('email'):
+    if settings.customer_email_notification == 'notification':
+        email = order.contact_information.email
+        if email:
             template = component.getAdapter( order, interfaces.INotificationMailTemplate, "customer-new-order")
-            message = template( to_email = member.getProperty('email'),
+            message = template( to_email =email,
                                 from_name = settings.store_name,
                                 from_email = settings.contact_email,
                                 total_price = order.getTotalPrice(),
