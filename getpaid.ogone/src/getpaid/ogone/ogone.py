@@ -5,7 +5,7 @@ from getpaid.ogone.interfaces import IOgoneStandardProcessor, IOgoneStandardOpti
 from zope.i18n.interfaces import IUserPreferredLanguages
 from zope.interface import implements
 from zope.component import getUtility
-from getpaid.core.interfaces.keys import results_async
+from getpaid.core.interfaces import keys
 import interfaces
 import urllib
 import sha
@@ -97,7 +97,7 @@ class OgoneStandardProcessor(object):
         """
         capture amount from order.
         """
-        return results_async
+        return keys.results_async
 
     def refund(self, order, amount):
         """
