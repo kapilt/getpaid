@@ -57,7 +57,7 @@ class OgonePostProcessAccepted(BrowserView, ValidatePaymentParameters):
         orderManager = getUtility(IOrderManager)
         order = orderManager.get(orderId)
         order.finance_workflow.fireTransition("charge-chargeable")
-        order.finance_workflow.fireTransition("charge-charged")
+        order.finance_workflow.fireTransition("charge-charging")
         return 1
 
 class OgonePostProcessCancelled(BrowserView, ValidatePaymentParameters):
