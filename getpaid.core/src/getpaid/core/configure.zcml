@@ -39,6 +39,12 @@
      factory=".order.OrderWorkflowLog"
      />
 
+  <adapter
+     for=".interfaces.IShoppingCart"
+     provides=".interfaces.ILineContainerTotals"
+     factory=".cart.CartItemTotals"
+     />
+
   <!-- Credit card types -->
   <adapter
     for="*"

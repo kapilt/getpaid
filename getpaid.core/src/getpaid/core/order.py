@@ -1,19 +1,23 @@
 """
 order utility implementation
 """
-import random
+import decimal, datetime, random
 
-from zope.interface import implements
-from zope.app.container.btree import BTreeContainer
-
-from zope import component
-from zope.schema.fieldproperty import FieldProperty
-
-from zope.index.field import FieldIndex
-from zope.index.keyword  import KeywordIndex
 from persistent import Persistent
 from persistent.list import PersistentList
 from persistent.dict import PersistentDict
+
+from BTrees.IFBTree import weightedIntersection, intersection
+
+from zope import component
+from zope.interface import implements
+from zope.index.field import FieldIndex
+from zope.i18nmessageid import MessageFactory
+from zope.index.keyword  import KeywordIndex
+from zope.schema.fieldproperty import FieldProperty
+
+from zope.app.container.btree import BTreeContainer
+from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo
 
 try:
     from zope.annotation.interfaces import IAttributeAnnotatable
@@ -23,15 +27,9 @@ except ImportError:
     from zope.app.annotation.interfaces import IAttributeAnnotatable
     from zope.app.annotation.interfaces import IAnnotations
 
-from BTrees.IFBTree import weightedIntersection, intersection
-from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo
+from getpaid.core import interfaces, cart
 
-import decimal, datetime
-
-from getpaid.core import interfaces
-from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('getpaid')
-
 
 try:
     from AccessControl import getSecurityManager
@@ -56,9 +54,9 @@ class workflow_state( object ):
         raise AttributeError, "can't delete attribute"
 
 
-class Order( Persistent ):
+class Order( Persistent, cart.CartItemTotals ):
 
-    implements( interfaces.IOrder, IAttributeAnnotatable )
+    implements( interfaces.IOrder, interfaces.ILineContainerTotals, IAttributeAnnotatable )
 
     _order_id = None
     shipping_address = None
@@ -95,33 +93,34 @@ class Order( Persistent ):
     def fulfillment_workflow( self ):
         return component.getAdapter( self, IWorkflowInfo, "order.fulfillment")
 
-    def getTotalPrice( self ):
-        if not self.shopping_cart:
-            return 0
+##     # ILineContainerTotals implementation
+##     def getTotalPrice( self ):
+##         if not self.shopping_cart:
+##             return 0
 
-        total = 0
-        total += self.getSubTotalPrice()
-        total += self.getShippingCost()
-        total += self.getTaxCost()
+##         total = 0
+##         total += self.getSubTotalPrice()
+##         total += self.getShippingCost()
+##         total += self.getTaxCost()
         
-        return float( str( total ) )            
+##         return float( str( total ) )            
 
-    def getSubTotalPrice( self ):
-        if not self.shopping_cart:
-            return 0
-        total = 0
-        for item in self.shopping_cart.values():
-            d = decimal.Decimal ( str(item.cost ) ) * item.quantity
-            total += d        
-        return total
+##     def getSubTotalPrice( self ):
+##         if not self.shopping_cart:
+##             return 0
+##         total = 0
+##         for item in self.shopping_cart.values():
+##             d = decimal.Decimal ( str(item.cost ) ) * item.quantity
+##             total += d        
+##         return total
         
-    def getShippingCost( self ):
-        shipping_method = component.getUtility( interfaces.IShippingMethod )
-        return shipping_method.getCost( self )
+##     def getShippingCost( self ):
+##         shipping_method = component.getUtility( interfaces.IShippingMethod )
+##         return shipping_method.getCost( self )
 
-    def getTaxCost( self ):
-        tax_utility = component.getUtility( interfaces.ITaxUtility )
-        return tax_utility.getCost( self )
+##     def getTaxCost( self ):
+##         tax_utility = component.getUtility( interfaces.ITaxUtility )
+##         return tax_utility.getCost( self )
 
 
 class OrderManager( Persistent ):

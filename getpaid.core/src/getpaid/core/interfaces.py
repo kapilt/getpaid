@@ -190,6 +190,30 @@ class ILineItemFactory( Interface ):
 class ILineItemContainer( IContainer ):
     """ A container for line items
     """
+
+class ILineContainerTotals( Interface ):
+    # interface for getting prices for a collection of items (aka an order),
+    # mostly encapsulation, of other components
+    
+    def getTotalPrice( ):
+        """
+        return the total price of all line items in the container
+        """
+
+    def getShippingCost( ):
+        """
+        return total estimated shipping cost for the items in the container.
+        """
+
+    def getTaxCost( ):
+        """
+        return total tax cost for the items in the container
+        """
+
+    def getSubTotalPrice( ):
+        """
+        get the price of all the items in the contaners
+        """
     
 class IPayableLineItem( ILineItem ):
     """
@@ -250,8 +274,10 @@ class IShipment( ILineItemContainer ):
 
 class IShippingMethod( Interface ):
 
-    def getCost( order ):
-        """ get the shipping cost for an order
+    def getCost( line_item_container ):
+        """ get the shipping cost for an order...
+
+        the object received may only be a line item container, as opposed to an order object.
         """
 
 #################################
@@ -259,8 +285,10 @@ class IShippingMethod( Interface ):
 
 class ITaxUtility( Interface ):
 
-    def getCost( order ):
+    def getCost( line_item_container ):
         """ return the tax amount for an order
+
+        the object received may only be a line item container, as opposed to an order object.
         """
         
 
