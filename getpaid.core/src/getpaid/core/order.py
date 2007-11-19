@@ -85,6 +85,10 @@ class Order( Persistent, cart.CartItemTotals ):
 
     fulfillment_state = workflow_state( "order.fulfillment")
 
+
+    def __len__( self ):
+        return len(self.shopping_cart)
+
     @property
     def finance_workflow( self ):
         return component.getAdapter( self, IWorkflowInfo, "order.finance")
