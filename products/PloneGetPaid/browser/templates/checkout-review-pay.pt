@@ -30,7 +30,7 @@
 
       <div class="visualClear"><!-- --></div>
 
-      <div>
+      <div class="cart-listing">
 	<fieldset>
 	  <legend i18n:translate=""> Shopping Cart </legend>
 	  <div tal:replace="structure view/renderCart">cart</div>

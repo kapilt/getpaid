@@ -76,7 +76,7 @@ from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
 from Products.PloneGetPaid.i18n import _
 
 from base import BaseView
-import cart
+import cart as cart_core
 from widgets import CountrySelectionWidget, StateSelectionWidget, CCExpirationDateWidget
 
 def null_condition( *args ):
@@ -371,6 +371,8 @@ class CheckoutAddress( BaseCheckoutForm ):
     def handle_cancel( self, action, data):
         return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
 
+
+
 class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
     
     form_fields = form.Fields( interfaces.IUserPaymentInformation )
@@ -382,10 +384,10 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
     template = ZopeTwoPageTemplateFile("templates/checkout-review-pay.pt")
     
     columns = [
-        column.GetterColumn( title=_(u"Quantity"), getter=cart.LineItemColumn("quantity") ),
-        column.GetterColumn( title=_(u"Name"), getter=cart.lineItemURL ),
-        column.GetterColumn( title=_(u"Price"), getter=cart.lineItemPrice ),
-        column.GetterColumn( title=_(u"Total"), getter=cart.lineItemTotal ),
+        column.GetterColumn( title=_(u"Quantity"), getter=cart_core.LineItemColumn("quantity") ),
+        column.GetterColumn( title=_(u"Name"), getter=cart_core.lineItemURL ),
+        column.GetterColumn( title=_(u"Price"), getter=cart_core.lineItemPrice ),
+        column.GetterColumn( title=_(u"Total"), getter=cart_core.lineItemTotal ),
        ]
     
     
@@ -430,13 +432,18 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
         cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
         if not cart:
             return _(u"N/A")
-        formatter = table.StandaloneFullFormatter( self.context,
-                                                   self.request,
-                                                   cart.values(),
-                                                   prefix=self.prefix,
-                                                   visible_column_names = [c.name for c in self.columns],
-                                                   #sort_on = ( ('name', False)
-                                                   columns = self.columns )
+
+        # create an order so that tax/shipping utilities have full order information
+        # to determine costs (ie. billing/shipping address ).
+        order = self.createOrder()
+        formatter = cart_core.CartFormatter( order,
+                                             self.request,
+                                             cart.values(),
+                                             prefix=self.prefix,
+                                             visible_column_names = [c.name for c in self.columns],
+                                             #sort_on = ( ('name', False)
+                                             columns = self.columns )
+        
         formatter.cssClasses['table'] = 'listing'
         return formatter()
 
@@ -480,17 +487,11 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
         
         # extract data to our adapters
         
-        
         result = processor.authorize( order, self.adapters[ interfaces.IUserPaymentInformation ] )
         if result is interfaces.keys.results_async:
-            # shouldn't ever happen..
-            # XXX
-            # huh.. we don't ever get here on async, we get async notified
-            #
-            # for async notified..
-            # redirect to async, thank you for order, being reviewed, email confirmation sent, further
-            # correspondence by email ?
-            #
+            # shouldn't ever happen, on async processors we're already directed to the third party
+            # site on the final checkout step, all interaction with a processor are based on processor
+            # adapter specific callback views.
             pass
         elif result is interfaces.keys.results_success:
             order_manager = component.getUtility( interfaces.IOrderManager )

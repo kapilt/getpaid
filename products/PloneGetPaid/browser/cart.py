@@ -9,7 +9,7 @@ from urllib import urlencode
 
 from zope import component
 from zope.formlib import form
-from zc.table import column
+from zc.table import column, table
 
 from ore.viewlet.container import ContainerViewlet
 from ore.viewlet.core import FormViewlet
@@ -149,6 +149,28 @@ def lineItemPrice( item, formatter ):
     return "%0.2f" % (LineItemColumn("cost")(item, formatter))
 
 
+class CartFormatter( table.StandaloneSortFormatter ):
+
+    def renderExtra( self ):
+        if not len( self.context ):
+            return super( CartFormatter, self).renderExtra()
+        
+        totals = interfaces.ILineContainerTotals( self.context )
+        tax_price, shipping_price, subtotal_price = \
+                   totals.getTaxCost(), \
+                   totals.getShippingCost(), \
+                   totals.getSubTotalPrice()
+        total_price = tax_price + shipping_price + subtotal_price
+        
+        buffer = [ '<div class="getpaid-totals"><table class="listing">']
+        buffer.append( '<tr><th>SubTotal</th><td style="border-top:1px solid #8CACBB;">%s</td></tr>'%( subtotal_price ) )
+        buffer.append( "<tr><th>Shipping</th><td>%s</td></tr>"%( shipping_price or "N/A") )
+        buffer.append( "<tr><th>Tax</th><td>%s</td></tr>"%( tax_price or "N/A") )
+        buffer.append( "<tr><th>Total</th><td>%s</td></tr>"%( total_price ) )
+        buffer.append('</table></div>')
+                       
+        return ''.join( buffer) + super( CartFormatter, self).renderExtra()
+    
 class ShoppingCartListing( ContainerViewlet ):
 
     actions = ContainerViewlet.actions.copy()
@@ -166,6 +188,8 @@ class ShoppingCartListing( ContainerViewlet ):
     quantity_column = columns[1]
     template = ZopeTwoPageTemplateFile('templates/cart-listing.pt')
 
+    formatter_factory = CartFormatter
+    
     def __init__( self, *args, **kw):
         super( ShoppingCartListing, self ).__init__( *args, **kw )
 

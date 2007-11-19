@@ -8,8 +8,9 @@
         class="edit-form" enctype="multipart/form-data"
         id="getpaid.cart.listing">
 
-   <div tal:replace="structure view/listing" />
-
+    <div class="cart-listing">
+      <div tal:replace="structure view/listing" />
+    </div>
   <div class="form-controls" tal:condition="view/availableActions">
   <!-- action/render doesn't handle i18n translations (fix)
     <input tal:repeat="action view/actions"
