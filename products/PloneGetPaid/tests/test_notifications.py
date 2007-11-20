@@ -22,13 +22,13 @@ class TestNotification(PloneGetPaidTestCase):
         >>> membership.addMember('testmanager', 'secret',
         ...                     ['Member', 'Manager'], [])
 
-        >>> component.provideAdapter( notifications.CustomerOrderNotificationTemplate,
+        >>> component.provideAdapter( notifications.CustomerOrderNotificationMessage,
         ...                          (interface.Interface, ),
-        ...                           interfaces.INotificationMailTemplate,
+        ...                           interfaces.INotificationMailMessage,
         ...                          'customer-new-order')
-        >>> component.provideAdapter( notifications.MerchantOrderNotificationTemplate,
+        >>> component.provideAdapter( notifications.MerchantOrderNotificationMessage,
         ...                          (interface.Interface, ),
-        ...                           interfaces.INotificationMailTemplate,
+        ...                           interfaces.INotificationMailMessage,
         ...                          'merchant-new-order')
 
         >>> settings = interfaces.IGetPaidManagementOptions( self.portal)
@@ -58,8 +58,11 @@ class TestNotification(PloneGetPaidTestCase):
 
         >>> from getpaid.core.tests.base import createOrders
         >>> from Products.PloneGetPaid.notifications import sendNotification
+        >>> from Products.PloneGetPaid.browser.checkout import ContactInfo
         >>> order = createOrders(how_many=2).next()
         >>> order.user_id = 'testmanager'
+        >>> order.contact_information = ContactInfo()
+        >>> order.contact_information.email = "example@example.com"
         >>> sendNotification( order, event)
 
         Now we overwrite the send method to raise an exception

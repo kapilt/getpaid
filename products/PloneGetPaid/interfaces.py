@@ -68,13 +68,14 @@ class IDonatableMarker( IPayableMarker ):
 
 class IStoreMember( Interface ):
     """ marker interface so we can adapt to members """
-    
-class INotificationMailTemplate( Interface ):
 
-    def __call__( from_email, to_email, store_name, store_settings, store_url, order ):
+class INotificationMailMessage( Interface ):
+
+    def __call__(settings, store_url, order_contents):
         """
-        return a rendered template suitable for passing to a mailhost.send
-        """
+        return a message suitable for passing to a mailhost.send
+        """ 
+
 class IDonationLevel( Interface ):
     
     title = schema.TextLine( title=_(u"Donation Level Name"))

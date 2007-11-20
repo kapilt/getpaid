@@ -32,13 +32,21 @@ ${order_contents}
 
 '''
 
-class CustomerOrderNotificationTemplate( object ):
+class CustomerOrderNotificationMessage(object):
 
-    interface.implements( interfaces.INotificationMailTemplate )
+    interface.implements(interfaces.INotificationMailMessage)
 
     __call__ = customer_new_order_template
 
-    def __call__( self, **kwargs):
+    def __call__(self, settings, store_url, order_contents):
+        kwargs = {'to_email': self.order.contact_information.email,
+                  'from_name': settings.store_name,
+                  'from_email': settings.contact_email,
+                  'total_price': u"%0.2f" % self.order.getTotalPrice(),
+                  'store_url': store_url,
+                  'order_id': self.order.order_id,
+                  'order_contents': order_contents,
+                 }
         msg = _(customer_new_order_template, mapping=kwargs)
         return translate(msg)
 
@@ -64,13 +72,21 @@ ${order_contents}
 ''')
 
 
-class MerchantOrderNotificationTemplate( object ):
+class MerchantOrderNotificationMessage( object ):
 
-    interface.implements( interfaces.INotificationMailTemplate )
+    interface.implements(interfaces.INotificationMailMessage)
 
     __call__ = merchant_new_order_template
     
-    def __call__( self, **kwargs):
+    def __call__(self, settings, store_url, order_contents):
+        kwargs = {'to_email': settings.contact_email,
+                  'from_name': settings.store_name,
+                  'from_email': settings.contact_email,
+                  'total_price': u"%0.2f" % self.order.getTotalPrice(),
+                  'store_url': store_url,
+                  'order_id': self.order.order_id,
+                  'order_contents': order_contents,
+                 }
         msg = _(merchant_new_order_template, mapping=kwargs)
         return translate(msg)
     
@@ -100,9 +116,7 @@ def sendNotification( order, event ):
         return 
     
     settings = interfaces.IGetPaidManagementOptions( portal )
-
     store_url = portal.absolute_url()
-
     order_contents = [u' '.join((cart_item.name, 
                                  u"%0.2f" % (cart_item.cost,),
                                  str(cart_item.quantity),
@@ -111,17 +125,10 @@ def sendNotification( order, event ):
     if settings.merchant_email_notification == 'notification' \
        and settings.contact_email:
 
-        template = component.getAdapter(  order, interfaces.INotificationMailTemplate, "merchant-new-order")
-        message = template( to_email = settings.contact_email,
-                            from_name = settings.store_name,
-                            from_email = settings.contact_email,
-                            total_price = order.getTotalPrice(),
-                            store_url = store_url,
-                            order_id = order.order_id,
-                            order_contents = order_contents,
-                            )
+        template = component.getAdapter(order, interfaces.INotificationMailMessage, "merchant-new-order")
+        message = template(settings, store_url, order_contents)
         try:
-            mailer.send( str(message) )
+            mailer.send(str(message))
         except:
             # Something happened and most probably we weren't able to send the
             # message. That's bad, but we got the money already and really
@@ -133,17 +140,10 @@ def sendNotification( order, event ):
     if settings.customer_email_notification == 'notification':
         email = order.contact_information.email
         if email:
-            template = component.getAdapter( order, interfaces.INotificationMailTemplate, "customer-new-order")
-            message = template( to_email =email,
-                                from_name = settings.store_name,
-                                from_email = settings.contact_email,
-                                total_price = order.getTotalPrice(),
-                                store_url = store_url,
-                                order_id = order.order_id,
-                                order_contents = order_contents,
-                                )
+            template = component.getAdapter( order, interfaces.INotificationMailMessage, "customer-new-order")
+            message = template(settings, store_url, order_contents)
             try:
-                mailer.send( str(message) )
+                mailer.send(str(message))
             except:
                 # Something happened and most probably we weren't able to send the
                 # message. That's bad, but we got the money already and really
@@ -152,6 +152,4 @@ def sendNotification( order, event ):
                 pass
 
     
-    
-
 
