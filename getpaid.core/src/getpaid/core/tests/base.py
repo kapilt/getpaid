@@ -27,8 +27,6 @@ from getpaid.core import order, cart, item as line_item
 from getpaid.core.workflow import store, order as oworkflow
 from getpaid.core import payment
 
-from Products.PloneGetPaid.browser.checkout import ContactInfo
-
 class GetPaidTestCase( unittest.TestCase ):
     
     def setUp( self ):
@@ -58,8 +56,6 @@ def createOrders( how_many=10 ):
             sc[item.item_id] = item
             
         o.user_id = "u%s"%random.choice( string.letters )
-        o.contact_information = ContactInfo()
-        o.contact_information.email = "example@example.com"
         #o.finance_workflow.fireTransition('create')
         #o.fulfillment_workflow.fireTransition('create')
         
