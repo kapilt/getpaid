@@ -32,7 +32,7 @@ class NullPaymentAdapter( object ):
             return interfaces.keys.results_success
         return "Capture Failed"
 
-    def refund( eslf, order, amount ):
+    def refund( self, order, amount ):
         if self.settings.allow_refunds == u'allow_refund':
             return interfaces.keys.results_success
         return "Refund Failed"
