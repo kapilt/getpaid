@@ -10,7 +10,7 @@
   <adapter
      for="getpaid.core.interfaces.IStore"
      provides="getpaid.core.interfaces.IPaymentProcessor"
-     factory=".payementech.PaymentechAdapter"
+     factory=".paymentech.PaymentechAdapter"
      name="Paymentech"
      />
 
