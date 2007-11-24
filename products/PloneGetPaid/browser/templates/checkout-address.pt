@@ -5,8 +5,8 @@
 
   <form action="."
         tal:attributes="action request/URL"
-	method="post"
-	enctype="multipart/form-data">
+        method="post"
+        enctype="multipart/form-data">
 
     <div class="hidden_fields"
 	 tal:content="structure view/hidden_inputs"> </div>
@@ -23,19 +23,27 @@
 		</td>
 	</tr>
     <tr>
-	<td>
+	<td valign="top">
 	  <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IBillingAddress')">
 	    <legend i18n:translate=""> Billing Address </legend>
 	    <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
 	  </fieldset>
        </td>
 
-	<td>
-	  <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IShippingAddress')">
-	    <legend i18n:translate=""> Mailing Address </legend>
-	    <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
-	  </fieldset>
-	</td>
+  <td>
+    <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IShippingAddress')">
+      <legend i18n:translate=""> Mailing Address </legend>
+      <div id="mailing-address">
+        <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
+      </div>
+      <tal:def define="same_billing request/form.ship_same_billing|nothing">
+        <tal:block tal:replace='structure string:<script type="text/javascript" charset="utf-8">'></tal:block>
+          <tal:cond condition="not:same_billing" replace="structure string:enableMailingAddress();"></tal:cond>
+          <tal:cond condition="same_billing" replace="structure string:disableMailingAddress();"></tal:cond>
+        <tal:block tal:replace='structure string:</script>'></tal:block>
+      </tal:def>
+    </fieldset>
+  </td>
 
       </tr>
 

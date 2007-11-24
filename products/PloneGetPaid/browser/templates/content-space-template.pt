@@ -8,6 +8,14 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/main_template/macros/master"
       >
+<head>
+    <metal:javascriptslot fill-slot="javascript_head_slot" >
+      <script type="text/javascript"
+              tal:attributes="src string:$portal_url/++resource++jquery.js"></script>
+      <script type="text/javascript"
+              tal:attributes="src string:$portal_url/++resource++checkout-process.js"></script>
+    </metal:javascriptslot>
+</head>
 <body>
 <div metal:fill-slot="content">
   <div id="content" class="documentEditable">
