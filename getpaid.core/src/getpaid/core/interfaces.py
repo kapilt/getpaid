@@ -310,14 +310,15 @@ class IAddress( Interface ):
 class IShippingAddress( Interface ):
     """ where to send goods
     """
-    ship_first_line = schema.TextLine( title = _(u"First Line"))
-    ship_second_line = schema.TextLine( title = _(u"Second Line"), required=False )
-    ship_city = schema.TextLine( title = _(u"City") )
+    ship_same_billing = schema.Bool( title = _(u"Same as billing address"), required=False)
+    ship_first_line = schema.TextLine( title = _(u"First Line"), required=False)
+    ship_second_line = schema.TextLine( title = _(u"Second Line"), required=False)
+    ship_city = schema.TextLine( title = _(u"City"), required=False)
     ship_country = schema.Choice( title = _(u"Country"),
-                                    vocabulary = "getpaid.countries")
+                                    vocabulary = "getpaid.countries", required=False)
     ship_state = schema.Choice( title = _(u"State"),
-                                  vocabulary="getpaid.states" )
-    ship_postal_code = schema.TextLine( title = _(u"Zip Code"))
+                                  vocabulary="getpaid.states", required=False)
+    ship_postal_code = schema.TextLine( title = _(u"Zip Code"), required=False)
 
 class IBillingAddress( Interface ):
     """ where to bill 
