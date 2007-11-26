@@ -59,23 +59,54 @@ def createXMLFile(message_type, options, payment, order):
     data = dom.toxml('utf-8')
     return data
 
+def getElement(result, tag_name):
+    """
+    Get the value corresponding to a xml tag
+    """
+    if result.getElementsByTagName(tag_name):
+        node = result.getElementsByTagName(tag_name)[0]
+        if node.childNodes:
+            child_node = node.childNodes[0]
+            return child_node.nodeValue
+    return None
 
-def createConnection(data_len, server, options, timeout=None):
-    """
-    Creates the HTTPS/POST connection to the Paymentech server
-    """
-    conn = zc.ssl.HTTPSConnection(server, timeout)
+class PaymentechConnection(object):
+    
+    def __init__(self, data, server, options, timeout=None):
+        self.server = server
+        self.timeout = timeout
+        self.data = data
+        self.options = options
+    
+    def sendTransaction(self):
+        """
+        Creates the HTTPS/POST connection to the Paymentech server
+        """
+        conn = zc.ssl.HTTPSConnection(self.server, self.timeout)
         
-    # setup the MIME HEADERS
-    conn.putrequest('POST', '/authorize')
-    conn.putheader('content-type', 'application/PTI41')
-    conn.putheader('content-length', data_len)
-    conn.putheader('content-transfer-encoding', 'text')
-    conn.putheader('request-number', '1')
-    conn.putheader('document-type', 'request')
-    conn.putheader('merchant-id', options.merchant_id)
-    conn.endheaders()
-    return conn
+        # setup the MIME HEADERS
+        conn.putrequest('POST', '/authorize')
+        conn.putheader('content-type', 'application/PTI41')
+        conn.putheader('content-length', len(self.data))
+        conn.putheader('content-transfer-encoding', 'text')
+        conn.putheader('request-number', '1')
+        conn.putheader('document-type', 'request')
+        conn.putheader('merchant-id', self.options.merchant_id)
+        conn.endheaders()
+        
+        conn.send(self.data)
+        return conn.getresponse()
+
+class PaymentechResult(object):
+    
+    def __init__(self, response):
+        self.response = response
+        result = xml.dom.minidom.parseString(self.response.read())
+        # ProcStatus is the only element that is returned in all response scenarios
+        self.proc_status = getElement(result, 'ProcStatus')
+        self.approval_status = getElement(result, 'ApprovalStatus')
+        self.trans_ref_num = getElement(result, 'TxRefNum')
+        self.status_msg = getElement(result, 'StatusMsg')
 
 class PaymentechAdapter(object):
     interface.implements(interfaces.IPaymentProcessor)
@@ -99,48 +130,55 @@ class PaymentechAdapter(object):
         Authorize the supplied information.
         This transaction type should be used for deferred billing transactions.
         """
-        # create the XML file
-        data = createXMLFile('A', self.options, payment, order) # A – Authorization request
+        # A – Authorization request
+        data = createXMLFile('A', self.options, payment, order)
         
-        # create an HTTPS request using SSL
-        data_len = len(data)
-        conn = createConnection(data_len, self.server, self.options, timeout=None)
+        result = self.process(data, timeout=None)
         
-        # send the request
-        conn.send(data)
-        
-        # take the results
-        response = conn.getresponse()
-        result = xml.dom.minidom.parseString(response.read())
-        
-        # ProcStatus is the only element that is returned in all response scenarios
-        proc_status_node = result.getElementsByTagName('ProcStatus')[0]
-        proc_status_child = proc_status_node.childNodes[0]
-        proc_status = proc_status_child.nodeValue
-        
-        if proc_status == "0":
-            approval_status_node = result.getElementsByTagName('ApprovalStatus')[0]
-            approval_status_child = approval_status_node.childNodes[0]
-            approval_status = approval_status_child.nodeValue
-
-            trans_node = result.getElementsByTagName('TxRefNum')[0]
-            trans_child = trans_node.childNodes[0]
-            trans_ref_num = trans_child.nodeValue
-            
+        if result.proc_status == "0":
             annotation = IAnnotations(order)
-            annotation[interfaces.keys.processor_txn_id] = trans_ref_num
+            annotation[interfaces.keys.processor_txn_id] = result.trans_ref_num
             annotation[LAST_FOUR] = payment.credit_card[-4:]
-            annotation[APPROVAL_KEY] = approval_status
+            annotation[APPROVAL_KEY] = result.approval_status
             return interfaces.keys.results_success
         else:
-            status_node = result.getElementsByTagName('StatusMsg')[0]
-            status_child = status_node.childNodes[0]
-            status_msg = status_child.nodeValue
-            return status_msg
+            return result.status_msg
 
     def capture(self, order, amount):
-        data = createXMLFile('AC', self.options, payment, order) #AC – Authorization and Mark for Capture
+        #AC – Authorization and Mark for Capture
+        data = createXMLFile('AC', self.options, payment, order)
+        
+        result = self.process(data, timeout=None)
+        
+        if result.proc_status == "0":
+            annotation = IAnnotations(order)
+            if annotation.get(interfaces.keys.capture_amount) is None:
+                annotation[interfaces.keys.capture_amount] = amount
+            else:
+                annotation[interfaces.keys.capture_amount] += amount            
+            return interfaces.keys.results_success
+        else:
+            return result.status_msg
     
     def refund(self, order, amount):
-        data = createXMLFile('R', self.options, payment, order) #R – Refund request
+        #R – Refund request
+        data = createXMLFile('R', self.options, payment, order)
+        
+        result = self.process(data, timeout=None)
+        
+        if result.proc_status == "0":
+            annotation = IAnnotations(order)
+            if annotation.get(interfaces.keys.capture_amount) is not None:
+                annotation[interfaces.keys.capture_amount] -= amount                        
+            return interfaces.keys.results_success
+        else:
+            return result.status_msg
 
+    def process(self, data, timeout):
+        """
+        creates a HTTPS request using SSL, sends the request
+        and returns a response
+        """
+        conn = PaymentechConnection(data, self.server, self.options, timeout=None)
+        response = conn.sendTransaction()
+        return PaymentechResult(response)
