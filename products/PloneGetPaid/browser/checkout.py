@@ -363,15 +363,13 @@ class CheckoutAddress( BaseCheckoutForm ):
         self.setupHiddenFormVariables()        
         super( CheckoutAddress, self).update()
     
-    @form.action(_(u"Continue"), name="continue", condition='hasNextStep')
-    def handle_continue( self, action, data ):
-        self._next_url = WIZARD_NEXT_STEP
-    
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
         return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
-
-
+        
+    @form.action(_(u"Continue"), name="continue", condition='hasNextStep')
+    def handle_continue( self, action, data ):
+        self._next_url = WIZARD_NEXT_STEP
 
 class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
     
