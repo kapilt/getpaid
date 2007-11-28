@@ -100,11 +100,21 @@ def copy_working_copy( src_wc, target_wc_root ):
     src_wc.copytree( target_wc )
     return target_wc
 
+def copy_file( src_wc, target_wc_root ):
+    target_wc = target_wc_root.to( src_wc.name )
+    if target_wc.exists():
+        target_wc.remove()
+    src_wc.copy( target_wc )
+    return target_wc
+
 def assemble_working_copy( working_copy_root, src_wc_directory, source_directory ):
     """
     take a directory / z2 product and assemble it as a product
     with the extracted source of packages from a buildout.
     """
+
+    readme = path(script_dir).to('README.txt')
+    copy_file(readme, working_copy_root)
 
     products_dir = working_copy_root.to( 'Products' )
     products_dir.exists() or products_dir.mkdir()
