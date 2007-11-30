@@ -127,7 +127,6 @@ class BuyableEdit( BuyableForm ): pass
 class BuyableDestruction( PayableDestruction ):
     marker = interfaces.IBuyableMarker
 
-
 class ShippableForm( PayableForm ):
     """ shippable content operations """
     form_fields = form.Fields( igetpaid.IShippableContent )

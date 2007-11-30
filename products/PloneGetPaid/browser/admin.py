@@ -1,4 +1,6 @@
 """
+admin setting and preferences
+
 $Id$
 """
 

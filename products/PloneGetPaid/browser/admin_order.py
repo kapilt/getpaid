@@ -1,8 +1,4 @@
 """
-temporary module for sprint, fold back into admin.py
-
-or better split admin.py into getpaid.admin
-
 order administration
 """
 

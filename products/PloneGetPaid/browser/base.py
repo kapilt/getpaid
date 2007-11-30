@@ -1,4 +1,8 @@
 """
+
+our base view, formlib view, and viewlet. mostly this consists of work arounds for zope2, and
+some utilities.
+
 $Id$
 """
 
