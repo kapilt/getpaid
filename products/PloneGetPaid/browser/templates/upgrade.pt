@@ -17,6 +17,7 @@
 	      screen shows the currently stored data's version number,
 	      and the software's data version, and allows you to
 	      perform a data upgrade if needed from here.
+	      </span>
 	    </p>
 
     <fieldset tal:define="sver view/softwareVersion;

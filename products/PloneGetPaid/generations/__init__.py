@@ -1,7 +1,7 @@
 """
 Simple Upgrading Framework
 
-we put modules in generations/r500 corresponding to svn revision numbers and increment
+we put modules in generations/r500 corresponding to revision numbers and increment
 the revision on db-version.txt .. each module has an evolve function which is called
 in order to increment the app version to the latest software version which is nominally
 post the upgrade module's revision.

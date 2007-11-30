@@ -5,6 +5,7 @@ from Products.PloneGetPaid.Extensions.install import install_cart_portlet
 from Products.PloneGetPaid.Extensions.install import install_contentwidget_portlet
 from Products.PloneGetPaid.Extensions.install import setup_site
 from Products.PloneGetPaid.Extensions.install import setup_store
+from Products.PloneGetPaid.Extensions.install import setup_software_generation
 from Products.PloneGetPaid.Extensions.install import setup_order_manager
 from Products.PloneGetPaid.Extensions.install import add_intids
 from Products.PloneGetPaid.Extensions.install import install_plone3_portlets
@@ -48,6 +49,9 @@ def setupVarious(context):
 
     print >> out, "Installing IntId Utility"
     add_intids(site)
+
+    print >> out, "Setting up update facility"
+    setup_software_generation( site )
 
     logger.info(out.getvalue())
 

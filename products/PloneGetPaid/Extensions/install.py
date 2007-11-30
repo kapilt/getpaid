@@ -11,7 +11,7 @@ from Products.Archetypes.utils import shasattr
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.app.component.hooks import setSite
 from zope.app.component.interfaces import ISite
-from Products.PloneGetPaid.config import PLONE3
+from Products.PloneGetPaid.config import generations, PLONE3
 from five.intid.site import add_intids
 from getpaid.core.interfaces import IOrderManager, IStore
 from getpaid.core.order import OrderManager
@@ -24,6 +24,10 @@ def setup_site( self ):
         return
     enableLocalSiteHook( portal )
     setSite( portal )
+
+def setup_software_generation( self ):
+    # mark the current version of the software in the database on install
+    generations.setSoftwareVersion( self, generations.getApSoftwareVersion() )
 
 def setup_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
