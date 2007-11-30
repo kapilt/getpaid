@@ -164,9 +164,18 @@ class CartFormatter( table.StandaloneSortFormatter ):
         
         buffer = [ '<div class="getpaid-totals"><table class="listing">']
         buffer.append( '<tr><th>SubTotal</th><td style="border-top:1px solid #8CACBB;">%s</td></tr>'%( subtotal_price ) )
-        buffer.append( "<tr><th>Shipping</th><td>%s</td></tr>"%( shipping_price or "N/A") )
-        buffer.append( "<tr><th>Tax</th><td>%s</td></tr>"%( tax_price or "N/A") )
-        buffer.append( "<tr><th>Total</th><td>%s</td></tr>"%( total_price ) )
+
+        if shipping_price:
+            buffer.append( "<tr><th>Shipping</th><td>%s</td></tr>"%( shipping_price ) )
+        else:
+            buffer.append( "<tr><th>Shipping</th><td>%s</td></tr>"%( u"N/A") )
+
+        if tax_price:
+            buffer.append( "<tr><th>Tax</th><td>%0.2f</td></tr>"%( tax_price ) )
+        else:
+            buffer.append( "<tr><th>Tax</th><td>%s</td></tr>"%( u"N/A") )            
+            
+        buffer.append( "<tr><th>Total</th><td>%0.2f</td></tr>"%( total_price ) )
         buffer.append('</table></div>')
                        
         return ''.join( buffer) + super( CartFormatter, self).renderExtra()
