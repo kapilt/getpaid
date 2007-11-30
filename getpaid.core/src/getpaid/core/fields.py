@@ -14,6 +14,13 @@ def creditCardValid(card_number):
     """ checks to make sure that the card passes a luhn mod-10 checksum """
     # strip any whitespace
     card_number = card_number.replace(' ', '').strip()
+    
+    if isinstance( card_number, unicode ) and not card_number.isnumeric():
+        return False
+    
+    elif isinstance( card_number, str) and not card_number.isdigit():
+        return False
+    
     if not card_number.isnumber():
         return False
     sum = 0
