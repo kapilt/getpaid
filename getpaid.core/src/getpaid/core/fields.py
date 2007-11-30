@@ -12,6 +12,10 @@ class InvalidCreditCardNumber(ValidationError):
 
 def creditCardValid(card_number):
     """ checks to make sure that the card passes a luhn mod-10 checksum """
+    # strip any whitespace
+    card_number = card_number.replace(' ', '').strip()
+    if not card_number.isnumber():
+        return False
     sum = 0
     num_digits = len(card_number)
     oddeven = num_digits & 1

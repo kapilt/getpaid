@@ -32,7 +32,6 @@
      factory=".payment.DefaultFinanceProcessorIntegration"
      />
 
-
   <adapter
      for=".interfaces.IOrder"
      provides=".interfaces.IOrderWorkflowLog"
