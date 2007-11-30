@@ -11,7 +11,8 @@ from Products.Archetypes.utils import shasattr
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.app.component.hooks import setSite
 from zope.app.component.interfaces import ISite
-from Products.PloneGetPaid.config import generations, PLONE3
+from Products.PloneGetPaid import generations
+from Products.PloneGetPaid.config import PLONE3
 from five.intid.site import add_intids
 from getpaid.core.interfaces import IOrderManager, IStore
 from getpaid.core.order import OrderManager
