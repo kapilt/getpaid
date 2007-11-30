@@ -28,7 +28,7 @@ def setup_site( self ):
 
 def setup_software_generation( self ):
     # mark the current version of the software in the database on install
-    generations.setSoftwareVersion( self, generations.getApSoftwareVersion() )
+    generations.setAppVersion( self, generations.getAppSoftwareVersion() )
 
 def setup_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
