@@ -1,0 +1,7 @@
+This buildout for Plone 3.0 has been deprecated!
+
+It should still work.  But it is now recommended to use the normal
+buildout, which works in both Plone 2.5 and 3.0.  To use that buildout
+with 3.0, run:
+
+bin/buildout -c 30.cfg
