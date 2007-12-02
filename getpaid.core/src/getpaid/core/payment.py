@@ -92,6 +92,8 @@ class DefaultFinanceProcessorIntegration( object ):
             self.order.finance_workflow.fireTransition('decline-charging', comment=result)
 
 
+CREDIT_CARD_TYPES = ( u"Visa", u"MasterCard", u"Discover", u"American Express" )
+
 class CreditCardTypeEnumerator(object):
     interface.implements(interfaces.ICreditCardTypeEnumerator)
 
@@ -99,7 +101,7 @@ class CreditCardTypeEnumerator(object):
         self.context = context
 
     def acceptedCreditCardTypes(self):
-        return ( u"Visa", u"MasterCard", u"Discover", u"American Express" )
+        return CREDIT_CARD_TYPES
 
     def allCreditCardTypes(self):
-        return ( u"Visa", u"MasterCard", u"Discover", u"American Express" )
+        return CREDIT_CARD_TYPES
