@@ -3,6 +3,7 @@
 
 from unittest import TestSuite, makeSuite
 from base import PloneGetPaidTestCase
+from getpaid.core.payment import CREDIT_CARD_TYPES
 from Products.PloneGetPaid import interfaces, vocabularies
 from Products.CMFCore.utils import getToolByName
 from zope.interface import alsoProvides
@@ -61,10 +62,14 @@ class testAdminInterface(PloneGetPaidTestCase):
 
     def testSetupCreditcards( self ):
         """Test setting acceptable credit cards."""
-        our_credit_card = "VISA"
-        self.manage_options.credit_cards = [our_credit_card]
+        # Test default value
+        self.assertEqual(
+            self.manage_options.getProperty('credit_cards'), CREDIT_CARD_TYPES)
+        our_credit_card = u"Visa"
+        self.manage_options.setProperty('credit_cards', [our_credit_card])
         #test to see if it was set properly
-        self.assertEqual([our_credit_card], self.manage_options.credit_cards)
+        self.assertEqual([our_credit_card], 
+            self.manage_options.getProperty('credit_cards'))
 
 def test_suite():
     suite = TestSuite()

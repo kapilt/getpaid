@@ -9,6 +9,7 @@ from Products.PloneGetPaid.Extensions.install import setup_software_generation
 from Products.PloneGetPaid.Extensions.install import setup_order_manager
 from Products.PloneGetPaid.Extensions.install import add_intids
 from Products.PloneGetPaid.Extensions.install import install_plone3_portlets
+from Products.PloneGetPaid.Extensions.install import setup_payment_options
 from Products.PloneGetPaid.config import PLONE3
 
 def setupVarious(context):
@@ -46,6 +47,9 @@ def setupVarious(context):
 
     print >> out, "Installing Order Local Utility"
     setup_order_manager(site)
+    
+    print >> out, "Configure default payment options"
+    setup_payment_options(site)
 
     print >> out, "Installing IntId Utility"
     add_intids(site)

@@ -9,6 +9,7 @@ from zope.app.event.interfaces import IObjectEvent
 from getpaid.core.fields import PhoneNumber
 
 import getpaid.core.interfaces as igetpaid
+from getpaid.core.payment import CREDIT_CARD_TYPES
 import zope.viewlet.interfaces
 
 from Products.PloneGetPaid.i18n import _
@@ -214,7 +215,7 @@ class IGetPaidManagementPaymentOptions( igetpaid.IPersistentOptions ):
 
     accepted_credit_cards = schema.List( title = _(u"Accepted Credit Cards"),
                                         required = False,
-                                        default = [],
+                                        default = list(CREDIT_CARD_TYPES),
                                         description = _(u"Credit cards accepted for payment"),
                                         value_type = schema.Choice( title=u"accepted_credit_cards", source="getpaid.core.credit_card_types" )
                                         )    

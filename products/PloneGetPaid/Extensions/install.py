@@ -12,10 +12,12 @@ from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.app.component.hooks import setSite
 from zope.app.component.interfaces import ISite
 from Products.PloneGetPaid import generations
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
 from Products.PloneGetPaid.config import PLONE3
 from five.intid.site import add_intids
 from getpaid.core.interfaces import IOrderManager, IStore
 from getpaid.core.order import OrderManager
+from getpaid.core.payment import CREDIT_CARD_TYPES
 
 def setup_site( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()    
@@ -145,6 +147,12 @@ def install_plone3_portlets(self):
         title = assignment.title
         if title not in portletnames:
             manager[chooser.chooseName(title, assignment)] = assignment
+
+def setup_payment_options(self):
+    """ Set the default payment options for credit card types.
+    """
+    manage_options = IGetPaidManagementOptions(self)
+    manage_options.setProperty('credit_cards', CREDIT_CARD_TYPES)
 
 def install( self ):
     out = StringIO()
