@@ -20,9 +20,7 @@ def creditCardValid(card_number):
     
     elif isinstance( card_number, str) and not card_number.isdigit():
         return False
-    
-    if not card_number.isnumber():
-        return False
+
     sum = 0
     num_digits = len(card_number)
     oddeven = num_digits & 1
