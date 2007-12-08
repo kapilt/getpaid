@@ -11,7 +11,8 @@
         <tal:block tal:define="selected python:view.hasInput() and view.getInputValue() == i.value or (value and value==i.value)">
             <option tal:attributes="value python: i.value;"
                     tal:content="python: i.title"
-                    tal:condition="selected"/>
+                    tal:condition="selected"
+                    selected/>
             <option tal:attributes="value python: i.value;"
             		tal:content="python: i.title"
                     tal:condition="not:selected"/>
