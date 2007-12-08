@@ -51,9 +51,15 @@ class StateSelectionWidget(SimpleInputWidget):
         else:
             value = self._getFormValue()
         return """<div id="%s_container">
-                  <input name="%s" id="%s"
-                   value="%s" size="7" maxlength="30" type="text">
+                  <select name="%s" id="%s">
+                    <option value="%s" selected="selected">Selected</option>
+                  </select>
                   </div>""" % (self.name, self.name, self.name, value)
+# Maurits: why did you put this instead of what it was (and I restored above) ? -- javimansilla
+#        return """<div id="%s_container">
+#                  <input name="%s" id="%s"
+#                   value="%s" size="7" maxlength="30" type="text">
+#                  </div>""" % (self.name, self.name, self.name, value)
 
 class CCExpirationDateWidget(WithTemplateWidget,DateWidget):
     template = ViewPageTemplateFile('templates/cc-expiration-date-widget.pt')
