@@ -530,22 +530,22 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
         
         return order
     
-    def getNextURL( self, order ):
+    def getNextURL(self, order):
         state = order.finance_state
         f_states = interfaces.workflow_states.order.finance
         base_url = self.context.absolute_url()
 
-## we display errors inline on the checkout form, so don't redirect
-##         if state in ( f_states.CANCELLED,
-##                       f_states.CANCELLED_BY_PROCESSOR,
-##                       f_states.PAYMENT_DECLINED ):
-##             return base_url + '/@@checkout-error'
+        if state in (f_states.CANCELLED,
+                     f_states.CANCELLED_BY_PROCESSOR,
+                     f_states.PAYMENT_DECLINED):
+            return base_url + '/@@getpaid-cancelled-declined?order_id=%s&finance_state=%s' %(order.order_id, state)
         
-        if state in ( f_states.CHARGEABLE,
-                      f_states.CHARGING,
-                      f_states.REVIEWING,
-                      f_states.CHARGED ):
-            return base_url + '/@@getpaid-thank-you?order_id=%s&finance_state=%s' %(order.order_id,state)
+        if state in (f_states.CHARGEABLE,
+                     f_states.CHARGING,
+                     f_states.REVIEWING,
+                     f_states.CHARGED):
+            return base_url + '/@@getpaid-thank-you?order_id=%s&finance_state=%s' %(order.order_id, state)
+        
 
 class CheckoutConfirmed( BrowserView ):
     """ thank you screen after success

@@ -4,7 +4,7 @@
                tal:define="finance_state request/form/finance_state|nothing;
                            order_id request/form/order_id|string:">
 
-    <h3 i18n:translate="heading_checkout_thank_you"> Thank you for your order </h3>
+    <h3 i18n:translate="">A problem occurred with your payment</h3>
 
     <div>
         <div tal:condition="finance_state|nothing">
@@ -20,7 +20,7 @@
             <tal:replace tal:replace="order_id"></tal:replace>
         </div>
     </div>
-    
+
     <div>
       <span i18n:translate="box_order_status_url_description">You can check the status of your order
 	  <span i18n:name="status_url">
