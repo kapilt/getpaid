@@ -14,7 +14,7 @@ CARD_SEC_VAL = ['Visa', 'Discover', 'Mastercard']
 LAST_FOUR = "getpaid.paymentech.cc_last_four"
 APPROVAL_KEY = "getpaid.paymentech.approval_code"
 
-def createXMLFile(message_type, options, payment, order):
+def createAuthorizeXMLFile(message_type, options, order, payment):
     """
     Creates the XML file to send to the Paymentech Interface
     """
@@ -31,10 +31,9 @@ def createXMLFile(message_type, options, payment, order):
         card_sec_val = """<CardSecValInd>1</CardSecValInd>"""
     card_sec_value = payment.cc_cvc
     order_id = order.getOrderId()
-    amount = str(order.getTotalPrice() * 100) # $50.00 should be sent as 5000
+    amount = str(int(order.getTotalPrice() * 100)) # $50.00 should be sent as 5000
     xml_text = """\
-<Request xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="Request_PTI42.xsd">
+<Request>
   <NewOrder>
     <IndustryType>EC</IndustryType>
     <MessageType>%(message_type)s</MessageType>
@@ -57,7 +56,36 @@ def createXMLFile(message_type, options, payment, order):
     
     dom = xml.dom.minidom.parseString(xml_text)
     data = dom.toxml('utf-8')
-    return data
+    return xml_text
+
+def createCaptureXMLFile(options, order, trans_ref_num, amount):
+    """
+    Creates the XML file to send to the Paymentech Interface
+    """
+    merchant_id = options.merchant_id
+    if len(merchant_id) == 6:
+        bin_number = "000001" # corresponds to 6 digit Salem Division Number
+    else:
+        bin_number = "000002" # corresponds to 12 digit PNS Merchant ID
+    terminal_id = options.terminal_id
+    order_id = order.getOrderId()
+    amount = str(int(amount * 100)) # $50.00 should be sent as 5000
+    xml_text = """\
+<Request>
+  <MarkForCapture>
+    <OrderID>%(order_id)s</OrderID>
+    <Amount>%(amount)s</Amount>
+    <BIN>%(bin_number)s</BIN>
+    <MerchantID>%(merchant_id)s</MerchantID>
+    <TerminalID>%(terminal_id)s</TerminalID>
+    <TxRefNum>%(trans_ref_num)s</TxRefNum>
+  </MarkForCapture>
+</Request>
+""" % locals()
+    
+    dom = xml.dom.minidom.parseString(xml_text)
+    data = dom.toxml('utf-8')
+    return xml_text
 
 def getElement(result, tag_name):
     """
@@ -86,12 +114,13 @@ class PaymentechConnection(object):
         
         # setup the MIME HEADERS
         conn.putrequest('POST', '/authorize')
-        conn.putheader('content-type', 'application/PTI41')
-        conn.putheader('content-length', len(self.data))
-        conn.putheader('content-transfer-encoding', 'text')
-        conn.putheader('request-number', '1')
-        conn.putheader('document-type', 'request')
-        conn.putheader('merchant-id', self.options.merchant_id)
+        conn.putheader('MIME-Version', '1.1')
+        conn.putheader('Content-type', 'application/PTI41')
+        conn.putheader('Content-length', len(self.data))
+        conn.putheader('Content-transfer-encoding', 'text')
+        conn.putheader('Request-number', '1')
+        conn.putheader('Document-type', 'Request')
+        conn.putheader('Merchant-id', self.options.merchant_id)
         conn.endheaders()
         
         conn.send(self.data)
@@ -131,10 +160,9 @@ class PaymentechAdapter(object):
         This transaction type should be used for deferred billing transactions.
         """
         # A – Authorization request
-        data = createXMLFile('A', self.options, payment, order)
+        data = createAuthorizeXMLFile('A', self.options, order, payment)
         
         result = self.process(data, timeout=None)
-        
         if result.proc_status == "0":
             annotation = IAnnotations(order)
             annotation[interfaces.keys.processor_txn_id] = result.trans_ref_num
@@ -146,12 +174,13 @@ class PaymentechAdapter(object):
 
     def capture(self, order, amount):
         #AC – Authorization and Mark for Capture
-        data = createXMLFile('AC', self.options, payment, order)
+        annotation = IAnnotations(order)
+        trans_ref_num = annotation[interfaces.keys.processor_txn_id]
+        data = createCaptureXMLFile(self.options, order, trans_ref_num, amount)
         
         result = self.process(data, timeout=None)
         
         if result.proc_status == "0":
-            annotation = IAnnotations(order)
             if annotation.get(interfaces.keys.capture_amount) is None:
                 annotation[interfaces.keys.capture_amount] = amount
             else:
@@ -161,18 +190,21 @@ class PaymentechAdapter(object):
             return result.status_msg
     
     def refund(self, order, amount):
+        """ XXX Not implemented
+        """
         #R – Refund request
-        data = createXMLFile('R', self.options, payment, order)
-        
-        result = self.process(data, timeout=None)
-        
-        if result.proc_status == "0":
-            annotation = IAnnotations(order)
-            if annotation.get(interfaces.keys.capture_amount) is not None:
-                annotation[interfaces.keys.capture_amount] -= amount                        
-            return interfaces.keys.results_success
-        else:
-            return result.status_msg
+        #data = createAuthorizeXMLFile('R', options, order, payment)
+        #
+        #result = self.process(data, timeout=None)
+        #
+        #if result.proc_status == "0":
+        #    annotation = IAnnotations(order)
+        #    if annotation.get(interfaces.keys.capture_amount) is not None:
+        #        annotation[interfaces.keys.capture_amount] -= amount                        
+        #    return interfaces.keys.results_success
+        #else:
+        #    return result.status_msg
+        return "Not implemented"
 
     def process(self, data, timeout):
         """

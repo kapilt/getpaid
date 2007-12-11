@@ -14,6 +14,6 @@ class IPaymentechOptions(interfaces.IPaymentProcessorOptions):
                 "Test2",)
         )
     
-    merchant_id = schema.ASCIILine( title=u"API Login Id" )
-    merchant_key = schema.ASCIILine( title=u"Transaction Key" )
+    merchant_id = schema.ASCIILine( title=u"Merchant Id" )
+    #merchant_key = schema.ASCIILine( title=u"Transaction Key" )
     terminal_id = schema.ASCIILine( title=u"Terminal Id" )
