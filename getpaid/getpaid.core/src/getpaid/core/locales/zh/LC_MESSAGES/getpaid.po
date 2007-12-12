@@ -1,0 +1,370 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GetPaid.core 0.3.0\n"
+"POT-Creation-Date: 2007-11-01 22:53+0000\n"
+"PO-Revision-Date: 2007-12-12 19:22+0800\n"
+"Last-Translator: adam tang <yuejun.tang@gmail.com>\n"
+"Language-Team: http://315ok.org/ team <admins@315ok.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: zh\n"
+"Language-Name: Chinese\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: getpaid\n"
+"Generated-By: zope/app/translation_files/extract.py\n"
+"X-Is-Fallback-For: zh-cn zh-hk zh-mo zh-sg\n"
+
+#: ./interfaces.py:373
+msgid "Accepted"
+msgstr "已接受"
+
+#: ./interfaces.py:66
+msgid "An organization's unique product identifier (not required since shopping cart uses content UID internally)"
+msgstr "产品唯一标识符（不是必须的，因为购物车采用商品的UID标识）"
+
+#: ./workflow/order.py:75
+msgid "Authorize"
+msgstr "授权"
+
+#: ./interfaces.py:333
+msgid "Can we contact you regarding new offers?"
+msgstr "是否接受新的商品信息？"
+
+#: ./interfaces.py:332
+msgid "Can we contact you with offers"
+msgstr "是否接收商品信息？"
+
+#: ./workflow/item.py:109
+msgid "Cancel"
+msgstr "取消"
+
+#: ./workflow/order.py:88
+msgid "Cancel Order"
+msgstr "取消订单"
+
+#: ./interfaces.py:348
+msgid "Card Holder Name"
+msgstr "信任卡持有者姓名"
+
+#: ./interfaces.py:472
+msgid "Change Date"
+msgstr "更改日期"
+
+#: ./interfaces.py:473
+msgid "Change Kind"
+msgstr "更改种类"
+
+#: ./interfaces.py:471
+msgid "Changed By"
+msgstr "已更改由"
+
+#: ./workflow/shipment.py:70
+msgid "Charge"
+msgstr "支付"
+
+#: ./workflow/order.py:82
+msgid "Charge Order"
+msgstr "支付订单"
+
+#: ./workflow/shipment.py:85
+msgid "Charged"
+msgstr "已支付"
+
+#: ./interfaces.py:275
+msgid "City"
+msgstr "城市"
+
+#: ./interfaces.py:474
+msgid "Comment"
+msgstr "评注"
+
+#: ./interfaces.py:328
+msgid "Contact Information"
+msgstr "联系信息"
+
+#: ./interfaces.py:176
+msgid "Cost"
+msgstr "花费"
+
+#: ./interfaces.py:276
+msgid "Country"
+msgstr "国家"
+
+#: ./workflow/order.py:24
+msgid "Create"
+msgstr "创建"
+
+#: ./interfaces.py:361
+msgid "Credit Card Expiration Date"
+msgstr "信任卡过期日期"
+
+#: ./interfaces.py:358
+msgid "Credit Card Number"
+msgstr "信任卡号码"
+
+#: ./interfaces.py:355
+msgid "Credit Card Type"
+msgstr "信任卡类型"
+
+#: ./interfaces.py:364
+msgid "Credit Card Verfication Number"
+msgstr "信任卡认证号码"
+
+#: ./interfaces.py:414
+msgid "Customer Id"
+msgstr "客户ID"
+
+#: ./interfaces.py:374
+msgid "Declined"
+msgstr "拒绝"
+
+#: ./workflow/shipment.py:109
+msgid "Delivered"
+msgstr "已发送"
+
+#: ./interfaces.py:175
+msgid "Description"
+msgstr "描述"
+
+#: ./interfaces.py:98
+msgid "Dimensions"
+msgstr "尺寸"
+
+#: ./interfaces.py:74
+msgid "Donation Description"
+msgstr "折扣描述"
+
+#: ./workflow/item.py:100
+msgid "Electronic Delivery"
+msgstr "电子发送"
+
+#: ./interfaces.py:327
+msgid "Email"
+msgstr "电子邮件"
+
+#: ./interfaces.py:337
+msgid "Email Format"
+msgstr "邮件格式"
+
+#: ./interfaces.py:349
+msgid "Enter the full name, as it appears on the card. "
+msgstr "输入全名，该名称将出现在卡上。"
+
+#: ./order.py:428
+msgid "Finance"
+msgstr "财务"
+
+#: ./interfaces.py:420
+msgid "Finance State"
+msgstr "财务状态"
+
+#: ./interfaces.py:273
+msgid "First Line"
+msgstr "地址一"
+
+#: ./interfaces.py:365
+msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "
+msgstr "对于MC,VIsa,DC,是卡背面三个数字，对于AmEx,是卡正面4位代码"
+
+#: ./order.py:430
+msgid "Fulfillment"
+msgstr "履行"
+
+#: ./interfaces.py:421
+msgid "Fulfillment State"
+msgstr "履约状态"
+
+#: ./interfaces.py:314
+msgid "HTML"
+msgstr "HTML"
+
+#: ./interfaces.py:199
+msgid "Integer Id for a Product"
+msgstr "产品ID（应为整数）"
+
+#: ./fields.py:11
+msgid "Invalid Credit Card Number."
+msgstr "无效的信任卡号码"
+
+#: ./order.py:94
+msgid "Invalid Order Id"
+msgstr "无效的订单ID"
+
+#: ./interfaces.py:60
+msgid "Made Payable By"
+msgstr "上架销售由"
+
+#: ./interfaces.py:174
+msgid "Name"
+msgstr "名称"
+
+#: ./interfaces.py:475
+msgid "New State"
+msgstr "新状态"
+
+#: ./interfaces.py:308
+msgid "No"
+msgstr "不"
+
+#: ./fields.py:8
+msgid "Only digit character allowed."
+msgstr "仅仅允许数字字符"
+
+#: ./interfaces.py:324
+msgid "Only digits allowed - e.g. 3334445555 and not 333-444-5555 "
+msgstr "只允许数字，例如：3334445555  而不能是  333-444-5555 "
+
+#: ./interfaces.py:359
+msgid "Only digits allowed - e.g. 4444555566667777 and not 4444-5555-6666-7777 "
+msgstr "只允许数字，例如： 4444555566667777 而不能是 4444-5555-6666-7777 "
+
+#: ./workflow/shipment.py:93
+msgid "Order Charged"
+msgstr "已付款订单"
+
+#: ./order.py:92
+msgid "Order Id already set"
+msgstr "订单ID已设置"
+
+#: ./workflow/order.py:35
+msgid "Order Processed"
+msgstr "已处理的订单"
+
+#: ./workflow/order.py:68
+msgid "Payment Declined"
+msgstr "拒绝的支付"
+
+#: ./interfaces.py:372
+msgid "Payment Status"
+msgstr "支付状态"
+
+#: ./interfaces.py:207
+msgid "Period as a timedelta"
+msgstr "拒绝支付"
+
+#: ./interfaces.py:323
+msgid "Phone Number"
+msgstr "电话号码"
+
+#: ./interfaces.py:314
+msgid "Plain Text"
+msgstr "平面文本"
+
+#: ./interfaces.py:273
+msgid "Please Enter Your Address"
+msgstr "请输入您的地址"
+
+#: ./interfaces.py:476
+msgid "Previous State"
+msgstr "前一状态"
+
+#: ./interfaces.py:69
+msgid "Price"
+msgstr "价格"
+
+#: ./workflow/order.py:30
+msgid "Process Order"
+msgstr "处理订单"
+
+#: ./workflow/order.py:138
+msgid "Processor Cancel"
+msgstr "处理取消"
+
+#: ./workflow/order.py:100
+msgid "Processor Charged"
+msgstr "已付款处理"
+
+#: ./workflow/order.py:94
+msgid "Processor Declined"
+msgstr "拒绝处理"
+
+#: ./interfaces.py:422
+msgid "Processor Order Id"
+msgstr "处理订单ID"
+
+#: ./interfaces.py:65
+msgid "Product Code"
+msgstr "产品代码"
+
+#: ./interfaces.py:99
+msgid "Product SKU"
+msgstr "产品SKU"
+
+#: ./interfaces.py:177
+msgid "Quantity"
+msgstr "数量"
+
+#: ./workflow/item.py:117
+msgid "Refund"
+msgstr "退款"
+
+#: ./workflow/item.py:124
+msgid "Refund Processed"
+msgstr "已处理的退款"
+
+#: ./interfaces.py:375
+msgid "Refunded"
+msgstr "已退还"
+
+#: ./interfaces.py:274
+msgid "Second Line"
+msgstr "地址二"
+
+#: ./interfaces.py:362
+msgid "Select month and year"
+msgstr "选择年份和月份"
+
+#: ./workflow/item.py:133
+msgid "Ship"
+msgstr "送货"
+
+#: ./interfaces.py:39
+msgid "Shipping Method"
+msgstr "送货方法"
+
+#: ./interfaces.py:278
+msgid "State"
+msgstr "状态"
+
+#: ./interfaces.py:43
+msgid "Store/Organization Name"
+msgstr "商家名称"
+
+#: ./interfaces.py:173
+msgid "Unique Item Id"
+msgstr "唯一项目ID"
+
+#: ./interfaces.py:75
+msgid "Very brief 50 character text (that shows up in portlet)"
+msgstr "摘要描述（25个字）"
+
+#: ./workflow/order.py:41
+msgid "Will Not Deliver"
+msgstr "不将发送"
+
+#: ./interfaces.py:338
+msgid "Would you prefer to receive rich html emails or only plain text"
+msgstr "你选择接受HTML格式还是平面文本格式邮件？"
+
+#: ./interfaces.py:308
+msgid "Yes"
+msgstr "确认"
+
+#: ./interfaces.py:321
+msgid "Your Name"
+msgstr "您的名称"
+
+#: ./interfaces.py:292
+msgid "Zip Code"
+msgstr "邮政编码"
+
+#: ./interfaces.py:280
+msgid "Zip/Postal Code"
+msgstr "邮政编码"
+
+#: ./locales/empty.pt:3
+msgid "do_not_translate"
+msgstr ""
+
