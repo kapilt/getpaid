@@ -130,12 +130,12 @@ class PaymentechResult(object):
     
     def __init__(self, response):
         self.response = response
-        result = xml.dom.minidom.parseString(self.response.read())
+        self.result_resp = xml.dom.minidom.parseString(self.response.read())
         # ProcStatus is the only element that is returned in all response scenarios
-        self.proc_status = getElement(result, 'ProcStatus')
-        self.approval_status = getElement(result, 'ApprovalStatus')
-        self.trans_ref_num = getElement(result, 'TxRefNum')
-        self.status_msg = getElement(result, 'StatusMsg')
+        self.proc_status = getElement(self.result_resp, 'ProcStatus')
+        self.approval_status = getElement(self.result_resp, 'ApprovalStatus')
+        self.trans_ref_num = getElement(self.result_resp, 'TxRefNum')
+        self.status_msg = getElement(self.result_resp, 'StatusMsg')
 
 class PaymentechAdapter(object):
     interface.implements(interfaces.IPaymentProcessor)
