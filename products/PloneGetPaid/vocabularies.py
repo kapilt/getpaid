@@ -62,23 +62,6 @@ def WeightUnits( context ):
 def Currencies( context ):
     return vocabulary.SimpleVocabulary.fromValues( (_(u"US Dollars"),) )
 
-def MerchantNotificationChoices( context ):
-    return vocabulary.SimpleVocabulary.fromItems(
-        [
-        (_(u"Do not send merchant email notification of a completed transaction") ,u"no_notification"),
-        (_(u"Send merchant email notification when a transaction happens"), u"notification"),
-        #("Send merchant encrypted email notification when a transaction happens", u"encrypted_notification")]
-        ]
-        )
-
-def CustomerNotificationChoices( context ):
-    return vocabulary.SimpleVocabulary.fromItems(
-        [
-        (_(u"Do not send customer email notification of a completed transaction"), u"no_notification"),
-        (_(u"Send customer email notification of a completed transaction"), u"notification")
-        ]
-        )
-
 class TitledVocabulary(vocabulary.SimpleVocabulary):
     def fromTitles(cls, items, *interfaces):
         """Construct a vocabulary from a list of (value,title) pairs.
@@ -93,6 +76,23 @@ class TitledVocabulary(vocabulary.SimpleVocabulary):
         terms = [cls.createTerm(value,value,title) for (value,title) in items]
         return cls(terms, *interfaces)
     fromTitles = classmethod(fromTitles)
+
+def CustomerNotificationChoices( context ):
+    return TitledVocabulary.fromTitles(
+        [
+        ("no_notification", _(u"Do not send customer email notification of a completed transaction")),
+        ("notification", _(u"Send customer email notification of a completed transaction"))
+        ]
+        )
+
+def MerchantNotificationChoices( context ):
+    return TitledVocabulary.fromTitles(
+        [
+        ("no_notification", _(u"Do not send merchant email notification of a completed transaction")),
+        ("notification", _(u"Send merchant email notification when a transaction happens")),
+        #("encrypted_notification", _u"Send merchant encrypted email notification when a transaction happens")]
+        ]
+        )
 
 class CountriesStatesFromFile(object):
     """Countries utility that reads data from a file
