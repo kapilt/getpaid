@@ -309,7 +309,7 @@ msgstr ""
 
 #: ./interfaces.py:313
 msgid "Same as billing address"
-msgstr ""
+msgstr "Zelfde als adres voor rekening"
 
 #: ./interfaces.py:302
 msgid "Second Line"
