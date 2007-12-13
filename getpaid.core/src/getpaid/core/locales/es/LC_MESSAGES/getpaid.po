@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GetPaid VERSION\n"
-"POT-Creation-Date: 2007-11-01 22:53+0000\n"
+"POT-Creation-Date: 2007-12-13 20:02+0000\n"
 "PO-Revision-Date: 2007-08-16 12:46-0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Domain: getpaid\n"
 "X-Is-Fallback-For: es-ar es-bo es-cl es-co es-cr es-do es-ec es-es es-sv es-gt es-hn es-mx es-ni es-pa es-py es-pe es-pr es-us es-uy es-ve\n"
 
-#: ./interfaces.py:373
+#: ./interfaces.py:402
 msgid "Accepted"
 msgstr "Aceptado"
 
@@ -30,11 +30,11 @@ msgstr "Identificador unico de su organización (no es requerido ya que el carri
 msgid "Authorize"
 msgstr "Autorizar"
 
-#: ./interfaces.py:333
+#: ./interfaces.py:362
 msgid "Can we contact you regarding new offers?"
 msgstr "¿Podemos contactarlo por nuevas ofertas?"
 
-#: ./interfaces.py:332
+#: ./interfaces.py:361
 msgid "Can we contact you with offers"
 msgstr "¿Podemos contactarlo con ofertas?"
 
@@ -46,19 +46,19 @@ msgstr "Cancelar"
 msgid "Cancel Order"
 msgstr "Cancelar Pedido"
 
-#: ./interfaces.py:348
+#: ./interfaces.py:377
 msgid "Card Holder Name"
 msgstr "Nombre del Titular de la Tarjeta"
 
-#: ./interfaces.py:472
+#: ./interfaces.py:501
 msgid "Change Date"
 msgstr "Fecha de Cambio"
 
-#: ./interfaces.py:473
+#: ./interfaces.py:502
 msgid "Change Kind"
 msgstr "Cambiar tipo"
 
-#: ./interfaces.py:471
+#: ./interfaces.py:500
 msgid "Changed By"
 msgstr "Cambiado por"
 
@@ -74,15 +74,15 @@ msgstr "Cobrar Pedido"
 msgid "Charged"
 msgstr "Cobrado"
 
-#: ./interfaces.py:275
+#: ./interfaces.py:303
 msgid "City"
 msgstr "Ciudad"
 
-#: ./interfaces.py:474
+#: ./interfaces.py:503
 msgid "Comment"
 msgstr "Comentario"
 
-#: ./interfaces.py:328
+#: ./interfaces.py:357
 msgid "Contact Information"
 msgstr "Información de contacto"
 
@@ -90,7 +90,7 @@ msgstr "Información de contacto"
 msgid "Cost"
 msgstr "Precio"
 
-#: ./interfaces.py:276
+#: ./interfaces.py:304
 msgid "Country"
 msgstr "País"
 
@@ -98,27 +98,27 @@ msgstr "País"
 msgid "Create"
 msgstr "Crear"
 
-#: ./interfaces.py:361
+#: ./interfaces.py:390
 msgid "Credit Card Expiration Date"
 msgstr "Fecha de Expiración de la Tarjeta de Crédito"
 
-#: ./interfaces.py:358
+#: ./interfaces.py:387
 msgid "Credit Card Number"
 msgstr "Número de la Tarjeta de Crédito"
 
-#: ./interfaces.py:355
+#: ./interfaces.py:384
 msgid "Credit Card Type"
 msgstr "Tipo de Tarjeta de Crédito"
 
-#: ./interfaces.py:364
+#: ./interfaces.py:393
 msgid "Credit Card Verfication Number"
 msgstr "Número de Verificación de la Tarjeta de Crédito"
 
-#: ./interfaces.py:414
+#: ./interfaces.py:443
 msgid "Customer Id"
 msgstr "Id del Cliente"
 
-#: ./interfaces.py:374
+#: ./interfaces.py:403
 msgid "Declined"
 msgstr "Rechazado"
 
@@ -142,47 +142,47 @@ msgstr "Descripción de la Donación"
 msgid "Electronic Delivery"
 msgstr "Entrega Electrónica"
 
-#: ./interfaces.py:327
+#: ./interfaces.py:356
 msgid "Email"
 msgstr "Email"
 
-#: ./interfaces.py:337
+#: ./interfaces.py:366
 msgid "Email Format"
 msgstr "Formato de Email"
 
-#: ./interfaces.py:349
+#: ./interfaces.py:378
 msgid "Enter the full name, as it appears on the card. "
 msgstr "Ingrese el nombre completo, como aparece en la tarjeta. "
 
-#: ./order.py:428
+#: ./order.py:430
 msgid "Finance"
 msgstr "Financiar"
 
-#: ./interfaces.py:420
+#: ./interfaces.py:449
 msgid "Finance State"
 msgstr "Estado Financiero"
 
-#: ./interfaces.py:273
+#: ./interfaces.py:301
 msgid "First Line"
 msgstr "Primer Renglón"
 
-#: ./interfaces.py:365
+#: ./interfaces.py:394
 msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "
 msgstr "Para MC, Visa, y DC, es un numero de tres digitos que se encuentra en la parte de atras de la tarjeta. Para AmEx, es un numero de cuatro digitos en el frente de la misma."
 
-#: ./order.py:430
+#: ./order.py:432
 msgid "Fulfillment"
 msgstr ""
 
-#: ./interfaces.py:421
+#: ./interfaces.py:450
 msgid "Fulfillment State"
 msgstr ""
 
-#: ./interfaces.py:314
+#: ./interfaces.py:343
 msgid "HTML"
 msgstr "HTML"
 
-#: ./interfaces.py:199
+#: ./interfaces.py:223
 msgid "Integer Id for a Product"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Invalid Credit Card Number."
 msgstr ""
 
-#: ./order.py:94
+#: ./order.py:79
 msgid "Invalid Order Id"
 msgstr "Id de Pedido Inválida"
 
@@ -202,11 +202,11 @@ msgstr "Hecho Pagable Por"
 msgid "Name"
 msgstr "Nombre"
 
-#: ./interfaces.py:475
+#: ./interfaces.py:504
 msgid "New State"
 msgstr "Nuevo Estado"
 
-#: ./interfaces.py:308
+#: ./interfaces.py:337
 msgid "No"
 msgstr "No"
 
@@ -214,11 +214,11 @@ msgstr "No"
 msgid "Only digit character allowed."
 msgstr ""
 
-#: ./interfaces.py:324
+#: ./interfaces.py:353
 msgid "Only digits allowed - e.g. 3334445555 and not 333-444-5555 "
 msgstr "Solo dígitos permitidos - ej. 3334445555 no 333-444-5555 "
 
-#: ./interfaces.py:359
+#: ./interfaces.py:388
 msgid "Only digits allowed - e.g. 4444555566667777 and not 4444-5555-6666-7777 "
 msgstr "Solo dígitos permitidos - ej. 4444555566667777 no 4444-5555-6666-7777"
 
@@ -226,7 +226,7 @@ msgstr "Solo dígitos permitidos - ej. 4444555566667777 no 4444-5555-6666-7777"
 msgid "Order Charged"
 msgstr "Pedido Cobrada"
 
-#: ./order.py:92
+#: ./order.py:77
 msgid "Order Id already set"
 msgstr "Id de la orden ya fue asignado"
 
@@ -238,27 +238,27 @@ msgstr "Pedido Procesada"
 msgid "Payment Declined"
 msgstr "Pago declinado"
 
-#: ./interfaces.py:372
+#: ./interfaces.py:401
 msgid "Payment Status"
 msgstr "Estado del Pago"
 
-#: ./interfaces.py:207
+#: ./interfaces.py:231
 msgid "Period as a timedelta"
 msgstr "Periodo como una diferencia de tiempo"
 
-#: ./interfaces.py:323
+#: ./interfaces.py:352
 msgid "Phone Number"
 msgstr "Número de Teléfono"
 
-#: ./interfaces.py:314
+#: ./interfaces.py:343
 msgid "Plain Text"
 msgstr "Texto plano"
 
-#: ./interfaces.py:273
+#: ./interfaces.py:301
 msgid "Please Enter Your Address"
 msgstr "Por favor ingrese su dirección"
 
-#: ./interfaces.py:476
+#: ./interfaces.py:505
 msgid "Previous State"
 msgstr "Estado Anterior"
 
@@ -282,7 +282,7 @@ msgstr "Procesador cambiado"
 msgid "Processor Declined"
 msgstr "Procesador declinado"
 
-#: ./interfaces.py:422
+#: ./interfaces.py:451
 msgid "Processor Order Id"
 msgstr "Id del procesador de ordenes"
 
@@ -306,15 +306,19 @@ msgstr "Devolución"
 msgid "Refund Processed"
 msgstr "Devolución procesada"
 
-#: ./interfaces.py:375
+#: ./interfaces.py:404
 msgid "Refunded"
 msgstr "Devuelto"
 
-#: ./interfaces.py:274
+#: ./interfaces.py:313
+msgid "Same as billing address"
+msgstr ""
+
+#: ./interfaces.py:302
 msgid "Second Line"
 msgstr "Segundo Renglón"
 
-#: ./interfaces.py:362
+#: ./interfaces.py:391
 msgid "Select month and year"
 msgstr "Seleccione mes y año"
 
@@ -326,7 +330,7 @@ msgstr "Enviar"
 msgid "Shipping Method"
 msgstr ""
 
-#: ./interfaces.py:278
+#: ./interfaces.py:306
 msgid "State"
 msgstr "Estado"
 
@@ -346,23 +350,23 @@ msgstr "Descripción de hasta 50 carácteres que se muestra en el portlet)"
 msgid "Will Not Deliver"
 msgstr "No se enviará"
 
-#: ./interfaces.py:338
+#: ./interfaces.py:367
 msgid "Would you prefer to receive rich html emails or only plain text"
 msgstr "¿Preferiría recibir emails con html o solo texto plano?"
 
-#: ./interfaces.py:308
+#: ./interfaces.py:337
 msgid "Yes"
 msgstr "Si"
 
-#: ./interfaces.py:321
+#: ./interfaces.py:350
 msgid "Your Name"
 msgstr "Su nombre"
 
-#: ./interfaces.py:292
+#: ./interfaces.py:321
 msgid "Zip Code"
 msgstr "Código postal"
 
-#: ./interfaces.py:280
+#: ./interfaces.py:308
 msgid "Zip/Postal Code"
 msgstr "Código postal"
 

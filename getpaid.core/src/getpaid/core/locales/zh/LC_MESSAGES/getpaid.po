@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GetPaid.core 0.3.0\n"
-"POT-Creation-Date: 2007-11-01 22:53+0000\n"
+"POT-Creation-Date: 2007-12-13 20:02+0000\n"
 "PO-Revision-Date: 2007-12-12 19:22+0800\n"
 "Last-Translator: adam tang <yuejun.tang@gmail.com>\n"
 "Language-Team: http://315ok.org/ team <admins@315ok.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Generated-By: zope/app/translation_files/extract.py\n"
 "X-Is-Fallback-For: zh-cn zh-hk zh-mo zh-sg\n"
 
-#: ./interfaces.py:373
+#: ./interfaces.py:402
 msgid "Accepted"
 msgstr "已接受"
 
@@ -28,11 +28,11 @@ msgstr "产品唯一标识符（不是必须的，因为购物车采用商品的
 msgid "Authorize"
 msgstr "授权"
 
-#: ./interfaces.py:333
+#: ./interfaces.py:362
 msgid "Can we contact you regarding new offers?"
 msgstr "是否接受新的商品信息？"
 
-#: ./interfaces.py:332
+#: ./interfaces.py:361
 msgid "Can we contact you with offers"
 msgstr "是否接收商品信息？"
 
@@ -44,19 +44,19 @@ msgstr "取消"
 msgid "Cancel Order"
 msgstr "取消订单"
 
-#: ./interfaces.py:348
+#: ./interfaces.py:377
 msgid "Card Holder Name"
 msgstr "信任卡持有者姓名"
 
-#: ./interfaces.py:472
+#: ./interfaces.py:501
 msgid "Change Date"
 msgstr "更改日期"
 
-#: ./interfaces.py:473
+#: ./interfaces.py:502
 msgid "Change Kind"
 msgstr "更改种类"
 
-#: ./interfaces.py:471
+#: ./interfaces.py:500
 msgid "Changed By"
 msgstr "已更改由"
 
@@ -72,15 +72,15 @@ msgstr "支付订单"
 msgid "Charged"
 msgstr "已支付"
 
-#: ./interfaces.py:275
+#: ./interfaces.py:303
 msgid "City"
 msgstr "城市"
 
-#: ./interfaces.py:474
+#: ./interfaces.py:503
 msgid "Comment"
 msgstr "评注"
 
-#: ./interfaces.py:328
+#: ./interfaces.py:357
 msgid "Contact Information"
 msgstr "联系信息"
 
@@ -88,7 +88,7 @@ msgstr "联系信息"
 msgid "Cost"
 msgstr "花费"
 
-#: ./interfaces.py:276
+#: ./interfaces.py:304
 msgid "Country"
 msgstr "国家"
 
@@ -96,27 +96,27 @@ msgstr "国家"
 msgid "Create"
 msgstr "创建"
 
-#: ./interfaces.py:361
+#: ./interfaces.py:390
 msgid "Credit Card Expiration Date"
 msgstr "信任卡过期日期"
 
-#: ./interfaces.py:358
+#: ./interfaces.py:387
 msgid "Credit Card Number"
 msgstr "信任卡号码"
 
-#: ./interfaces.py:355
+#: ./interfaces.py:384
 msgid "Credit Card Type"
 msgstr "信任卡类型"
 
-#: ./interfaces.py:364
+#: ./interfaces.py:393
 msgid "Credit Card Verfication Number"
 msgstr "信任卡认证号码"
 
-#: ./interfaces.py:414
+#: ./interfaces.py:443
 msgid "Customer Id"
 msgstr "客户ID"
 
-#: ./interfaces.py:374
+#: ./interfaces.py:403
 msgid "Declined"
 msgstr "拒绝"
 
@@ -140,47 +140,47 @@ msgstr "折扣描述"
 msgid "Electronic Delivery"
 msgstr "电子发送"
 
-#: ./interfaces.py:327
+#: ./interfaces.py:356
 msgid "Email"
 msgstr "电子邮件"
 
-#: ./interfaces.py:337
+#: ./interfaces.py:366
 msgid "Email Format"
 msgstr "邮件格式"
 
-#: ./interfaces.py:349
+#: ./interfaces.py:378
 msgid "Enter the full name, as it appears on the card. "
 msgstr "输入全名，该名称将出现在卡上。"
 
-#: ./order.py:428
+#: ./order.py:430
 msgid "Finance"
 msgstr "财务"
 
-#: ./interfaces.py:420
+#: ./interfaces.py:449
 msgid "Finance State"
 msgstr "财务状态"
 
-#: ./interfaces.py:273
+#: ./interfaces.py:301
 msgid "First Line"
 msgstr "地址一"
 
-#: ./interfaces.py:365
+#: ./interfaces.py:394
 msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "
 msgstr "对于MC,VIsa,DC,是卡背面三个数字，对于AmEx,是卡正面4位代码"
 
-#: ./order.py:430
+#: ./order.py:432
 msgid "Fulfillment"
 msgstr "履行"
 
-#: ./interfaces.py:421
+#: ./interfaces.py:450
 msgid "Fulfillment State"
 msgstr "履约状态"
 
-#: ./interfaces.py:314
+#: ./interfaces.py:343
 msgid "HTML"
 msgstr "HTML"
 
-#: ./interfaces.py:199
+#: ./interfaces.py:223
 msgid "Integer Id for a Product"
 msgstr "产品ID（应为整数）"
 
@@ -188,7 +188,7 @@ msgstr "产品ID（应为整数）"
 msgid "Invalid Credit Card Number."
 msgstr "无效的信任卡号码"
 
-#: ./order.py:94
+#: ./order.py:79
 msgid "Invalid Order Id"
 msgstr "无效的订单ID"
 
@@ -200,11 +200,11 @@ msgstr "上架销售由"
 msgid "Name"
 msgstr "名称"
 
-#: ./interfaces.py:475
+#: ./interfaces.py:504
 msgid "New State"
 msgstr "新状态"
 
-#: ./interfaces.py:308
+#: ./interfaces.py:337
 msgid "No"
 msgstr "不"
 
@@ -212,11 +212,11 @@ msgstr "不"
 msgid "Only digit character allowed."
 msgstr "仅仅允许数字字符"
 
-#: ./interfaces.py:324
+#: ./interfaces.py:353
 msgid "Only digits allowed - e.g. 3334445555 and not 333-444-5555 "
 msgstr "只允许数字，例如：3334445555  而不能是  333-444-5555 "
 
-#: ./interfaces.py:359
+#: ./interfaces.py:388
 msgid "Only digits allowed - e.g. 4444555566667777 and not 4444-5555-6666-7777 "
 msgstr "只允许数字，例如： 4444555566667777 而不能是 4444-5555-6666-7777 "
 
@@ -224,7 +224,7 @@ msgstr "只允许数字，例如： 4444555566667777 而不能是 4444-5555-6666
 msgid "Order Charged"
 msgstr "已付款订单"
 
-#: ./order.py:92
+#: ./order.py:77
 msgid "Order Id already set"
 msgstr "订单ID已设置"
 
@@ -236,27 +236,27 @@ msgstr "已处理的订单"
 msgid "Payment Declined"
 msgstr "拒绝的支付"
 
-#: ./interfaces.py:372
+#: ./interfaces.py:401
 msgid "Payment Status"
 msgstr "支付状态"
 
-#: ./interfaces.py:207
+#: ./interfaces.py:231
 msgid "Period as a timedelta"
 msgstr "拒绝支付"
 
-#: ./interfaces.py:323
+#: ./interfaces.py:352
 msgid "Phone Number"
 msgstr "电话号码"
 
-#: ./interfaces.py:314
+#: ./interfaces.py:343
 msgid "Plain Text"
 msgstr "平面文本"
 
-#: ./interfaces.py:273
+#: ./interfaces.py:301
 msgid "Please Enter Your Address"
 msgstr "请输入您的地址"
 
-#: ./interfaces.py:476
+#: ./interfaces.py:505
 msgid "Previous State"
 msgstr "前一状态"
 
@@ -280,7 +280,7 @@ msgstr "已付款处理"
 msgid "Processor Declined"
 msgstr "拒绝处理"
 
-#: ./interfaces.py:422
+#: ./interfaces.py:451
 msgid "Processor Order Id"
 msgstr "处理订单ID"
 
@@ -304,15 +304,19 @@ msgstr "退款"
 msgid "Refund Processed"
 msgstr "已处理的退款"
 
-#: ./interfaces.py:375
+#: ./interfaces.py:404
 msgid "Refunded"
 msgstr "已退还"
 
-#: ./interfaces.py:274
+#: ./interfaces.py:313
+msgid "Same as billing address"
+msgstr ""
+
+#: ./interfaces.py:302
 msgid "Second Line"
 msgstr "地址二"
 
-#: ./interfaces.py:362
+#: ./interfaces.py:391
 msgid "Select month and year"
 msgstr "选择年份和月份"
 
@@ -324,7 +328,7 @@ msgstr "送货"
 msgid "Shipping Method"
 msgstr "送货方法"
 
-#: ./interfaces.py:278
+#: ./interfaces.py:306
 msgid "State"
 msgstr "状态"
 
@@ -344,23 +348,23 @@ msgstr "摘要描述（25个字）"
 msgid "Will Not Deliver"
 msgstr "不将发送"
 
-#: ./interfaces.py:338
+#: ./interfaces.py:367
 msgid "Would you prefer to receive rich html emails or only plain text"
 msgstr "你选择接受HTML格式还是平面文本格式邮件？"
 
-#: ./interfaces.py:308
+#: ./interfaces.py:337
 msgid "Yes"
 msgstr "确认"
 
-#: ./interfaces.py:321
+#: ./interfaces.py:350
 msgid "Your Name"
 msgstr "您的名称"
 
-#: ./interfaces.py:292
+#: ./interfaces.py:321
 msgid "Zip Code"
 msgstr "邮政编码"
 
-#: ./interfaces.py:280
+#: ./interfaces.py:308
 msgid "Zip/Postal Code"
 msgstr "邮政编码"
 
