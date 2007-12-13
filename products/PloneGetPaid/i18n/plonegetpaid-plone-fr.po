@@ -21,20 +21,20 @@ msgstr ""
 msgid "Make Buyable"
 msgstr "Rendre Achetable"
 
+msgid "Make Not Buyable"
+msgstr "Rendre Non Achetable"
+
+msgid "Make Not Premium Members Only"
+msgstr ""
+
+msgid "Make Not Shippable Product"
+msgstr "Rendre Non Livrable"
+
 msgid "Make Shippable Product"
 msgstr "Rendre Livrable"
 
 msgid "Make this a Donation"
 msgstr "En faire une Donation"
-
-msgid "Make Not Buyable"
-msgstr "Rendre Non Achetable"
-
-msgid "Make Not Shippable Product"
-msgstr "Rendre Non Livrable"
-
-msgid "Make Not Premium Members Only"
-msgstr ""
 
 msgid "Make this not a Donation"
 msgstr "Ne Pas En faire une Donation"
@@ -45,11 +45,12 @@ msgstr "Voir mon Panier"
 msgid "Order History"
 msgstr "Historique des Commandes"
 
-msgid "Settings"
-msgstr "Paramètrage"
-
 msgid "Orders"
 msgstr "Commandes"
 
 msgid "Payable"
 msgstr "Payable"
+
+msgid "Settings"
+msgstr "Paramètrage"
+

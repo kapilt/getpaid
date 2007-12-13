@@ -20,30 +20,6 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-msgid "Site Profile"
-msgstr ""
-
-msgid "Content Types"
-msgstr ""
-
-msgid "Shipping Options"
-msgstr ""
-
-msgid "Payment Options"
-msgstr ""
-
-msgid "Payment Processor Settings"
-msgstr ""
-
-msgid "Sales Tax Configuration"
-msgstr ""
-
-msgid "Email Notifications"
-msgstr ""
-
-msgid "Legal Disclaimers"
-msgstr ""
-
 # zope.formlib
 # Apply button
 msgid "Apply"
