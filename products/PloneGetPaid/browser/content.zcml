@@ -47,7 +47,7 @@
   <!-- Edit Views, on payable -->
   <browser:page
      for="..interfaces.IBuyableMarker"
-     name="edit-buyable"
+     name="edit-payable"
      class=".content.BuyableEdit"
      permission="cmf.ModifyPortalContent"
      />
@@ -60,13 +60,22 @@
      for="..interfaces.IBuyableMarker"
      menu="object"
      title="Payable"
-     action="edit-buyable"
+     action="edit-payable"
      filter="python:object.portal_membership.checkPermission('Modify portal content', object)"
+     />
+
+  <!-- This view exists mainly to solve this issue:
+       http://code.google.com/p/getpaid/issues/detail?id=152 -->
+  <browser:page
+     for="..interfaces.IPayableMarker"
+     name="payable-content"
+     class=".content.IsPayableContent"
+     permission="zope2.View"
      />
 
   <browser:page
      for="..interfaces.IPremiumMarker"
-     name="edit-premium"
+     name="edit-payable"
      menu="object"
      title="Payable"
      class=".content.PremiumEdit"
@@ -75,7 +84,7 @@
 
   <browser:page
      for="..interfaces.IShippableMarker"
-     name="edit-shippable"
+     name="edit-payable"
      menu="object"
      title="Payable"
      class=".content.ShippableEdit"
@@ -84,7 +93,7 @@
 
   <browser:page
     for="..interfaces.IDonatableMarker"
-    name="edit-donate"
+    name="edit-payable"
     class=".content.DonateEdit"
     permission="cmf.ModifyPortalContent"
     />
@@ -93,7 +102,7 @@
      for="..interfaces.IDonatableMarker"
      menu="object"
      title="Payable"
-     action="edit-donate"
+     action="edit-payable"
      filter="python:object.portal_membership.checkPermission('Modify portal content', object)"
      />
 

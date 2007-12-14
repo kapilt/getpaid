@@ -65,4 +65,20 @@
             <permission>View</permission>
         </action>
     </action-provider>
+    <object name="object" meta_type="CMF Action Category">
+      <property name="title"></property>
+      <object name="buyable" meta_type="CMF Action">
+        <property name="title">Payable</property>
+        <property name="description"></property>
+        <property
+            name="url_expr">string:${object_url}/@@edit-payable</property>
+        <property name="icon_expr"></property>
+        <property
+            name="available_expr">object/@@payable-content|nothing</property>
+        <property name="permissions">
+          <element value="Modify portal content"/>
+        </property>
+        <property name="visible">True</property>
+      </object>
+    </object>
 </object>
