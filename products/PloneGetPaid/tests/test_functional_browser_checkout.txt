@@ -115,11 +115,11 @@ Continue where we left of after clicking Donate.
     >>> browser.getControl(name='form.email').value = 'test@test.com'
     >>> browser.getControl(name='form.bill_first_line').value = 'Test'
     >>> browser.getControl(name='form.bill_city').value = 'Test'
-    >>> browser.getControl(name='form.bill_state').value = 'US-HI'
+    >>> browser.getControl(name='form.bill_state').value = ('US-HI',)
     >>> browser.getControl(name='form.bill_postal_code').value = '12345'
     >>> browser.getControl(name='form.ship_first_line').value = 'Test'
     >>> browser.getControl(name='form.ship_city').value = 'Test'
-    >>> browser.getControl(name='form.ship_state').value = 'US-HI'
+    >>> browser.getControl(name='form.ship_state').value = ('US-HI',)
     >>> browser.getControl(name='form.ship_postal_code').value = '12345'
 
 Now go to the next form.
@@ -152,6 +152,10 @@ Use real test credit card numbers, available from http://developer.authorize.net
     >>> browser.getControl('Make Payment').click()
 
 Donation checkout completed. Now check order
+
+XXX When I [maurits] try this myself in Plone 3.0 the browser url is
+http://127.0.0.1:8080/test/@@getpaid-order/514856172
+So the test may be wrong here.  Please check.
 
     >>> browser.getLink('here').click()
     >>> browser.url.startswith('http://nohost/plone/@@getpaid-order-history?searchterm=')
@@ -214,7 +218,7 @@ The link "Add to Cart" is there when you check browser.contents...
     >>> browser.getControl(name='form.email').value = 'test@test.com'
     >>> browser.getControl(name='form.bill_first_line').value = 'Test'
     >>> browser.getControl(name='form.bill_city').value = 'Test'
-    >>> browser.getControl(name='form.bill_state').value = 'US-HI'
+    >>> browser.getControl(name='form.bill_state').value = ('US-HI',)
     >>> browser.getControl(name='form.bill_postal_code').value = '12345'
 
 Note: we are only buying something, not shipping it, so maybe these
@@ -222,7 +226,7 @@ controls are not available here (or they are but they should not be).
 
     >>> browser.getControl(name='form.ship_first_line').value = 'Test'
     >>> browser.getControl(name='form.ship_city').value = 'Test'
-    >>> browser.getControl(name='form.ship_state').value = 'US-HI'
+    >>> browser.getControl(name='form.ship_state').value = ('US-HI',)
     >>> browser.getControl(name='form.ship_postal_code').value = '12345'
     >>> browser.getControl('Continue').click()
 

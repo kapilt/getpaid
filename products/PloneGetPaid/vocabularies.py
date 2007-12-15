@@ -143,10 +143,10 @@ class CountriesStatesFromFile(object):
         if len(states) == 0:
             return self._noValues
 
-        return states
+        return self._noValues + states
 
     def allStates(self):
-        return self.csparser.getStatesOfAllCountries() + self._noValues
+        return self._noValues + self.csparser.getStatesOfAllCountries()
 
 def Countries( context ):
     utility = zapi.getUtility(ICountriesStates)

@@ -8,6 +8,8 @@ from zope.app.form.browser.itemswidgets import OrderedMultiSelectWidget as BaseS
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.i18n.interfaces import IUserPreferredCharsets
 from Products.PloneGetPaid.interfaces import IMonthsAndYears
+from Products.PloneGetPaid.interfaces import ICountriesStates
+from Products.PloneGetPaid.vocabularies import TitledVocabulary
 
 from Products.Five.browser import decode
 
@@ -42,24 +44,39 @@ class CountrySelectionWidget(WithTemplateWidget):
     def getVocabulary(self):
         return self.context.vocabulary
 
-class StateSelectionWidget(SimpleInputWidget):
+class StateSelectionWidget(WithTemplateWidget):
+    """State selection widget for non-Javascript.
 
-    def __call__( self ):
-        value = ''
-        if self.hasInput():
-            value = self.getInputValue()
+    When Javascript is available, this widget is simply
+    overwritten.
+    """
+    template = ViewPageTemplateFile('templates/state-selection-widget.pt')
+
+    def getVocabulary(self):
+        utility = zapi.getUtility(ICountriesStates)
+        # US is a good default for country.
+        country = 'US'
+
+        # Try to get the country from the form.
+        form_country = self.request.form.get('form.contact_country', '')
+
+        # If a country is known we can safely ignore any possible
+        # setting of the state and just return the states for that
+        # country: if the chosen country is The Netherlands there is
+        # no sense in believing that the state is the Japanese
+        # province of Hokkaido.
+        if form_country == '':
+            # No country is known.
+            # Try to get the state from the form.
+            state = self._getCurrentValue()
+            if state and state != u'(no values)':
+                # A state has been chosen.  Take the first two letters of
+                # the state value as the country.
+                country = state[:2]
         else:
-            value = self._getFormValue()
-        return """<div id="%s_container">
-                  <select name="%s" id="%s">
-                    <option value="%s" selected="selected">Selected</option>
-                  </select>
-                  </div>""" % (self.name, self.name, self.name, value)
-# Maurits: why did you put this instead of what it was (and I restored above) ? -- javimansilla
-#        return """<div id="%s_container">
-#                  <input name="%s" id="%s"
-#                   value="%s" size="7" maxlength="30" type="text">
-#                  </div>""" % (self.name, self.name, self.name, value)
+            country = form_country
+        states = utility.states(country)
+        return TitledVocabulary.fromTitles(states)
 
 class CCExpirationDateWidget(WithTemplateWidget,DateWidget):
     template = ViewPageTemplateFile('templates/cc-expiration-date-widget.pt')

@@ -25,7 +25,7 @@ class TestStatesVocabulary(PloneGetPaidTestCase):
         True
 
         >>> len(states)
-        57
+        58
 
         Now everything looks good...
         """
