@@ -153,12 +153,12 @@ Use real test credit card numbers, available from http://developer.authorize.net
 
 Donation checkout completed. Now check order
 
-XXX When I [maurits] try this myself in Plone 3.0 the browser url is
-http://127.0.0.1:8080/test/@@getpaid-order/514856172
-So the test may be wrong here.  Please check.
+XXX I [lucie] updated the "here" link because it didnt need to be a search on an order
+since we already have the order id
+
 
     >>> browser.getLink('here').click()
-    >>> browser.url.startswith('http://nohost/plone/@@getpaid-order-history?searchterm=')
+    >>> browser.url.startswith('http://nohost/plone/@@getpaid-order/')
     True
 
 Verify order was for what we checked out.
@@ -246,7 +246,7 @@ Use real test credit card numbers, available from http://developer.authorize.net
 Donation checkout completed. Now check order
 
     >>> browser.getLink('here').click()
-    >>> browser.url.startswith('http://nohost/plone/@@getpaid-order-history?searchterm=')
+    >>> browser.url.startswith('http://nohost/plone/@@getpaid-order/')
     True
 
 Verify order was for what we checked out.  Well, that is not listed
