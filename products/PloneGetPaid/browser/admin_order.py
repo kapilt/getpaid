@@ -5,6 +5,7 @@ order administration
 import datetime, os, inspect, StringIO, csv
 
 from zope import component, schema, interface
+from zope.app import zapi
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema import vocabulary
 from zope.viewlet.interfaces import IViewlet
@@ -23,10 +24,13 @@ from Products.Five.viewlet import viewlet, manager as viewlet_manager
 
 from Products.PloneGetPaid import interfaces as ipgp
 from Products.PloneGetPaid.i18n import _
+from Products.PloneGetPaid.interfaces import ICountriesStates
+from Products.PloneGetPaid.vocabularies import TitledVocabulary
 
 from yoma.batching import BatchingMixin, RenderNav
 
 from order import OrderRoot
+
 
 def renderOrderId( order, formatter ):
     return '<a href="@@admin-manage-order/%s/@@admin">%s</a>'%( order.order_id, order.order_id )
@@ -445,29 +449,57 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
     prefix = "ordersummary"
 
     def render( self ):
+        utility = zapi.getUtility(ICountriesStates)
+        self.vocab_countries = TitledVocabulary.fromTitles(utility.countries)
+        self.vocab_states = TitledVocabulary.fromTitles(utility.states())
+        self.order = self.__parent__.context
         return self.__of__( self.__parent__ ).template()
 
     def show( self, **kw):
         return True
 
     def getTotalPrice( self ):
-        total_price = "%0.2f" % self.__parent__.context.getTotalPrice()
+        total_price = "%0.2f" % self.order.getTotalPrice()
         return total_price
 
     def getOrderId( self ):
-        return self.__parent__.context.order_id
+        return self.order.order_id
 
     def getUserId( self ):
-        return self.__parent__.context.user_id
+        return self.order.user_id
 
     def getCreationDate( self ):
-        return self.__parent__.context.creation_date
+        return self.order.creation_date
 
     def fulfillment_status( self ):
-        return self.__parent__.context.fulfillment_state
+        return self.order.fulfillment_state
 
     def finance_status( self ):
-        return self.__parent__.context.finance_state
+        return self.order.finance_state
+        
+    def getContactInformation(self):
+        infos = self.order.contact_information
+        return {'name': infos.name}
+        
+    def getShippingAddress(self):
+        infos = self.order.shipping_address
+        if infos.ship_same_billing:
+            return "Same as billing"
+        return {'ship_first_line': infos.ship_first_line,
+                'ship_second_line': infos.ship_second_line,
+                'ship_city': infos.ship_city,
+                'ship_country': self.vocab_countries.getTerm(infos.ship_country).title,
+                'ship_state': self.vocab_states.getTerm(infos.ship_state).title,
+                'ship_postal_code': infos.ship_postal_code}
+        
+    def getBillingAddress(self):
+        infos = self.order.billing_address
+        return {'bill_first_line': infos.bill_first_line,
+                'bill_second_line': infos.bill_second_line,
+                'bill_city': infos.bill_city,
+                'bill_country': self.vocab_countries.getTerm(infos.bill_country).title,
+                'bill_state': self.vocab_states.getTerm(infos.bill_state).title,
+                'bill_postal_code': infos.bill_postal_code}
 
 ###############################################
 # context vocabularies for workflow transitions
