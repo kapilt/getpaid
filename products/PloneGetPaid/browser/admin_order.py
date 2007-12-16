@@ -18,6 +18,8 @@ from getpaid.core import interfaces
 from getpaid.core.order import OrderQuery as query
 from hurry.workflow.interfaces import IWorkflowInfo
 
+from Products.CMFCore.utils import getToolByName
+
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.Five.viewlet import viewlet, manager as viewlet_manager
@@ -449,10 +451,16 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
     prefix = "ordersummary"
 
     def render( self ):
+        self.order = self.__parent__.context
+        pm = getToolByName(self.order, "portal_membership")
+        user = pm.getAuthenticatedMember()
+        if not 'Manager' in user.getRoles():
+            user_id = user.getId()
+            if 'Anonymous' in user.getRoles() or user_id != self.getUserId():
+                raise "Unauthorized"
         utility = zapi.getUtility(ICountriesStates)
         self.vocab_countries = TitledVocabulary.fromTitles(utility.countries)
         self.vocab_states = TitledVocabulary.fromTitles(utility.states())
-        self.order = self.__parent__.context
         return self.__of__( self.__parent__ ).template()
 
     def show( self, **kw):

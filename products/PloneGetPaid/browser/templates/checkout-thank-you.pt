@@ -21,7 +21,7 @@
         </div>
     </div>
     
-    <div>
+    <div tal:condition="not:isAnon">
       <span i18n:translate="box_order_status_url_description">You can check the status of your order
 	  <span i18n:name="status_url">
       <a href=""
