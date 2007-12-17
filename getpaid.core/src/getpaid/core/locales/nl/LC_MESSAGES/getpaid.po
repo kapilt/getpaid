@@ -73,7 +73,7 @@ msgstr "In rekening gebracht"
 
 #: ./interfaces.py:303
 msgid "City"
-msgstr "Stad"
+msgstr "Plaats"
 
 #: ./interfaces.py:503
 msgid "Comment"
@@ -209,15 +209,15 @@ msgstr "Nee"
 
 #: ./fields.py:8
 msgid "Only digit character allowed."
-msgstr ""
+msgstr "Alleen cijfers toegestaan."
 
 #: ./interfaces.py:353
 msgid "Only digits allowed - e.g. 3334445555 and not 333-444-5555 "
-msgstr ""
+msgstr "Alleen cijfers toegestaan - b.v. 3334445555 en niet 333-444-5555 "
 
 #: ./interfaces.py:388
 msgid "Only digits allowed - e.g. 4444555566667777 and not 4444-5555-6666-7777 "
-msgstr ""
+msgstr "Alleen cijfers toegestaan - b.v. 4444555566667777 and not 4444-5555-6666-7777 "
 
 #: ./workflow/shipment.py:93
 msgid "Order Charged"
@@ -245,15 +245,15 @@ msgstr ""
 
 #: ./interfaces.py:352
 msgid "Phone Number"
-msgstr ""
+msgstr "Telefoonnummer"
 
 #: ./interfaces.py:343
 msgid "Plain Text"
-msgstr ""
+msgstr "Kale tekst"
 
 #: ./interfaces.py:301
 msgid "Please Enter Your Address"
-msgstr ""
+msgstr "Vul uw adres in"
 
 #: ./interfaces.py:505
 msgid "Previous State"
@@ -261,7 +261,7 @@ msgstr ""
 
 #: ./interfaces.py:69
 msgid "Price"
-msgstr ""
+msgstr "Prijs"
 
 #: ./workflow/order.py:30
 msgid "Process Order"
@@ -285,7 +285,7 @@ msgstr ""
 
 #: ./interfaces.py:65
 msgid "Product Code"
-msgstr ""
+msgstr "Productcode"
 
 #: ./interfaces.py:99
 msgid "Product SKU"
@@ -293,11 +293,11 @@ msgstr ""
 
 #: ./interfaces.py:177
 msgid "Quantity"
-msgstr ""
+msgstr "Hoeveelheid"
 
 #: ./workflow/item.py:117
 msgid "Refund"
-msgstr ""
+msgstr "Teruggave"
 
 #: ./workflow/item.py:124
 msgid "Refund Processed"
@@ -317,7 +317,7 @@ msgstr ""
 
 #: ./interfaces.py:391
 msgid "Select month and year"
-msgstr ""
+msgstr "Selecteer maand en jaar"
 
 #: ./workflow/item.py:133
 msgid "Ship"
@@ -353,19 +353,19 @@ msgstr ""
 
 #: ./interfaces.py:337
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: ./interfaces.py:350
 msgid "Your Name"
-msgstr ""
+msgstr "Uw naam"
 
 #: ./interfaces.py:321
 msgid "Zip Code"
-msgstr ""
+msgstr "Postcode"
 
 #: ./interfaces.py:308
 msgid "Zip/Postal Code"
-msgstr ""
+msgstr "Postcode"
 
 #: ./locales/empty.pt:3
 msgid "do_not_translate"
