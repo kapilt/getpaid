@@ -215,7 +215,12 @@ class ShoppingCartListing( ContainerViewlet ):
             data = self.quantity_column.input(self.container.values(), self.request)
             self.form_reset = True
             self.quantity_column.update(self.container.values(), data)
+            for item_id in self.container:
+                if self.container[item_id].quantity == 0:
+                    item_factory = interfaces.ILineItemFactory( self.container )
+                    item_factory.delete(item_id)
         except:
+            raise
             self.form_reset = True
             #reset the form data in the request
             for i in self.request.form.keys():

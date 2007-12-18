@@ -84,6 +84,24 @@ class LineItemFactory( object ):
         
         return nitem
 
+    def delete(self, item_id):
+        """
+        This methods removes an item from the cart and updates last_item to the last item
+        of the ShoppingCart or None if we where at the last one.
+        """
+        #From where we are deleting the object it is much easyer to get the item_id than
+        #the item
+        #item_id = content.UID()
+        if item_id in self.cart:
+            del self.cart[item_id]
+            if self.cart.last_item == item_id:
+                if len(self.cart)>0:
+                    self.cart.last_item = self.cart.keys()[-1]
+                else:
+                    self.cart.last_item = None
+            
+ 
+
 #################################
 # Buyable Content
 
