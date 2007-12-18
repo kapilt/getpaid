@@ -267,7 +267,7 @@ msgstr "Disclaimers"
 #. Default: "Mailing Address"
 #: ./browser/templates/checkout-review-pay.pt:27
 msgid "Mailing Address"
-msgstr "Postadres"
+msgstr "Afleveradres"
 
 #: ./browser/checkout.py:466
 msgid "Make Payment"
