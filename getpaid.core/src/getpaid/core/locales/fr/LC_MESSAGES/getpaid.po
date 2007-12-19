@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GetPaid VERSION\n"
-"POT-Creation-Date: 2007-12-13 20:02+0000\n"
+"POT-Creation-Date: 2007-12-19 14:26+0000\n"
 "PO-Revision-Date: 2007-10-15 12:35+0100\n"
 "Last-Translator: Lucie Lejard <lucie@sixfeetup.com>\n"
 "Language-Team: \n"
