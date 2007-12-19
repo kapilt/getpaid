@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GetPaid VERSION\n"
-"POT-Creation-Date: 2007-12-13 20:02+0000\n"
+"POT-Creation-Date: 2007-12-19 14:26+0000\n"
 "PO-Revision-Date: 2007-10-04 13:22+0000\n"
 "Last-Translator: Maurits van Rees <m.van.rees@zestsoftware.nl>\n"
 "Language-Team: Zest Software\n"
@@ -221,27 +221,27 @@ msgstr "Alleen cijfers toegestaan - b.v. 4444555566667777 and not 4444-5555-6666
 
 #: ./workflow/shipment.py:93
 msgid "Order Charged"
-msgstr ""
+msgstr "Order in rekening gebracht"
 
 #: ./order.py:77
 msgid "Order Id already set"
-msgstr ""
+msgstr "Order id is al gezet"
 
 #: ./workflow/order.py:35
 msgid "Order Processed"
-msgstr ""
+msgstr "Order verwerkt"
 
 #: ./workflow/order.py:68
 msgid "Payment Declined"
-msgstr ""
+msgstr "Betaling afgewezen"
 
 #: ./interfaces.py:401
 msgid "Payment Status"
-msgstr ""
+msgstr "Betalingsstatus"
 
 #: ./interfaces.py:231
 msgid "Period as a timedelta"
-msgstr ""
+msgstr "Periode als een timedelta"
 
 #: ./interfaces.py:352
 msgid "Phone Number"
@@ -257,7 +257,7 @@ msgstr "Vul uw adres in"
 
 #: ./interfaces.py:505
 msgid "Previous State"
-msgstr ""
+msgstr "Vorige staat"
 
 #: ./interfaces.py:69
 msgid "Price"
@@ -265,23 +265,23 @@ msgstr "Prijs"
 
 #: ./workflow/order.py:30
 msgid "Process Order"
-msgstr ""
+msgstr "Verwerk order"
 
 #: ./workflow/order.py:138
 msgid "Processor Cancel"
-msgstr ""
+msgstr "Geannuleerd door processor"
 
 #: ./workflow/order.py:100
 msgid "Processor Charged"
-msgstr ""
+msgstr "In rekening gebracht door processor"
 
 #: ./workflow/order.py:94
 msgid "Processor Declined"
-msgstr ""
+msgstr "Afgewezen door processor"
 
 #: ./interfaces.py:451
 msgid "Processor Order Id"
-msgstr ""
+msgstr "Processor Order Id"
 
 #: ./interfaces.py:65
 msgid "Product Code"
@@ -289,7 +289,7 @@ msgstr "Productcode"
 
 #: ./interfaces.py:99
 msgid "Product SKU"
-msgstr ""
+msgstr "Product SKU"
 
 #: ./interfaces.py:177
 msgid "Quantity"
@@ -301,19 +301,19 @@ msgstr "Teruggave"
 
 #: ./workflow/item.py:124
 msgid "Refund Processed"
-msgstr ""
+msgstr "Teruggave verwerkt"
 
 #: ./interfaces.py:404
 msgid "Refunded"
-msgstr ""
+msgstr "Teruggegeven"
 
 #: ./interfaces.py:313
 msgid "Same as billing address"
-msgstr "Zelfde als adres voor rekening"
+msgstr "Hetzelfde als het factuuradres"
 
 #: ./interfaces.py:302
 msgid "Second Line"
-msgstr ""
+msgstr "Tweede regel"
 
 #: ./interfaces.py:391
 msgid "Select month and year"
@@ -321,35 +321,35 @@ msgstr "Selecteer maand en jaar"
 
 #: ./workflow/item.py:133
 msgid "Ship"
-msgstr ""
+msgstr "Verscheep"
 
 #: ./interfaces.py:39
 msgid "Shipping Method"
-msgstr ""
+msgstr "Verscheepmethode"
 
 #: ./interfaces.py:306
 msgid "State"
-msgstr ""
+msgstr "Provincie"
 
 #: ./interfaces.py:43
 msgid "Store/Organization Name"
-msgstr ""
+msgstr "Winkel/Organisatienaam"
 
 #: ./interfaces.py:173
 msgid "Unique Item Id"
-msgstr ""
+msgstr "Uniek item id"
 
 #: ./interfaces.py:75
 msgid "Very brief 50 character text (that shows up in portlet)"
-msgstr ""
+msgstr "Korte tekst van maximaal 50 karakters (wordt in de portlet getoond)"
 
 #: ./workflow/order.py:41
 msgid "Will Not Deliver"
-msgstr ""
+msgstr "Zal niet afleveren"
 
 #: ./interfaces.py:367
 msgid "Would you prefer to receive rich html emails or only plain text"
-msgstr ""
+msgstr "Geeft u er de voorkeur aan emails te ontvangen in html formaat of als kale tekst."
 
 #: ./interfaces.py:337
 msgid "Yes"
