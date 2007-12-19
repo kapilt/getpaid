@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PloneGetPaid VERSION\n"
 "POT-Creation-Date: 2007-12-13 19:59+0000\n"
-"PO-Revision-Date: 2007-10-24 16:45+0000\n"
+"PO-Revision-Date: 2007-12-19 13:31+0000\n"
 "Last-Translator: Maurits van Rees <m.van.rees@zestsoftware.nl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -35,11 +35,11 @@ msgstr "Een lijst met jaartallen"
 #. Default: "A problem occurred with your payment"
 #: ./browser/templates/checkout-cancelled-declined.pt:7
 msgid "A problem occurred with your payment"
-msgstr ""
+msgstr "Er heeft zich een probleem voorgedaan met uw betaling."
 
 #: ./interfaces.py:216
 msgid "Accepted Credit Cards"
-msgstr ""
+msgstr "Geaccepteerde credit cards"
 
 #: ./browser/content.py:85
 msgid "Activate"
@@ -51,7 +51,7 @@ msgstr "Anoniem afrekenen toestaan"
 
 #: ./interfaces.py:83
 msgid "Amount"
-msgstr ""
+msgstr "Hoeveelheid"
 
 # zope.formlib Apply button
 msgid "Apply"
@@ -64,7 +64,7 @@ msgstr "Terug"
 #. Default: "Billing Address"
 #: ./browser/templates/checkout-review-pay.pt:19
 msgid "Billing Address"
-msgstr "Adres voor Rekening"
+msgstr "Factuuradres"
 
 #: ./browser/portlets/buy.py:22
 msgid "Buyable"
@@ -165,7 +165,7 @@ msgstr "Gemaakt"
 
 #: ./interfaces.py:219
 msgid "Credit cards accepted for payment"
-msgstr ""
+msgstr "Credit cards geaccepteerd voor betaling"
 
 #: ./interfaces.py:263
 msgid "Currency Symbol"
@@ -222,11 +222,11 @@ msgstr "Doneerbare content types"
 
 #: ./interfaces.py:82
 msgid "Donation Level Name"
-msgstr ""
+msgstr "Naam van donatieniveau"
 
 #: ./interfaces.py:87
 msgid "Donation Levels"
-msgstr ""
+msgstr "Donatieniveau's"
 
 #: ./browser/admin.py:175
 msgid "Email Notifications"
@@ -443,7 +443,7 @@ msgstr "US valuta formaat"
 
 #: ./vocabularies.py:63
 msgid "US Dollars"
-msgstr ""
+msgstr "US Dollars"
 
 #: ./browser/cart.py:212
 msgid "Update"
