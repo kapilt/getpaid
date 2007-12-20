@@ -117,11 +117,11 @@ def sendNotification( order, event ):
     
     settings = interfaces.IGetPaidManagementOptions( portal )
     store_url = portal.absolute_url()
-    order_contents = [u' '.join((cart_item.name, 
-                                 u"%0.2f" % (cart_item.cost,),
-                                 str(cart_item.quantity),
-                               )) for cart_item in order.shopping_cart.values()]
-    
+    order_contents = u'\n'.join([u' '.join((str(cart_item.quantity),
+                                  cart_item.name,
+                                  u"@%0.2f" % (cart_item.cost,),
+                                  'total: US$%0.2f' % (cart_item.cost*cart_item.quantity,),
+                                )) for cart_item in order.shopping_cart.values()])
     if settings.merchant_email_notification == 'notification' \
        and settings.contact_email:
 
