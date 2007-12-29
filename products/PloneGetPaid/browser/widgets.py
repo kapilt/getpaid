@@ -7,6 +7,7 @@ from zope.app.form.browser.textwidgets import DateWidget
 from zope.app.form.browser.itemswidgets import OrderedMultiSelectWidget as BaseSelection
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from zope.i18n.interfaces import IUserPreferredCharsets
+from Products.PloneGetPaid.config import PLONE3
 from Products.PloneGetPaid.interfaces import IMonthsAndYears
 from Products.PloneGetPaid.interfaces import ICountriesStates
 from Products.PloneGetPaid.vocabularies import TitledVocabulary
@@ -68,7 +69,10 @@ class StateSelectionWidget(WithTemplateWidget):
         if form_country == '':
             # No country is known.
             # Try to get the state from the form.
-            state = self._getCurrentValue()
+            if PLONE3: # _getCurrentValue not in zope.app.form with zope 2.9
+                state = self._getCurrentValue()
+            else:
+                state = self._getFormInput()
             if state and state != u'(no values)':
                 # A state has been chosen.  Take the first two letters of
                 # the state value as the country.
