@@ -12,17 +12,17 @@ Create the browser object we'll be using.
     >>> browser.open(portal.absolute_url())
     >>> 'Welcome to Plone' in browser.contents
     True
-     >>> membership = self.portal.portal_membership
-     >>> membership.addMember('testmanager', 'secret',
-     ...		     ['Member', 'Manager'], [])
+    >>> membership = self.portal.portal_membership
+    >>> membership.addMember('testmanager', 'secret',
+    ...		     ['Member', 'Manager'], [])
 
-     >>> browser.getLink('Log in').click()
-     >>> browser.getControl('Login Name').value = 'testmanager'
-     >>> browser.getControl('Password').value = 'secret'
-     >>> browser.getControl('Log in').click()
-     >>> self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
-     'Installing Dependencies\n'
-     >>> browser.getLink('Home').click()
+    >>> browser.getLink('Log in').click()
+    >>> browser.getControl('Login Name').value = 'testmanager'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Log in').click()
+    >>> self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
+    'Installing Dependencies\n'
+    >>> browser.getLink('Home').click()
      
 Testing the setup aspects of GetPaid. Setting required settings. 
 
@@ -72,7 +72,7 @@ Here we are setting the buyable types for use in the following tests
 
 Check to make sure the settings we put in Site Profile appear on this page. 
 
-     >>> browser.getLink('Home').click()
+    >>> browser.getLink('Home').click()
 
 Testing process of configuring Plone content for "buyable" states of donation, buyable and shippable. Depends on options that were set in the admin functional tests. 
 
@@ -84,22 +84,22 @@ Make Buyable
     >>> browser.getControl('Activate').click()
 
 Buy
+
     >>> browser.getLink('Add to Cart').click()
     >>> 'SubTotal' in browser.contents
     True
 
 Set item quantity to 0 so the product is removed from the cart
+
     >>> import sre
     >>> regex = sre.compile("edit\..*?\.quantity")
     >>> try:
-    >>>     editName = regex.findall(browser.contents)[0]
-    >>>     browser.getControl(name=editName).value = '0'
-    >>>     browser.getControl('Update').click()
-    >>>     'subtotal' in browser.contents
-And Just in case the regex finds nothing we fail because we should have at
-least one
-    >>> except:
-    >>>     True
+    ...     editName = regex.findall(browser.contents)[0]
+    ...     browser.getControl(name=editName).value = '0'
+    ...     browser.getControl('Update').click()
+    ...     'subtotal' in browser.contents
+    ... except:
+    ...     # And Just in case the regex finds nothing we fail because we
+    ...     # should have at least one
+    ...     True
     False
-
-
