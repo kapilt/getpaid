@@ -21,13 +21,13 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
+from zope.schema import vocabulary
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory('getpaid.googlecheckout')
 
-from getpaid.core.options import PersistentOptions
-from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 
-GoogleCheckoutOptions = PersistentOptions.wire("GoogleCheckoutOptions",
-                                               "getpaid.googlecheckout",
-                                               IGoogleCheckoutOptions)
-
+def currencyChoices(context):
+    return vocabulary.SimpleVocabulary.fromItems([
+        (_(u"British pound"), u"GBP"),
+        (_(u"US dollar"), u"USD"),
+        ])

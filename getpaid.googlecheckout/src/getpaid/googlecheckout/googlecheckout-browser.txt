@@ -1,0 +1,136 @@
+Functional browser tests for Google Checkout processor.
+
+General configuration
+=====================
+
+Create an admin user for managing the site:
+
+    >>> membership = self.portal.portal_membership
+    >>> membership.addMember('admin', 'secret', ['Member', 'Manager'], [])
+
+Install PloneGetPaid:
+
+     >>> self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
+     'Installing Dependencies\n'
+
+Create the browser object we'll be using:
+
+    >>> from Products.Five.testbrowser import Browser
+    >>> browser = Browser()
+    >>> browser.handleErrors = False
+
+Login as the site admin user:
+
+    >>> browser.open(portal.absolute_url())
+    >>> browser.getLink('Log in').click()
+    >>> browser.getControl('Login Name').value = 'admin'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Log in').click()
+
+General configuration of GetPaid:
+
+    >>> browser.getLink('Site Setup').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Content Types').click()
+    >>> from getpaid.googlecheckout.tests.utils import setSelectWidget
+    >>> setSelectWidget(browser, 'form.buyable_types', ['Page'])
+    >>> browser.getControl('Apply').click()
+
+Make the site front page buyable so that we have something to add to
+the shopping cart for testing:
+
+    >>> browser.getLink('Home').click()
+    >>> browser.getLink('Make Buyable').click()
+    >>> browser.getControl(name='form.product_code').value = 'Test Buy Code'
+    >>> browser.getControl(name='form.price').value = '10.00'
+    >>> browser.getControl('Activate').click()
+
+
+Google Checkout processor configuration
+=======================================
+
+Configure GetPaid to use Google Checkout (and allow anonymous checkouts):
+
+    >>> browser.getLink('Site Setup').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Payment Options').click()
+    >>> browser.getControl(name='form.payment_processor').value = [
+    ...     'Google Checkout']
+    >>> browser.getControl(name='form.allow_anonymous_checkout').value = 'on'
+    >>> browser.getControl('Apply').click()
+
+Configure Google Checkout processor:
+
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Payment Processor Settings').click()
+    >>> browser.getControl(name="form.server_url").value = ['Sandbox']
+    >>> browser.getControl(name="form.merchant_id").value = '1234567890'
+    >>> browser.getControl(
+    ...     name="form.merchant_key").value = 'HsYXFoZfHAqyLcCRYeH8qQ'
+    >>> browser.getControl(name="form.currency").value = ['British pound']
+    >>> browser.getControl('Apply').click()
+
+Finished with the configuration so we can now log out:
+
+    >>> browser.getLink('Log out').click()
+
+
+Checkout process
+================
+
+Visit the home page and add to the cart:
+
+    >>> browser.getLink('Home').click()
+    >>> browser.getLink('Add to Cart').click()
+
+Which renders the populated cart for the visitor with a checkout action:
+
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...<h3>Your Shopping Cart</h3>...
+    ...<th>Total</th><td>10.00</td>...
+    ...<input type="submit"
+              class="button context"
+              id="form.actions.Checkout"
+              name="form.actions.Checkout"
+              value="Checkout" />...
+
+The checkout action redirects the user to Google Checkout.
+
+    >>> browser.getControl('Checkout').click()
+    >>> browser.url
+    'http://sandbox.google.com/checkout'
+
+For demonstration purposes the request to Google Checkout has been
+intercepted and a fabricated response returned. (Normally the
+redirection URL is HTTPS and includes a couple of query string
+parameters.) The target of the redirect simply echos the original
+request:
+
+    >>> print browser.contents
+    <?xml version='1.0' encoding='UTF-8'?>
+    <checkout-shopping-cart xmlns='http://checkout.google.com/schema/2'>
+      <shopping-cart>
+        <items>
+          <item>
+            <item-name>Welcome to Plone</item-name>
+            <quantity>1</quantity>
+            <unit-price currency='GBP'>10.000000</unit-price>
+            <item-description>Congratulations! You have successfully
+                installed Plone.</item-description>
+          </item>
+        </items>
+      </shopping-cart>
+      <checkout-flow-support>
+        <merchant-checkout-flow-support/>
+      </checkout-flow-support>
+    </checkout-shopping-cart>
+
+The contents of the cart have now been uploaded to Google Checkout and
+we consider this the end of the process as far as GetPaid is
+concerned. So just before redirection the users cart is emptied out.
+Lets check that is the case:
+
+    >>> browser.open('%s/@@getpaid-cart' % portal.absolute_url())
+    >>> 'name="form.actions.Checkout"' in browser.contents
+    False

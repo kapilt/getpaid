@@ -21,13 +21,20 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
+from Products.Five.browser import BrowserView
+from getpaid.core.interfaces import IPaymentProcessor
+from getpaid.core.interfaces import IShoppingCartUtility
+from zope.component import getAdapter
+from zope.component import getUtility
 
-from getpaid.core.options import PersistentOptions
-from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 
-GoogleCheckoutOptions = PersistentOptions.wire("GoogleCheckoutOptions",
-                                               "getpaid.googlecheckout",
-                                               IGoogleCheckoutOptions)
+class CheckoutWizard(BrowserView):
 
+    def __call__(self):
+        processor = getAdapter(self.context, IPaymentProcessor,
+                               'Google Checkout')
+        cart_utility = getUtility(IShoppingCartUtility)
+        cart = cart_utility.get(self.context)
+        url = processor.checkout(cart)
+        cart_utility.destroy(self.context)
+        self.request.response.redirect(url)

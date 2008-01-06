@@ -21,13 +21,11 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
+from Products.Five.browser import BrowserView
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
 
-from getpaid.core.options import PersistentOptions
-from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
+class Checkout(BrowserView):
 
-GoogleCheckoutOptions = PersistentOptions.wire("GoogleCheckoutOptions",
-                                               "getpaid.googlecheckout",
-                                               IGoogleCheckoutOptions)
-
+    def __call__(self):
+        controller = IGoogleCheckoutController(self.context.plone)
+        return controller.get_last_request()

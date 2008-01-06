@@ -1,0 +1,70 @@
+Provide the processor with details about the Google Checkout merchant
+account:
+
+    >>> from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
+    >>> options = IGoogleCheckoutOptions(portal)
+    >>> options.merchant_id = '1234567890'
+    >>> options.merchant_key = 'HsYXFoZfHAqyLcCRYeH8qQ'
+    >>> options.server_url = 'Sandbox'
+    >>> options.currency = 'GBP'
+
+Create a shopping cart:
+
+    >>> from zope.component import getUtility
+    >>> from getpaid.core.interfaces import IShoppingCartUtility
+    >>> cart = getUtility(IShoppingCartUtility).get(portal, create=True)
+
+and add a couple of entries to this cart:
+
+    >>> from getpaid.core.item import LineItem
+    >>> line = LineItem()
+    >>> line.item_id = 'book-9789988647131'
+    >>> line.name = 'Not Without Flowers'
+    >>> line.description = 'ISBN: 9789988647131'
+    >>> line.cost = 19.95
+    >>> line.quantity = 2
+    >>> cart[line.item_id] = line
+
+    >>> line = LineItem()
+    >>> line.item_id = 'book-9789780232412'
+    >>> line.name = 'Echoes from the Mountain'
+    >>> line.description = 'ISBN: 9789780232412'
+    >>> line.cost = 14.95
+    >>> line.quantity = 1
+    >>> cart[line.item_id] = line
+
+The processor can generate a checkout request from a cart:
+
+    >>> from zope.component import getAdapter
+    >>> from getpaid.core.interfaces import IPaymentProcessor
+    >>> processor = getAdapter(portal, IPaymentProcessor, 'Google Checkout')
+    >>> checkout_shopping_cart = processor.checkout_shopping_cart(cart)
+    >>> print checkout_shopping_cart.toxml()
+    <?xml version='1.0' encoding='UTF-8'?>
+    <checkout-shopping-cart xmlns='http://checkout.google.com/schema/2'>
+      <shopping-cart>
+        <items>
+          <item>
+            <item-name>Not Without Flowers</item-name>
+            <quantity>2</quantity>
+            <unit-price currency='GBP'>19.950000</unit-price>
+            <item-description>ISBN: 9789988647131</item-description>
+          </item>
+          <item>
+            <item-name>Echoes from the Mountain</item-name>
+            <quantity>1</quantity>
+            <unit-price currency='GBP'>14.950000</unit-price>
+            <item-description>ISBN: 9789780232412</item-description>
+          </item>
+        </items>
+      </shopping-cart>
+      <checkout-flow-support>
+        <merchant-checkout-flow-support/>
+      </checkout-flow-support>
+    </checkout-shopping-cart>
+
+and also send a checkout request from a cart and parse the response
+for the redirection URL:
+
+    >>> processor.checkout(cart)
+    u'http://sandbox.google.com/checkout'

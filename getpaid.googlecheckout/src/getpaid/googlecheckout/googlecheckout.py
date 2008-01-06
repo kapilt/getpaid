@@ -23,48 +23,35 @@
 
 """
 """
-from zope import component
-from zope import interface
+from zope.interface import implements
 
-from gchecky.controller import Controller
 from gchecky import model as gmodel
+from gchecky import gxml
 
-import interfaces
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutProcessor
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
 
-class GController(Controller):
-    pass
+from cgi import escape
 
-def gcart_item(entry):
+
+def gcart_item(entry, options):
     return gmodel.item_t(
         name = entry.name,
         description = entry.description,
         unit_price = gmodel.price_t(
             value = entry.cost,
-            currency = 'USD'
+            currency = options.currency,
             ),
         quantity = entry.quantity
         )
 
-class GCartAdapter(object):
-    """
-    """
-    def __init__(self, context):
-        self.context = context
-        self.gcart = gmodel.checkout_shopping_cart_t(
-            shopping_cart = gmodel.shopping_cart_t(
-                items = [gcart_item(entry) for entry in cart.values()]
-                )
-            )
 
-    def toxml(self):
-        return self.gcart.toxml()
-        
+class GoogleCheckoutProcessor(object):
 
-class GoogleCheckoutProcessor( object ):
-   
-    interface.implements( interfaces.IGoogleCheckoutProcessor )
+    implements(IGoogleCheckoutProcessor)
 
-    options_interface = interfaces.IGoogleCheckoutOptions
+    options_interface = IGoogleCheckoutOptions
 
     def __init__( self, context ):
         self.context = context
@@ -72,17 +59,48 @@ class GoogleCheckoutProcessor( object ):
 
     def getController( self ):
         if self._controller is None:
-            options = interfaces.IGoogleCheckoutOptions( self.context )
-            self._controller = GController(options.merchant_id,
-                                           options.merchant_key,
-                                           options.server_url == 'Sandbox')
+            self._controller = IGoogleCheckoutController(self.context)
         return self._controller
 
     controller = property(getController)
 
-    def cart_post_button( self, cart ):
-        prepared = self.controller.prepare_order(GCartAdapter(cart))
-        return prepared.html
+    def checkout_shopping_cart(self, cart):
+        options = IGoogleCheckoutOptions(self.context)
+        return gmodel.checkout_shopping_cart_t(
+            shopping_cart = gmodel.shopping_cart_t(
+                items = [gcart_item(entry, options) for entry in cart.values()]
+                ),
+            checkout_flow_support = gmodel.checkout_flow_support_t(),
+            )
 
-    def authorize( self, order, payment ):
-        pass
+    def checkout(self, cart):
+        checkout_shopping_cart = self.checkout_shopping_cart(cart)
+        request = checkout_shopping_cart.toxml()
+        response = self.controller.send_xml(request)
+        __traceback_supplement__ = (TracebackSupplement, request, response)
+        return gxml.Document.fromxml(response).redirect_url
+
+
+
+class TracebackSupplement:
+
+    def __init__(self, request, response):
+        self.request = request
+        self.response = response
+
+    def format_text(self, name):
+        value = getattr(self, name)
+        return '   - %s:\n      %s' % (name, value.replace('\n', '\n      '))
+
+    def format_html(self, name):
+        value = getattr(self, name)
+        return '<dt>%s:</dt><dd><pre>%s</pre></dd>' % (name, escape(value))
+
+    def getInfo(self, as_html=0):
+        if not as_html:
+            return '%s\n%s' % (self.format_text('request'),
+                               self.format_text('response'))
+        else:
+            return '<dl>%s%s</dl>' % (self.format_html('request'),
+                                      self.format_html('response'))
+

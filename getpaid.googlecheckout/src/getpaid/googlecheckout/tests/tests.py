@@ -21,13 +21,37 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
+import unittest
+from Testing import ZopeTestCase
+from zope.testing import doctest
+from Products.PloneGetPaid.tests.base import PloneGetPaidFunctionalTestCase
+import getpaid.googlecheckout.tests
+from Products.Five import zcml
 
-from getpaid.core.options import PersistentOptions
-from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 
-GoogleCheckoutOptions = PersistentOptions.wire("GoogleCheckoutOptions",
-                                               "getpaid.googlecheckout",
-                                               IGoogleCheckoutOptions)
+OPTIONFLAGS = (doctest.ELLIPSIS |
+               doctest.NORMALIZE_WHITESPACE)
 
+
+class GoogleCheckoutFuncationalTestCase(PloneGetPaidFunctionalTestCase):
+
+    def afterSetUp(self):
+        super(GoogleCheckoutFuncationalTestCase, self).afterSetUp()
+        zcml.load_config('testing.zcml', package=getpaid.googlecheckout.tests)
+
+
+def test_suite():
+    return unittest.TestSuite([
+        ZopeTestCase.ZopeDocFileSuite(
+            'googlecheckout.txt',
+            package='getpaid.googlecheckout',
+            test_class=GoogleCheckoutFuncationalTestCase,
+            optionflags=OPTIONFLAGS,
+            ),
+        ZopeTestCase.ZopeDocFileSuite(
+            'googlecheckout-browser.txt',
+            package='getpaid.googlecheckout',
+            test_class=GoogleCheckoutFuncationalTestCase,
+            optionflags=OPTIONFLAGS,
+            ),
+        ])

@@ -22,9 +22,9 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 """
-$Id: interfaces.py 10 2007-05-10 15:34:29Z kapilt $
 """
 
+from zope.interface import Interface
 from getpaid.core import interfaces
 from zope import schema
 
@@ -47,3 +47,13 @@ class IGoogleCheckoutOptions( interfaces.IPaymentProcessorOptions ):
 
     merchant_id = schema.ASCIILine( title = _(u"Merchant Id"))
     merchant_key = schema.ASCIILine( title = _(u"Merchant Key"))
+
+    currency = schema.Choice(
+        title = _(u"Currency"),
+        vocabulary = "getpaid.googlecheckout.currencies",
+        )
+
+class IGoogleCheckoutController(Interface):
+    """
+    Google Checkout Controller
+    """

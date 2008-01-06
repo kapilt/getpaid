@@ -21,13 +21,4 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
-
-from getpaid.core.options import PersistentOptions
-from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
-
-GoogleCheckoutOptions = PersistentOptions.wire("GoogleCheckoutOptions",
-                                               "getpaid.googlecheckout",
-                                               IGoogleCheckoutOptions)
 

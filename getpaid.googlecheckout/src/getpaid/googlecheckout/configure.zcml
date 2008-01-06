@@ -4,6 +4,8 @@
 
    <i18n:registerTranslations directory="locales" />
 
+   <include file="vocabulary.zcml" />
+
    <adapter
       for="Products.CMFCore.interfaces.ISiteRoot"
       provides=".interfaces.IGoogleCheckoutOptions"
@@ -15,11 +17,9 @@
       name="Google Checkout"
       factory=".googlecheckout.GoogleCheckoutProcessor" />
 
-    <browser:page
-      for="*"
-      name="checkout_link"
-      class=".browser.GoogleCheckoutButton"
-      permission="zope2.View"
-      />
-     
+   <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      provides=".interfaces.IGoogleCheckoutController"
+      factory=".controller.GoogleCheckoutController" />
+
 </configure>

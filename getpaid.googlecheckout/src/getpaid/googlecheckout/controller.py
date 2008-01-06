@@ -21,13 +21,21 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
-
-from getpaid.core.options import PersistentOptions
+from zope.interface import implements
+from gchecky.controller import Controller
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
 
-GoogleCheckoutOptions = PersistentOptions.wire("GoogleCheckoutOptions",
-                                               "getpaid.googlecheckout",
-                                               IGoogleCheckoutOptions)
+
+class GoogleCheckoutController(Controller):
+
+    implements(IGoogleCheckoutController)
+
+    def __init__(self, context):
+        options = IGoogleCheckoutOptions(context)
+        self.vendor_id = options.merchant_id
+        self.merchant_key = options.merchant_key
+        self.is_sandbox = options.server_url == 'Sandbox'
+
+
 

@@ -21,20 +21,21 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
+from getpaid.googlecheckout.controller import GoogleCheckoutController
 
-from zope import component
-from zope.app.publisher.browser import BrowserView
-from getpaid.core.interfaces import IPaymentProcessor
-from getpaid.core.interfaces import IShoppingCartUtility
+_requests = []
 
-class GoogleCheckoutButton( BrowserView ):
+class TestingController(GoogleCheckoutController):
 
-    def __call__( self ):
-        processor = component.getAdapter( self.context,
-                                          IPaymentProcessor,
-                                          "Google Checkout" )
-        cart_manager = component.getUtility( IShoppingCartUtility )
-        cart = cart = cart_manager.get( self.context )
-        return processor.cart_post_button( cart )
+    def send_xml(self, msg):
+        if 'checkout-shopping-cart' in msg:
+            _requests.append(msg)
+            return """<?xml version="1.0" encoding="UTF-8"?>
+            <checkout-redirect
+                xmlns="http://checkout.google.com/schema/2"
+                serial-number="1234">
+              <redirect-url>http://sandbox.google.com/checkout</redirect-url>
+            </checkout-redirect>"""
+
+    def get_last_request(self):
+        return _requests[-1]
