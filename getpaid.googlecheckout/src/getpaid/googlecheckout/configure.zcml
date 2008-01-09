@@ -22,4 +22,9 @@
       provides=".interfaces.IGoogleCheckoutController"
       factory=".controller.GoogleCheckoutController" />
 
+   <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      provides=".interfaces.IGoogleCheckoutShipping"
+      factory=".shipping.GoogleCheckoutShipping" />
+
 </configure>

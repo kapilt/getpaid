@@ -21,44 +21,17 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-"""
+from zope.interface import implements
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutShipping
 
-from zope.interface import Interface
-from getpaid.core import interfaces
-from zope import schema
 
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory('getpaid.googlecheckout')
+class GoogleCheckoutShipping(object):
 
-class IGoogleCheckoutProcessor( interfaces.IPaymentProcessor ):
-    """
-    Google Checkout Processor
-    """
+    implements(IGoogleCheckoutShipping)
 
-class IGoogleCheckoutOptions( interfaces.IPaymentProcessorOptions ):
-    """
-    Google Checkout Options
-    """
-    server_url = schema.Choice(
-        title = _(u"Google Checkout Server URL"),
-        values = ( "Sandbox", "Production" ),
-        )
+    def __init__(self, context):
+        self.context = context
 
-    merchant_id = schema.ASCIILine( title = _(u"Merchant Id"))
-    merchant_key = schema.ASCIILine( title = _(u"Merchant Key"))
-
-    currency = schema.Choice(
-        title = _(u"Currency"),
-        vocabulary = "getpaid.googlecheckout.currencies",
-        )
-
-class IGoogleCheckoutController(Interface):
-    """
-    Google Checkout Controller
-    """
-
-class IGoogleCheckoutShipping(Interface):
-    """
-    Google Checkout Shipping
-    """
+    def __call__(self, cart):
+        # Default adapter has no shipping methods.
+        pass

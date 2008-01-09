@@ -31,6 +31,7 @@ from gchecky import gxml
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutProcessor
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutShipping
 
 from cgi import escape
 
@@ -70,7 +71,9 @@ class GoogleCheckoutProcessor(object):
             shopping_cart = gmodel.shopping_cart_t(
                 items = [gcart_item(entry, options) for entry in cart.values()]
                 ),
-            checkout_flow_support = gmodel.checkout_flow_support_t(),
+            checkout_flow_support = gmodel.checkout_flow_support_t(
+                shipping_methods = IGoogleCheckoutShipping(self.context)(cart)
+                ),
             )
 
     def checkout(self, cart):
