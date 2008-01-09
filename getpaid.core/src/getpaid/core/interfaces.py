@@ -381,8 +381,8 @@ class IUserContactInformation( Interface ):
                         )
         
     marketing_preference = schema.Bool(
-                                        title=_(u"Can we contact you with offers"), 
-                                        description=_(u"Can we contact you regarding new offers?"),                            
+                                        title=_(u"Can we contact you with offers?"), 
+                                        required=False,
                                         ) 
     
     email_html_format = schema.Choice( 
