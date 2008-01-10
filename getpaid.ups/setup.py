@@ -8,7 +8,8 @@ setup(
     namespace_packages=['getpaid'],
     include_package_data=True,
     install_requires = [ 'setuptools',
-	                 'getpaid.core',
+                         'getpaid.core',
+                         'lxml'
                          ],
     zip_safe = False,
     )
