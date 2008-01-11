@@ -78,13 +78,44 @@ class ContentTypes( BaseSettingsForm ):
     form_fields['donate_types'].custom_widget = SelectWidgetFactory
     form_fields['shippable_types'].custom_widget = SelectWidgetFactory
 
-
-class ShippingOptions( BaseSettingsForm ):
+class ShippingMethods( BaseSettingsForm ):
     """
     get paid management interface
     """
-    form_fields = form.Fields(interfaces.IGetPaidManagementShippingOptions)
-    form_name = _(u'Shipping Options')
+    form_fields = form.Fields(interfaces.IGetPaidManagementShippingMethods)
+    form_name = _(u'Shipping Methods')
+
+class ShippingSettings( BaseSettingsForm ):
+    """
+    get paid management interface, slightly different because our form fields
+    are dynamically set based on the store's setting for a shipping method.
+    """
+    
+    form_fields = form.Fields()
+    
+    def __call__( self ):
+        self.setupServices()
+        return super( ShippingSettings, self).__call__()
+        
+    def setupServices( self ):
+        manage_options = interfaces.IGetPaidManagementShippingMethods( self.context )
+        
+        service_name = manage_options.shipping_method
+        if not service_name:
+            self.status = _(u"Please Select a Shipping Method From the Main Setup Page")
+            return
+
+        #NOTE: if a service name is saved in the configuration but the corresponding service package
+        # doesn't exist anymore, a corresponding adapter will not be found.
+        try:
+            ship_method = component.getAdapter( self.context,
+                                              igetpaid.IShippingMethod,
+                                              service_name )
+        except:
+            self.status = _(u"The currenly configured Shipping Method cannot be found; please check if the corresponding package is installed correctly.")
+            return
+        
+        self.form_fields = form.Fields( ship_method.options_interface )
 
 class PaymentOptions( BaseSettingsForm ):
     """

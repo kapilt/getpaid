@@ -197,12 +197,16 @@ class IGetPaidManagementContentTypes( igetpaid.IPersistentOptions ):
         value_type = schema.Choice( title=u"shippable_types", source="plone.content_types" )
         )
 
-class IGetPaidManagementShippingOptions( igetpaid.IPersistentOptions ):
+class IGetPaidManagementShippingMethods( igetpaid.IPersistentOptions ):
     """
     """
     shipping_method = schema.Choice( title = _(u"Shipping Method"),
                                      required = True,
                                      source = "getpaid.shipping_methods" )
+
+class IGetPaidManagementShippingSettings( igetpaid.IPersistentOptions ):
+    """
+    """
 
 class IGetPaidManagementPaymentOptions( igetpaid.IPersistentOptions ):
     """
@@ -326,7 +330,8 @@ class IGetPaidManagementLegalDisclaimerOptions( igetpaid.IPersistentOptions ):
 
 class IGetPaidManagementOptions( IGetPaidManagementIdentificationOptions,
                                  IGetPaidManagementContentTypes,
-                                 IGetPaidManagementShippingOptions,
+                                 IGetPaidManagementShippingMethods,
+                                 IGetPaidManagementShippingSettings,
                                  IGetPaidManagementPaymentOptions,
                                  IGetPaidManagementCustomerInformation,
                                  IGetPaidManagementOrderInformation,

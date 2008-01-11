@@ -37,16 +37,24 @@
      title="Content Types"
      />
 
-  <!-- Management Shipping Options Editing 
+
    <browser:page
      for="getpaid.core.interfaces.IStore"
-     name="manage-getpaid-shipping-options"
-     class=".admin.ShippingOptions"     
+     name="manage-getpaid-shipping-methods"
+     class=".admin.ShippingMethods"     
      permission="cmf.ManagePortal"
      menu="getpaid_settings"
-     title="Shipping Options"
+     title="Shipping Methods"
      />
-commenting this out until shipping is supported-->
+   
+   <browser:page
+     for="getpaid.core.interfaces.IStore"
+     name="manage-getpaid-shipping-settings"
+     class=".admin.ShippingSettings"     
+     permission="cmf.ManagePortal"
+     menu="getpaid_settings"
+     title="Shipping Method Settings"
+     />
 
   <!-- Management Payment Options Editing -->
   <browser:page
