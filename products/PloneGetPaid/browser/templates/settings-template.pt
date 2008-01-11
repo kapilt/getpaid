@@ -47,7 +47,7 @@
 
 <!--	    
 	    <p i18n:translate="description_getpaid_setup">
-              Use the links below to configure GetPaid. Documentation on GetPaid can be found at <a href="http://plone.org/products/plonegetpaid/documentation">http://plone.org/products/plonegetpaid/documentation</a> . To view and manage orders in the site, click on the Orders tab above. 
+              Use the links below to configure GetPaid. Documentation on GetPaid can be found at <a href="http://plone.org/products/getpaid/documentation">http://plone.org/products/getpaid/documentation</a> . To view and manage orders in the site, click on the Orders tab above. 
 	    </p>
 -->
 	  </div>
