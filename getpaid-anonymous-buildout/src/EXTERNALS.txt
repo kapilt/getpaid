@@ -8,13 +8,13 @@ getpaid.core http://getpaid.googlecode.com/svn/trunk/getpaid.core
 getpaid.io http://getpaid.googlecode.com/svn/trunk/getpaid.io
 
 # various viewlet conviences 
-ore.viewlet https://svn.objectrealms.net/svn/public/ore.viewlet/trunk
+ore.viewlet http://svn.objectrealms.net/svn/public/ore.viewlet/trunk
 
 # python xml object marshalling
-ore.xd https://svn.objectrealms.net/svn/public/ore.xd/trunk
+ore.xd http://svn.objectrealms.net/svn/public/ore.xd/trunk
 
 # integer object references
-five.intid https://svn.plone.org/svn/collective/five.intid/trunk
+five.intid http://svn.plone.org/svn/collective/five.intid/trunk
 
 # workflow engine for orders/checkout wizards, etc.
 hurry.workflow http://getpaid.googlecode.com/svn/trunk/vendor/hurry.workflow/branches/0.9
