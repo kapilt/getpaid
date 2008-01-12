@@ -101,7 +101,7 @@ class ShippingSettings( BaseSettingsForm ):
         manage_options = interfaces.IGetPaidManagementShippingMethods( self.context )
         
         service_name = manage_options.shipping_method
-        if not service_name:
+        if not service_name or service_name == "None":
             self.status = _(u"Please Select a Shipping Method From the Main Setup Page")
             return
 

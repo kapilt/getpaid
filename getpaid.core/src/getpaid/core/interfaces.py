@@ -303,6 +303,11 @@ class IShippingMethod( Interface ):
         the object received may only be a line item container, as opposed to an order object.
         """
 
+class IShippingMethodSettings( Interface ):
+    """ Options for a Shipping Method
+
+    """
+
 #################################
 # Tax Utility
 

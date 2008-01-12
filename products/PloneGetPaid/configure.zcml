@@ -57,6 +57,9 @@
 <include zcml:condition="installed getpaid.nullpayment"
 	 package="getpaid.nullpayment" />
 
+<include zcml:condition="installed getpaid.flatrateshipping"
+	 package="getpaid.flatrateshipping" />
+
 <include zcml:condition="installed getpaid.paymentech"
         package="getpaid.paymentech" />
 

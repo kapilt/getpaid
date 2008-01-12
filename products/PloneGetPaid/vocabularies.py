@@ -51,7 +51,10 @@ def TaxMethods( context ):
     return vocabulary.SimpleVocabulary.fromValues( (u"None",) )
 
 def ShippingMethods( context ):
-    return vocabulary.SimpleVocabulary.fromValues( (u"None", _(u"Flat Rate Shipping")))
+    adapters = component.getAdapters( (context.context,), interfaces.IShippingMethod )
+    methods = set( map(unicode, [ n for n,a in adapters]) )
+    methods.add(u"None")
+    return vocabulary.SimpleVocabulary.fromValues( methods )
 
 #def CreditCards( context ):
 #    return vocabulary.SimpleVocabulary.fromValues( (u"Visa", u"Mastercard", u"Discover", u"American Express") )
