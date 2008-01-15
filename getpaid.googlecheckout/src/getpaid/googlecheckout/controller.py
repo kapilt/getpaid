@@ -23,6 +23,7 @@
 
 from zope.interface import implements
 from gchecky.controller import Controller
+from gchecky.controller import ControllerContext
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
 
@@ -37,5 +38,8 @@ class GoogleCheckoutController(Controller):
         self.merchant_key = options.merchant_key
         self.is_sandbox = options.server_url == 'Sandbox'
 
-
-
+    def send_xml(self, message):
+        context = ControllerContext(outgoing=True)
+        context.message = message
+        diagnose = False
+        return self._send_xml(message, context, diagnose)
