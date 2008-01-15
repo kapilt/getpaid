@@ -22,6 +22,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 from getpaid.googlecheckout.controller import GoogleCheckoutController
+import xml.dom.minidom
 
 _requests = []
 
@@ -29,13 +30,17 @@ class TestingController(GoogleCheckoutController):
 
     def send_xml(self, msg):
         if 'checkout-shopping-cart' in msg:
-            _requests.append(msg)
+            self.store_request(msg)
             return """<?xml version="1.0" encoding="UTF-8"?>
             <checkout-redirect
                 xmlns="http://checkout.google.com/schema/2"
                 serial-number="1234">
               <redirect-url>http://sandbox.google.com/checkout</redirect-url>
             </checkout-redirect>"""
+
+    def store_request(self, msg):
+        msg = xml.dom.minidom.parseString(msg).toprettyxml('  ')
+        _requests.append(msg)
 
     def get_last_request(self):
         return _requests[-1]

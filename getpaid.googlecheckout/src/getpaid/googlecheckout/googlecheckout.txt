@@ -38,23 +38,39 @@ The processor can generate a checkout request from a cart:
     >>> from zope.component import getAdapter
     >>> from getpaid.core.interfaces import IPaymentProcessor
     >>> processor = getAdapter(portal, IPaymentProcessor, 'Google Checkout')
-    >>> checkout_shopping_cart = processor.checkout_shopping_cart(cart)
-    >>> print checkout_shopping_cart.toxml()
-    <?xml version='1.0' encoding='UTF-8'?>
-    <checkout-shopping-cart xmlns='http://checkout.google.com/schema/2'>
+    >>> message = processor.checkout_shopping_cart(cart)
+    >>> print message.toxml(pretty=True)
+    <?xml version="1.0" ?>
+    <checkout-shopping-cart xmlns="http://checkout.google.com/schema/2">
       <shopping-cart>
         <items>
           <item>
-            <item-name>Not Without Flowers</item-name>
-            <quantity>2</quantity>
-            <unit-price currency='GBP'>19.950000</unit-price>
-            <item-description>ISBN: 9789988647131</item-description>
+            <item-name>
+              Not Without Flowers
+            </item-name>
+            <quantity>
+              2
+            </quantity>
+            <unit-price currency="GBP">
+              19.950
+            </unit-price>
+            <item-description>
+              ISBN: 9789988647131
+            </item-description>
           </item>
           <item>
-            <item-name>Echoes from the Mountain</item-name>
-            <quantity>1</quantity>
-            <unit-price currency='GBP'>14.950000</unit-price>
-            <item-description>ISBN: 9789780232412</item-description>
+            <item-name>
+              Echoes from the Mountain
+            </item-name>
+            <quantity>
+              1
+            </quantity>
+            <unit-price currency="GBP">
+              14.950
+            </unit-price>
+            <item-description>
+              ISBN: 9789780232412
+            </item-description>
           </item>
         </items>
       </shopping-cart>
@@ -72,15 +88,18 @@ for the redirection URL:
 The processor will include google analytic data if present:
 
     >>> analytics_data = '00000000'
-    >>> print processor.checkout_shopping_cart(cart, analytics_data).toxml()
-    <?xml version='1.0' encoding='UTF-8'?>
-    <checkout-shopping-cart xmlns='http://checkout.google.com/schema/2'>
+    >>> message = processor.checkout_shopping_cart(cart, analytics_data)
+    >>> print message.toxml(pretty=True)
+    <?xml version="1.0" ?>
+    <checkout-shopping-cart xmlns="http://checkout.google.com/schema/2">
       <shopping-cart>
         ...
       </shopping-cart>
       <checkout-flow-support>
         <merchant-checkout-flow-support>
-          <analytics-data>00000000</analytics-data>
+          <analytics-data>
+            00000000
+          </analytics-data>
         </merchant-checkout-flow-support>
       </checkout-flow-support>
     </checkout-shopping-cart>

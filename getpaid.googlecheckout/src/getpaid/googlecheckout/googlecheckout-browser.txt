@@ -119,25 +119,35 @@ parameters.) The target of the redirect simply echos the original
 request:
 
     >>> print browser.contents
-    <?xml version='1.0' encoding='UTF-8'?>
-    <checkout-shopping-cart xmlns='http://checkout.google.com/schema/2'>
+    <?xml version="1.0" encoding="utf-8" ?>
+    <checkout-shopping-cart xmlns="http://checkout.google.com/schema/2">
       <shopping-cart>
         <items>
           <item>
-            <item-name>Welcome to Plone</item-name>
-            <quantity>1</quantity>
-            <unit-price currency='GBP'>10.000000</unit-price>
-            <item-description>Congratulations! You have successfully
-                installed Plone.</item-description>
+            <item-name>
+              Welcome to Plone
+            </item-name>
+            <quantity>
+              1
+            </quantity>
+            <unit-price currency="GBP">
+              10.000
+            </unit-price>
+            <item-description>
+              Congratulations! You have successfully installed Plone.
+            </item-description>
           </item>
         </items>
       </shopping-cart>
       <checkout-flow-support>
         <merchant-checkout-flow-support>
-          <analytics-data>00000000</analytics-data>
+          <analytics-data>
+            00000000
+          </analytics-data>
         </merchant-checkout-flow-support>
       </checkout-flow-support>
     </checkout-shopping-cart>
+
 
 The contents of the cart have now been uploaded to Google Checkout and
 we consider this the end of the process as far as GetPaid is
