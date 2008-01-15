@@ -151,10 +151,6 @@
     
 <!-- Utilities -->
 <utility
-   provides="getpaid.core.interfaces.IShoppingCartUtility"
-   factory=".cart.ShoppingCartUtility"/>
-
-<utility
     provides=".interfaces.ICountriesStates"
     factory=".vocabularies.CountriesStatesFromFile"/>
 

@@ -10,6 +10,7 @@ from Products.PloneGetPaid.Extensions.install import setup_order_manager
 from Products.PloneGetPaid.Extensions.install import add_intids
 from Products.PloneGetPaid.Extensions.install import install_plone3_portlets
 from Products.PloneGetPaid.Extensions.install import setup_payment_options
+from Products.PloneGetPaid.Extensions.install import register_shopping_cart_utility
 from Products.PloneGetPaid.config import PLONE3
 
 def setupVarious(context):
@@ -56,6 +57,9 @@ def setupVarious(context):
 
     print >> out, "Setting up update facility"
     setup_software_generation( site )
+
+    print >> out, "Registering shopping cart utility"
+    register_shopping_cart_utility(site)
 
     logger.info(out.getvalue())
 

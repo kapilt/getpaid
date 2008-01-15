@@ -14,8 +14,9 @@ from zope.app.component.interfaces import ISite
 from Products.PloneGetPaid import generations
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
 from Products.PloneGetPaid.config import PLONE3
+from Products.PloneGetPaid.cart import ShoppingCartUtility
 from five.intid.site import add_intids
-from getpaid.core.interfaces import IOrderManager, IStore
+from getpaid.core.interfaces import IOrderManager, IStore, IShoppingCartUtility
 from getpaid.core.order import OrderManager
 from getpaid.core.payment import CREDIT_CARD_TYPES
 
@@ -153,6 +154,18 @@ def setup_payment_options(self):
     """
     manage_options = IGetPaidManagementOptions(self)
     manage_options.setProperty('credit_cards', CREDIT_CARD_TYPES)
+
+def register_shopping_cart_utility(self):
+    """ Register a local utility to make carts persists
+    """
+    portal = getToolByName(self, 'portal_url').getPortalObject()
+    sm = portal.getSiteManager()
+
+    if not sm.queryUtility(IShoppingCartUtility):
+        if PLONE3:
+            sm.registerUtility(ShoppingCartUtility(), IShoppingCartUtility)
+        else:
+            sm.registerUtility(IShoppingCartUtility, ShoppingCartUtility())
 
 def install( self ):
     out = StringIO()
