@@ -35,8 +35,7 @@ Checkout API.
 Todo
 ====
 
-- Need to fix the buildout experience. Currently there is no download
-  for PyXML (needed by gchecky) and there are few wrinkles with the
+- Need to fix the buildout experience. There are few wrinkles with the
   install of ghcecky.
 
 - Still need to override the cart portlet to use the Google Checkout
