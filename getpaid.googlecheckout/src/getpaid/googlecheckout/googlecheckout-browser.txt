@@ -8,11 +8,6 @@ Create an admin user for managing the site:
     >>> membership = self.portal.portal_membership
     >>> membership.addMember('admin', 'secret', ['Member', 'Manager'], [])
 
-Install PloneGetPaid:
-
-     >>> self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
-     'Installing Dependencies\n'
-
 Create the browser object we'll be using:
 
     >>> from Products.Five.testbrowser import Browser

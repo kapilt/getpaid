@@ -38,6 +38,7 @@ class GoogleCheckoutFuncationalTestCase(PloneGetPaidFunctionalTestCase):
     def afterSetUp(self):
         super(GoogleCheckoutFuncationalTestCase, self).afterSetUp()
         zcml.load_config('testing.zcml', package=getpaid.googlecheckout.tests)
+        self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
 
 
 def test_suite():
