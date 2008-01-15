@@ -2,10 +2,11 @@
            xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:five="http://namespaces.zope.org/five">
 
-  <browser:page
-     for="*"
-     name="getpaid-checkout-wizard"
-     class=".checkout.CheckoutWizard"
+  <!-- number prefix on 'name' determines the order they show up in the cart -->
+  <browser:viewlet
+     name="20cart-actions"
+     manager="Products.PloneGetPaid.interfaces.IGetPaidCartViewletManager"
+     class=".cart.Actions"
      permission="zope2.View"
      />
 

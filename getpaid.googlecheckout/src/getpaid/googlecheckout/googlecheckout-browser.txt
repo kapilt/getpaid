@@ -83,21 +83,32 @@ Visit the home page and add to the cart:
     >>> browser.getLink('Home').click()
     >>> browser.getLink('Add to Cart').click()
 
-Which renders the populated cart for the visitor with a checkout action:
+Which renders the populated cart for the visitor with a Google
+Checkout button:
 
     >>> print browser.contents
     <!DOCTYPE html ...
     ...<h3>Your Shopping Cart</h3>...
     ...<th>Total</th><td>10.00</td>...
-    ...<input type="submit"
-              class="button context"
-              id="form.actions.Checkout"
-              name="form.actions.Checkout"
-              value="Checkout" />...
+    ...<form method="post"
+             class="googlecheckout"
+             action="http://nohost/plone/google-checkout">
+         <input type="hidden" name="analyticsdata" value="" />
+         <input type="image" id="cart-google-checkout"
+                name="Google Checkout"
+                alt="Fast checkout through Google"
+                src="http://sandbox.google.com/checkout/buttons/checkout.gif?merchant_id=1234567890&amp;w=160&amp;h=43&amp;style=white&amp;variant=text&amp;loc=en_GB" />
+       </form>...
+
+Note the there is a hidden input to support integration with Google
+Analytics. This input is populated via JavaScript before the form is
+submitted. For demonstration lets populate that with some data:
+
+    >>> browser.getControl(name='analyticsdata').value = '00000000'
 
 The checkout action redirects the user to Google Checkout.
 
-    >>> browser.getControl('Checkout').click()
+    >>> browser.getControl(name='Google Checkout').click()
     >>> browser.url
     'http://sandbox.google.com/checkout'
 
@@ -122,7 +133,9 @@ request:
         </items>
       </shopping-cart>
       <checkout-flow-support>
-        <merchant-checkout-flow-support/>
+        <merchant-checkout-flow-support>
+          <analytics-data>00000000</analytics-data>
+        </merchant-checkout-flow-support>
       </checkout-flow-support>
     </checkout-shopping-cart>
 
@@ -132,5 +145,5 @@ concerned. So just before redirection the users cart is emptied out.
 Lets check that is the case:
 
     >>> browser.open('%s/@@getpaid-cart' % portal.absolute_url())
-    >>> 'name="form.actions.Checkout"' in browser.contents
+    >>> 'name="Google Checkout"' in browser.contents
     False

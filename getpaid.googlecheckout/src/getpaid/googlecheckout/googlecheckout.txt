@@ -68,3 +68,19 @@ for the redirection URL:
 
     >>> processor.checkout(cart)
     u'http://sandbox.google.com/checkout'
+
+The processor will include google analytic data if present:
+
+    >>> analytics_data = '00000000'
+    >>> print processor.checkout_shopping_cart(cart, analytics_data).toxml()
+    <?xml version='1.0' encoding='UTF-8'?>
+    <checkout-shopping-cart xmlns='http://checkout.google.com/schema/2'>
+      <shopping-cart>
+        ...
+      </shopping-cart>
+      <checkout-flow-support>
+        <merchant-checkout-flow-support>
+          <analytics-data>00000000</analytics-data>
+        </merchant-checkout-flow-support>
+      </checkout-flow-support>
+    </checkout-shopping-cart>

@@ -21,21 +21,20 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-from Products.Five.browser import BrowserView
-from getpaid.core.interfaces import IPaymentProcessor
-from getpaid.core.interfaces import IShoppingCartUtility
-from zope.component import getAdapter
-from zope.component import getUtility
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
+
+SANDBOX_URL = 'http://sandbox.google.com/checkout/buttons/checkout.gif?merchant_id=%s&w=160&h=43&style=white&variant=text&loc=%s'
+PRODUCTION_URL = 'http://checkout.google.com/buttons/checkout.gif?merchant_id=%s&w=160&h=43&style=white&variant=text&loc=%s'
 
 
-class Checkout(BrowserView):
-
-    def __call__(self):
-        processor = getAdapter(self.context, IPaymentProcessor,
-                               'Google Checkout')
-        cart_utility = getUtility(IShoppingCartUtility)
-        cart = cart_utility.get(self.context)
-        analytics_data = self.request.form.get('analyticsdata', None)
-        url = processor.checkout(cart, analytics_data)
-        cart_utility.destroy(self.context)
-        self.request.response.redirect(url)
+def checkout_button_url(portal):
+    options = IGoogleCheckoutOptions(portal)
+    if options.server_url == 'Production':
+        url = PRODUCTION_URL
+    else:
+        url = SANDBOX_URL
+    if options.currency == 'GBP':
+        loc = 'en_GB'
+    else:
+        loc = 'en_US'
+    return url % (options.merchant_id, loc)

@@ -65,19 +65,21 @@ class GoogleCheckoutProcessor(object):
 
     controller = property(getController)
 
-    def checkout_shopping_cart(self, cart):
+    def checkout_shopping_cart(self, cart, analytics_data=None):
         options = IGoogleCheckoutOptions(self.context)
         return gmodel.checkout_shopping_cart_t(
             shopping_cart = gmodel.shopping_cart_t(
-                items = [gcart_item(entry, options) for entry in cart.values()]
+                items = [gcart_item(entry, options) for entry in cart.values()],
                 ),
             checkout_flow_support = gmodel.checkout_flow_support_t(
-                shipping_methods = IGoogleCheckoutShipping(self.context)(cart)
+                shipping_methods = IGoogleCheckoutShipping(self.context)(cart),
+                analytics_data = analytics_data,
                 ),
             )
 
-    def checkout(self, cart):
-        checkout_shopping_cart = self.checkout_shopping_cart(cart)
+    def checkout(self, cart, analytics_data=None):
+        checkout_shopping_cart = self.checkout_shopping_cart(cart,
+                                                             analytics_data)
         request = checkout_shopping_cart.toxml()
         response = self.controller.send_xml(request)
         __traceback_supplement__ = (TracebackSupplement, request, response)

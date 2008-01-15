@@ -21,21 +21,22 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-from Products.Five.browser import BrowserView
-from getpaid.core.interfaces import IPaymentProcessor
-from getpaid.core.interfaces import IShoppingCartUtility
-from zope.component import getAdapter
-from zope.component import getUtility
+from Products.PloneGetPaid.browser.cart import ShoppingCartActions
+from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
+from getpaid.googlecheckout.browser.button import checkout_button_url
+from Products.CMFCore.utils import getToolByName
 
+class Actions(ShoppingCartActions):
 
-class Checkout(BrowserView):
+    template = ZopeTwoPageTemplateFile('templates/cart-actions.pt')
 
-    def __call__(self):
-        processor = getAdapter(self.context, IPaymentProcessor,
-                               'Google Checkout')
-        cart_utility = getUtility(IShoppingCartUtility)
-        cart = cart_utility.get(self.context)
-        analytics_data = self.request.form.get('analyticsdata', None)
-        url = processor.checkout(cart, analytics_data)
-        cart_utility.destroy(self.context)
-        self.request.response.redirect(url)
+    def actionsOtherThanCheckout(self):
+        return [action for action in self.availableActions()
+                if action.label != 'Checkout']
+
+    def doesHaveActions(self):
+        return len(self.availableActions()) > 0
+
+    def googleCheckoutButtonUrl(self):
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        return checkout_button_url(portal)
