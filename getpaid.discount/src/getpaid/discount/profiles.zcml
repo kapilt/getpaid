@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="plone">
+
+  <genericsetup:registerProfile
+      name="Discount"
+      title="Discount Profile Egg"
+      directory="profiles/default"
+      description="Default Profile for the Discount Product."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+      
+</configure>

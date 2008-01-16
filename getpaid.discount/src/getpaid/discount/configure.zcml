@@ -1,0 +1,12 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+ <include file="profiles.zcml"/>
+ 
+ <include package=".browser" />
+ 
+ <subscriber
+    for="getpaid.core.interfaces.IPayableLineItem
+         zope.app.container.contained.ObjectAddedEvent"
+    handler="Products.Discount.subscribers.checkDiscount"/>
+
+</configure>
