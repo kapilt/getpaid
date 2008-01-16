@@ -4,10 +4,10 @@
     i18n_domain="plone">
 
   <genericsetup:registerProfile
-      name="Discount"
-      title="Discount Profile Egg"
+      name="default"
+      title="getpaid.discount"
       directory="profiles/default"
-      description="Default Profile for the Discount Product."
+      description="Default Profile for getpaid.discount."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
       
