@@ -159,7 +159,7 @@ class PaymentechAdapter(object):
         Authorize the supplied information.
         This transaction type should be used for deferred billing transactions.
         """
-        # A – Authorization request
+        # A - Authorization request
         data = createAuthorizeXMLFile('A', self.options, order, payment)
         
         result = self.process(data, timeout=None)
@@ -173,7 +173,7 @@ class PaymentechAdapter(object):
             return result.status_msg
 
     def capture(self, order, amount):
-        #AC – Authorization and Mark for Capture
+        #AC - Authorization and Mark for Capture
         annotation = IAnnotations(order)
         trans_ref_num = annotation[interfaces.keys.processor_txn_id]
         data = createCaptureXMLFile(self.options, order, trans_ref_num, amount)
@@ -192,7 +192,7 @@ class PaymentechAdapter(object):
     def refund(self, order, amount):
         """ XXX Not implemented
         """
-        #R – Refund request
+        #R - Refund request
         #data = createAuthorizeXMLFile('R', options, order, payment)
         #
         #result = self.process(data, timeout=None)
