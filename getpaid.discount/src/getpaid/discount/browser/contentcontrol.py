@@ -1,7 +1,7 @@
 from Products.Five.browser import BrowserView
 
-from Products.Discount.browser.interfaces import IDiscountableMarker
-from Products.Discount.browser.interfaces import IBuyXGetXFreeableMarker
+from getpaid.discount.browser.interfaces import IDiscountableMarker
+from getpaid.discount.browser.interfaces import IBuyXGetXFreeableMarker
 
 from Products.PloneGetPaid.interfaces import IPayableMarker
 

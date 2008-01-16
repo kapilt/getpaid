@@ -5,12 +5,12 @@
   <browser:page
      for="*"
      name="discount_content_control"
-     class="Products.Discount.browser.contentcontrol.ContentControl"
+     class="getpaid.discount.browser.contentcontrol.ContentControl"
      permission="zope2.View"
      />
      
   <browser:menuItem
-     for="Products.Discount.browser.interfaces.IDiscountableMarker"
+     for="getpaid.discount.browser.interfaces.IDiscountableMarker"
      menu="object"
      title="Discountable"
      action="edit-discount"
@@ -18,7 +18,7 @@
      />
      
   <browser:menuItem
-     for="Products.Discount.browser.interfaces.IBuyXGetXFreeableMarker"
+     for="getpaid.discount.browser.interfaces.IBuyXGetXFreeableMarker"
      menu="object"
      title="Discountable"
      action="edit-buyxgetxfree"
@@ -26,58 +26,58 @@
      />
   
   <browser:page
-    for="Products.Discount.browser.interfaces.IDiscountableMarker"
+    for="getpaid.discount.browser.interfaces.IDiscountableMarker"
     name="edit-discount"
-    class="Products.Discount.browser.discount.DiscountEdit"
+    class="getpaid.discount.browser.discount.DiscountEdit"
     permission="cmf.ModifyPortalContent"
     />
     
   <browser:page
-    for="Products.Discount.browser.interfaces.IBuyXGetXFreeableMarker"
+    for="getpaid.discount.browser.interfaces.IBuyXGetXFreeableMarker"
     name="edit-buyxgetxfree"
-    class="Products.Discount.browser.discount.BuyXGetXFreeEdit"
+    class="getpaid.discount.browser.discount.BuyXGetXFreeEdit"
     permission="cmf.ModifyPortalContent"
     />
     
   <browser:page
      for="*"
      name="activate-discountable"
-     class="Products.Discount.browser.discount.DiscountCreation"
+     class="getpaid.discount.browser.discount.DiscountCreation"
      permission="cmf.ModifyPortalContent"
      />
   
   <browser:page
      for="*"
      name="deactivate-discountable"
-     class="Products.Discount.browser.discount.DiscountDestruction"
+     class="getpaid.discount.browser.discount.DiscountDestruction"
      permission="cmf.ModifyPortalContent"
      />
      
   <browser:page
      for="*"
      name="activate-buyxgetxfreeable"
-     class="Products.Discount.browser.discount.BuyXGetXFreeCreation"
+     class="getpaid.discount.browser.discount.BuyXGetXFreeCreation"
      permission="cmf.ModifyPortalContent"
      />
      
    <browser:page
      for="*"
      name="deactivate-buyxgetxfreeable"
-     class="Products.Discount.browser.discount.BuyXGetXFreeDestruction"
+     class="getpaid.discount.browser.discount.BuyXGetXFreeDestruction"
      permission="cmf.ModifyPortalContent"
      />
   
   <adapter
       for="Products.PloneGetPaid.interfaces.IPayableMarker"
-      provides="Products.Discount.browser.interfaces.IDiscountable"
-      factory="Products.Discount.browser.discount.DiscountAdapter"
+      provides="getpaid.discount.browser.interfaces.IDiscountable"
+      factory="getpaid.discount.browser.discount.DiscountAdapter"
       trusted="true"
   />
   
   <adapter
       for="Products.PloneGetPaid.interfaces.IPayableMarker"
-      provides="Products.Discount.browser.interfaces.IBuyXGetXFreeable"
-      factory="Products.Discount.browser.discount.BuyXGetXFreeAdapter"
+      provides="getpaid.discount.browser.interfaces.IBuyXGetXFreeable"
+      factory="getpaid.discount.browser.discount.BuyXGetXFreeAdapter"
       trusted="true"
   />
 

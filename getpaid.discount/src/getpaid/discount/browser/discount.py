@@ -12,10 +12,10 @@ from Products.Five.browser import pagetemplatefile
 from Products.Five.utilities import marker
 from Products.Five.browser import BrowserView
 
-from Products.Discount.browser.interfaces import IDiscountable
-from Products.Discount.browser.interfaces import IBuyXGetXFreeable
-from Products.Discount.browser.interfaces import IDiscountableMarker
-from Products.Discount.browser.interfaces import IBuyXGetXFreeableMarker
+from getpaid.discount.browser.interfaces import IDiscountable
+from getpaid.discount.browser.interfaces import IBuyXGetXFreeable
+from getpaid.discount.browser.interfaces import IDiscountableMarker
+from getpaid.discount.browser.interfaces import IBuyXGetXFreeableMarker
 
 from Products.PloneGetPaid.interfaces import IPayableMarker
 

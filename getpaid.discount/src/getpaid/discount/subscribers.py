@@ -1,5 +1,5 @@
-from Products.Discount.browser.interfaces import IDiscountable
-from Products.Discount.browser.interfaces import IDiscountableMarker
+from getpaid.discount.browser.interfaces import IDiscountable
+from getpaid.discount.browser.interfaces import IDiscountableMarker
 
 from zope.app import zapi
 
