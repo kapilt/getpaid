@@ -5,24 +5,64 @@ cart-review checkout
 $Id$
 """
 
+"""
+random notes
 
+get order
+ 
+ - create order [ entry points ]
+ - dispatch on workflow state
+
+Order Workflow
+  
+  - created
+     - system invariant - make sure we don't create multiple orders from the same cart, need to create cart_id, retrieve order by user_id, cart_id
+     - automatic ready
+  
+  - ready
+     - user submit
+  
+  - pending
+     - automatic declined
+     - automatic accepted
+  
+  - declined
+     - user submit pending
+  
+  - accepted
+     - admin submit processed
+  
+  - processed
+  
+  - re
+  
+  - status
+
+allow linear progression
+
+carry hidden to force transition to required, allow linear links to be used though
+
+"""
+
+import sys
 from cPickle import loads, dumps
-from datetime import timedelta
 
+
+from zope.dottedname import resolve
 from zope.event import notify
 from zope.formlib import form
 from zope import schema, interface
+from zope.interface.interfaces import IInterface
 from zope.app.event.objectevent import ObjectCreatedEvent
 from zope.app.renderer.plaintext import PlainTextToHTMLRenderer
 
 from zope import component
 
-from zc.table import column
-from getpaid.wizard import Wizard, ListViewController, interfaces as wizard_interfaces
+from zc.table import table, column
+
 from getpaid.core import interfaces, options, payment
 from getpaid.core.order import Order
 
-import Acquisition
 from AccessControl import getSecurityManager
 from ZTUtils import make_hidden_input
 
@@ -42,40 +82,51 @@ from widgets import CountrySelectionWidget, StateSelectionWidget, CCExpirationDa
 def null_condition( *args ):
     return ()
 
-def named( klass ):
-    return "%s.%s"%(klass.__module__, klass.__name__)
-    
 class BaseCheckoutForm( formbase.EditForm, BaseView ):
     
     template = None # must be overridden
-
     hidden_form_vars = None
-    adapters = None
-    next_step_name = None # next step in wizard
-    _next_url = None # redirect url
-    wizard = None  # wizard
-    
-    interface.implements( wizard_interfaces.IWizardFormStep )
+    _next_url = None
+    wizard = None
     
     def __init__( self, context, request ):
         self.context = context
         self.request = request
         self.setupLocale( request )
         self.setupEnvironment( request )
-
+    
     def hidden_inputs( self ):
         if not self.hidden_form_vars: return ''
         return make_hidden_input( **self.hidden_form_vars )
-        
+    
     hidden_inputs = property( hidden_inputs )
-
-    def setExportedVariables( self, mapping ):
-        assert isinstance( mapping, dict )
-        self.hidden_form_vars = mapping
+    
+    def setupHiddenFormVariables( self ):
+        """ 
+        export all values for all request form variables, excepting our own ourselves.
+        for ourselves, its expected that a step will render widgets to pickup request values (default)        
+        """
+        # widgets don't nesc. have one to one mapping, greedily pass through
+        # all the previous form data in the request.. skip actions. and only
+        # pass through values which this step isn't collecting itself (issue 88)
+        passed = {}
+        ignore = []
+        for f in self.form_fields:
+            ignore.append( "%s.%s"%(self.prefix, f.__name__) )
         
-    def getSchemaAdapters( self ):
-        return self.adapters
-        
+        for k, v in self.request.form.items():
+            # we need to do a second loop, if we want to allow custom multi part widgets (credit card date for example)
+            # so we can ignore the entire input for the widget, probably a nicer way.
+            next = False
+            for i in ignore:
+                if k.startswith(i):
+                    next = True        
+                    break
+            if next:
+                continue                
+            passed[ k ] = v
+        self.hidden_form_vars.update( passed )
+    
     def invariantErrors( self ):
         errors = []
         for error in self.errors:
@@ -83,21 +134,41 @@ class BaseCheckoutForm( formbase.EditForm, BaseView ):
                 errors.append( error )
         return errors
     
+    def getAdapters( self ):
+        return self.adapters.values()
+    
+    def getFieldsByAdapter( self, adapter ):
+        return [ff for ff in self.form_fields if ff.field.interface == adapter.schema]
+    
+    def getWidgetsByAdapter( self, adapter ):
+        return [w for w in self.widgets if w.context.interface == adapter.schema ]
+    
     def getWidgetsByIName( self, name ):
-        for iface in self.wizard.data_manager.adapters.keys():
-            if name == named( iface ):
-                return self._getWidgetsByInterface( iface )
-
-    def _getWidgetsByInterface( self, interface ):
+        # XXX only call through unrestricted code..
+        iface  = resolve.resolve( name )
+        assert IInterface.providedBy( iface )
+        return self.getWidgetsByInterface( iface )
+    
+    def getWidgetsByInterface( self, interface ):
         return [w for w in self.widgets if w.context.interface == interface ]
-        
+    
     def setUpWidgets( self, ignore_request=False ):
         self.adapters = self.adapters is not None and self.adapters or {}
         self.widgets = form.setUpEditWidgets(
             self.form_fields, self.prefix, self.context, self.request,
             adapters=self.adapters, ignore_request=ignore_request
             )
-        
+    
+    def hasPreviousStep( self, *args ):
+        step = self.hidden_form_vars.get('cur_step', self.wizard.start_step )
+        c, n, p = self.wizard.getSteps( step )
+        return p != None
+
+    def hasNextStep( self, *args ):
+        step = self.hidden_form_vars.get('cur_step', self.wizard.start_step )
+        c, n, p = self.wizard.getSteps( step )
+        return n != None
+                
     def render( self ):
         if self._next_url:
             self.request.RESPONSE.redirect( self._next_url )
@@ -136,11 +207,24 @@ class ImmutableBag( object ):
             setattr( self, field_name, field.get( other ) )
         return self
 
-class CheckoutWizard( Wizard ):
+
+class OrderIdManagerMixin( object ):
+    def getOrderId( self ):
+        """ get the current order id out of the request,
+            or generate a new one if it's not there yet."""
+        order_id = self.request.get('order_id', None)
+        if order_id is None and 'cur_step' not in self.request:
+            # you're at the first step. Ok, have a new Id then            
+            order_manager = component.getUtility( interfaces.IOrderManager )
+            order_id = order_manager.newOrderId()
+        return order_id
+
+WIZARD_NEXT_STEP = object()
+WIZARD_PREVIOUS_STEP = object()
+
+class CheckoutWizard( OrderIdManagerMixin, BrowserView ):
     """
-    a bidirectional checkout wizard. see the controller if you want to customize,
-    the sequence, see the viewlets for a given checkout page to customize a single
-    ui component.
+    a bidirectional checkout wizard.
     
     steps should export all form variables not from themselves as hidden inputs, to 
     allow for prepopulated forms from previous inputs on that step. 
@@ -155,10 +239,13 @@ class CheckoutWizard( Wizard ):
     
     steps can't override call methods, as such logic won't be processed, since we call
     update / render methods directly.
-    
-
     """
+    steps = ['checkout-address-info', 'checkout-review-pay']
 
+
+    @property
+    def start_step( self ):
+        return self.steps[0]
     
     def checkShoppingCart(self):
         cart = component.getUtility(interfaces.IShoppingCartUtility).get( self.context )
@@ -176,82 +263,61 @@ class CheckoutWizard( Wizard ):
             self.request.response.redirect('login_form?came_from=@@getpaid-checkout-wizard')
             return False
         return True
-    
-    def checkOrderId( self ):
-        """ get the current order id out of the request,
-            and verify it"""
         
-        order_id = self.request.get('order_id', None)
-        order_manager = component.getUtility( interfaces.IOrderManager )
-        
-        # if invalid order id, or no order id present 
-        # set to first step and give new order id
-        if ( order_id is None and not self.controller.hasPreviousStep() ) or \
-            not order_manager.isValid( order_id ):
-            self.controller.reset()
-            self.request['order_id'] = order_id = order_manager.newOrderId()
-            self.data_manager['order_id'] = order_id
-            return True
-            
-        # if the order id is already in use check to see if its the same user that
-        # owns it    
-        if order_id in order_manager:
-            # check for already existing order belonging to the same user from the
-            # last day, and redirect them to it, else restart them in the wizard
-            # all anonymous get restarted.
-            user_id = getSecurityManager().getUser().getId()
-            if user_id != 'Anonymous':
-                results = order_manager.query( user_id = user_id,
-                                               order_id = order_id,
-                                               creation_date = timedelta(1) )
-                if len(results) == 1:
-                    order = list( results )[0]
-                    base_url = self.context.absolute_url()
-                    url = base_url + '/@@getpaid-thank-you?order_id=%s' %(order_id)
-                    self.request.response.redirect( url )
-                    self.wizard.data_manager.reset()
-                    return False
-                    
-            # redirect and reset form variables
-            self.wizard.data_manager.reset()
-            self.request.response.redirect('@@checkout-wizard')
-
-            return False
-            
-        self.data_manager['order_id'] = order_id
-        return True
-    
     def __call__( self ):
-        # if we don't have a shopping cart redirect browser to empty cart view
+        
         if not self.checkShoppingCart():
             return
-        
-        # if we're not authenticated redirect to login page with camefrom
-        # which points back to the checkout wizard, bypassed by admin 
-        # option to allow anonymous checkout
         if not self.checkAuthenticated():
             return
-        
-        # check to make sure we have a valid unused order id associated throughout
-        # the checkout process. also stores the order id in the data mangaer for
-        # use by other components.
-        if not self.checkOrderId():
-            return
-        
-        return super( CheckoutWizard, self).__call__()
-    
 
-class CheckoutController( ListViewController ):
-    
-    steps = ['checkout-address-info', 'checkout-review-pay']    
-
-    def getStep( self, step_name ):
-        step = component.getMultiAdapter( 
-                    ( self.wizard.context, self.wizard.request ),
-                    name=step_name
-                    )
-        return step.__of__( Acquisition.aq_inner( self.wizard.context ) )
+        current_step, next_step, previous_step = self.getSteps()
         
+        current = self.context.restrictedTraverse('@@%s'%current_step)
+        current.wizard = self
+        current.hidden_form_vars = dict( cur_step = current_step,
+                                         order_id = self.getOrderId() )
+        current.update()
+        
+        if current._next_url == WIZARD_NEXT_STEP:
+            assert next_step, "No Next Step Or Redirect"
+            current = self.context.restrictedTraverse('@@%s'%next_step )
+            current.hidden_form_vars = dict( cur_step = next_step,
+                                             order_id = self.getOrderId() )
+        elif current._next_url == WIZARD_PREVIOUS_STEP:
+            assert previous_step, "No Previous Step Or Redirect"            
+            current = self.context.restrictedTraverse('@@%s'%previous_step)
+            current.hidden_form_vars = dict( cur_step = previous_step,
+                                             order_id = self.getOrderId() )
+        else:
+            # finish processing current step
+            return current.render()
+
+        # new current view
+        current.wizard = self
+        return current()
+    
+    def getSteps( self, cur_step=None ):
+        """ return the current, next, and previous steps. """
+        if cur_step is None:
+            cur_step = self.request.get('cur_step', self.steps[0] )
+            
+        assert cur_step in self.steps
+        
+        step_idx = self.steps.index( cur_step )
+        # check last step
+        if len(self.steps) -1 == step_idx:
+            next_step = None
+        else:
+            next_step = self.steps[ step_idx + 1 ]
+            
+        # check first step
+        if step_idx == 0:
+            previous_step = None
+        else:
+            previous_step = step_idx-1
+            
+        return cur_step, next_step, previous_step
 
 class CheckoutAddress( BaseCheckoutForm ):
     """
@@ -269,9 +335,11 @@ class CheckoutAddress( BaseCheckoutForm ):
     form_fields['bill_state'].custom_widget = StateSelectionWidget
     
     template = ZopeTwoPageTemplateFile("templates/checkout-address.pt")
+
+    _next_url = None
     
-    def getSchemaAdapters( self ):
-        adapters = {}        
+    def setupDataAdapters( self ):
+        self.adapters = {}        
         user = getSecurityManager().getUser()   
         contact_info = component.queryAdapter( user, interfaces.IUserContactInformation )
         if contact_info is None:
@@ -285,27 +353,30 @@ class CheckoutAddress( BaseCheckoutForm ):
         if shipping_address is None:
             shipping_address = ShipAddressInfo()
             
-        adapters[ interfaces.IUserContactInformation ] = contact_info
-        adapters[ interfaces.IShippingAddress ] = shipping_address
-        adapters[ interfaces.IBillingAddress ] = billing_address
-        return adapters
+        self.adapters[ interfaces.IUserContactInformation ] = contact_info
+        self.adapters[ interfaces.IShippingAddress ] = shipping_address
+        self.adapters[ interfaces.IBillingAddress ] = billing_address
+        return
     
     def update( self ):
-        if not self.adapters:
-            self.adapters = self.getSchemaAdapters()
+        self.setupDataAdapters()
+        self.setupHiddenFormVariables()        
         super( CheckoutAddress, self).update()
     
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
         return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
         
-    @form.action(_(u"Continue"), name="continue")
+    @form.action(_(u"Continue"), name="continue", condition='hasNextStep')
     def handle_continue( self, action, data ):
-        self.next_step_name = wizard_interfaces.WIZARD_NEXT_STEP
+        self._next_url = WIZARD_NEXT_STEP
 
-class CheckoutReviewAndPay( BaseCheckoutForm ):
+class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
     
     form_fields = form.Fields( interfaces.IUserPaymentInformation )
+    passed_fields = form.Fields( interfaces.IBillingAddress ) + \
+                    form.Fields( interfaces.IShippingAddress ) + \
+                    form.Fields( interfaces.IUserContactInformation )
     form_fields['cc_expiration'].custom_widget = CCExpirationDateWidget
 
     template = ZopeTwoPageTemplateFile("templates/checkout-review-pay.pt")
@@ -317,45 +388,49 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         column.GetterColumn( title=_(u"Total"), getter=cart_core.lineItemTotal ),
        ]
     
-    def getSchemaAdapters( self ):
-        adapters = {}
-        adapters[ interfaces.IUserPaymentInformation ] = BillingInfo(self.context)
-        return adapters
+    
+    def setupDataAdapters( self ):
+        self.adapters = {}
+        self.adapters[ interfaces.IUserContactInformation ] = ContactInfo()        
+        self.adapters[ interfaces.IBillingAddress ] = BillAddressInfo()
+        self.adapters[ interfaces.IShippingAddress ] = ShipAddressInfo()
+        self.adapters[ interfaces.IUserPaymentInformation ] = BillingInfo(self.context)
+
+        # extract data that was passed through in the request, using edit widgets
+        # for marshalling value extraction. we'll basically throw an error here
+        # if the values aren't found, but that shouldn't happen in normal operation
+        data = {}
+        widgets = form.setUpEditWidgets( self.passed_fields, self.prefix, self.context,
+                                         self.request, adapters=self.adapters,
+                                         ignore_request=False )
+        form.getWidgetsData( widgets, self.prefix, data )
         
+        
+        # save the data to the adapters, we're not an edit form so we won't automatically
+        # be storing to them, and we don't want to use the values as object attributes
+        self.extractData( data )
+    
     def setUpWidgets( self, ignore_request=False ):
         self.adapters = self.adapters is not None and self.adapters or {}
-        
-        # grab all the adapters and fields from the entire wizard form sequence (till the current step)
-        adapters = self.wizard.data_manager.adapters
-        adapters.update( self.getSchemaAdapters() )
-        fields   = self.wizard.data_manager.fields
         
         # edit widgets for payment info
         self.widgets = form.setUpEditWidgets(
             self.form_fields.select( *schema.getFieldNames( interfaces.IUserPaymentInformation)),
             self.prefix, self.context, self.request,
-            adapters=adapters, ignore_request=ignore_request
+            adapters=self.adapters, ignore_request=ignore_request
             )
         
         # display widgets for bill/ship address
-        bill_ship_fields = fields.select( *schema.getFieldNamesInOrder( interfaces.IBillingAddress ) ) + \
-                           fields.select( *schema.getFieldNamesInOrder( interfaces.IShippingAddress ) )
-                           
-        # clear custom widgets.. (typically for edit, we want display)
-        for field in bill_ship_fields:
-            if field.custom_widget is not None:
-                field.custom_widget = None
-        
         self.widgets += form.setUpEditWidgets(
-            bill_ship_fields,  self.prefix, self.context, self.request,
-            adapters=adapters, for_display=True, ignore_request=ignore_request
+            self.passed_fields,  self.prefix, self.context, self.request,
+            adapters=self.adapters, for_display=True, ignore_request=ignore_request
             )
     
     def renderCart( self ):
         cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
         if not cart:
             return _(u"N/A")
-        
+
         # create an order so that tax/shipping utilities have full order information
         # to determine costs (ie. billing/shipping address ).
         order = self.createOrder()
@@ -369,14 +444,24 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         
         formatter.cssClasses['table'] = 'listing'
         return formatter()
-        
+
+    
+    def update( self ):
+        self.setupDataAdapters()
+        self.setupHiddenFormVariables()
+        super( CheckoutReviewAndPay, self).update()
+    
+    # custom validator.. make sure we have all relevant data
+    #def validatePayment( self, action, data ):
+    #    pass
+    
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
         return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
         
-    @form.action(_(u"Back"), name="back")
+    @form.action(_(u"Back"), name="back", condition='hasPreviousStep')
     def handle_back( self, action, data):
-        self.next_step_name = wizard_interfaces.WIZARD_PREVIOUS_STEP                
+        self._next_url = WIZARD_PREVIOUS_STEP                
         
     @form.action(_(u"Make Payment"), name="make-payment", condition=form.haveInputWidgets )
     def makePayment( self, action, data ):
@@ -392,8 +477,7 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         processor = component.getAdapter( self.context,
                                           interfaces.IPaymentProcessor,
                                           processor_name )
-        
-        adapters = self.wizard.data_manager.adapters
+        self.extractData( data )
         
         order = self.createOrder()
         order.processor_id = processor_name
@@ -401,10 +485,10 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         
         # extract data to our adapters
         
-        result = processor.authorize( order, adapters[ interfaces.IUserPaymentInformation ] )
+        result = processor.authorize( order, self.adapters[ interfaces.IUserPaymentInformation ] )
         if result is interfaces.keys.results_async:
             # shouldn't ever happen, on async processors we're already directed to the third party
-            # site on the final checkout step, all interaction with an async processor are based on processor
+            # site on the final checkout step, all interaction with a processor are based on processor
             # adapter specific callback views.
             pass
         elif result is interfaces.keys.results_success:
@@ -419,7 +503,13 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
             self.form_reset = False
         
         self._next_url = self.getNextURL( order )
-        
+    
+    def extractData( self, data ):
+        for iface, adapter in self.adapters.items():
+            for name, field in schema.getFieldsInOrder( iface ):
+                if name in data:
+                    field.set( adapter, data[ name ] )
+    
     def createOrder( self ):
         order_manager = component.getUtility( interfaces.IOrderManager )
         order = Order()
@@ -428,14 +518,13 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         
         # shopping cart is attached to the session, but we want to switch the storage to the persistent
         # zodb, we pickle to get a clean copy to store.
-        adapters = self.wizard.data_manager.adapters
-                
+        
         order.shopping_cart = loads( dumps( shopping_cart ) )
-        order.shipping_address = payment.ShippingAddress.frominstance( adapters[ interfaces.IShippingAddress ] )
-        order.billing_address = payment.BillingAddress.frominstance( adapters[ interfaces.IBillingAddress ] )
-        order.contact_information = payment.ContactInformation.frominstance( adapters[ interfaces.IUserContactInformation ] )
+        order.shipping_address = payment.ShippingAddress.frominstance( self.adapters[ interfaces.IShippingAddress ] )
+        order.billing_address = payment.BillingAddress.frominstance( self.adapters[ interfaces.IBillingAddress ] )
+        order.contact_information = payment.ContactInformation.frominstance( self.adapters[ interfaces.IUserContactInformation ] )
 
-        order.order_id = self.wizard.data_manager.get('order_id')
+        order.order_id = self.getOrderId()
         order.user_id = getSecurityManager().getUser().getId()
         notify( ObjectCreatedEvent( order ) )
         
@@ -458,27 +547,37 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
             return base_url + '/@@getpaid-thank-you?order_id=%s&finance_state=%s' %(order.order_id, state)
         
 
-class StorePropertyView(BrowserView):
-    
-    def _getProperty(self, name ):
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        settings = IGetPaidManagementOptions(portal)
-        value = getattr( settings, name, '')
-        if value:
-            renderer = PlainTextToHTMLRenderer(value, self.request)
-            value = renderer.render().strip()
-        return value
+class CheckoutConfirmed( BrowserView ):
+    """ thank you screen after success
+    """
 
-class DisclaimerView( StorePropertyView ):
+class CartEmpty( BrowserView ):
+    """ cart is empty, can't checkout """
+
+class DisclaimerView(BrowserView):
     """ Shows the disclaimer text from the getpaid settings.
     """
-    @property
-    def disclaimer( self ):
-        return self._getProperty( 'disclaimer' )
     
-class PrivacyPolicyView( StorePropertyView ):
+    @property
+    def disclaimer(self):
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        settings = IGetPaidManagementOptions(portal)
+        disclaimer = None
+        if settings.disclaimer:
+            renderer = PlainTextToHTMLRenderer(settings.disclaimer, self.request)
+            disclaimer = renderer.render().strip()
+        return disclaimer
+
+class PrivacyPolicyView(BrowserView):
     """ Shows the privacy policy text from the getpaid settings.
     """
+    
     @property
     def privacy_policy(self):
-        return self._getProperty('privacy_policy')
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        settings = IGetPaidManagementOptions(portal)
+        privacy = None
+        if settings.privacy_policy:
+            renderer = PlainTextToHTMLRenderer(settings.privacy_policy, self.request)
+            privacy = renderer.render().strip()
+        return privacy

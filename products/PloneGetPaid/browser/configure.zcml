@@ -56,33 +56,23 @@
       name="batching.css"
       file="resources/batching.css" />
 
-  <!-- Admin UI -->
+  <!-- Get Paid Admin UI -->
   <include file="admin.zcml" />
 
-  <!-- Content Integration UI -->
+
+  <!-- Get Paid Content UI -->
   <include file="content.zcml" />
 
   <!-- Shopping Cart UI -->
   <include file="cart.zcml" />
 
-  <!-- Checkout UI -->
   <browser:page
      for="*"
      name="getpaid-checkout-wizard"
      class=".checkout.CheckoutWizard"
      permission="zope2.View"
      />
-   
-  <adapter 
-      for="getpaid.wizard.interfaces.IWizard"
-      provides="getpaid.wizard.interfaces.IWizardController"
-      factory=".checkout.CheckoutController" />
-    
-  <adapter 
-      for="getpaid.wizard.interfaces.IWizard"
-      provides="getpaid.wizard.interfaces.IWizardDataManager"
-      factory="getpaid.wizard.DataManager"/>
-      
+
   <browser:page
      for="*"
      name="checkout-address-info"
