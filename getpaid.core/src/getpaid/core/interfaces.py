@@ -263,17 +263,30 @@ class IGiftCertificate( ILineItem ):
 
 class IShoppingCartUtility( Interface ):
 
-    def get( create=False ):
+    def get( context, create=False, key=None ):
         """
-        return the user's shopping cart or none if not found.
-        if create is passed then create a new one if one isn't found
+        Return the user's shopping cart or none if not found. If
+        create is passed then create a new one if one isn't found. If
+        key is passed then return the cart corresponding to that key
+        independent of the current user.
         """
 
-    def destroy( ):
+    def destroy( context, key=None ):
         """
-        remove the current's users cart from the session if it exists
+        Remove the current user's cart from the session if it exists.
+        If key is passed then remove the cart corresponding to that
+        key independent of the current user.
         """
-        
+
+    def getKey( context ):
+        """
+        Return a key for the shopping cart of the current user
+        including anonymous users. This key can then be used to
+        retrieve or destroy the cart at a later point. This is to
+        support handling of notification callbacks with async
+        processors.
+        """
+
 class IShoppingCart( ILineItemContainer ):
     """ A Shopping Cart 
     """
