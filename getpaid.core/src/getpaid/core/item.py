@@ -68,7 +68,16 @@ class LineItem( Persistent ):
     def fulfillment_workflow( self ):
         return IWorkflowInfo( self )
 
+class ShippableLineItem( LineItem ):
     
+    implements( interfaces.IShippableLineItem )
+    weight = ""
+    um_weight = ""
+    um_distance = ""
+    length = ""
+    height = ""
+    width = ""
+
 class PayableLineItem( LineItem ):
     """
     an item in the cart for a payable
@@ -82,4 +91,7 @@ class PayableLineItem( LineItem ):
         utility = component.getUtility( IIntIds )
         return utility.queryObject( self.uid )
         
-        
+class PayableShippableLineItem( ShippableLineItem, PayableLineItem ):
+    """
+    a shippable item in a cart for a payable
+    """
