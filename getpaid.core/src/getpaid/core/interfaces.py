@@ -57,17 +57,81 @@ class IPersistentOptions( Interface ):
     """
 
 class IStoreSettings( IPersistentOptions ):
-    """ minimum configuration schema for a store, pgp product has examples of many more
+    """ minimum configuration schema for a store, pgp product has examples of many more.
+    
+    TODO: there some duplication here between PGP interfaces for store configuration and the ones here.
+    the ones here are for usage without plone... ie z3 unit tests, and z3 stores. ideally the ones
+    in pgp would be derived from these.. which needs parallel work to fix up translations.
     """
+    
     shipping_method = schema.Choice( title = _(u"Shipping Method"),
                                      required = True,
                                      source = "getpaid.shipping_methods" )
 
     store_name = schema.TextLine( title = _(u"Store/Organization Name"),
                                   required = True,
+                                  default = u"" )
+
+    contact_name = schema.TextLine( title = _(u"Contact Name"),
+                                    required = False,
+                                    default = u"" )
+                                    
+
+    contact_email = schema.TextLine( title = _(u"Contact Email"),
+                                  required = False,
                                   default = u""
                                 )
-    
+                                
+    contact_company = schema.TextLine( title = _(u"Contact Company"),
+                              required = False,
+                              default = u""
+                            )
+
+    contact_address = schema.TextLine( title = _(u"Contact Address"),
+                                       required = False,
+                                       default = u""
+                                     )
+                                
+    contact_address2 = schema.TextLine( title = _(u"Contact Address2"),
+                                        required = False,
+                                        default = u""
+                                      )
+
+    contact_city = schema.TextLine( title = _(u"Contact City"),
+                                    required = False,
+                                    default = u""
+                                  )
+
+    contact_country = schema.Choice( title = _(u"Contact Country"),
+                                     required = False,
+                                     vocabulary = "getpaid.countries"
+                                   )
+
+    contact_state = schema.Choice( title = _(u"Contact State/Province"),
+                                   required = False,
+                                   vocabulary = "getpaid.states"
+                                 )
+
+    contact_postalcode = schema.TextLine( title = _(u"Contact Zip/Postal Code"),
+                                          required = False,
+                                          default = u""
+                                        )
+
+    contact_phone = PhoneNumber( title = _(u"Contact Phone"),
+                                 description = _(u"Only digits allowed"),
+                                     required = False,
+                                     default = u""
+                                   )
+
+    contact_fax = schema.TextLine( title = _(u"Contact Fax"),
+                                   required = False,
+                                   default = u""
+                                 )
+
+    tax_ein = schema.TextLine( title= _(u"Tax Identification Number"),
+                               required = False,
+                               default=u"")
+
 
 #################################
 # Stuff To Buy
@@ -249,6 +313,20 @@ class IPayableLineItem( ILineItem ):
         """ return the payable object, or None if can't be found.
         """
 
+class IShippableLineItem( ILineItem ):
+    """
+    a line item that can be shipped
+    """
+    #implements( interfaces.IShippableLineItem )
+    weight = schema.Float( title = _(u'Weight of Packaged Item'),
+                           required = True,
+                           )
+    #um_weight = 
+    #um_distance = ""
+    #length = ""
+    #height = ""
+    #width = ""
+        
 class IRecurringLineItem( IPayableLineItem ):
 
     period = schema.Int( title = _(u"Period as a timedelta"))
