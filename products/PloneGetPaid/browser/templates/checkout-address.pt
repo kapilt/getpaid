@@ -9,10 +9,9 @@
         enctype="multipart/form-data">
 
     <div class="hidden_fields"
-	 tal:content="structure view/hidden_inputs"> </div>
+	     tal:content="structure view/hidden_inputs"> </div>
 
     <div class="portalMessage" tal:content="view/status" tal:condition="view/status"> </div>
-
     <table>
 	<tr>
 		<td colspan="2">
