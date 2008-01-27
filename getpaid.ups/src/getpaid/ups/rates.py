@@ -25,7 +25,7 @@ class OriginRouter( object ):
     def getOrigin( self ):
         store_settings = component.getUtility( IStoreSettings )
         
-        contact = ContactInformation( name = ( store_settings.company_name or store_settings.store_name ),
+        contact = ContactInformation( name = ( store_settings.contact_company or store_settings.store_name ),
                                       phone_number = store_settings.contact_phone,
                                       email = store_settings.contact_email )
                                          
@@ -43,18 +43,23 @@ class UPSRateService( Contained ):
     
     interface.implements( interfaces.IUPSRateService, 
                           interfaces.IUPSSettings )
-        
+                          
+    server_url = interfaces.UPS_URLS.getTermByToken('sandbox').value
+    pickup_type = interfaces.UPS_PICKUP_TYPES.getTermByToken('one-time-pickup').value
+    
     def getRates( self, order ):
         settings = interfaces.IUPSSettings( self )
         store_contact = component.getUtility( IStoreSettings )
         origin_contact, origin_address = interfaces.IOriginRouter( order ).getOrigin() 
-        
+
+
         request = CreateRequest( settings,       # ups settings
                                  store_contact,  # store contact information 
                                  origin_contact, # origin contact information
                                  origin_address, # origin location
-                                 order )         # destination contact and location
-        
+                                 order,          # destination contact and location
+                                 pretty=True)
+        #raise str(request)
         try:
             response_text = SendRequest( settings.server_url, request ).read()
         except URLError:
@@ -66,6 +71,16 @@ class UPSRateService( Contained ):
 class ShippingMethodRate( object ):
     """A Shipment Option and Price"""
     interface.implements( interfaces.IShippingMethodRate )
+
+    service_code = ""
+    service = ""
+    currency = ""
+    cost = 0
+    days_to_delivery = 0
+    delivery_time = ""
+    
+    def __repr__( self ):
+        return  "<UPS Method %s>"%(str(self.__dict__))
     
 class UPSResponse:
     """An object representing a response from UPS...will contain status/error info and possibly a list of shipments"""
@@ -94,7 +109,8 @@ def CreateAccessRequest( license_number, user_id, psswrd):
     etree.SubElement(accessrequest, "AccessLicenseNumber").text = license_number
     etree.SubElement(accessrequest, "UserId").text = user_id
     etree.SubElement(accessrequest, "Password").text = psswrd
-    #print etree.tostring(accessrequest, pretty_print=True)
+
+    
     return accessrequest
 
 
@@ -107,8 +123,8 @@ def CreateServiceRequest(settings,
                          description = "Rate Shopping"):
                          
     """Generates and returns the etree version of the service request"""
-    
-    items = filter( IShippableLineItem.providedBy, order.shopping_cart )
+
+    items = filter( IShippableLineItem.providedBy, order.shopping_cart.values() )
     
     servicerequest = etree.Element("RatingServiceSelectionRequest")
     request = etree.SubElement(servicerequest, "Request")
@@ -120,14 +136,20 @@ def CreateServiceRequest(settings,
     xpciversion = etree.SubElement(trans_reference, "XpciVersion").text = "1.0"
     
     etree.SubElement(request, "RequestAction").text = "Rate"
-    #etree.SubElement(request, "RequestOption").text = ship_options.request_option
+    etree.SubElement(request, "RequestOption").text = "Shop"
     
     #pickup type
-    pickuptype = etree.SubElement(servicerequest, "PickupType")
-    pickup_type_code = interfaces.UPS_PICKUP_TYPES[settings.pickup_type]
-    etree.SubElement(pickuptype, "Code").text = pickup_type_code
-    etree.SubElement(pickuptype, "Description").text = settings.pickup_type
-    
+    if getattr( settings, 'pickup_type', None):
+        pickuptype = etree.SubElement(servicerequest, "PickupType")
+        description = interfaces.UPS_PICKUP_TYPES.getTerm( settings.pickup_type ).token
+        etree.SubElement(pickuptype, "Code").text = settings.pickup_type
+        etree.SubElement(pickuptype, "Description").text = description
+
+    if getattr( settings, 'customer_classification', None):
+        etree.SubElement(
+            etree.SubElement( servicerequest, "CustomerClassification"),
+            "Code").text = settings.customer_classification
+        
     #Shipment
     shipment = etree.SubElement(servicerequest, "Shipment")
     etree.SubElement(shipment, "Description").text = description
@@ -149,8 +171,10 @@ def CreateServiceRequest(settings,
         etree.SubElement(shipment_shipper, "PhoneNumber").text = store_contact.contact_phone
     if store_contact.contact_fax:
         etree.SubElement(shipment_shipper, "FaxNumber").text = store_contact.contact_fax
-    if settings.shipper_number:
-        etree.SubElement(shipment_shipper, "ShipperNumber").text = settings.shipper_number
+        
+    # required for negotiated rates
+    #if settings.shipper_number:
+    #    etree.SubElement(shipment_shipper, "ShipperNumber").text = settings.shipper_number
     
     shipper_address = etree.SubElement(shipment_shipper, "Address")
     
@@ -168,14 +192,19 @@ def CreateServiceRequest(settings,
     addr = order.shipping_address
     contact = order.contact_information
     
-    etree.SubElement(shipment_shipto, "CompanyName")
-    etree.SubElement(shipment_shipto, "AttentionName")
-    etree.SubElement(shipment_shipto, "PhoneNumber").text = contact.phone_number
+    etree.SubElement(shipment_shipto, "CompanyName").text = contact.name
+    etree.SubElement(shipment_shipto, "AttentionName").text = contact.name
     etree.SubElement(shipment_shipto, "Name").text = contact.name
+                     
+    if contact.phone_number:
+        etree.SubElement(shipment_shipto, "PhoneNumber").text = contact.phone_number
     
     shipto_address = etree.SubElement(shipment_shipto, "Address")
     etree.SubElement(shipto_address, "AddressLine1").text = addr.ship_first_line
-    etree.SubElement(shipto_address, "AddressLine2").text = addr.ship_second_line
+    
+    if getattr( addr, 'ship_second_line', None):
+        etree.SubElement(shipto_address, "AddressLine2").text = addr.ship_second_line
+        
     etree.SubElement(shipto_address, "City").text = addr.ship_city
     etree.SubElement(shipto_address, "State").text = addr.ship_state
     etree.SubElement(shipto_address, "CountryCode").text = addr.ship_country
@@ -184,7 +213,7 @@ def CreateServiceRequest(settings,
     #shipment - shipfrom (same as shipper)
     if origin_contact:
         shipment_shipfrom = etree.SubElement(shipment, "ShipFrom")
-        etree.SubElement(shipment_shipfrom, "CompanyName")
+        etree.SubElement(shipment_shipfrom, "CompanyName").text = origin_contact.name
         etree.SubElement(shipment_shipfrom, "AttentionName").text = origin_contact.name
         etree.SubElement(shipment_shipfrom, "PhoneNumber").text = origin_contact.phone_number
         #etree.SubElement(shipment_shipfrom, "FaxNumber").text = origin_contact
@@ -213,11 +242,11 @@ def CreateServiceRequest(settings,
         package = etree.SubElement(shipment, "Package")
         package_type = etree.SubElement(package, "PackagingType")
         etree.SubElement(package_type, "Code").text = '04' # Generic 'PAK' description
-    
+        etree.SubElement( package, "Description").text = "Rate"
         package_weight = etree.SubElement(package, "PackageWeight")
-        #package_weight_unit = etree.SubElement(package_weight, "UnitOfMeasurement")
-        #etree.SubElement(package_weight_unit, "Code").text = item.weight_unit
-        etree.SubElement(package_weight, "Weight").text = item.weight
+        package_weight_unit = etree.SubElement(package_weight, "UnitOfMeasurement")
+        etree.SubElement(package_weight_unit, "Code").text = "LBS"
+        etree.SubElement(package_weight, "Weight").text = str( item.weight )
     
     etree.SubElement(shipment, "ShipmentServiceOptions")
     
@@ -232,8 +261,8 @@ def CreateRequest( settings,
                    pretty=False ):
 
     """Returns the text version of the xml request"""
-    accessreq = CreateAccessRequest( settings.access_key, settings.user_id, settings.password)
-    servicereq = CreateServiceRequest( settings, store_contact, origin_contact, origin_address)
+    accessreq = CreateAccessRequest( settings.access_key, settings.username, settings.password)
+    servicereq = CreateServiceRequest( settings, store_contact, origin_contact, origin_address, order )
     
     xml_text = '<?xml version="1.0"?>' + etree.tostring(accessreq, pretty_print=pretty) + '<?xml version="1.0"?>' + etree.tostring(servicereq, pretty_print=pretty)
     return xml_text
@@ -265,7 +294,7 @@ def ParseResponse( root ):
                         elif child2.tag == "ErrorLocation":
                             for child3 in child2:
                                 if child3.tag == "ErrorLocationElementName":
-                                    ups_response.error_locaction_elem_name = child3.text
+                                    ups_response.error_location_elem_name = child3.text
                                 elif child3.tag == "ErrorLocationElementReference":
                                     ups_response.error_location_elem_ref = child3.text
                                 elif child3.tag == "ErrorLocationAttributeName":
@@ -275,6 +304,16 @@ def ParseResponse( root ):
         elif elem.tag == "RatedShipment":
             shipment = ParseShipment( elem )
             ups_response.shipments.append( shipment )
+
+    if getattr( ups_response, 'error_code', None):
+        if 'AccessRequest' in getattr( ups_response, 'error_location_elem_name', ''):
+            raise interfaces.UPSInvalidCredentials( **ups_response.__dict__ )
+        if ups_response.error_code == '250003':
+            raise interfaces.UPSInvalidCredentials( **ups_response.__dict__ )
+
+        raise str( ups_response.__dict__.items() )
+        
+        raise interfaces.UPSError( **ups_response.__dict__ )
     return ups_response
 
 def ParseShipment( elem ):
@@ -286,7 +325,10 @@ def ParseShipment( elem ):
                 if child2.tag == "Code":
                     current_shipment.service_code = child2.text
                 elif child2.tag == "Description":
-                    current_shipment.service_desc = child2.text
+                    current_shipment.service = child2.text
+            if not getattr( current_shipment, 'service'):
+                current_shipment.service = \
+                    interfaces.UPS_SERVICES.getTerm( current_shipment.service_code ).title
         elif child.tag == "BillingWeight":
             for child2 in child:
                 if child2.tag == "UnitOfMeasurement":
@@ -314,9 +356,9 @@ def ParseShipment( elem ):
         elif child.tag == "TotalCharges":
             for child2 in child:
                 if child2.tag == "CurrencyCode":
-                    current_shipment.total_charge_currency = child2.text
+                    current_shipment.currency = child2.text
                 elif child2.tag == "MonetaryValue":
-                    current_shipment.total_charge_value = child2.text
+                    current_shipment.cost = float( child2.text )
         elif child.tag == "GuaranteedDaysToDelivery":
             current_shipment.days_to_delivery = child.text
         elif child.tag == "ScheduledDeliveryTime":
@@ -332,10 +374,10 @@ def PrintResponse( response ):
         {'severity' : response.error_severity, 'code' : response.error_code, 'desc' : response.error_desc }
     print
     
-    l_services = dict( [ (v,k) for k,v in interfaces.UPS_SERVICES.items() ])
+    #l_services = dict( [ (v,k) for k,v in interfaces.UPS_SERVICES.items() ])
     
     for shipment in response.shipments:
-        print ' Service Code: %s' % ( l_services[shipment.service_code] )
+        #print ' Service Code: %s' % ( l_services[shipment.service_code] )
         if hasattr(shipment, 'service_desc'):
             print ' Service Description %s' % shipment.service_desc
         print ' Shipment unit of measurement: %s' % shipment.unit
