@@ -228,4 +228,9 @@
      permission="zope2.View"
      />
 
+  <!-- Conditionally Load up Plugin UIS -->
+  <include zcml:condition="installed getpaid.ups"
+           package="getpaid.ups.browser" />	 	  
+      
+
 </configure>
