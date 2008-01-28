@@ -5,7 +5,7 @@ $Id:
 from urllib2 import Request, urlopen, URLError
 from lxml import etree
 
-from zope import interface, component
+from zope import interface, schema, component
 from zope.app.container.contained import Contained
 
 from getpaid.core.interfaces import IShippableLineItem, IStoreSettings, IOrder
@@ -44,9 +44,13 @@ class UPSRateService( Contained ):
     interface.implements( interfaces.IUPSRateService, 
                           interfaces.IUPSSettings )
                           
-    server_url = interfaces.UPS_URLS.getTermByToken('sandbox').value
-    pickup_type = interfaces.UPS_PICKUP_TYPES.getTermByToken('one-time-pickup').value
     
+    def __init__( self ):
+        # initialize defaults from schema
+        for name, field in schema.getFields( interfaces.IUPSSettings ).items():
+            field.set( self, field.query( self, field.default ) )
+        super( UPSRateService, self).__init__()
+        
     def getRates( self, order ):
         settings = interfaces.IUPSSettings( self )
         store_contact = component.getUtility( IStoreSettings )

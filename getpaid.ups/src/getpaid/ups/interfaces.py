@@ -5,6 +5,8 @@ $Id: $
 from zope import schema, interface
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
+from getpaid.core.interfaces import IShippingRateService
+
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('getpaid.ups')
 
@@ -63,7 +65,7 @@ UPS_STATUS_CODES = SimpleVocabulary([
     ])
 
 
-class IUPSRateService( interface.Interface ):
+class IUPSRateService( IShippingRateService ):
     """
     UPS Rates Service
     """
