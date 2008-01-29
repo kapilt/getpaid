@@ -21,20 +21,15 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-from Products.Five.browser import BrowserView
-from getpaid.core.interfaces import IPaymentProcessor
-from getpaid.core.interfaces import IShoppingCartUtility
-from zope.component import getAdapter
-from zope.component import getUtility
+from gchecky import model as gmodel
+from gchecky import gxml
 
-
-class Checkout(BrowserView):
-
-    def __call__(self):
-        processor = getAdapter(self.context, IPaymentProcessor,
-                               'Google Checkout')
-        cart_utility = getUtility(IShoppingCartUtility)
-        cart = cart_utility.get(self.context)
-        analytics_data = self.request.form.get('analyticsdata', None)
-        url = processor.checkout(cart, analytics_data)
-        self.request.response.redirect(url)
+def gchecky():
+    # Avoid problems with validating URLs. The test framework uses a
+    # placeholder host name of "nohost". Meanwhile gheckys validation
+    # expects at least one dot in the host name. So we just fiddle
+    # with the model to use Strings inplace of URLs.
+    gmodel.checkout_flow_support_t._fields['edit_cart_url'] = \
+        gxml.String('edit-cart-url')
+    gmodel.checkout_flow_support_t._fields['continue_shopping_url'] = \
+        gxml.String('continue-shopping-url')

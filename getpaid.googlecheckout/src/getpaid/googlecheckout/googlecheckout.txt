@@ -45,37 +45,49 @@ The processor can generate a checkout request from a cart:
       <shopping-cart>
         <items>
           <item>
-            <item-name>
-              Not Without Flowers
-            </item-name>
+            <item-description>
+              ISBN: 9789988647131
+            </item-description>
             <quantity>
               2
             </quantity>
             <unit-price currency="GBP">
               19.950
             </unit-price>
-            <item-description>
-              ISBN: 9789988647131
-            </item-description>
+            <item-name>
+              Not Without Flowers
+            </item-name>
           </item>
           <item>
-            <item-name>
-              Echoes from the Mountain
-            </item-name>
+            <item-description>
+              ISBN: 9789780232412
+            </item-description>
             <quantity>
               1
             </quantity>
             <unit-price currency="GBP">
               14.950
             </unit-price>
-            <item-description>
-              ISBN: 9789780232412
-            </item-description>
+            <item-name>
+              Echoes from the Mountain
+            </item-name>
           </item>
         </items>
+        <merchant-private-data>
+          <__cart-key>
+            user:test_user_1_
+          </__cart-key>
+        </merchant-private-data>
       </shopping-cart>
       <checkout-flow-support>
-        <merchant-checkout-flow-support/>
+        <merchant-checkout-flow-support>
+          <edit-cart-url>
+            http://nohost/plone/getpaid-cart
+          </edit-cart-url>
+          <continue-shopping-url>
+            http://nohost/plone
+          </continue-shopping-url>
+        </merchant-checkout-flow-support>
       </checkout-flow-support>
     </checkout-shopping-cart>
 
@@ -97,6 +109,7 @@ The processor will include google analytic data if present:
       </shopping-cart>
       <checkout-flow-support>
         <merchant-checkout-flow-support>
+          ...
           <analytics-data>
             00000000
           </analytics-data>

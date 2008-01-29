@@ -26,15 +26,27 @@ from getpaid.core.interfaces import IPaymentProcessor
 from getpaid.core.interfaces import IShoppingCartUtility
 from zope.component import getAdapter
 from zope.component import getUtility
+from zExceptions import Unauthorized
+from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 
 
-class Checkout(BrowserView):
+class Notification(BrowserView):
+
+    def validate_authorization(self):
+        auth = self.request._authUserPW()
+        if auth is None:
+            raise Unauthorized
+        else:
+            name, password = auth
+            options = IGoogleCheckoutOptions(self.context)
+            if name != options.merchant_id or password != options.merchant_key:
+                raise Unauthorized
 
     def __call__(self):
+        self.validate_authorization()
+        self.request.stdin.seek(0)
+        xml = self.request.stdin.read()
         processor = getAdapter(self.context, IPaymentProcessor,
                                'Google Checkout')
-        cart_utility = getUtility(IShoppingCartUtility)
-        cart = cart_utility.get(self.context)
-        analytics_data = self.request.form.get('analyticsdata', None)
-        url = processor.checkout(cart, analytics_data)
-        self.request.response.redirect(url)
+        return processor.notify(xml)
+

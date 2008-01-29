@@ -7,23 +7,23 @@ Introduction
 Status
 ======
 
-Attempt to get minimal integration with Google Checkout using the
-Checkout API.
+Working integration with Google Checkout using both the Checkout API
+and the Notification API:
 
 - The GetPaid checkout wizard is completely replaced with Google
   Checkout.
 
+- Includes integration with the Google Checkout Notification API. So
+  far this is just used to improve the user experience during the
+  checkout process. A shopper can still edit the cart after commencing
+  the google checkout process - an "edit cart" link is available from
+  the checkout. And the cart is cleared after completing the checkout.
+
 - The GetPaid order manager is not integrated with Google Checkout.
   Google Checkout includes its own order management functionality.
   Although Google Checkout does have a rich enough API that these two
-  could be integrated with each other.
-
-- The contents of the shopping cart are emptied just before
-  redirecting the browser to Google Checkout. This is done by making
-  use of "Option B - Submit a Server-to-Server Checkout API Request".
-  (It would be better to empty the shopping cart only once the sale
-  has been completed. This could be integrated using Google Checkout
-  Notification API.)
+  could be integrated with each other. And there is already working
+  integration with the Google Checkout Notification API.
 
 - Makes use of zcml overrides to integrate with GetPaid. This is a
   sign that GetPaid is not yet sufficiently plugable to support this
@@ -34,6 +34,10 @@ Checkout API.
 
 Todo
 ====
+
+- There is a collection of notifications messages sent by Google
+  Checkout that are unhandled. These should be responded to with the
+  notification handshake.
 
 - Need to fix the buildout experience. There are few wrinkles with the
   install of ghcecky.
@@ -57,6 +61,31 @@ buildout.cfg::
 
 Create a merchant account in the Google Checkout Sandbox service. See
 step 1 of `Getting Startted with Google Checkout`_.
+
+Configure the notification handshake for this merchant account. Set
+the API callback URL and enable checking serial numbers for
+notification acknowledgments:
+
+1. Log in to your merchant account.
+
+2. Click on the *Settings* tab.
+
+3. Click the *Integration* link on the left side of the page.
+
+4. Enter a URL for the notification callback for your site into *API
+   callback URL*. This will look something like::
+
+     http://demo.my.site/google-checkout-notification
+
+   (This can be HTTP for merchant accounts created in the sandbox
+   service. However needs to be HTTPS with suitable certificate for
+   production.)
+
+4. Expand the list of advanced settings and check the box next to the
+   setting that says, "Require notification acknowledgments to specify
+   the serial number of the notification."
+
+5. Click the *Save* button to update your settings.
 
 Configure the Google Checkout processor in GetPaid with the your
 Merchant ID and Merchant Key for the sandbox. You'll find these in

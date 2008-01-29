@@ -9,4 +9,11 @@
      permission="zope2.View"
      />
 
+  <browser:page
+     for="*"
+     name="google-checkout-notification"
+     class=".notification.Notification"
+     permission="zope2.View"
+     />
+
 </configure>

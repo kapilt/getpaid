@@ -24,8 +24,20 @@
 from zope.interface import implements
 from gchecky.controller import Controller
 from gchecky.controller import ControllerContext
+from gchecky import model as gmodel
+from gchecky import gxml
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
+
+from getpaid.core.interfaces import IShoppingCartUtility
+from zope.component import getUtility
+
+
+class notification_acknowledgment_t(gxml.Document):
+    # XXX With a bit of luck this will show up in gchecky and we can
+    # remove this from here.
+    tag_name = 'notification-acknowledgment'
+    serial_number = gxml.ID('@serial-number')
 
 
 class GoogleCheckoutController(Controller):
@@ -33,6 +45,7 @@ class GoogleCheckoutController(Controller):
     implements(IGoogleCheckoutController)
 
     def __init__(self, context):
+        self.context = context
         options = IGoogleCheckoutOptions(context)
         self.vendor_id = options.merchant_id
         self.merchant_key = options.merchant_key
@@ -43,3 +56,21 @@ class GoogleCheckoutController(Controller):
         context.message = message
         diagnose = False
         return self._send_xml(message, context, diagnose)
+
+    def new_order(self, notification):
+        private_data = notification.shopping_cart.merchant_private_data
+        cart_key = private_data['cart-key'].strip()
+        cart_utility = getUtility(IShoppingCartUtility)
+        cart = cart_utility.get(self.context)
+        cart_utility.destroy(self.context, key=cart_key)
+
+    def receive_xml(self, xml):
+        notification = gxml.Document.fromxml(xml)
+        if notification.__class__ == gmodel.new_order_notification_t:
+            self.new_order(notification)
+        else:
+            # XXX Custom Exception?
+            raise ValueError('Unhandled notification %s'
+                             % notification.__class__)
+        return notification_acknowledgment_t(
+            serial_number=notification.serial_number)
