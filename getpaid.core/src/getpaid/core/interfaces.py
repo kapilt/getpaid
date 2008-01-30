@@ -198,6 +198,7 @@ class ILineItem( Interface ):
     description = schema.TextLine( title = _(u"Description"))
     cost = schema.Float( title = _(u"Cost"))
     quantity = schema.Int( title = _(u"Quantity"))
+    product_code = schema.TextLine( title = _(u"Product Code"))
 
 
 class ILineItemFactory( Interface ):
