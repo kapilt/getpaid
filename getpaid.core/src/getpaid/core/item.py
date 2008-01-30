@@ -59,6 +59,7 @@ class LineItem( Persistent ):
     description = ""
     quantity = 0
     cost = 0
+    product_code = ""
 
     @property
     def fulfillment_state( self ):
