@@ -323,9 +323,9 @@ class IShippableLineItem( ILineItem ):
                            )
     #um_weight = 
     #um_distance = ""
-    #length = ""
-    #height = ""
-    #width = ""
+    length = schema.Float( title=_(u"Length"))
+    height = schema.Float( title=_(u"Height"))
+    width = schema.Float( title=_(u"Width"))    
         
 class IRecurringLineItem( IPayableLineItem ):
 
@@ -340,13 +340,13 @@ class IGiftCertificate( ILineItem ):
 # Shopping Cart Stuff
 
 class IShoppingCartUtility( Interface ):
-
+    
     def get( create=False ):
         """
         return the user's shopping cart or none if not found.
         if create is passed then create a new one if one isn't found
         """
-
+        
     def destroy( ):
         """
         remove the current's users cart from the session if it exists
@@ -360,8 +360,7 @@ class IShoppingCart( ILineItemContainer ):
         Count the number of items in the cart (*not* the number of line
         items)
         """
-
-
+        
 #################################
 # Shipping
 
@@ -373,13 +372,18 @@ class IShipment( ILineItemContainer ):
     """ a (partial|complete) shipment of ishippable line items of an order
     """
 
+# todo change to shipping service, different services offer
+# different methods, methods have name, cost, estimate
 class IShippingMethod( Interface ):
 
-    def getCost( line_item_container ):
+    def getCost( order ):
         """ get the shipping cost for an order...
-
-        the object received may only be a line item container, as opposed to an order object.
         """
+        
+class IShippingRateService( Interface ):
+    """
+    """
+
 
 class IShippingMethodSettings( Interface ):
     """ Options for a Shipping Method
@@ -391,7 +395,7 @@ class IShippingMethodSettings( Interface ):
 
 class ITaxUtility( Interface ):
 
-    def getCost( line_item_container ):
+    def getCost( order ):
         """ return the tax amount for an order
 
         the object received may only be a line item container, as opposed to an order object.
@@ -401,7 +405,10 @@ class ITaxUtility( Interface ):
 #################################
 # Payment Information Details
 
-class IAddress( Interface ):
+class IAbstractAddress( Interface ):
+    """ base/common interface for all addresses"""
+    
+class IAddress( IAbstractAddress ):
     """ a physical address
     """
     first_line = schema.TextLine( title = _(u"First Line"), description=_(u"Please Enter Your Address"))
@@ -413,7 +420,7 @@ class IAddress( Interface ):
                              vocabulary="getpaid.states")
     postal_code = schema.TextLine( title = _(u"Zip/Postal Code"))
 
-class IShippingAddress( Interface ):
+class IShippingAddress( IAbstractAddress ):
     """ where to send goods
     """
     ship_same_billing = schema.Bool( title = _(u"Same as billing address"), required=False)
@@ -426,7 +433,7 @@ class IShippingAddress( Interface ):
                                   vocabulary="getpaid.states", required=False)
     ship_postal_code = schema.TextLine( title = _(u"Zip Code"), required=False)
 
-class IBillingAddress( Interface ):
+class IBillingAddress( IAbstractAddress ):
     """ where to bill 
     """
     bill_first_line = schema.TextLine( title = _(u"First Line"))
