@@ -46,7 +46,8 @@ def gcart_item(entry, options):
             value = entry.cost,
             currency = options.currency,
             ),
-        quantity = entry.quantity
+        quantity = entry.quantity,
+        merchant_item_id = entry.product_code,
         )
 
 

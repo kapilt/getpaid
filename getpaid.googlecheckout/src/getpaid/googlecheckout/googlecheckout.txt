@@ -22,6 +22,7 @@ and add a couple of entries to this cart:
     >>> line.name = 'Not Without Flowers'
     >>> line.description = 'ISBN: 9789988647131'
     >>> line.cost = 19.95
+    >>> line.product_code = '9789988647131'
     >>> line.quantity = 2
     >>> cart[line.item_id] = line
 
@@ -29,6 +30,7 @@ and add a couple of entries to this cart:
     >>> line.item_id = 'book-9789780232412'
     >>> line.name = 'Echoes from the Mountain'
     >>> line.description = 'ISBN: 9789780232412'
+    >>> line.product_code = '9789780232412'
     >>> line.cost = 14.95
     >>> line.quantity = 1
     >>> cart[line.item_id] = line
@@ -54,6 +56,9 @@ The processor can generate a checkout request from a cart:
             <unit-price currency="GBP">
               19.950
             </unit-price>
+            <merchant-item-id>
+              9789988647131
+            </merchant-item-id>
             <item-name>
               Not Without Flowers
             </item-name>
@@ -68,6 +73,9 @@ The processor can generate a checkout request from a cart:
             <unit-price currency="GBP">
               14.950
             </unit-price>
+            <merchant-item-id>
+              9789780232412
+            </merchant-item-id>
             <item-name>
               Echoes from the Mountain
             </item-name>
