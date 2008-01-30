@@ -77,6 +77,7 @@ class LineItemFactory( object ):
         nitem.description = content.Description()
         nitem.cost = payable.price
         nitem.quantity = 1
+        nitem.product_code = payable.product_code
 
         # 
         self.cart[ nitem.item_id ] = nitem
