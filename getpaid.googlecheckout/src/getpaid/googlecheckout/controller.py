@@ -28,9 +28,11 @@ from gchecky import model as gmodel
 from gchecky import gxml
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
-
 from getpaid.core.interfaces import IShoppingCartUtility
 from zope.component import getUtility
+import logging
+
+logger = logging.getLogger('getpaid.googlecheckout')
 
 
 class notification_acknowledgment_t(gxml.Document):
@@ -69,8 +71,7 @@ class GoogleCheckoutController(Controller):
         if notification.__class__ == gmodel.new_order_notification_t:
             self.new_order(notification)
         else:
-            # XXX Custom Exception?
-            raise ValueError('Unhandled notification %s'
-                             % notification.__class__)
+            logger.debug('Unhandled notification %s\n%s'
+                         % (notification.__class__, xml))
         return notification_acknowledgment_t(
             serial_number=notification.serial_number)

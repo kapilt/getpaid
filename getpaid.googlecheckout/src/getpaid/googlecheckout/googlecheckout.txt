@@ -124,3 +124,110 @@ The processor will include google analytic data if present:
         </merchant-checkout-flow-support>
       </checkout-flow-support>
     </checkout-shopping-cart>
+
+Processor can handle incoming notifications from Google Checkout:
+
+    >>> acknowledgment = processor.notify("""<?xml version="1.0" ?>
+    ... <new-order-notification
+    ...     xmlns="http://checkout.google.com/schema/2"
+    ...     serial-number="123456789012345-00001-7">
+    ...   <timestamp>2008-01-11T07:49:33.000Z</timestamp>
+    ...   <shopping-cart>
+    ...     <items>
+    ...       <item>
+    ...         <item-description>ISBN: 9789988647131</item-description>
+    ...         <quantity>2</quantity>
+    ...         <unit-price currency="GBP">19.95</unit-price>
+    ...         <merchant-item-id>9789988647131</merchant-item-id>
+    ...         <item-name>Not Without Flowers</item-name>
+    ...       </item>
+    ...       <item>
+    ...         <item-description>ISBN: 9789780232412</item-description>
+    ...         <quantity>1</quantity>
+    ...         <unit-price currency="GBP">14.95</unit-price>
+    ...         <merchant-item-id>9789780232412</merchant-item-id>
+    ...         <item-name>Echoes from the Mountain</item-name>
+    ...       </item>
+    ...     </items>
+    ...     <merchant-private-data>
+    ...       <__cart-key>user:test_user_1_</__cart-key>
+    ...     </merchant-private-data>
+    ...   </shopping-cart>
+    ...   <order-adjustment>
+    ...     <merchant-codes />
+    ...     <total-tax currency="GBP">0.0</total-tax>
+    ...     <adjustment-total currency="GBP">9.0</adjustment-total>
+    ...   </order-adjustment>
+    ...   <buyer-id>123412342134</buyer-id>
+    ...   <google-order-number>4321432143214321</google-order-number>
+    ...   <buyer-shipping-address>
+    ...     <contact-name>Michael</contact-name>
+    ...     <company-name></company-name>
+    ...     <email>michael.dunstan@gmail.com</email>
+    ...     <phone></phone>
+    ...     <fax></fax>
+    ...     <address1>51 Rayner Road</address1>
+    ...     <address2></address2>
+    ...     <city>Piha</city>
+    ...     <country-code>NZ</country-code>
+    ...     <region></region>
+    ...     <postal-code>1010</postal-code>
+    ...   </buyer-shipping-address>
+    ...   <buyer-billing-address>
+    ...     <contact-name>Michael</contact-name>
+    ...     <company-name></company-name>
+    ...     <email>michael.dunstan@elyt.com</email>
+    ...     <phone></phone>
+    ...     <fax></fax>
+    ...     <address1>51 Rayner Road</address1>
+    ...     <address2></address2>
+    ...     <city>Piha</city>
+    ...     <country-code>NZ</country-code>
+    ...     <region></region>
+    ...     <postal-code>1010</postal-code>
+    ...   </buyer-billing-address>
+    ...   <buyer-marketing-preferences>
+    ...     <email-allowed>true</email-allowed>
+    ...   </buyer-marketing-preferences>
+    ...   <order-total currency="GBP">43.90</order-total>
+    ...   <fulfillment-order-state>NEW</fulfillment-order-state>
+    ...   <financial-order-state>REVIEWING</financial-order-state>
+    ... </new-order-notification>""")
+
+Notifications are responded to with an appropriate acknowledgement:
+
+    >>> print acknowledgment.toxml(pretty=True)
+    <?xml version="1.0" ?>
+    <notification-acknowledgment
+        serial-number="123456789012345-00001-7"
+        xmlns="http://checkout.google.com/schema/2"/>
+
+A new order notification signifies that the shopper has completed the
+transaction. So we use this notification to clear the shoppers cart
+contents:
+
+    >>> print getUtility(IShoppingCartUtility).get(portal, create=False)
+    None
+
+Google Checkout will send a range of other notifications as the order
+payment is finalised and the delivery fulfilled. At the moment we just
+acknowledge these notifications so that Google Checkout does not keep
+trying to resend the notifications.
+
+    >>> acknowledgment = processor.notify("""
+    ... <order-state-change-notification
+    ...     xmlns="http://checkout.google.com/schema/2"
+    ...     serial-number="271378875535161-00005-1">
+    ...   <timestamp>2008-01-31T06:12:06.000Z</timestamp>
+    ...   <google-order-number>4321432143214321</google-order-number>
+    ...   <new-fulfillment-order-state>NEW</new-fulfillment-order-state>
+    ...   <new-financial-order-state>CHARGEABLE</new-financial-order-state>
+    ...   <previous-fulfillment-order-state>NEW</previous-fulfillment-order-state>
+    ...   <previous-financial-order-state>REVIEWING</previous-financial-order-state>
+    ... </order-state-change-notification>""")
+
+    >>> print acknowledgment.toxml(pretty=True)
+    <?xml version="1.0" ?>
+    <notification-acknowledgment
+        serial-number="271378875535161-00005-1"
+        xmlns="http://checkout.google.com/schema/2"/>

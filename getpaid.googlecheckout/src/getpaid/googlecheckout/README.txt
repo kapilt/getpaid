@@ -35,10 +35,6 @@ and the Notification API:
 Todo
 ====
 
-- There is a collection of notifications messages sent by Google
-  Checkout that are unhandled. These should be responded to with the
-  notification handshake.
-
 - Need to fix the buildout experience. There are few wrinkles with the
   install of ghcecky.
 
