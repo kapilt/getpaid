@@ -157,10 +157,6 @@
     
 <!-- Utilities -->
 <utility
-    provides=".addressbook.IAddressBookUtility"
-    factory=".addressbook.AddressBookUtility"/>
-
-<utility
     provides=".interfaces.ICountriesStates"
     factory=".vocabularies.CountriesStatesFromFile"/>
 

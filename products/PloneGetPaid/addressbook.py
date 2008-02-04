@@ -3,39 +3,18 @@ from persistent import Persistent
 from BTrees.OOBTree import OOBTree
 from zope import interface, schema
 
-from getpaid.core import interfaces
+#from getpaid.core import interfaces
 from zope.app.container.sample import SampleContainer
-from zope.app.container.constraints import contains
-from zope.app.container.interfaces import IContainer
 
-class IAddressBookUtility( interface.Interface ):
-    """
-    only available for authenticated users.
-    """
+import interfaces
 
-    def get( uid ):
-        """
-        """
-        
-    def destroy( uid ):
-        """
-        """
-        
-class IAddressBook( IContainer ):
-    
-    contains( interfaces.IAbstractAddress )
-    
-class INamedAddress( interface.Interface ):
-    
-    schema.TextLine(title=u"Name")
-    
 def AddressBook( SampleContainer ):
     
     interface.implements( interfaces.IAddressBook )
 
 class AddressBookUtility( Persistent ):
 
-    interface.implements( IAddressBookUtility )
+    interface.implements( interfaces.IAddressBookUtility )
     
     def __init__( self ):
         self._addresses = OOBTree()

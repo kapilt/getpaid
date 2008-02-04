@@ -11,10 +11,11 @@ from Products.Archetypes.utils import shasattr
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.app.component.hooks import setSite
 from zope.app.component.interfaces import ISite
-from Products.PloneGetPaid import generations
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
+from Products.PloneGetPaid import generations, preferences
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
 from Products.PloneGetPaid.config import PLONE3
 from Products.PloneGetPaid.cart import ShoppingCartUtility
+
 from five.intid.site import add_intids
 from getpaid.core.interfaces import IOrderManager, IStore, IShoppingCartUtility
 from getpaid.core.order import OrderManager
@@ -154,6 +155,26 @@ def setup_payment_options(self):
     """
     manage_options = IGetPaidManagementOptions(self)
     manage_options.setProperty('credit_cards', CREDIT_CARD_TYPES)
+
+def setup_settings( self ):
+    portal = getToolByName( self, 'portal_url').getPortalObject()
+    sm = portal.getSiteManager()
+
+    if not sm.queryUtility( IGetPaidManagementOptions ):
+        if PLONE3:
+            sm.registerUtility( preferences.StoreSettings(), IGetPaidManagementOptions )
+        else:
+            sm.registerUtility( IGetPaidManagementOptions, preferences.StoreSettings() )
+
+def setup_addressbook( self ):
+    portal = getToolByName( self, 'portal_url').getPortalObject()
+    sm = portal.getSiteManager()
+
+    if not sm.queryUtility(IAddressBookUtility):
+        if PLONE3:
+            sm.registerUtility(ShoppingCartUtility(), IAddressBookUtility)
+        else:
+            sm.registerUtility(IShoppingCartUtility, AddressBookUtility())
 
 def register_shopping_cart_utility(self):
     """ Register a local utility to make carts persists
