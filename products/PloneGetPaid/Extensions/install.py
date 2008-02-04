@@ -11,7 +11,7 @@ from Products.Archetypes.utils import shasattr
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
 from zope.app.component.hooks import setSite
 from zope.app.component.interfaces import ISite
-from Products.PloneGetPaid import generations, preferences
+from Products.PloneGetPaid import generations, preferences, addressbook
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
 from Products.PloneGetPaid.config import PLONE3
 from Products.PloneGetPaid.cart import ShoppingCartUtility
@@ -172,9 +172,9 @@ def setup_addressbook( self ):
 
     if not sm.queryUtility(IAddressBookUtility):
         if PLONE3:
-            sm.registerUtility(ShoppingCartUtility(), IAddressBookUtility)
+            sm.registerUtility( addressbook.AddressBookUtility(), IAddressBookUtility)
         else:
-            sm.registerUtility(IShoppingCartUtility, AddressBookUtility())
+            sm.registerUtility( IAddressBookUtility, addressbook.AddressBookUtility() )
 
 def register_shopping_cart_utility(self):
     """ Register a local utility to make carts persists
