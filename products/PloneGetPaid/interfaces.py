@@ -344,7 +344,8 @@ class IGetPaidManagementOptions( IGetPaidManagementIdentificationOptions,
                                  IGetPaidManagementSalesTaxOptions,                                 
                                  IGetPaidManagementCurrencyOptions,
                                  IGetPaidManagementEmailOptions,
-                                 IGetPaidManagementLegalDisclaimerOptions
+                                 IGetPaidManagementLegalDisclaimerOptions,
+                                 igetpaid.IStoreSettings
                                 ):
     """ One-stop configuration access from a single interface 
     """
