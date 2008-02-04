@@ -53,7 +53,7 @@ class CustomerOrderNotificationMessage(object):
     def __init__( self, order ):
         self.order = order
 
-merchant_new_order_template = HTML('''\
+merchant_new_order_template = '''\
 To: ${to_email}
 From: "${from_name}" <${from_email}>
 Subject: New Order Notification
@@ -69,7 +69,7 @@ Order Contents
 
 ${order_contents}
 
-''')
+'''
 
 
 class MerchantOrderNotificationMessage( object ):
