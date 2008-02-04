@@ -32,5 +32,5 @@ class AddressBookUtility( Persistent ):
             return
         del self._addresses[ uid ]
         
-    def manage_fixOwnershipAfterAdd( self ): pass
+    def manage_fixupOwnershipAfterAdd( self ): pass
     

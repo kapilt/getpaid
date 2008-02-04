@@ -37,6 +37,6 @@ class StoreSettings( _StoreSettings ):
     @property
     def context( self ):
         return self._v_site
-    
-    def manage_fixOwnershipAfterAdd( self ): pass
+
+    def manage_fixupOwnershipAfterAdd( self ): pass
 
