@@ -92,7 +92,7 @@ class MerchantOrderNotificationMessage( object ):
     
     def __init__( self, order ):
         self.order = order
-        
+
 def sendNotification( order, event ):
     """ sends out email notifications to merchants and clients based on settings.
 
