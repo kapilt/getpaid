@@ -11,7 +11,11 @@ import interfaces
 
 def ConfigurationPreferences( site ):
 
-    settings = component.getUtility( interfaces.IGetPaidManagementOptions )
+    settings = component.queryUtility( interfaces.IGetPaidManagementOptions )
+
+    if settings is None: # we have an unmigrated site.. fallback gracefully
+        return OldConfigurationPreferences( site )
+    
     # store access to the site, because our vocabularies get the setting as context
     # and want to access portal tools to construct various vocabs
     settings._v_site = site
