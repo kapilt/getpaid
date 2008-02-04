@@ -73,8 +73,14 @@ class PropertyBag( object ):
             d[field_name] = field.get(instance)
         return cls( **d )
         
-class PersistentBag( PropertyBag ):
-    pass
+class PersistentBag( PropertyBag, Persistent ):
+
+
+    def getProperty( self, property_name ):
+        return getattr( self, property_name, None )
+
+    def setProperty( self, property_name, property_value ):
+        setattr( self, property_name, property_value )
     
 class PersistentOptions( object ):
 
