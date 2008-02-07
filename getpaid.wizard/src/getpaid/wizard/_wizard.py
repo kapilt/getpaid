@@ -17,8 +17,8 @@ class Wizard( object ):
         self.data_manager = interfaces.IWizardDataManager( self )
         
     def update( self ):
+        self.data_manager.update()        
         self.controller.update()
-        self.data_manager.update()
                 
     def render( self ):
         current_step = self.controller.getCurrentStep()
