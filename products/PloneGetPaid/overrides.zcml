@@ -15,5 +15,7 @@
 
   <includeOverrides zcml:condition="installed getpaid.ogone"
       package="getpaid.ogone" />
+  <includeOverrides 
+      package="getpaid.ups" file="overrides.zcml" />
 
 </configure>

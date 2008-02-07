@@ -54,7 +54,7 @@ class UPSRateService( Contained ):
     def getRates( self, order ):
         settings = interfaces.IUPSSettings( self )
         store_contact = component.getUtility( IStoreSettings )
-        origin_contact, origin_address = interfaces.IOriginRouter( order ).getOrigin() 
+        origin_contact, origin_address = interfaces.IOriginRouter( order ).getOrigin()
 
 
         request = CreateRequest( settings,       # ups settings
@@ -63,6 +63,7 @@ class UPSRateService( Contained ):
                                  origin_address, # origin location
                                  order,          # destination contact and location
                                  pretty=True)
+	return FakeResponse(request).shipments
         #raise str(request)
         try:
             response_text = SendRequest( settings.server_url, request ).read()
@@ -270,7 +271,32 @@ def CreateRequest( settings,
     
     xml_text = '<?xml version="1.0"?>' + etree.tostring(accessreq, pretty_print=pretty) + '<?xml version="1.0"?>' + etree.tostring(servicereq, pretty_print=pretty)
     return xml_text
-    
+
+def FakeResponse( something ):
+    """This is to save the devels the pain of ups registering """
+    ups_response = UPSResponse()
+    ups_response.shipments = []
+    shipment = ShippingMethodRate()
+    shipment.service_code = "CTRL"
+    shipment.service = "ASERVICE"
+    shipment.currency = "$"
+    shipment.cost = 10
+    shipment.days_to_delivery = 20
+    shipment.delivery_time = "A lot of days"
+
+    ups_response.shipments.append( shipment )
+    shipment1 = ShippingMethodRate()
+    shipment1.service_code = "ALT"
+    shipment1.service = "ANOTHERSERVICE"
+    shipment1.currency = "$"
+    shipment1.cost = 20
+    shipment1.days_to_delivery = 30
+    shipment1.delivery_time = "A lot more of days"
+
+    ups_response.shipments.append( shipment1 )
+
+    return ups_response 
+
 def ParseResponse( root ):
     """extract the shipping options from the response from UPS"""
     ups_response = UPSResponse()
