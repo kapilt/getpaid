@@ -4,11 +4,13 @@ from Products.PloneGetPaid.Extensions.install import install_dependencies
 from Products.PloneGetPaid.Extensions.install import install_cart_portlet 
 from Products.PloneGetPaid.Extensions.install import install_contentwidget_portlet
 from Products.PloneGetPaid.Extensions.install import setup_site
+from Products.PloneGetPaid.Extensions.install import setup_settings
 from Products.PloneGetPaid.Extensions.install import setup_store
 from Products.PloneGetPaid.Extensions.install import setup_software_generation
 from Products.PloneGetPaid.Extensions.install import setup_order_manager
 from Products.PloneGetPaid.Extensions.install import add_intids
 from Products.PloneGetPaid.Extensions.install import install_plone3_portlets
+from Products.PloneGetPaid.Extensions.install import setup_addressbook
 from Products.PloneGetPaid.Extensions.install import setup_payment_options
 from Products.PloneGetPaid.Extensions.install import register_shopping_cart_utility
 from Products.PloneGetPaid.config import PLONE3
@@ -46,12 +48,18 @@ def setupVarious(context):
     print >> out, "Installing Store Marker Interface"
     setup_store(site)
 
+    print >> out, "Installing Store Settings Utility"
+    setup_settings(site)
+
+    print >> out, "Configure default payment options"
+    setup_payment_options( site )
+
     print >> out, "Installing Order Local Utility"
     setup_order_manager(site)
     
-    print >> out, "Configure default payment options"
-    setup_payment_options(site)
-
+    print >> out, "Installing Address Book Utility"
+    setup_addressbook( site )
+    
     print >> out, "Installing IntId Utility"
     add_intids(site)
 

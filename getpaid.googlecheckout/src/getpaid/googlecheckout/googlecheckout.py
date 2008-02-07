@@ -24,12 +24,10 @@
 """
 """
 from zope.interface import implements
-from zope.component import getUtility
 
 from gchecky import model as gmodel
 from gchecky import gxml
 
-from getpaid.core.interfaces  import IShoppingCartUtility
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutOptions
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutProcessor
 from getpaid.googlecheckout.interfaces import IGoogleCheckoutController
@@ -46,8 +44,7 @@ def gcart_item(entry, options):
             value = entry.cost,
             currency = options.currency,
             ),
-        quantity = entry.quantity,
-        merchant_item_id = entry.product_code,
+        quantity = entry.quantity
         )
 
 
@@ -70,19 +67,13 @@ class GoogleCheckoutProcessor(object):
 
     def checkout_shopping_cart(self, cart, analytics_data=None):
         options = IGoogleCheckoutOptions(self.context)
-        cart_key = getUtility(IShoppingCartUtility).getKey(self.context)
-        edit_cart_url = '%s/getpaid-cart' % self.context.absolute_url()
-        continue_shopping_url = self.context.absolute_url()
         return gmodel.checkout_shopping_cart_t(
             shopping_cart = gmodel.shopping_cart_t(
                 items = [gcart_item(entry, options) for entry in cart.values()],
-                merchant_private_data={'cart-key': cart_key},
                 ),
             checkout_flow_support = gmodel.checkout_flow_support_t(
                 shipping_methods = IGoogleCheckoutShipping(self.context)(cart),
                 analytics_data = analytics_data,
-                edit_cart_url = edit_cart_url,
-                continue_shopping_url = continue_shopping_url,
                 ),
             )
 
@@ -93,11 +84,6 @@ class GoogleCheckoutProcessor(object):
         response = self.controller.send_xml(request)
         __traceback_supplement__ = (TracebackSupplement, request, response)
         return gxml.Document.fromxml(response).redirect_url
-
-    def notify(self, xml):
-        __traceback_supplement__ = (NotifyTracebackSupplement, xml)
-        return self.controller.receive_xml(xml)
-
 
 
 
@@ -122,16 +108,4 @@ class TracebackSupplement:
         else:
             return '<dl>%s%s</dl>' % (self.format_html('request'),
                                       self.format_html('response'))
-
-
-class NotifyTracebackSupplement(TracebackSupplement):
-
-    def __init__(self, xml):
-        self.xml = xml
-
-    def getInfo(self, as_html=0):
-        if not as_html:
-            return '%s' % self.format_text('xml')
-        else:
-            return '<dl>%s</dl>' % self.format_html('xml')
 

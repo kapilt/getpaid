@@ -5,7 +5,10 @@ $Id$
 from zope import schema
 from zope.interface import Interface
 from zope.schema import Iterable
+from zope.app.container.interfaces import IContainer
+from zope.app.container.constraints import contains
 from zope.app.event.interfaces import IObjectEvent
+
 from getpaid.core.fields import PhoneNumber
 
 import getpaid.core.interfaces as igetpaid
@@ -341,7 +344,8 @@ class IGetPaidManagementOptions( IGetPaidManagementIdentificationOptions,
                                  IGetPaidManagementSalesTaxOptions,                                 
                                  IGetPaidManagementCurrencyOptions,
                                  IGetPaidManagementEmailOptions,
-                                 IGetPaidManagementLegalDisclaimerOptions
+                                 IGetPaidManagementLegalDisclaimerOptions,
+                                 igetpaid.IStoreSettings
                                 ):
     """ One-stop configuration access from a single interface 
     """
@@ -365,3 +369,25 @@ class IMonthsAndYears(Interface):
         title = _(u"years"),
         description=_(u"A list of years")
         )
+
+class IAddressBookUtility( Interface ):
+    """
+    only available for authenticated users.
+    """
+
+    def get( uid ):
+        """
+        """
+        
+    def destroy( uid ):
+        """
+        """
+        
+class IAddressBook( IContainer ):
+    
+    contains( igetpaid.IAbstractAddress )
+    
+class INamedAddress( Interface ):
+    
+    schema.TextLine(title=u"Name")
+    

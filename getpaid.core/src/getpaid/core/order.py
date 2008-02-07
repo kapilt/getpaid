@@ -177,7 +177,16 @@ class OrderManager( Persistent ):
                 break
         return order_id
 
-
+    def __contains__( self, order_id ):
+        return order_id in self.storage
+        
+    def isValid( self, order_id ):
+        try:
+            int( order_id )
+            return True
+        except TypeError, ValueError:
+            return False
+            
     #################################
     # junk for z2.9 / f 1.4
     def manage_fixupOwnershipAfterAdd(self, *args):

@@ -30,17 +30,14 @@ def getUpgrades( self ):
     software_version = getAppSoftwareVersion( )
     
     revisions = range( version+1, software_version+1 )
-    print revisions
     base_generation_path = os.path.dirname( __file__ )
 
     upgrades = []
     for rev in revisions:
         rev_module = "r%s"%rev
-        print "fetch rev"
         if os.path.exists( os.path.join( base_generation_path, "%s.py"%rev_module) ):
             module = __import__( "Products.PloneGetPaid.generations.%s"%rev_module, globals(), locals(), [rev_module] )
             upgrades.append( (rev, module.__doc__) )
-    print "upgrades ", upgrades
     return upgrades
     
 def upgrade( self ):

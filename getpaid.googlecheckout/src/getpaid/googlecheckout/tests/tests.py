@@ -26,14 +26,11 @@ from Testing import ZopeTestCase
 from zope.testing import doctest
 from Products.PloneGetPaid.tests.base import PloneGetPaidFunctionalTestCase
 import getpaid.googlecheckout.tests
-import getpaid.googlecheckout.tests.patch
 from Products.Five import zcml
-from xml.dom.minidom import parseString
 
 
 OPTIONFLAGS = (doctest.ELLIPSIS |
-               doctest.NORMALIZE_WHITESPACE |
-               doctest.REPORT_UDIFF)
+               doctest.NORMALIZE_WHITESPACE)
 
 
 class GoogleCheckoutFuncationalTestCase(PloneGetPaidFunctionalTestCase):
@@ -42,11 +39,6 @@ class GoogleCheckoutFuncationalTestCase(PloneGetPaidFunctionalTestCase):
         super(GoogleCheckoutFuncationalTestCase, self).afterSetUp()
         zcml.load_config('testing.zcml', package=getpaid.googlecheckout.tests)
         self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
-        getpaid.googlecheckout.tests.patch.gchecky()
-
-    def extract_data(self, xml_blob, name):
-        xml = parseString(xml_blob)
-        return str(xml.getElementsByTagName(name)[0].firstChild.data).strip()
 
 
 def test_suite():

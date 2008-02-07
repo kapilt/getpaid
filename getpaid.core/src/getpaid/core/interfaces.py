@@ -57,17 +57,81 @@ class IPersistentOptions( Interface ):
     """
 
 class IStoreSettings( IPersistentOptions ):
-    """ minimum configuration schema for a store, pgp product has examples of many more
+    """ minimum configuration schema for a store, pgp product has examples of many more.
+    
+    TODO: there some duplication here between PGP interfaces for store configuration and the ones here.
+    the ones here are for usage without plone... ie z3 unit tests, and z3 stores. ideally the ones
+    in pgp would be derived from these.. which needs parallel work to fix up translations.
     """
+    
     shipping_method = schema.Choice( title = _(u"Shipping Method"),
                                      required = True,
                                      source = "getpaid.shipping_methods" )
 
     store_name = schema.TextLine( title = _(u"Store/Organization Name"),
                                   required = True,
+                                  default = u"" )
+
+    contact_name = schema.TextLine( title = _(u"Contact Name"),
+                                    required = False,
+                                    default = u"" )
+                                    
+
+    contact_email = schema.TextLine( title = _(u"Contact Email"),
+                                  required = False,
                                   default = u""
                                 )
-    
+                                
+    contact_company = schema.TextLine( title = _(u"Contact Company"),
+                              required = False,
+                              default = u""
+                            )
+
+    contact_address = schema.TextLine( title = _(u"Contact Address"),
+                                       required = False,
+                                       default = u""
+                                     )
+                                
+    contact_address2 = schema.TextLine( title = _(u"Contact Address2"),
+                                        required = False,
+                                        default = u""
+                                      )
+
+    contact_city = schema.TextLine( title = _(u"Contact City"),
+                                    required = False,
+                                    default = u""
+                                  )
+
+    contact_country = schema.Choice( title = _(u"Contact Country"),
+                                     required = False,
+                                     vocabulary = "getpaid.countries"
+                                   )
+
+    contact_state = schema.Choice( title = _(u"Contact State/Province"),
+                                   required = False,
+                                   vocabulary = "getpaid.states"
+                                 )
+
+    contact_postalcode = schema.TextLine( title = _(u"Contact Zip/Postal Code"),
+                                          required = False,
+                                          default = u""
+                                        )
+
+    contact_phone = PhoneNumber( title = _(u"Contact Phone"),
+                                 description = _(u"Only digits allowed"),
+                                     required = False,
+                                     default = u""
+                                   )
+
+    contact_fax = schema.TextLine( title = _(u"Contact Fax"),
+                                   required = False,
+                                   default = u""
+                                 )
+
+    tax_ein = schema.TextLine( title= _(u"Tax Identification Number"),
+                               required = False,
+                               default=u"")
+
 
 #################################
 # Stuff To Buy
@@ -198,7 +262,6 @@ class ILineItem( Interface ):
     description = schema.TextLine( title = _(u"Description"))
     cost = schema.Float( title = _(u"Cost"))
     quantity = schema.Int( title = _(u"Quantity"))
-    product_code = schema.TextLine( title = _(u"Product Code"))
 
 
 class ILineItemFactory( Interface ):
@@ -250,6 +313,20 @@ class IPayableLineItem( ILineItem ):
         """ return the payable object, or None if can't be found.
         """
 
+class IShippableLineItem( ILineItem ):
+    """
+    a line item that can be shipped
+    """
+    #implements( interfaces.IShippableLineItem )
+    weight = schema.Float( title = _(u'Weight of Packaged Item'),
+                           required = True,
+                           )
+    #um_weight = 
+    #um_distance = ""
+    length = schema.Float( title=_(u"Length"))
+    height = schema.Float( title=_(u"Height"))
+    width = schema.Float( title=_(u"Width"))    
+        
 class IRecurringLineItem( IPayableLineItem ):
 
     period = schema.Int( title = _(u"Period as a timedelta"))
@@ -263,31 +340,18 @@ class IGiftCertificate( ILineItem ):
 # Shopping Cart Stuff
 
 class IShoppingCartUtility( Interface ):
-
-    def get( context, create=False, key=None ):
+    
+    def get( create=False ):
         """
-        Return the user's shopping cart or none if not found. If
-        create is passed then create a new one if one isn't found. If
-        key is passed then return the cart corresponding to that key
-        independent of the current user.
+        return the user's shopping cart or none if not found.
+        if create is passed then create a new one if one isn't found
         """
-
-    def destroy( context, key=None ):
+        
+    def destroy( ):
         """
-        Remove the current user's cart from the session if it exists.
-        If key is passed then remove the cart corresponding to that
-        key independent of the current user.
+        remove the current's users cart from the session if it exists
         """
-
-    def getKey( context ):
-        """
-        Return a key for the shopping cart of the current user
-        including anonymous users. This key can then be used to
-        retrieve or destroy the cart at a later point. This is to
-        support handling of notification callbacks with async
-        processors.
-        """
-
+        
 class IShoppingCart( ILineItemContainer ):
     """ A Shopping Cart 
     """
@@ -296,8 +360,7 @@ class IShoppingCart( ILineItemContainer ):
         Count the number of items in the cart (*not* the number of line
         items)
         """
-
-
+        
 #################################
 # Shipping
 
@@ -309,13 +372,18 @@ class IShipment( ILineItemContainer ):
     """ a (partial|complete) shipment of ishippable line items of an order
     """
 
+# todo change to shipping service, different services offer
+# different methods, methods have name, cost, estimate
 class IShippingMethod( Interface ):
 
-    def getCost( line_item_container ):
+    def getCost( order ):
         """ get the shipping cost for an order...
-
-        the object received may only be a line item container, as opposed to an order object.
         """
+        
+class IShippingRateService( Interface ):
+    """
+    """
+
 
 class IShippingMethodSettings( Interface ):
     """ Options for a Shipping Method
@@ -327,7 +395,7 @@ class IShippingMethodSettings( Interface ):
 
 class ITaxUtility( Interface ):
 
-    def getCost( line_item_container ):
+    def getCost( order ):
         """ return the tax amount for an order
 
         the object received may only be a line item container, as opposed to an order object.
@@ -337,7 +405,10 @@ class ITaxUtility( Interface ):
 #################################
 # Payment Information Details
 
-class IAddress( Interface ):
+class IAbstractAddress( Interface ):
+    """ base/common interface for all addresses"""
+    
+class IAddress( IAbstractAddress ):
     """ a physical address
     """
     first_line = schema.TextLine( title = _(u"First Line"), description=_(u"Please Enter Your Address"))
@@ -349,7 +420,7 @@ class IAddress( Interface ):
                              vocabulary="getpaid.states")
     postal_code = schema.TextLine( title = _(u"Zip/Postal Code"))
 
-class IShippingAddress( Interface ):
+class IShippingAddress( IAbstractAddress ):
     """ where to send goods
     """
     ship_same_billing = schema.Bool( title = _(u"Same as billing address"), required=False)
@@ -362,7 +433,7 @@ class IShippingAddress( Interface ):
                                   vocabulary="getpaid.states", required=False)
     ship_postal_code = schema.TextLine( title = _(u"Zip Code"), required=False)
 
-class IBillingAddress( Interface ):
+class IBillingAddress( IAbstractAddress ):
     """ where to bill 
     """
     bill_first_line = schema.TextLine( title = _(u"First Line"))

@@ -37,4 +37,5 @@ class Checkout(BrowserView):
         cart = cart_utility.get(self.context)
         analytics_data = self.request.form.get('analyticsdata', None)
         url = processor.checkout(cart, analytics_data)
+        cart_utility.destroy(self.context)
         self.request.response.redirect(url)

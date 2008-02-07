@@ -542,9 +542,10 @@ def renderItemId( item, formatter ):
 def renderItemName( item, formatter ):
     content = item.resolve()
     if not content:
-        return item.name
+        return _(u"N/A")
     content_url = content.absolute_url()
-    return '<a href="%s">%s</a>'%( content_url, item.name )
+    title = content.Title()
+    return '<a href="%s">%s</a>'%( content_url, title )
 
 def renderItemCost( item, formatter ):
     return "%0.2f" % ( item.cost )

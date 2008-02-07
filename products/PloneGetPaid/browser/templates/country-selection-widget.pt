@@ -12,10 +12,10 @@
             <option tal:attributes="value python: i.value;"
                     tal:content="python: i.title"
                     tal:condition="selected"
-                    selected="selected" />
+                    selected/>
             <option tal:attributes="value python: i.value;"
             		tal:content="python: i.title"
-                    tal:condition="not:selected" />
+                    tal:condition="not:selected"/>
         </tal:block>
 </tal:loop>
 </select>

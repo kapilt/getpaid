@@ -21,116 +21,51 @@ class ShoppingCartUtility(Persistent):
         self._sessions = OOBTree()
 
 
-    def get(self, context, create=False, key=None):
+    def get(self, context, create=False):
         """ Get the persistent cart. It does not persist for anonymous users.
         """
-        if key is not None:
-            if create:
-                raise ValueError('Invalid combination of optional '
-                                 'parameters "create" and "key".')
-            name, value = self._decodeKey(key)
-            if name == 'user':
-                return self._getCartForUser(context, value)
-            elif name == 'session':
-                return self._getCartForSession(context, browser_id=value)
-        else:
-            uid = getSecurityManager().getUser().getId()
-            if uid is not None:
-                return self._getCartForUser(context, uid, create)
-            else:
-                return self._getCartForSession(context, create)
+        uid = getSecurityManager().getUser().getId()
 
+        if not uid:
+            session_manager = getToolByName( context, 'session_data_manager')
+            if not session_manager.hasSessionData() and not create:
+                return None
 
-    def _getCartForUser(self, context, uid, create=False):
+            session = session_manager.getSessionData()
+            if not session.has_key('getpaid.cart'):
+                if create:
+                    session['getpaid.cart'] = cart = ShoppingCart()
+                else:
+                    return None
+            return session['getpaid.cart']
+
         cart = self._sessions.get(uid)
         if cart or not create:
             return cart
+
         cart = ShoppingCart()
         cart.member_id = uid
         self._sessions[uid] = cart
         return cart
 
 
-    def _getCartForSession(self, context, create=False, browser_id=None):
-        session_manager = getToolByName(context, 'session_data_manager')
-        if browser_id is None:
-            if not session_manager.hasSessionData() and not create:
-                return
-            session = session_manager.getSessionData()
-        else:
-            session = session_manager.getSessionDataByKey(browser_id)
-            if session is None:
-                return
-        if not session.has_key('getpaid.cart'):
-            if create:
-                session['getpaid.cart'] = cart = ShoppingCart()
-            else:
-                return None
-        return session['getpaid.cart']
-
-
-    def destroy(self, context, key=None):
+    def destroy(self, context):
         """ Destroy the cart.
         """
-        if key is not None:
-            name, value = self._decodeKey(key)
-            if name == 'user':
-                return self._destroyCartForUser(context, value)
-            elif name == 'session':
-                return self._destroyCartForSession(context, value)
-        else:
-            uid = getSecurityManager().getUser().getId()
-            if uid is not None:
-                return self._destroyCartForUser(context, uid)
-            else:
-                return self._destroyCartForSession(context)
+        uid = getSecurityManager().getUser().getId()
 
-
-    def _destroyCartForUser(self, context, uid):
-        if self._sessions.has_key(uid):
-            del self._sessions[uid]
-
-
-    def _destroyCartForSession(self, context, browser_id=None):
-        session_manager = getToolByName(context, 'session_data_manager')
-        if browser_id is None:
+        if not uid:
+            # delete the current shopping cart
+            session_manager = getToolByName( context, 'session_data_manager')
             if not session_manager.hasSessionData(): #nothing to destroy
                 return None
             session = session_manager.getSessionData()
-        else:
-            session = session_manager.getSessionDataByKey(browser_id)
-            if session is None:
-                return
-        if not session.has_key('getpaid.cart'):
-            return
-        del session['getpaid.cart']
-
-
-    def getKey(self, context):
-        """Return key that can be used to recover the cart for the
-        current user or session.
-        """
-        uid = getSecurityManager().getUser().getId()
-        if uid is not None:
-            return 'user:%s' % uid
-        else:
-            session_manager = getToolByName(context, 'session_data_manager')
-            if not session_manager.hasSessionData():
-                return None
-            session = session_manager.getSessionData()
             if not session.has_key('getpaid.cart'):
-                return None
-            return 'session:%s' % session.token
+                return
+            del session['getpaid.cart']
 
-
-    def _decodeKey(self, key):
-        try:
-            name, value = key.split(':', 1)
-        except ValueError:
-            raise ValueError('Malformed key: %s' % key)
-        if name not in ['user', 'session']:
-            raise ValueError('Malformed key: %s' % key)
-        return name, value
+        if self._sessions.has_key(uid):
+           del self._sessions[uid]
 
 
     def manage_fixupOwnershipAfterAdd(self):
