@@ -11,5 +11,12 @@
      menu="getpaid_settings"
      title="UPS"     
      />  
+    
+    <browser:page
+     for="*"
+     name="checkout-select-shipping"
+     class=".checkout.CheckoutSelectShipping"
+     permission="zope2.View"
+     />
 
 </configure>
