@@ -51,6 +51,7 @@ class DataManager( object ):
     def update( self ):
         """
         """
+        self._adapters, self._fields = None, None
         self._extractRequestVariables()
         
     def reset( self ):
@@ -130,7 +131,10 @@ class DataManager( object ):
         """
         step = self.controller.getCurrentStep()
         passed = {}
-        ignore = []
+        ignore = [ ]
+        if 'cur_step' in self._state:
+            ignore.append( 'cur_step' )
+        
         for f in step.form_fields:
             ignore.append( "%s.%s"%( step.prefix, f.__name__) )
             
@@ -227,8 +231,10 @@ class ControllerBase( object ):
         
         elif next_step_name == interfaces.WIZARD_REDIRECT:
             return
-        
+
         self.transitionTo( next_step_name )
+        self.wizard.data_manager.update()
+
         self.getCurrentStep().update()
         
     def getActions( self ):
@@ -286,7 +292,8 @@ class ListViewController( ViewControllerBase ):
         
     def getTraversedFormSteps( self ):
         step_name = self.getCurrentStepName()
+        idx = self.steps.index( step_name )
         return [ self.getStep( step_name ) for step_name \
-                 in self.steps[ : self.steps.index( step_name ) ] ]
+                 in self.steps[ : self.steps.index( step_name ) + 1 ] ]
 
         
