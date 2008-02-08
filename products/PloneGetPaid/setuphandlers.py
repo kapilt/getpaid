@@ -11,6 +11,11 @@ from Products.PloneGetPaid.Extensions.install import add_intids
 from Products.PloneGetPaid.Extensions.install import install_plone3_portlets
 from Products.PloneGetPaid.Extensions.install import setup_payment_options
 from Products.PloneGetPaid.Extensions.install import register_shopping_cart_utility
+
+from Products.PloneGetPaid.Extensions.install import setup_addressbook
+from Products.PloneGetPaid.Extensions.install import setup_settings
+from Products.PloneGetPaid.Extensions.install import register_shopping_cart_utility
+
 from Products.PloneGetPaid.config import PLONE3
 
 def setupVarious(context):
@@ -39,29 +44,38 @@ def setupVarious(context):
     if PLONE3:
         print >> out, "Installing Plone 3 Portlets"
         install_plone3_portlets(site)
-
+    
     print >> out, "Installing Local Site"
     setup_site(site)
-
+    
     print >> out, "Installing Store Marker Interface"
     setup_store(site)
-
+    
+    print >> out, "Installing Store Settings Utility"
+    setup_settings(site)
+    
+    print >> out, "Configure default payment options"
+    setup_payment_options( site )
+    
     print >> out, "Installing Order Local Utility"
     setup_order_manager(site)
     
+    print >> out, "Installing Address Book Utility"
+    setup_addressbook( site )        
+    
     print >> out, "Configure default payment options"
     setup_payment_options(site)
-
+    
     print >> out, "Installing IntId Utility"
     add_intids(site)
-
+    
     print >> out, "Setting up update facility"
     setup_software_generation( site )
-
+    
     print >> out, "Registering shopping cart utility"
     register_shopping_cart_utility(site)
-
+    
     logger.info(out.getvalue())
-
+    
     return "Setup various finished"
 

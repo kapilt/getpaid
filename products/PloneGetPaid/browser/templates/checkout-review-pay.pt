@@ -33,10 +33,10 @@
       <div class="visualClear"><!-- --></div>
 
       <div class="cart-listing">
-	<fieldset>
-	  <legend i18n:translate=""> Shopping Cart </legend>
-	  <div tal:replace="structure view/renderCart">cart</div>
-	</fieldset>
+	     <fieldset>
+ 	         <legend i18n:translate=""> Shopping Cart </legend>
+	         <div tal:replace="structure view/renderCart">cart</div>
+	    </fieldset>
       </div>
 
       <div>
@@ -49,11 +49,6 @@
       <div id="actionsView">
 	<span class="actionButtons"
 	      tal:condition="view/availableActions">
-  <!-- action/render doesn't handle i18n translations (fix)
-    <input tal:repeat="action view/actions"
-           tal:replace="structure action/render"
-           />
-  -->
       <tal:loop tal:repeat="action view/availableActions">
 		<input type="submit" class="button context"
 			   id="" name="" value=""

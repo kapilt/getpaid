@@ -14,6 +14,7 @@ from ZTUtils import make_hidden_input
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.Five.formlib import formbase
+from zope.formlib import form
 from Products.Five.viewlet import viewlet
 
 class FormViewlet( viewlet.SimpleAttributeViewlet, formbase.SubPageForm ):
@@ -66,6 +67,7 @@ class BaseFormView( formbase.EditForm, BaseView ):
 
     template = ViewPageTemplateFile('templates/form.pt')
 
+    adapters = None
     action_url = "" # NEEDED
     hidden_form_vars = None # mapping of hidden variables to pass through on the form
 
@@ -81,3 +83,9 @@ class BaseFormView( formbase.EditForm, BaseView ):
         self.setupEnvironment( request )
         super( BaseFormView, self).__init__( context, request )
         
+    def setUpWidgets( self, ignore_request=False ):
+        self.adapters = self.adapters is not None and self.adapters or {}
+        self.widgets = form.setUpEditWidgets(
+            self.form_fields, self.prefix, self.context, self.request,
+            adapters=self.adapters, ignore_request=ignore_request
+            )        

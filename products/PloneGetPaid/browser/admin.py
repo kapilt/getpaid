@@ -91,7 +91,8 @@ class ShippingSettings( BaseSettingsForm ):
     are dynamically set based on the store's setting for a shipping method.
     """
     
-    form_fields = form.Fields()
+    form_fields = form.Fields(interfaces.IGetPaidManagementShippingMethods)
+    form_name = _(u'Shipping Methods')
     
     def __call__( self ):
         self.setupServices()
