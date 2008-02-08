@@ -135,17 +135,14 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
 
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
-        print "checkoutSelectShiping Cancel >"
         return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
 
     @form.action(_(u"Back"), name="back")
     def handle_back( self, action, data):
-        print "checkoutSelectShiping Back >"
         self.next_step_name = wizard_interfaces.WIZARD_PREVIOUS_STEP
 
     @form.action(_(u"Continue"), name="continue_s")
     def handle_continue_s( self, action, data ):
-        print "checkoutSelectShiping Continue >"
         self.setShippingMethods()
         self.next_step_name = wizard_interfaces.WIZARD_NEXT_STEP
 
