@@ -497,7 +497,7 @@ class IUserPaymentInformation( Interface ):
     name_on_card = schema.TextLine( title = _(u"Card Holder Name"),
                                 description = _(u"Enter the full name, as it appears on the card. "))
 
-    phone_number = PhoneNumber( title = _(u"Phone Number"),
+    bill_phone_number = PhoneNumber( title = _(u"Phone Number"),
                                 description = _(u"Only digits allowed - e.g. 3334445555 and not 333-444-5555 "))
 
     # DONT STORED PERSISTENTLY
