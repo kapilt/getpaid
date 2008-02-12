@@ -1,5 +1,9 @@
 from zope import interface, schema, component
-from zope.publisher.browser import IBrowserView
+try:
+    from zope.publisher.browser import IBrowserView
+except ImportError:
+    #plone2.5 compatibility
+    from zope.app.publisher.interfaces.browser import IBrowserView
 from zope.formlib import form
 
 import interfaces
