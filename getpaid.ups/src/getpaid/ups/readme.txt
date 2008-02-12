@@ -12,6 +12,9 @@ it with our UPS Account Information. In order to run the unit tests in this
 package the values for UPS_USERNAME, UPS_PASSWORD, UPS_ACCESS_KEY need to
 be setup in the shell/process environment.
 
+Also note that rates.py currently returns FakeResponse( ) to these requests.
+To get a real response from the server, simply comment that line (#66) out.
+
    >>> from getpaid.ups import interfaces
    >>> from getpaid.ups.rates import UPSRateService
    >>> ups = UPSRateService()

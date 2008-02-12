@@ -9,7 +9,7 @@ setup(
     include_package_data=True,
     install_requires = [ 'setuptools',
                          'getpaid.core',
-                         'lxml'
+                         'elementtree'
                          ],
     zip_safe = False,
     )

@@ -3,7 +3,7 @@ $Id:
 """
 
 from urllib2 import Request, urlopen, URLError
-from lxml import etree
+import elementtree.ElementTree as etree
 
 from zope import interface, schema, component
 from zope.app.container.contained import Contained
@@ -269,7 +269,7 @@ def CreateRequest( settings,
     accessreq = CreateAccessRequest( settings.access_key, settings.username, settings.password)
     servicereq = CreateServiceRequest( settings, store_contact, origin_contact, origin_address, order )
     
-    xml_text = '<?xml version="1.0"?>' + etree.tostring(accessreq, pretty_print=pretty) + '<?xml version="1.0"?>' + etree.tostring(servicereq, pretty_print=pretty)
+    xml_text = '<?xml version="1.0"?>' + etree.tostring(accessreq) + '<?xml version="1.0"?>' + etree.tostring(servicereq)
     return xml_text
 
 def FakeResponse( something ):
@@ -334,7 +334,7 @@ def ParseResponse( root ):
         elif elem.tag == "RatedShipment":
             shipment = ParseShipment( elem )
             ups_response.shipments.append( shipment )
-
+            
     if getattr( ups_response, 'error_code', None):
         if 'AccessRequest' in getattr( ups_response, 'error_location_elem_name', ''):
             raise interfaces.UPSInvalidCredentials( **ups_response.__dict__ )
