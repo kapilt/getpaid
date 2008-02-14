@@ -570,6 +570,8 @@ class IOrder( Interface ):
     fulfillment_state = schema.TextLine( title = _(u"Fulfillment State"), readonly=True)
     processor_order_id = schema.ASCIILine( title = _(u"Processor Order Id") )
     processor_id = schema.ASCIILine( readonly=True )
+    shipping_method = schema.ASCIILine( title = _(u"Shipping Method") )
+    shipping_price = schema.ASCIILine( title = _(u"Shipping Price") )
 
 
 # Various Order Classification Markers..

@@ -68,6 +68,8 @@ Here we are setting the buyable types for use in the following tests
     >>> options.buyable_types = ['Document']
     >>> options.donate_types = ['Document']
     >>> options.shippable_types = ['Document']
+    >>> options.buyable_types
+    ['Document']
 
 
 Check to make sure the settings we put in Site Profile appear on this page. 
@@ -77,7 +79,7 @@ Check to make sure the settings we put in Site Profile appear on this page.
 Testing process of configuring Plone content for "buyable" states of donation, buyable and shippable. Depends on options that were set in the admin functional tests. 
 
 Test Make Buyable
-
+ 
     >>> browser.getLink('Make Buyable').click()
     >>> browser.getControl(name='form.product_code').value = 'Test Buy Code'
     >>> browser.getControl(name='form.price').value = '10.00'
