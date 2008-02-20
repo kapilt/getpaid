@@ -1,13 +1,48 @@
 from zope import interface
 from getpaid.core import interfaces
-
+from ore.alchemist import Session, container
+from hurry.workflow.interfaces import IWorkflowState
 import domain
 
 def createRDBOrder( order ):
     rdb_order = domain.Order()
     return rdb_order
     
-class RDBOrderManager( object ):
+class WorkflowAttributeState( object ):
+    
+    interface.implements( IWorkflowState )
+    
+    _attribute = "_status"
+    
+    def __init__( self, context ):
+        self.context = context
+        
+    def setState( self, state):
+        setattr( self.context, self._attribute, state )
+        
+    def setId( self, id):
+        return
+        
+    def getState( self ):
+        return getattr( self.context, self._attribute )
+        
+    def getId( self ):
+        return self.context.order_id
+    
+class FinanceState( object ):
+    _attribute = "_finance_status"
+
+class FulfillmentState( object ):
+    _attribute = "_fufillment_status"
+    
+class ShoppingCart( container.PartialContainer ):
+    
+    def __setitem__( self, key, item ):
+        super( ShoppingCart, self).__setitem__( key, item )        
+        rid = self.__parent__.order_rid
+        item.order_id = rid
+
+class OrderManager( object ):
     
     interface.implements( interfaces.IOrderManager )
     

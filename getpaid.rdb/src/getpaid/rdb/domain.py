@@ -2,14 +2,11 @@ from zope import interface
 from getpaid.core import interfaces
 from ore.alchemist import Session
 
+from interfaces import IRDBOrder
 import schema
 
 class Order( object ):
-    interface.implements( interfaces.IOrder )
-    
-    @property
-    def order_id( self ):
-        return str( self._order_id )
+    interface.implements( IRDBOrder )
         
 class Address( object ):
     pass
@@ -24,7 +21,7 @@ class LineItem( object ):
     interface.implements( interfaces.ILineItem )
     
 class ShippableLineItem( object ):
-    interfaces.implements( interfaces.IShippableLineItem )
+    interface.implements( interfaces.IShippableLineItem )
     
 class OrderLogEntry( object ):
     interface.implements( interfaces.IOrderWorkflowEntry )
@@ -48,3 +45,11 @@ class OrderLog( object ):
                 schema.order_log.c.order_id == self.context.order_id,
                 ).order_by( schema.order_log.c.creation_date ).one()
             
+class Warehouse( object ):
+    pass
+
+class WarehouseStock( object ):
+    pass
+        
+
+    
