@@ -3,6 +3,7 @@ email notifications for store admins and customers.
 """
 
 from zope import component, interface
+from zope.app import zapi
 from getpaid.core.interfaces import workflow_states
 from Products.CMFCore.utils import getToolByName
 
@@ -32,6 +33,21 @@ ${order_contents}
 
 '''
 
+anonymous_customer_new_order_template = '''\
+To: ${to_email}
+From: "${from_name}" <${from_email}>
+Subject: New Order Notification
+
+Thank you for you order.
+
+Total Amount to be Charged : ${total_price}
+
+Order Contents
+
+${order_contents}
+
+'''
+
 class CustomerOrderNotificationMessage(object):
 
     interface.implements(interfaces.INotificationMailMessage)
@@ -47,7 +63,13 @@ class CustomerOrderNotificationMessage(object):
                   'order_id': self.order.order_id,
                   'order_contents': order_contents,
                  }
-        msg = _(customer_new_order_template, mapping=kwargs)
+        portal = zapi.getSiteManager().context
+        pm = getToolByName(portal, 'portal_membership')
+        user = pm.getAuthenticatedMember()
+        if 'Anonymous' in user.getRoles():
+            msg = _(anonymous_customer_new_order_template, mapping=kwargs)
+        else:
+            msg = _(customer_new_order_template, mapping=kwargs)
         return translate(msg)
 
     def __init__( self, order ):
