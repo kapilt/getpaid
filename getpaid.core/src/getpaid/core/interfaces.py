@@ -25,13 +25,20 @@
 $Id$
 """
 
-from zope.interface import Interface, Attribute, classImplements
+from zope.interface import Interface, Attribute, classImplements, implements
 from zope import schema
 try:
     from zope.component.interfaces import IObjectEvent
 except ImportError:
     # BBB for Zope 2.9
     from zope.app.event.interfaces import IObjectEvent
+
+try:
+    from zope.component.interfaces import ObjectEvent
+except ImportError: 
+    # BBB for Zope 2.9
+    from zope.app.event.objectevent import ObjectEvent    
+    
 from zope.app.container.interfaces import IContainer
 from zope.schema.interfaces import ITextLine
 from zope.schema.vocabulary import SimpleVocabulary
@@ -131,6 +138,41 @@ class IStoreSettings( IPersistentOptions ):
     tax_ein = schema.TextLine( title= _(u"Tax Identification Number"),
                                required = False,
                                default=u"")
+
+
+#################################
+# Plugin Management
+
+class IPluginManager( Interface ):
+    """
+    a lifecycle manager for a single plugin
+    """
+    
+    title = schema.TextLine(title=_(u"Title"))
+    description = schema.TextLine(title=_(u"Description"))  
+    
+    def install( ):
+        """install the plugin"""
+        
+    def uninstall( remove_data=False ):
+        """ uninstall the plugin, if remove data is true, the plugin
+        should remove its persistent state.
+        """
+        
+    def status():
+        """ return true if installed, else false """
+
+class IStoreInstallation( IObjectEvent ):
+    """ object event for store installation, and plugin installation """
+    
+class StoreInstalled( ObjectEvent ):
+    implements( IStoreInstallation )
+    
+class IStoreUninstall( IObjectEvent ):
+    """ object event for store uninstallation, and plugin removal """
+    
+class StoreUninstalled( ObjectEvent ):
+    implements( IStoreUninstall )
 
 
 #################################
