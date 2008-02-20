@@ -6,7 +6,11 @@ import schema
 
 class Order( object ):
     interface.implements( interfaces.IOrder )
-
+    
+    @property
+    def order_id( self ):
+        return str( self._order_id )
+        
 class Address( object ):
     pass
     

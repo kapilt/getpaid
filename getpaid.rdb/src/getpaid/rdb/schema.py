@@ -3,10 +3,12 @@ import sqlalchemy as rdb
 
 metadata = rdb.MetaData()
 
+order_ids = rdb.Sequence('order_id_seq', metadata=metadata)
+
 orders = rdb.Table( 
   "orders",
   metadata,
-  rdb.Column("order_id",rdb.Integer(), primary_key=True ),
+  rdb.Column("order_rid",rdb.Integer(), order_ids, primary_key=True ),
   rdb.Column("billing_id", rdb.Integer,  rdb.ForeignKey('addresses.address_id'), nullable=False ),
   rdb.Column("ship_id", rdb.Integer, rdb.ForeignKey('addresses.address_id'), nullable=False ), 
   rdb.Column("customer_id", rdb.Integer, rdb.ForeignKey('customers.customer_id'), nullable=False ),
@@ -70,7 +72,8 @@ addresses = rdb.Table(
   rdb.Column("second_line", rdb.Unicode(60), nullable=False ),
   rdb.Column("city", rdb.Unicode(60), nullable=False ),
   rdb.Column("state", rdb.Unicode(6), nullable=False ),
-  rdb.Column("country", rdb.Unicode(4), nullable=False )
+  rdb.Column("country", rdb.Unicode(4), nullable=False ),
+  rdb.Column("postal_code", rdb.Unicode(10) ),
   )
   
 def main( ):
