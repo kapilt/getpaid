@@ -65,7 +65,7 @@ class LineItemFactory( object ):
         item_id = content.UID()
         if item_id in self.cart:
             self.cart[ item_id ].quantity += 1
-            return
+            return True
         
     def checkPayable( self, content):
         found = False
