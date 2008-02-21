@@ -29,13 +29,6 @@
 <include package="zc.comment" />
 -->
 
-<!-- Classify Orders with marker interfaces -->
-<subscriber
-   for="getpaid.core.interfaces.IOrder
-	zope.app.event.interfaces.IObjectCreatedEvent"
-   handler=".order.classifyOrder"
-   />
-
 <!-- Optional Payment Processors and Dependency Checks-->
 
 <configure zcml:condition="installed gchecky">

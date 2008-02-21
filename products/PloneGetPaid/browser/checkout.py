@@ -442,6 +442,7 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         order.order_id = self.wizard.data_manager.get('order_id')
         order.user_id = getSecurityManager().getUser().getId()
         if  self.wizard.data_manager.get('shipping_rate'):
+            order.shipping_service = self.wizard.data_manager.get('shipping_service')
             order.shipping_method = self.wizard.data_manager.get('shipping_rate')
             order.shipping_price = self.wizard.data_manager.get('shipping_price')
         notify( ObjectCreatedEvent( order ) )
