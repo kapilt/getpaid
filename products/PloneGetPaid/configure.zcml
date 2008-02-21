@@ -134,10 +134,19 @@
 
 <!-- Content to Line Item Adapter -->
 <adapter
-   for="getpaid.core.interfaces.IShoppingCart"
+   for="getpaid.core.interfaces.IShoppingCart
+        .interfaces.IPayableMarker"
    provides="getpaid.core.interfaces.ILineItemFactory"
    factory=".content.LineItemFactory"
    />
+
+<adapter
+   for="getpaid.core.interfaces.IShoppingCart
+        .interfaces.IShippableMarker"
+   provides="getpaid.core.interfaces.ILineItemFactory"
+   factory=".content.ShippableItemFactory"
+   />
+
 
 <!-- Property Storage for Configuration Options -->
 <adapter

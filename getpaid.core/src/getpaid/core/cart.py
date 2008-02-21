@@ -41,9 +41,24 @@ class ShoppingCart( OrderedContainer ):
     """
     implements( interfaces.IShoppingCart )
 
+    last_item = None
+    
     def size( self ):
         return sum(i.quantity for i in self.values())
 
+    def __setitem__( self, key, value ):
+        super(ShoppingCart, self).__setitem__( key, value)
+        self.last_item = key
+        
+    def __delitem__( self, key ):
+        if not key in self:
+            return
+        super( ShoppingCart, self).__delitem__( key )
+        if self.last_item == key:
+            if len(self)>0:
+                self.last_item = self.keys()[-1]
+            else:
+                self.last_item = None
 
 class CartItemTotals( object ):
 

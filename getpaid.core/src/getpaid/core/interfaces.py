@@ -228,6 +228,9 @@ class IShippableContent( IPayable ):
     dimensions = schema.TextLine( title = _(u"Dimensions"))
     sku = schema.TextLine( title = _(u"Product SKU"))
     
+    # default unit is country of origin specific... 
+    weight = schema.TextLine( title = _(u"Weight") )
+
     def getShipWeight( self ):
         """ Shipping Weight
         """

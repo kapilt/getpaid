@@ -45,15 +45,29 @@ class LineItemFactory( object ):
     adapts to cart and content (payable marker marked), and creates a line item
     from said item for cart.
     """
-    def __init__( self, cart ):
+    
+    def __init__( self, cart, content ):
         self.cart = cart
+        self.content = content
 
-    def create( self, content ):
+    def create( self, quantity=1 ):
+        
+        if self.checkIncrementCart( self.content ):
+            return
+        
+        payable = self.checkPayable( self.content )
+        nitem = self.createLineItem( payable, quantity)
+        self.cart[ nitem.item_id ] = nitem
+        
+        return nitem
+        
+    def checkIncrementCart( self, content ):
         item_id = content.UID()
         if item_id in self.cart:
             self.cart[ item_id ].quantity += 1
             return
         
+    def checkPayable( self, content):
         found = False
         for marker, iface in PayableMarkerMap.items():
             if marker.providedBy( content ):
@@ -63,45 +77,46 @@ class LineItemFactory( object ):
         if not found:
             raise RuntimeError("Invalid Context For Cart Add")
 
-        payable = iface( content )
-
+        return iface( content )
+        
+    def createLineItem( self, payable, quantity ):
         nitem = item.PayableLineItem()
-        nitem.item_id = content.UID() # archetypes uid
-
+        nitem.item_id = self.content.UID() # archetypes uid
+        
         # we use intids to reference content that we can dereference cleanly
         # without access to context.
-        nitem.uid = component.getUtility( IIntIds ).register( content )
-
+        nitem.uid = component.getUtility( IIntIds ).register( self.content )
+        
         # copy over information regarding the item
-        nitem.name = content.Title()
-        nitem.description = content.Description()
+        nitem.name = self.content.Title()
+        nitem.description = self.content.Description()
         nitem.cost = payable.price
-        nitem.quantity = 1
+        nitem.quantity = int( quantity )
         nitem.product_code = payable.product_code
-
-        # 
-        self.cart[ nitem.item_id ] = nitem
-        self.cart.last_item = nitem.item_id
         
         return nitem
-
-    def delete(self, item_id):
-        """
-        This methods removes an item from the cart and updates last_item to the last item
-        of the ShoppingCart or None if we where at the last one.
-        """
-        #From where we are deleting the object it is much easyer to get the item_id than
-        #the item
-        #item_id = content.UID()
-        if item_id in self.cart:
-            del self.cart[item_id]
-            if self.cart.last_item == item_id:
-                if len(self.cart)>0:
-                    self.cart.last_item = self.cart.keys()[-1]
-                else:
-                    self.cart.last_item = None
-            
  
+class ShippableItemFactory( LineItemFactory ):
+    
+    def createLineItem( self, payable, quantity ):
+        
+        nitem = item.PayableShippableLineItem()
+        nitem.item_id = self.content.UID() # archetypes uid
+        
+        # we use intids to reference content that we can dereference cleanly
+        # without access to context.
+        nitem.uid = component.getUtility( IIntIds ).register( self.content )
+        
+        # copy over information regarding the item
+        nitem.name = self.content.Title()
+        nitem.description = self.content.Description()
+        nitem.cost = payable.price
+        nitem.quantity = int( quantity )
+        nitem.product_code = payable.product_code
+        nitem.weight = payable.weight 
+        
+        return nitem
+                
 
 #################################
 # Buyable Content
