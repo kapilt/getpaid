@@ -616,28 +616,25 @@ class IOrder( Interface ):
     fulfillment_state = schema.TextLine( title = _(u"Fulfillment State"), readonly=True)
     processor_order_id = schema.ASCIILine( title = _(u"Processor Order Id") )
     processor_id = schema.ASCIILine( readonly=True )
-    shipping_method = schema.ASCIILine( title = _(u"Shipping Method") )
-    shipping_price = schema.ASCIILine( title = _(u"Shipping Price") )
+    
 
 
 # Various Order Classification Markers..
-# a shippable order for exmaple contains something an ishippable,
-# virtual order contains only ttw deliverables
-# donation orders contain donations
-# recurrence for not yet implement contains recurring line items
-# the only mutual exclusive we have at the moment we these is shippable/virtual
 
-
-class IShippableOrder( Interface ):
+class IShippableOrder( IOrder ):
     """ marker interface for orders which need shipping """
-
-class IRecurringOrder( Interface ):
+    
+    shipping_service = schema.ASCIILine( title = _(u"Shipping Service"))
+    shipping_method = schema.ASCIILine( title = _(u"Shipping Method") )
+    shipping_price = schema.ASCIILine( title = _(u"Shipping Price") )
+        
+class IRecurringOrder( IOrder ):
     """ marker interface for orders containing recurring line items """
 
-class IVirtualOrder( Interface ):
+class IVirtualOrder( IOrder ):
     """ marker inteface for orders which are delivered virtually """
 
-class IDonationOrder( Interface ):
+class IDonationOrder( IOrder ):
     """ marker interface for orders which contain donations"""
 
 class IOrderSetReport( Interface ):
