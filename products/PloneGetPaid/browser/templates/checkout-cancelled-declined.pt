@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    <div tal:condition="not:isAnon">
+    <!--><div tal:condition="not:isAnon">
       <span i18n:translate="box_order_status_url_description">You can check the status of your order
 	  <span i18n:name="status_url">
       <a href=""
@@ -30,7 +30,7 @@
          i18n:translate="">here</a>
       </span>
 	  </span>
-	  </div>
+	  </div>-->
 
   </metal:block>
 </metal:page>
