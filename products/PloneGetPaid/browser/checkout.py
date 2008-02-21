@@ -158,10 +158,7 @@ class CheckoutWizard( Wizard ):
     
     steps can't override call methods, as such logic won't be processed, since we call
     update / render methods directly.
-    
-
     """
-
     
     def checkShoppingCart(self):
         cart = component.getUtility(interfaces.IShoppingCartUtility).get( self.context )
@@ -308,6 +305,38 @@ class CheckoutAddress( BaseCheckoutForm ):
     def handle_continue( self, action, data ):
         self.next_step_name = wizard_interfaces.WIZARD_NEXT_STEP
 
+def copy_field( field ):
+    # copies a field dropping custom widgets
+    return field.__class__( 
+        field = field.field,
+        name = field.__name__,
+        prefix = field.prefix,
+        for_display = field.for_input,
+        for_input = field.for_input,
+        get_rendered = field.get_rendered,
+        render_context = field.render_context
+        )
+        
+def sanitize_custom_widgets( fields ):
+    # we need to drop custom edit widgets so we get default display widgets
+    # this method makes inplace copies of fields with custom widgets without
+    # the custom widget
+    custom_fields = []
+    for field in fields:
+        if field.custom_widget is not None:
+            custom_fields.append( field )
+    if not custom_fields:
+        return fields
+    
+    for field in custom_fields:
+        field_copy = copy_field( field )
+        idx = fields.__FormFields_seq__.index( field )
+        fields.__FormFields_seq__.pop(idx)
+        fields.__FormFields_seq__.insert( idx, field_copy )
+        fields.__FormFields_byname__[ field.__name__] = field
+        
+    return fields
+    
 class CheckoutReviewAndPay( BaseCheckoutForm ):
     
     form_fields = form.Fields( interfaces.IUserPaymentInformation )
@@ -345,10 +374,8 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         bill_ship_fields = fields.select( *schema.getFieldNamesInOrder( interfaces.IBillingAddress ) ) + \
                            fields.select( *schema.getFieldNamesInOrder( interfaces.IShippingAddress ) )
                            
-        # clear custom widgets.. (typically for edit, we want display)
-        for field in bill_ship_fields:
-            if field.custom_widget is not None:
-                field.custom_widget = None
+        # make copies of custom widgets.. (typically for edit, we want display)
+        bill_ship_fields = sanitize_custom_widgets( bill_ship_fields )
         
         self.widgets += form.setUpEditWidgets(
             bill_ship_fields,  self.prefix, self.context, self.request,
@@ -441,10 +468,13 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
 
         order.order_id = self.wizard.data_manager.get('order_id')
         order.user_id = getSecurityManager().getUser().getId()
+
         if  self.wizard.data_manager.get('shipping_rate'):
+            interface.directlyProvides( order, interfaces.IShippableOrder )
             order.shipping_service = self.wizard.data_manager.get('shipping_service')
             order.shipping_method = self.wizard.data_manager.get('shipping_rate')
             order.shipping_price = self.wizard.data_manager.get('shipping_price')
+            
         notify( ObjectCreatedEvent( order ) )
         
         return order
