@@ -3,6 +3,8 @@ from StringIO import StringIO
 from Products.PloneGetPaid.Extensions.install import install_dependencies
 from Products.PloneGetPaid.Extensions.install import install_cart_portlet 
 from Products.PloneGetPaid.Extensions.install import install_contentwidget_portlet
+from Products.PloneGetPaid.Extensions.install import notify_install
+from Products.PloneGetPaid.Extensions.install import notify_uninstalled
 from Products.PloneGetPaid.Extensions.install import setup_site
 from Products.PloneGetPaid.Extensions.install import setup_store
 from Products.PloneGetPaid.Extensions.install import setup_software_generation
@@ -74,6 +76,9 @@ def setupVarious(context):
     
     print >> out, "Registering shopping cart utility"
     register_shopping_cart_utility(site)
+    
+    print >> out, "Notifying Installation"
+    notify_install( site )
     
     logger.info(out.getvalue())
     

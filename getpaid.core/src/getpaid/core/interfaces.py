@@ -155,24 +155,25 @@ class IPluginManager( Interface ):
         """install the plugin"""
         
     def uninstall( remove_data=False ):
-        """ uninstall the plugin, if remove data is true, the plugin
+        """ 
+        uninstall the plugin, if remove data is true, the plugin
         should remove its persistent state.
         """
         
     def status():
         """ return true if installed, else false """
 
-class IStoreInstallation( IObjectEvent ):
+class IStoreInstalledEvent( IObjectEvent ):
     """ object event for store installation, and plugin installation """
     
 class StoreInstalled( ObjectEvent ):
-    implements( IStoreInstallation )
+    implements( IStoreInstalledEvent )
     
-class IStoreUninstall( IObjectEvent ):
+class IStoreUninstallEvent( IObjectEvent ):
     """ object event for store uninstallation, and plugin removal """
     
 class StoreUninstalled( ObjectEvent ):
-    implements( IStoreUninstall )
+    implements( IStoreUninstallEvent )
 
 
 #################################

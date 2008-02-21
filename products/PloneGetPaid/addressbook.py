@@ -8,7 +8,7 @@ from zope.app.container.sample import SampleContainer
 
 import interfaces
 
-def AddressBook( SampleContainer ):
+def AddressBook( SampleContainer, Persistent ):
     
     interface.implements( interfaces.IAddressBook )
 

@@ -10,9 +10,9 @@ from zope.app.container.constraints import contains
 from zope.app.event.interfaces import IObjectEvent
 
 from getpaid.core.fields import PhoneNumber
+from getpaid.core.payment import CREDIT_CARD_TYPES
 
 import getpaid.core.interfaces as igetpaid
-from getpaid.core.payment import CREDIT_CARD_TYPES
 import zope.viewlet.interfaces
 
 from Products.PloneGetPaid.i18n import _
@@ -389,5 +389,5 @@ class IAddressBook( IContainer ):
     
 class INamedAddress( Interface ):
     
-    schema.TextLine(title=u"Name")
+    __name__ = schema.TextLine(title=_(u"Name"))
     

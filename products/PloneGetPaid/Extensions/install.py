@@ -9,6 +9,7 @@ from Products.Five.site.localsite import enableLocalSiteHook
 from Products.Archetypes.utils import shasattr
 
 from zope.interface import alsoProvides, directlyProvides, directlyProvidedBy
+from zope.event import notify
 from zope.app.component.hooks import setSite
 from zope.app.component.interfaces import ISite
 from Products.PloneGetPaid import generations, preferences, addressbook
@@ -16,7 +17,7 @@ from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddress
 from Products.PloneGetPaid.config import PLONE3
 from Products.PloneGetPaid.cart import ShoppingCartUtility
 from five.intid.site import add_intids
-from getpaid.core.interfaces import IOrderManager, IStore, IShoppingCartUtility
+from getpaid.core.interfaces import IOrderManager, IStore, IShoppingCartUtility, StoreInstalled, StoreUninstalled
 from getpaid.core.order import OrderManager
 from getpaid.core.payment import CREDIT_CARD_TYPES
 
@@ -36,6 +37,12 @@ def setup_software_generation( self ):
 def setup_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
     alsoProvides(portal, IStore)
+    
+def notify_install( self ):
+    notify( StoreInstalled( self ) )
+
+def notify_uninstalled( self ):
+    notify( StoreUninstalled( self ) )
 
 def teardown_store( self ):
     portal = getToolByName( self, 'portal_url').getPortalObject()
