@@ -5,7 +5,7 @@
 
       <div class="addressbook-listing">
     
-            <script languaje="javascript" tal:content="view/getEntryScripts">
+            <script language="javascript" tal:content="view/getEntryScripts">
             /* Define scripts for this here */
             </script>
         

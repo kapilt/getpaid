@@ -2,7 +2,7 @@
 	i18n:domain="plonegetpaid">
   <metal:block fill-slot="getpaid_content">
 
-    <script languaje="javascript">
+    <script language="javascript">
     function swapVisibility(fromWho, toWho){
         window.document.getElementById(fromWho).style.display = 'none';
         window.document.getElementById(toWho).style.display = 'inline'
