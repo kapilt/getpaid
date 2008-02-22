@@ -159,8 +159,23 @@
 	provides="getpaid.core.interfaces.IUserContactInformation"
 	factory=".member.memberContactInformation"
     />
-    
-<!-- Utilities -->
+
+<!-- Billing Address Info for Members -->
+<adapter
+	for=".interfaces.IStoreMember"
+	provides="getpaid.core.interfaces.IBillingAddress"
+	factory=".member.memberBillAddressInfo"
+    />
+
+<!-- Shipping Address Info for Members -->
+<adapter
+	for=".interfaces.IStoreMember"
+	provides="getpaid.core.interfaces.IShippingAddress"
+	factory=".member.memberShipAddressInfo"
+    />
+
+
+!-- Utilities -->
 <utility
     provides=".interfaces.ICountriesStates"
     factory=".vocabularies.CountriesStatesFromFile"/>

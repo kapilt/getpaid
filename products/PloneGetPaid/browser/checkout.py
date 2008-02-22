@@ -17,6 +17,12 @@ from zope.app.renderer.plaintext import PlainTextToHTMLRenderer
 
 from zope import component
 
+from zope.interface import Interface
+from zope.schema.interfaces import IField
+from zope.app.apidoc import interface as apidocInterface
+
+
+
 from zc.table import column
 from getpaid.wizard import Wizard, ListViewController, interfaces as wizard_interfaces
 from getpaid.core import interfaces, options, payment
@@ -27,14 +33,14 @@ from AccessControl import getSecurityManager
 from ZTUtils import make_hidden_input
 
 from Products.Five.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
+from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
 
 from Products.PloneGetPaid.i18n import _
 
-from base import BaseFormView
+from base import BaseFormView, BaseView
 import cart as cart_core
 from widgets import CountrySelectionWidget, StateSelectionWidget, CCExpirationDateWidget
 
@@ -118,19 +124,21 @@ class BillingInfo( options.PropertyBag ):
         # don't store persistently
         raise RuntimeError("Storage Not Allowed")
 
+class ContactInfo( options.PropertyBag ):
+    title = "Contact Information"    
+
+ContactInfo.initclass( interfaces.IUserContactInformation )
+BillingInfo.initclass( interfaces.IUserPaymentInformation )
+
 class ShipAddressInfo( options.PropertyBag ):
     title = "Shipping Information"
 
 class BillAddressInfo( options.PropertyBag ):
     title = "Payment Information"
 
-class ContactInfo( options.PropertyBag ):
-    title = "Contact Information"    
-
-ContactInfo.initclass( interfaces.IUserContactInformation )
-BillingInfo.initclass( interfaces.IUserPaymentInformation )
 ShipAddressInfo.initclass( interfaces.IShippingAddress )
 BillAddressInfo.initclass( interfaces.IBillingAddress )
+
 
 class ImmutableBag( object ):
     
@@ -297,12 +305,42 @@ class CheckoutAddress( BaseCheckoutForm ):
             self.adapters = adapters
         super( CheckoutAddress, self).update()
     
+    def hasAddressBookEntries(self):
+        """
+        Do we have any entry?
+        """
+        addressBookUsr = component.getUtility(IAddressBookUtility).get(getSecurityManager().getUser().getId())
+        return len(addressBookUsr.keys())
+
+    def save_address(self, data):
+        """
+        store the address in the addressbook of the user
+        """
+        entry = self.wizard.data_manager.get('addressbook_entry_name')
+        # if the user fill the name of the entry mean that we have to save the address
+        if entry:
+            user = getSecurityManager().getUser()
+            addressBookUtility = component.getUtility(IAddressBookUtility)
+            addressBookUsr = addressBookUtility.get(user.getId())
+            # here we get the shipping address
+            ship_address_info = ShipAddressInfo()
+            if data['ship_same_billing']:
+                for field in data.keys():
+                    if field.startswith('bill_'):
+                        ship_address_info.__setattr__(field.replace('bill_','ship_'), data[field])
+            else:
+                for field in data.keys():
+                    if field.startswith('ship_'):
+                        ship_address_info.__setattr__(field, data[field])
+            addressBookUsr[entry] = ship_address_info
+    
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
         return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
         
     @form.action(_(u"Continue"), name="continue")
     def handle_continue( self, action, data ):
+	self.save_address(data)
         self.next_step_name = wizard_interfaces.WIZARD_NEXT_STEP
 
 def copy_field( field ):
@@ -474,6 +512,7 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
             order.shipping_service = self.wizard.data_manager.get('shipping_service')
             order.shipping_method = self.wizard.data_manager.get('shipping_rate')
             order.shipping_price = self.wizard.data_manager.get('shipping_price')
+
             
         notify( ObjectCreatedEvent( order ) )
         
@@ -520,3 +559,48 @@ class PrivacyPolicyView( StorePropertyView ):
     @property
     def privacy_policy(self):
         return self._getProperty('privacy_policy')
+
+class AddressBookView(BrowserView):
+    
+    __call__ = ZopeTwoPageTemplateFile("templates/addressbook-listing.pt")
+        
+    def getEntryNames(self):
+        """
+        get a list of entry names
+        """
+        addressBookUsr = component.getUtility(IAddressBookUtility).get(getSecurityManager().getUser().getId())
+        return addressBookUsr.keys()
+
+        
+    def getEntryScripts(self):
+        """
+        Returns javascript function that fill the fields with the data
+        """
+        addressBookUsr = component.getUtility(IAddressBookUtility).get(getSecurityManager().getUser().getId())
+         
+        
+        jstemplate = \
+        """ 
+        function assign_variables(contact_name){
+        %s 
+        window.close();
+        }
+        """
+        field_assign_template = \
+        """
+        window.opener.parent.document.getElementById('form.%s').value = '%s' ;
+        """
+        javaScript = ""
+        field_assignations = ""
+        for entry in self.getEntryNames():
+            
+            field_assignations += "if (contact_name == '%s') {\n" % entry
+            for name in apidocInterface.getElements(interfaces.IShippingAddress, type=IField).keys():
+                try:
+                    field_assignations += field_assign_template % (name,getattr(addressBookUsr[entry],name) or '')
+                except KeyError:
+                    pass
+            field_assignations += "}"
+        javaScript += jstemplate % field_assignations
+            
+        return javaScript

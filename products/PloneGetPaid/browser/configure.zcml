@@ -96,6 +96,12 @@
      class=".checkout.CheckoutReviewAndPay"
      permission="zope2.View"
      />
+  <browser:page
+     for="*"
+     name="addresbook-listing"
+     class=".checkout.AddressBookView"
+     permission="zope2.View"
+     />
 
   <browser:page
      for="*"

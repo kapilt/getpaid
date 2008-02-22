@@ -1,0 +1,20 @@
+<fieldset
+	i18n:domain="plonegetpaid">
+
+  <legend i18n:translate="legend_addressbook_contents"> Your Address Book entries </legend>
+
+      <div class="addressbook-listing">
+    
+            <script languaje="javascript" tal:content="view/getEntryScripts">
+            /* Define scripts for this here */
+            </script>
+        
+            <tal:loop repeat="entry view/getEntryNames">
+                <a href="#" tal:content="entry" tal:attributes="onclick python:'assign_variables(\'%s\')' % entry"></a><br/>
+            </tal:loop>
+    
+        </div>
+
+ <br />
+
+</fieldset>
