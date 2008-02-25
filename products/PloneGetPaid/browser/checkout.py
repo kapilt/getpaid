@@ -40,9 +40,11 @@ from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddress
 
 from Products.PloneGetPaid.i18n import _
 
+
 from base import BaseFormView, BaseView
 import cart as cart_core
 from widgets import CountrySelectionWidget, StateSelectionWidget, CCExpirationDateWidget
+
 
 def null_condition( *args ):
     return ()
@@ -335,6 +337,7 @@ class CheckoutAddress( BaseCheckoutForm ):
                     if field.startswith('ship_'):
                         ship_address_info.__setattr__(field, data[field])
             addressBookUsr[entry] = ship_address_info
+            self.context.plone_utils.addPortalMessage(_(u'A new address has been saved'))
     
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
@@ -342,7 +345,7 @@ class CheckoutAddress( BaseCheckoutForm ):
         
     @form.action(_(u"Continue"), name="continue")
     def handle_continue( self, action, data ):
-	self.save_address(data)
+        self.save_address(data)
         self.next_step_name = wizard_interfaces.WIZARD_NEXT_STEP
 
 def copy_field( field ):

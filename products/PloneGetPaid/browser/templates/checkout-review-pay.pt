@@ -12,6 +12,9 @@
 	 tal:content="structure view/hidden_inputs"> </div>
 
     <div class="portalMessage" tal:content="view/status" tal:condition="view/status"> </div>
+    <div metal:use-macro="here/global_statusmessage/macros/portal_message">
+        Portal status message
+    </div>
 
       <div>
 	 <div style="float:left; width:30%">
