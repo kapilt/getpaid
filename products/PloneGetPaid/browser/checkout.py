@@ -317,6 +317,8 @@ class CheckoutAddress( BaseCheckoutForm ):
         store the address in the addressbook of the user
         """
         entry = self.wizard.data_manager.get('addressbook_entry_name')
+        if not isinstance(entry,str):
+            entry = entry[-1]
         # if the user fill the name of the entry mean that we have to save the address
         if entry:
             user = getSecurityManager().getUser()
@@ -581,23 +583,35 @@ class AddressBookView(BrowserView):
         
         jstemplate = \
         """ 
-        function assign_variables(contact_name){
-        %s 
+         function doWaitUntilStatesAreLoaded(theStateValue){
+           window.opener.parent.document.getElementById('form.ship_state').value = theStateValue
         window.close();
+        }
+        
+        function assign_variables(contact_name,contact_link){
+        contact_link.innerHTML="Please wait, retrieving data..."
+        %s
         }
         """
         field_assign_template = \
         """
         window.opener.parent.document.getElementById('form.%s').value = '%s' ;
         """
-        javaScript = ""
-        field_assignations = ""
+        javaScript = ''
+        field_assignations = ''
         for entry in self.getEntryNames():
             
             field_assignations += "if (contact_name == '%s') {\n" % entry
             for name in apidocInterface.getElements(interfaces.IShippingAddress, type=IField).keys():
                 try:
-                    field_assignations += field_assign_template % (name,getattr(addressBookUsr[entry],name) or '')
+                    if name == "ship_state":
+                        field_assignations += """\n setTimeout("doWaitUntilStatesAreLoaded('%s')",2000);""" %  getattr(addressBookUsr[entry],name) or ''
+                    elif name == "ship_country":
+                        field_assignations += field_assign_template % (name,getattr(addressBookUsr[entry],name) or '')
+                        field_assignations += "window.opener.parent.document.getElementById('form.%s').onchange();\n"%name
+                    else:
+                        field_assignations += field_assign_template % (name,getattr(addressBookUsr[entry],name) or '')
+                    
                 except KeyError:
                     pass
             field_assignations += "}"
