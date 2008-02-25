@@ -571,7 +571,9 @@ class AddressBookView(BrowserView):
         get a list of entry names
         """
         addressBookUsr = component.getUtility(IAddressBookUtility).get(getSecurityManager().getUser().getId())
-        return addressBookUsr.keys()
+        abKeys = addressBookUsr.keys()
+        abKeys.sort()
+        return abKeys
 
         
     def getEntryScripts(self):
