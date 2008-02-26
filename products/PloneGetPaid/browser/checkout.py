@@ -546,7 +546,7 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         if state in (f_states.CANCELLED,
                      f_states.CANCELLED_BY_PROCESSOR,
                      f_states.PAYMENT_DECLINED):
-            return base_url + '/@@getpaid-cancelled-declined?order_id=%s&finance_state=%s' %(order.order_id, state)
+            return base_url + '/@@getpaid-cancelled-declined'
         
         if state in (f_states.CHARGEABLE,
                      f_states.CHARGING,
