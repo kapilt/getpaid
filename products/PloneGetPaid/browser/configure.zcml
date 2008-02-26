@@ -15,6 +15,12 @@
      template="templates/form.pt"
      permission="zope2.View"
      />
+   <browser:page
+      for="*"
+      name="getpaid-form-valuesonly"
+      template="templates/form-valuesonly.pt"
+      permission="zope2.View"
+      />
 
   <!-- Generic Content Space which hides context actions -->
   <browser:page
@@ -96,6 +102,14 @@
      class=".checkout.CheckoutReviewAndPay"
      permission="zope2.View"
      />
+     
+  <browser:page
+    for="*"
+    name="checkout-select-shipping"
+    class=".checkout.CheckoutSelectShipping"
+    permission="zope2.View"
+    />
+        
   <browser:page
      for="*"
      name="addresbook-listing"
@@ -234,9 +248,7 @@
      permission="zope2.View"
      />
 
-  <!-- Conditionally Load up Plugin UIS -->
-  <include zcml:condition="installed getpaid.ups"
-           package="getpaid.ups.browser" />	 	  
+
       
 
 </configure>

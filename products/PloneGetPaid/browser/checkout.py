@@ -36,7 +36,7 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility, IGetPaidManagementShippingMethods
 
 from Products.PloneGetPaid.i18n import _
 
@@ -253,7 +253,8 @@ class CheckoutWizard( Wizard ):
 
 class CheckoutController( ListViewController ):
     
-    steps = ['checkout-address-info', 'checkout-review-pay']    
+    conditions = {'checkout-select-shipping' : 'checkShippableCart'}
+    steps = ['checkout-address-info', 'checkout-select-shipping', 'checkout-review-pay']    
 
     def getStep( self, step_name ):
         step = component.getMultiAdapter( 
@@ -261,6 +262,12 @@ class CheckoutController( ListViewController ):
                     name=step_name
                     )
         return step.__of__( Acquisition.aq_inner( self.wizard.context ) )
+        
+    def checkShippableCart( self ):
+        #manage_options = interfaces.IGetPaidManagementShippingMethods( self.context )
+        cart_utility = component.getUtility( interfaces.IShoppingCartUtility )
+        cart = cart_utility.get( self.wizard.context )
+        return bool( filter(  interfaces.IShippableLineItem.providedBy, cart.values() ) )
         
 
 class CheckoutAddress( BaseCheckoutForm ):
@@ -539,6 +546,108 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
                      f_states.CHARGED):
             return base_url + '/@@getpaid-thank-you?order_id=%s&finance_state=%s' %(order.order_id, state)
         
+
+class ShippingRate( options.PropertyBag ):
+    title = "Shipping Rate"
+
+ShippingRate.initclass( interfaces.IShippingMethodRate )
+
+class CheckoutSelectShipping( BaseCheckoutForm ):
+    """
+    browser view for selecting a shipping option and setting it as the shipping total for the order.
+    """
+
+    form_fields = form.Fields( interfaces.IShippingMethodRate )
+
+    template = ZopeTwoPageTemplateFile("templates/checkout-shipping-method.pt")
+    shipping_methods = {}
+
+
+    def getShippingMethods( self ):
+        """
+        Queries the getpaid.ups utility to get the available shipping methods and returns a list
+        of them for the template to display and the user to choose among.
+        """
+        manage_options = IGetPaidManagementShippingMethods( self.context )
+        try:
+            shipping_services = list(component.getAdapters((self.context,), interfaces.IShippingRateService))
+        except:
+            self.status = _(u"Couldn't get any shipping services.")
+            return self.shipping_methods
+        for item in shipping_services:
+            name, service = item
+            available_shipping_methods = service.getRates( self.createTransientOrder() )
+            for method in available_shipping_methods:
+                self.shipping_methods[method.service_code] = method
+        return available_shipping_methods
+
+    def setShippingMethods( self, data ):
+        """
+        Set the shipping methods chosen by the user
+        """
+        # "what we do with the shipping method selected?"
+        # set it in the request, so that we can restore it in the
+        #print 'data: ' + str(data)
+        #print self.shipping_rate[data]
+        pass
+
+    def setUpWidgets( self, ignore_request=False ):
+        self.adapters = self.adapters is not None and self.adapters or {}
+
+        # grab all the adapters and fields from the entire wizard form sequence (till the current step)
+        adapters = self.getSchemaAdapters()
+        self.widgets = form.setUpEditWidgets(
+            self.form_fields.select( *schema.getFieldNames(interfaces.IShippingMethodRate)),
+            self.prefix, self.context, self.request,
+            adapters=adapters, ignore_request=ignore_request
+            )
+
+
+    def createTransientOrder( self ):
+        order_manager = component.getUtility( interfaces.IOrderManager )
+        order = Order()
+
+        shopping_cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
+
+        # shopping cart is attached to the session, but we want to switch the storage to the persistent
+        # zodb, we pickle to get a clean copy to store.
+        adapters = self.wizard.data_manager.adapters
+
+        if not filter(interfaces.IShippableLineItem.providedBy, shopping_cart.values() ): 
+            raise SyntaxError( "No Shippable Items")
+
+        order.shopping_cart = loads( dumps( shopping_cart ) )
+        order.shipping_address = payment.ShippingAddress.frominstance( adapters[ interfaces.IShippingAddress ] )
+        order.billing_address = payment.BillingAddress.frominstance( adapters[ interfaces.IBillingAddress ] )
+        order.contact_information = payment.ContactInformation.frominstance( adapters[ interfaces.IUserContactInformation ] )
+
+        order.order_id = self.wizard.data_manager.get('order_id')
+        order.user_id = getSecurityManager().getUser().getId()
+
+        return order
+
+    def update( self ):
+        if not self.adapters:
+            self.adapters = self.getSchemaAdapters()
+        super( CheckoutSelectShipping, self).update()
+
+    def getSchemaAdapters( self ):
+        adapters = {}
+        adapters[ interfaces.IShippingMethodRate ] = ShippingRate()
+        return adapters
+
+    @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
+    def handle_cancel( self, action, data):
+        return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
+
+    @form.action(_(u"Back"), name="back")
+    def handle_back( self, action, data, validator=null_condition):
+        self.next_step_name = wizard_interfaces.WIZARD_PREVIOUS_STEP
+
+    @form.action(_(u"Continue"), name="continue")
+    def handle_continue( self, action, data ):
+        self.setShippingMethods( data )
+        self.next_step_name = wizard_interfaces.WIZARD_NEXT_STEP
 
 class StorePropertyView(BrowserView):
     

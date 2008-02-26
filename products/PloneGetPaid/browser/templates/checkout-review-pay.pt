@@ -20,7 +20,7 @@
 	 <div style="float:left; width:30%">
 	  <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IBillingAddress')">
 	    <legend i18n:translate=""> Billing Address </legend>
-	    <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
+	    <div metal:use-macro="context/@@getpaid-form-valuesonly/fieldset"> </div>
 	  </fieldset>
 	 </div>
    <div style="float: left; padding-left: 3em; width: 30%;"
@@ -28,7 +28,7 @@
                 shipping_address python: ship_same_billing and 'getpaid.core.interfaces.IBillingAddress' or 'getpaid.core.interfaces.IShippingAddress'">
       <fieldset tal:define="widgets python: view.getWidgetsByIName(shipping_address)">
         <legend i18n:translate=""> Mailing Address </legend>
-        <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
+        <div metal:use-macro="context/@@getpaid-form-valuesonly/fieldset"> </div>
       </fieldset>
    </div>
       </div>
