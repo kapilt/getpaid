@@ -568,7 +568,7 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
     form_fields = form.Fields( interfaces.IShippingMethodRate )
 
     template = ZopeTwoPageTemplateFile("templates/checkout-shipping-method.pt")
-    shipping_methods = {}
+    shipping_methods = []
 
 
     def getShippingMethods( self ):
@@ -584,9 +584,7 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
             return self.shipping_methods
         for item in shipping_services:
             name, service = item
-            available_shipping_methods = service.getRates( self.createTransientOrder() )
-            for method in available_shipping_methods:
-                self.shipping_methods[method.service_code] = method
+            self.shipping_methods.extend( service.getRates( self.createTransientOrder() ) )
         return self.shipping_methods
 
     def setShippingMethods( self, data ):
