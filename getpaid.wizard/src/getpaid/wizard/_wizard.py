@@ -234,7 +234,6 @@ class ControllerBase( object ):
         next_step_name = self.getNextStepName( step_name )
         
         if next_step_name == 'checkout-select-shipping':
-            import pdb;pdb.set_trace()
             shipping_services = component.getAdapters((self,), coreinterfaces.IShippingRateService)
             if not shipping_services:
                 next_step_name = self.getNextStepName(next_step_name)
