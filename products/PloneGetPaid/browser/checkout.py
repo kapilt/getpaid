@@ -576,19 +576,18 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         Queries the getpaid.ups utility to get the available shipping methods and returns a list
         of them for the template to display and the user to choose among.
         """
-        manage_options = IGetPaidManagementShippingMethods( self.context )
+        #manage_options = IGetPaidManagementShippingMethods( self.context )
         try:
             shipping_services = list(component.getAdapters((self.context,), interfaces.IShippingRateService))
         except:
             self.status = _(u"Couldn't get any shipping services.")
             return self.shipping_methods
-        available_shipping_methods =[]
         for item in shipping_services:
             name, service = item
             available_shipping_methods = service.getRates( self.createTransientOrder() )
             for method in available_shipping_methods:
                 self.shipping_methods[method.service_code] = method
-        return available_shipping_methods
+        return self.shipping_methods
 
     def setShippingMethods( self, data ):
         """
