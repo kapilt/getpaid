@@ -1,7 +1,0 @@
-<action-icons>
-    <action-icon category="object_buttons" action_id="make_discountable" title="Make this a Discountable Product" priority="0" icon_expr="user.gif"/>
-    <action-icon category="object_buttons" action_id="make_not_discountable" title="Make this Not a Discountable Product" priority="0" icon_expr="user.gif"/>
-    
-    <action-icon category="object_buttons" action_id="make_buyxgetxfreeable" title="Make this a Buy X Get X Free Product" priority="0" icon_expr="user.gif"/>
-    <action-icon category="object_buttons" action_id="make_not_buyxgetxfreeable" title="Make this Not a Buy X Get X Free Product" priority="0" icon_expr="user.gif"/>
-</action-icons>

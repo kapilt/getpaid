@@ -1,4 +1,0 @@
-
-can we replace the default view of content with a view? ie. does the
-five view default viewable implementation take precedence over the cmf?
-
