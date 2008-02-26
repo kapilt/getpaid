@@ -101,12 +101,12 @@ And we do our anonymous checkout
 
 We check that the fields are not empty since now we are logged in
     
+    >>> browser.getControl(name='form.name').value = 'username'
     >>> browser.getControl(name='form.phone_number').value = '55555555'
-
     >>> browser.getControl(name='form.bill_first_line').value = 'here on earth'
     >>> browser.getControl(name='form.bill_city').value = 'doctic city'
-    >>> browser.getControl(name='form.bill_country').value = 'US'
-    >>> browser.getControl(name='form.bill_state').value = 'US-AL'
+    >>> browser.getControl(name='form.bill_country').displayValue = ['UNITED STATES']
+    >>> browser.getControl(name='form.bill_state').displayValue = ['Alabama']
     >>> browser.getControl(name='form.bill_postal_code').value = '5000'
     >>> browser.getControl(name='form.ship_same_billing').value = True
 
@@ -118,7 +118,7 @@ enables it does javascript which is not supported by doctests
 we check that the user gets confirmation
 after saving on the Address book
 
-    >>> browser.getControl(name='Continue').click()
+    >>> browser.getControl(name='form.actions.continue').click()
     >>> 'A new address has been saved' in browser.contents
     True
 
@@ -127,27 +127,24 @@ in the Address book utility should be the entry
     >>> from zope import component
     >>> from Products.PloneGetPaid.interfaces import IAddressBookUtility
     >>> adressBookUtility = component.getUtility(IAddressBookUtility)
-    >>> addressBookUser = addressBookUtility.get('testmanager')
+    >>> addressBookUser = adressBookUtility.get('testmanager')
     >>> address = addressBookUser['my first entry']
     >>> address != None 
     True
     
 finally we check that all the data is store
 
-    >>> address.phone_number == '55555555'
-    True
-    >>> address.bill_first_line == 'here on earth'
-    True
-    >>> address.bill_city.value == 'doctic city'
-    True
-    >>> address.bill_country == 'US'
-    True
-    >>> address.bill_state == 'US-AL'
-    True
-    >>> address.bill_postal_code.value == '5000'
-    True
-    >>> address.ship_same_billing == True
-    True
+    print dir(address)
 
+    >>> address.ship_first_line == 'here on earth'
+    True
+    >>> address.ship_city == 'doctic city'
+    True
+    >>> address.ship_country == 'US'
+    True
+    >>> address.ship_state == 'US-AL'
+    True
+    >>> address.ship_postal_code == '5000'
+    True
 
 Finished verification.
