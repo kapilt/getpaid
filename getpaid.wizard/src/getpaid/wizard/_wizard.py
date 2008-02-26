@@ -6,6 +6,8 @@ except ImportError:
     from zope.app.publisher.interfaces.browser import IBrowserView
 from zope.formlib import form
 
+from getpaid.core import interfaces as coreinterfaces
+
 import interfaces
 
 class Wizard( object ):
@@ -230,6 +232,13 @@ class ControllerBase( object ):
         current_step = self.getCurrentStep()
         current_step.update()
         next_step_name = self.getNextStepName( step_name )
+        
+        if next_step_name == 'checkout-select-shipping':
+            import pdb;pdb.set_trace()
+            shipping_services = component.getAdapters((self,), coreinterfaces.IShippingRateService)
+            if not shipping_services:
+                next_step_name = self.getNextStepName(next_step_name)
+        
         if next_step_name == step_name:
             return
         
