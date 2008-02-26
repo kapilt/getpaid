@@ -20,8 +20,11 @@ from zope import component
 from zope.interface import Interface
 from zope.schema.interfaces import IField
 from zope.app.apidoc import interface as apidocInterface
-from zope.location.interfaces import ILocation
-
+try:
+    from zope.location.interfaces import ILocation
+except ImportError:
+    #plone2.5 compatibility
+    from zope.app.location.interfaces import ILocation
 
 from zc.table import column
 from getpaid.wizard import Wizard, ListViewController, interfaces as wizard_interfaces
@@ -332,10 +335,10 @@ class CheckoutAddress( BaseCheckoutForm ):
         store the address in the addressbook of the user
         """
         entry = self.wizard.data_manager.get('addressbook_entry_name')
-        if not isinstance(entry,str):
-            entry = entry[-1]
         # if the user fill the name of the entry mean that we have to save the address
         if entry:
+            if not isinstance(entry,str):
+                entry = entry[-1]
             user = getSecurityManager().getUser()
             addressBookUtility = component.getUtility(IAddressBookUtility)
             addressBookUsr = addressBookUtility.get(user.getId())
@@ -579,6 +582,7 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         except:
             self.status = _(u"Couldn't get any shipping services.")
             return self.shipping_methods
+        available_shipping_methods =[]
         for item in shipping_services:
             name, service = item
             available_shipping_methods = service.getRates( self.createTransientOrder() )
