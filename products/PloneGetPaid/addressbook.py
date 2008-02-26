@@ -4,11 +4,11 @@ from BTrees.OOBTree import OOBTree
 from zope import interface, schema
 
 #from getpaid.core import interfaces
-from zope.app.container.sample import SampleContainer
+from zope.app.container.btree import BTreeContainer
 
 import interfaces
 
-class AddressBook( SampleContainer, Persistent ):
+class AddressBook( BTreeContainer ):
     
     interface.implements( interfaces.IAddressBook )
 

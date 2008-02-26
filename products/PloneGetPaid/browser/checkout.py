@@ -20,7 +20,7 @@ from zope import component
 from zope.interface import Interface
 from zope.schema.interfaces import IField
 from zope.app.apidoc import interface as apidocInterface
-
+from zope.location.interfaces import ILocation
 
 
 from zc.table import column
@@ -126,18 +126,24 @@ class BillingInfo( options.PropertyBag ):
         # don't store persistently
         raise RuntimeError("Storage Not Allowed")
 
-class ContactInfo( options.PropertyBag ):
+class ContactInfo( options.PersistentBag ):
     title = "Contact Information"    
 
 ContactInfo.initclass( interfaces.IUserContactInformation )
 BillingInfo.initclass( interfaces.IUserPaymentInformation )
 
-class ShipAddressInfo( options.PropertyBag ):
+class ShipAddressInfo( options.PersistentBag ):
     title = "Shipping Information"
+    interface.implements( ILocation )
+    __parent__ = None
+    __name__ = None
 
-class BillAddressInfo( options.PropertyBag ):
+class BillAddressInfo( options.PersistentBag ):
     title = "Payment Information"
-
+    interface.implements( ILocation )
+    __parent__ = None
+    __name__ = None
+    
 ShipAddressInfo.initclass( interfaces.IShippingAddress )
 BillAddressInfo.initclass( interfaces.IBillingAddress )
 
@@ -515,15 +521,14 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         order.shipping_address = payment.ShippingAddress.frominstance( adapters[ interfaces.IShippingAddress ] )
         order.billing_address = payment.BillingAddress.frominstance( adapters[ interfaces.IBillingAddress ] )
         order.contact_information = payment.ContactInformation.frominstance( adapters[ interfaces.IUserContactInformation ] )
-
+        
         order.order_id = self.wizard.data_manager.get('order_id')
         order.user_id = getSecurityManager().getUser().getId()
-
+        
         if  self.wizard.data_manager.get('shipping_rate'):
             interface.directlyProvides( order, interfaces.IShippableOrder )
             order.shipping_service = self.wizard.data_manager.get('shipping_service')
             order.shipping_method = self.wizard.data_manager.get('shipping_rate')
-            order.shipping_price = self.wizard.data_manager.get('shipping_price')
 
             
         notify( ObjectCreatedEvent( order ) )
