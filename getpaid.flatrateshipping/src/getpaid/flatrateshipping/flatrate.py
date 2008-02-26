@@ -28,7 +28,7 @@ $Id: null.py 1143 2007-12-31 02:16:19Z kapilt $
 from zope import interface
 from getpaid.core import interfaces, options
 from interfaces import IFlatRateShippingSettings
-from zope.app.annotation.interfaces import IAnnotations
+from getpaid.core.interfaces import IShippableLineItem
 
 FlatRateShippingSettings = options.PersistentOptions.wire(
     "FlatRateShippingSettings",
@@ -39,12 +39,22 @@ FlatRateShippingSettings = options.PersistentOptions.wire(
 class FlatRateShippingAdapter( object ):
 
     interface.implements( interfaces.IShippingMethod )
-
     options_interface = IFlatRateShippingSettings
 
     def __init__( self, context ):
         self.context = context
         self.settings = IFlatRateShippingSettings( self.context )
         
-    def getCost( self, line_item_container ):
-        return self.settings.flat_rate
+    def getCost( self, order ):
+        settings = self.settings
+        if(settings.flatrate_option == "Percentage"):
+            return self.settings.flat_rate
+        else: # we're calculating the percentage
+            items = filter( IShippableLineItem.providedBy, order.shopping_cart.values() )
+            cost = 0
+            for item in items:
+                cost += item.cost
+            shipcost = cost * (settings.flatrate_percentage / 100)
+            if shipcost > settings.flatrate_max:
+                shipcost = settings.flatrate_max
+            return shipcost

@@ -31,10 +31,33 @@ class IFlatRateShippingSettings( interfaces.IShippingMethodSettings ):
     """
     Flat Rate Shipping Settings
     """
-
-    flat_rate = schema.Float(
+    
+    flatrate_option = schema.Choice(
+        title=_(u"Shipping Rate Configuration"),
+        description = _(u"Choose either a flat rate for all orders, or calculate shipping as a percentage of total order cost."),
+        default="Flat Rate",
+        values = ( "Flat Rate", "Percentage" ),
+        required=True,
+        )
+    
+    flatrate = schema.Float(
         title=_(u"Flat Shipping Rate"),
+        description = _(u"If 'Flat Rate' is selected above, this is the rate applied to all orders."),
         default=5.00,
+        required=True,
+        )
+        
+    flatrate_percentage = schema.Float(
+        title=_(u"Flat Shipping Percentage"),
+        description = _(u"If 'Percentage' is selected above, this is the percentage of the total order to charge for shipping."),
+        default=10.0,
+        required=True,
+        )
+        
+    flatrate_max = schema.Float(
+        title=_(u"Max Handling Charge"),
+        description = _(u"If 'Percentage' is selected above, the total shipping charge is never greater than this number."),
+        default=20.0,
         required=True,
         )
 

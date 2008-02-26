@@ -72,6 +72,7 @@ class IStoreSettings( IPersistentOptions ):
     """
     
     shipping_method = schema.Choice( title = _(u"Shipping Method"),
+                                    description = _(u"Select a method to calculate shipping charges for orders in your store."),
                                      required = True,
                                      source = "getpaid.shipping_methods" )
 
@@ -439,7 +440,31 @@ class IShippingMethod( Interface ):
         """
 
 class IShippingRateService( Interface ):
-    """ """
+
+    def getRates( order ):
+        """ return shipping rate options for an order
+        """
+
+class IShippingMethodRate( Interface ):
+    """
+     Service Code: UPS Next Day Air
+     Shipment unit of measurement: LBS
+     Shipment weight: 3.0
+     Currency Code: USD
+     Total Charge: 58.97
+     Days to Delivery: 1
+     Delivery Time: 10:30 A.M.
+    """
+    # may need to find a way to make this general
+    service_code = schema.ASCIILine( description=_(u"Service Code (2 Letter)"))
+    service = schema.TextLine( description=_(u"Service Name"))
+
+    currency = schema.ASCII( description=_(u"Currency Denomination Code"))
+    cost = schema.Float( description=_(u"Cost of Delivery"))
+
+    # really shouldn't show these, as they ignore store processing time
+    # days_to_delivery = schema.Int( description=_(u"Estimated Days to Deliver") )
+    # delivery_time = schema.TextLine( description=_(u"Estimated Delivery Time") )
 
 class IShippingMethodSettings( Interface ):
     """ Options for a Shipping Method
