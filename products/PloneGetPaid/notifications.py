@@ -63,7 +63,7 @@ class CustomerOrderNotificationMessage(object):
                   'order_id': self.order.order_id,
                   'order_contents': order_contents,
                  }
-        portal = zapi.getSiteManager().context
+        portal = getPortal()
         pm = getToolByName(portal, 'portal_membership')
         user = pm.getAuthenticatedMember()
         if 'Anonymous' in user.getRoles():
@@ -115,6 +115,16 @@ class MerchantOrderNotificationMessage( object ):
     def __init__( self, order ):
         self.order = order
 
+
+def getPortal( ):
+    site = component.getSiteManager()
+    try:
+        portal = getToolByName(site, 'portal_url').getPortalObject()
+    except AttributeError:
+        # BBB for Zope 2.9
+        portal = site.context
+    return portal
+    
 def sendNotification( order, event ):
     """ sends out email notifications to merchants and clients based on settings.
 
@@ -122,12 +132,7 @@ def sendNotification( order, event ):
     chargeable. We may not raise or pass exceptions: the payment has already
     happened and everything else is our, not the customer's fault.
     """
-    site = component.getSiteManager()
-    try:
-        portal = getToolByName(site, 'portal_url').getPortalObject()
-    except AttributeError:
-        # BBB for Zope 2.9
-        portal = site.context
+    portal = getPortal()
     mailer = getToolByName(portal, 'MailHost')
     
     if event.destination != workflow_states.order.finance.CHARGEABLE:
