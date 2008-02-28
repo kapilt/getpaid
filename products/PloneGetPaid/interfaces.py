@@ -79,7 +79,14 @@ class INotificationMailMessage( Interface ):
         """
         return a message suitable for passing to a mailhost.send
         """ 
-
+class IConditionalViewlet( Interface ):
+    
+    def condition( ):
+        """ 
+        boolean method to determine if the viewlet should be shown,
+        called before update.
+        """
+        
 class IDonationLevel( Interface ):
     
     title = schema.TextLine( title=_(u"Donation Level Name"))

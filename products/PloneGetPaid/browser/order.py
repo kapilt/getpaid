@@ -13,7 +13,6 @@ from OFS.SimpleItem import SimpleItem
 from Products.PloneGetPaid import interfaces as ipgp
 
 from zope import component, interface
-from zope.viewlet.interfaces import IViewlet
 from zope.app.traversing.interfaces import ITraversable
 
 from getpaid.core.order import query
@@ -37,7 +36,7 @@ class UserOrderHistory( BrowserView ):
         self.manager = OrderHistoryManager( self.context, self.request, self )
         self.manager.update()
         return super( UserOrderHistory, self ).__call__()
-
+        
 # viewlet manager for the same
 class ViewletManagerOrderHistory(object):
     """ Order History Viewlet Manager """

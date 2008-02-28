@@ -1,13 +1,13 @@
-<metal:block define-macro="form"
-			 i18n:domain="plonegetpaid">
+<metal:block define-macro="form" i18n:domain="plonegetpaid">
+    
   <form action="."
         tal:attributes="action request/URL" 
-	method="post"
-	enctype="multipart/form-data">
+        method="post"
+        enctype="multipart/form-data">
     
     <div class="portalMessage" tal:content="view/status" tal:condition="view/status"> </div>
 
-  
+<metal:block define-slot="form-inner">  
 <metal:block define-macro="form-body">
 
   <fieldset tal:define="widgets view/widgets">
@@ -16,6 +16,10 @@
             tal:condition="form_name"
             tal:content="form_name">Form name</legend>
 
+    <p tal:condition="view/form_description|nothing" 
+       tal:content="view/form_description" i18n:translate=""></p>
+
+  <metal:block define-slot="fieldset">
   <metal:block define-macro="fieldset"> 
 
   <tal:block tal:repeat="widget widgets">
@@ -55,11 +59,14 @@
     </div>
    </tal:block>
   </metal:block>
+  </metal:block>
   </fieldset>
 </metal:block>
+</metal:block>
 
-
-   <div id="actionsView" 
+<metal:block define-slot="actions">
+ <metal:block define-macro="buttons">
+    <div id="actionsView" 
         tal:define="actions view/availableActions">
     <span class="actionButtons"
           tal:condition="actions">
@@ -67,14 +74,17 @@
 		<input type="submit" class="button context"
 			   id="" name="" value=""
 			   tal:attributes="id action/__name__;
-			   				   name action/__name__;
-			   				   value python:str(action.label);"
-			   i18n:attributes="value" />
+                               name action/__name__;
+                               value python:str(action.label);"
+              i18n:attributes="value" />
 	  </tal:loop>						
     </span>
    </div>
-    
-  </form>
+ </metal:block>
+</metal:block>
+
+</form>
+ 
 </metal:block>
 
 

@@ -7,7 +7,7 @@ $Id$
 import os
 from urllib import urlencode
 
-from zope import component
+from zope import component, interface
 from zope.formlib import form
 from zc.table import column, table
 
@@ -25,7 +25,7 @@ from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
 from Products.PloneGetPaid.interfaces import PayableMarkers, IGetPaidCartViewletManager
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IConditionalViewlet
 from Products.PloneGetPaid.i18n import _
 from Products.CMFPlone.utils import safe_unicode
 
@@ -115,10 +115,20 @@ GetPaidShoppingCartTemplate = os.path.join( _prefix, "templates", "viewlet-manag
 class ViewletManagerShoppingCart( object ):
     """ Shopping Cart Viewlet Manager """
 
+    def filter( self, viewlets ):
+        viewlets = super( ViewletManagerShoppingCart, self).filter( viewlets )
+
+        for n,v in viewlets[:]:
+            if IConditionalViewlet.providedBy( v ):
+                if not v.condition():
+                    viewlets.remove( ( n, v ) )
+        return viewlets
+                
     def sort (self, viewlets ):
         """ sort by name """
-        return sorted(viewlets)
-
+        viewlets.sort( lambda x,y: cmp( int(x[1].weight), int(y[1].weight) ) )
+        return viewlets
+        
 ShoppingCartManager = manager.ViewletManager( "ShoppingCart",
                                               IGetPaidCartViewletManager,
                                               GetPaidShoppingCartTemplate,
@@ -178,7 +188,7 @@ class CartFormatter( table.StandaloneSortFormatter ):
         buffer.append( "<tr><th>Total</th><td>%0.2f</td></tr>"%( total_price ) )
         buffer.append('</table></div>')
                        
-        return ''.join( buffer) + super( CartFormatter, self).renderExtra()
+        return u''.join( buffer) + super( CartFormatter, self).renderExtra()
     
 class ShoppingCartListing( ContainerViewlet ):
 
@@ -279,3 +289,57 @@ class ShoppingCartActions( FormViewlet ):
 ##         return self.request.RESPONSE.redirect( url )
 
 
+class OrderTemplate( FormViewlet ):
+    
+    form_fields = form.Fields()
+    template = ZopeTwoPageTemplateFile('templates/cart-order-template.pt')
+    
+    form_name = _(u"Order Templates")
+    form_description = _(u"Select a previous order to fill your cart.")
+    
+    interface.implements( IConditionalViewlet )
+    
+    prefix = "order-template"
+    
+    orders = ()
+    
+    def render( self ):
+        return self.template()
+
+    def condition( self ):
+        uid = getSecurityManager().getUser().getId()
+        if uid == 'Anonymous':
+            return False
+        order_manager = component.getUtility( interfaces.IOrderManager )
+        self.orders = order_manager.query( user_id=uid )
+        if len(self.orders):
+            return True
+        return False
+
+    def condition_load_template( self, action ):
+        return self.condition()
+        
+    @form.action(_("Fill"), condition="condition_load_template")
+    def handle_load_template( self, action, data):
+        
+        order_id = self.request.form.get('order-template-id')
+        found = False
+        for o in self.orders:
+            if o.order_id == order_id:
+                found = True
+                break
+                
+        if not found:
+            self.status = _(u"Could not find order")
+            return
+        
+        # fetch cart from view
+        cart = self.manager.__parent__.cart
+        
+        for v in o.shopping_cart.values():
+            content = v.resolve()
+            item_factory = component.getMultiAdapter( (cart, content), 
+                                     interfaces.ILineItemFactory )
+            item_factory.create( quantity = v.quantity )
+        
+        self.status = _(u"Previous Order Loaded into Cart")        
