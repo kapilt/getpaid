@@ -17,7 +17,7 @@ from zope.app.renderer.plaintext import PlainTextToHTMLRenderer
 
 from zope import component
 
-from zope.interface import Interface
+
 from zope.schema.interfaces import IField
 from zope.app.apidoc import interface as apidocInterface
 try:
@@ -39,12 +39,12 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility, IGetPaidManagementShippingMethods
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
 
 from Products.PloneGetPaid.i18n import _
 
 
-from base import BaseFormView, BaseView
+from base import BaseFormView
 import cart as cart_core
 from widgets import CountrySelectionWidget, StateSelectionWidget, CCExpirationDateWidget
 
@@ -273,11 +273,43 @@ class CheckoutController( ListViewController ):
         return step.__of__( Acquisition.aq_inner( self.wizard.context ) )
         
     def checkShippableCart( self ):
-        #manage_options = interfaces.IGetPaidManagementShippingMethods( self.context )
         cart_utility = component.getUtility( interfaces.IShoppingCartUtility )
         cart = cart_utility.get( self.wizard.context )
         return bool( filter(  interfaces.IShippableLineItem.providedBy, cart.values() ) )
+
+    def checkStep( self, step_name ):
+        condition_method = self.conditions.get( step_name )
+        if not condition_method:
+            return step_name
+        condition = getattr( self, condition_method )
+        if condition():
+            return True
+        return False
         
+    # overridden icontroller methods        
+    # def getNextStepName( self, step_name ):
+    #     step_name = super( CheckoutController, self).getNextStepName( step_name )
+    #     print step_name,
+    #     if self.checkStep( step_name ):
+    #         print True
+    #         return step_name
+    #     print False
+    #     value = self.getNextStepName( step_name )        
+    #     print value
+    #     return value
+    # 
+    # def getTraversedFormSteps( self ):
+    #     steps = super( CheckoutController, self ).getTraversedFormSteps()
+    #     steps = filter( self.checkStep, steps )
+    #     return steps
+        
+    def getStep( self, step_name ):
+        step = component.getMultiAdapter(
+                    ( self.wizard.context, self.wizard.request ),
+                    name=step_name
+                    )
+        return step.__of__( Acquisition.aq_inner( self.wizard.context ) )
+            
 
 class CheckoutAddress( BaseCheckoutForm ):
     """
@@ -318,42 +350,49 @@ class CheckoutAddress( BaseCheckoutForm ):
     
     def update( self ):
         if not self.adapters:
-            adapters = self.wizard.data_manager.adapters
-            adapters.update( self.getSchemaAdapters() )      
-            self.adapters = adapters
+            self.adapters = self.wizard.data_manager.adapters
+            self.adapters.values()
         super( CheckoutAddress, self).update()
     
     def hasAddressBookEntries(self):
         """
         Do we have any entry?
         """
-        addressBookUsr = component.getUtility(IAddressBookUtility).get(getSecurityManager().getUser().getId())
-        return len(addressBookUsr.keys())
+        book = component.getUtility(IAddressBookUtility).get(getSecurityManager().getUser().getId())
+        return len(book.keys())
 
     def save_address(self, data):
         """
         store the address in the addressbook of the user
         """
-        entry = self.wizard.data_manager.get('addressbook_entry_name')
+        book_key = 'addressbook_entry_name'
+        entry = self.wizard.data_manager.get( book_key )
+        del self.wizard.data_manager[ book_key ]
         # if the user fill the name of the entry mean that we have to save the address
-        if entry:
-            if not isinstance(entry,str):
-                entry = entry[-1]
-            user = getSecurityManager().getUser()
-            addressBookUtility = component.getUtility(IAddressBookUtility)
-            addressBookUsr = addressBookUtility.get(user.getId())
-            # here we get the shipping address
-            ship_address_info = ShipAddressInfo()
-            if data['ship_same_billing']:
-                for field in data.keys():
-                    if field.startswith('bill_'):
-                        ship_address_info.__setattr__(field.replace('bill_','ship_'), data[field])
-            else:
-                for field in data.keys():
-                    if field.startswith('ship_'):
-                        ship_address_info.__setattr__(field, data[field])
-            addressBookUsr[entry] = ship_address_info
-            self.context.plone_utils.addPortalMessage(_(u'A new address has been saved'))
+        if not entry:
+            return
+        assert isinstance( entry, (str, unicode))
+        
+        uid = getSecurityManager().getUser().getId()
+        if uid == 'Anonymous':
+            return
+                        
+        book  = component.getUtility(IAddressBookUtility).get( uid )
+        if entry in book:
+            return
+            
+        # here we get the shipping address
+        ship_address_info = ShipAddressInfo()
+        if data['ship_same_billing']:
+            for field in data.keys():
+                if field.startswith('bill_'):
+                    ship_address_info.__setattr__(field.replace('bill_','ship_'), data[field])
+        else:
+            for field in data.keys():
+                if field.startswith('ship_'):
+                    ship_address_info.__setattr__(field, data[field])
+        addressBookUsr[entry] = ship_address_info
+        self.context.plone_utils.addPortalMessage(_(u'A new address has been saved'))
     
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
@@ -688,12 +727,14 @@ class AddressBookView(BrowserView):
         """
         get a list of entry names
         """
-        addressBookUsr = component.getUtility(IAddressBookUtility).get(getSecurityManager().getUser().getId())
-        abKeys = addressBookUsr.keys()
-        abKeys.sort()
-        return abKeys
+        uid = getSecurityManager().getUser().getId()
+        if uid == 'Anonymous':
+            return ()
+        book = component.getUtility(IAddressBookUtility).get( uid )
+        entry_names = list( book.keys() )
+        entry_names.sort()
+        return entry_names
 
-        
     def getEntryScripts(self):
         """
         Returns javascript function that fill the fields with the data
