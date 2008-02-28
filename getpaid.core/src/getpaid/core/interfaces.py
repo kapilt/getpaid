@@ -489,8 +489,8 @@ class IAbstractAddress( Interface ):
 class IAddress( IAbstractAddress ):
     """ a physical address
     """
-    first_line = schema.TextLine( title = _(u"First Line"), description=_(u"Please Enter Your Address"))
-    second_line = schema.TextLine( title = _(u"Second Line"), required=False )
+    first_line = schema.TextLine( title = _(u"Address 1"), description=_(u"Please Enter Your Address"))
+    second_line = schema.TextLine( title = _(u"Address 2"), required=False )
     city = schema.TextLine( title = _(u"City") )
     country = schema.Choice( title = _(u"Country"),
                                vocabulary = "getpaid.countries")    
@@ -502,8 +502,8 @@ class IShippingAddress( IAbstractAddress ):
     """ where to send goods
     """
     ship_same_billing = schema.Bool( title = _(u"Same as billing address"), required=False)
-    ship_first_line = schema.TextLine( title = _(u"First Line"), required=False)
-    ship_second_line = schema.TextLine( title = _(u"Second Line"), required=False)
+    ship_first_line = schema.TextLine( title = _(u"Address 1"), required=False)
+    ship_second_line = schema.TextLine( title = _(u"Address 2"), required=False)
     ship_city = schema.TextLine( title = _(u"City"), required=False)
     ship_country = schema.Choice( title = _(u"Country"),
                                     vocabulary = "getpaid.countries", required=False)
@@ -514,8 +514,8 @@ class IShippingAddress( IAbstractAddress ):
 class IBillingAddress( IAbstractAddress ):
     """ where to bill 
     """
-    bill_first_line = schema.TextLine( title = _(u"First Line"))
-    bill_second_line = schema.TextLine( title = _(u"Second Line"), required=False )
+    bill_first_line = schema.TextLine( title = _(u"Address 1"))
+    bill_second_line = schema.TextLine( title = _(u"Address 2"), required=False )
     bill_city = schema.TextLine( title = _(u"City") )
     bill_country = schema.Choice( title = _(u"Country"),
                                     vocabulary = "getpaid.countries")
