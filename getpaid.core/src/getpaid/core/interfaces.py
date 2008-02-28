@@ -230,7 +230,7 @@ class IShippableContent( IPayable ):
     sku = schema.TextLine( title = _(u"Product SKU"))
     
     # default unit is country of origin specific... 
-    weight = schema.TextLine( title = _(u"Weight") )
+    weight = schema.Float( title = _(u"Weight") )
 
     def getShipWeight( self ):
         """ Shipping Weight
@@ -440,6 +440,7 @@ class IShippingMethod( Interface ):
         """
 
 class IShippingRateService( Interface ):
+    """ utility """
 
     def getRates( order ):
         """ return shipping rate options for an order

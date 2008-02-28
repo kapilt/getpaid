@@ -73,15 +73,15 @@ class PropertyBag( object ):
             d[field_name] = field.get(instance)
         return cls( **d )
         
-class PersistentBag( PropertyBag, Persistent ):
-
+class PersistentBag( Persistent, PropertyBag):
 
     def getProperty( self, property_name ):
         return getattr( self, property_name, None )
 
     def setProperty( self, property_name, property_value ):
         setattr( self, property_name, property_value )
-    
+        self._p_changed = True
+        
 class PersistentOptions( object ):
 
     implements( interfaces.IPersistentOptions )
