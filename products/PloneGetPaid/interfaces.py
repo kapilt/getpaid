@@ -26,6 +26,14 @@ class IGetPaidManageViewletManager( zope.viewlet.interfaces.IViewletManager ):
     """ viewlet manager for get paid management ui
     """
 
+class ISettingsShipmentManager( zope.viewlet.interfaces.IViewletManager ):
+    """ viewlet manager for get paid management ui - shipping
+    """
+
+class ISettingsPaymentManager( zope.viewlet.interfaces.IViewletManager ):
+    """ viewlet manager for get paid management ui - payment
+    """
+
 class IGetPaidCartViewletManager( zope.viewlet.interfaces.IViewletManager ):
     """ viewlet manager for get paid shopping cart ui
     """
@@ -212,15 +220,19 @@ class IGetPaidManagementShippingMethods( igetpaid.IPersistentOptions ):
     """
     shipping_methods = schema.List( 
         title = _(u"Shipping Methods"),
-        required = True,
+        required = False,
         default = [],
         description = _(u"Shipping methods to offer for orders in your store"),
         value_type = schema.Choice( title=u"shipping_methods", source="getpaid.shipping_methods" )
         )
-
-class IGetPaidManagementShippingSettings( igetpaid.IPersistentOptions ):
-    """
-    """
+        
+    shipping_services = schema.List(
+        title = _(u"Shipping Rate Service"),
+        required = True,
+        default = [],
+        description = _(u"Shipping services to offer for orders in your store"),
+        value_type = schema.Choice( title=u"shipping_services", source="getpaid.shipping_services")
+        )
 
 class IGetPaidManagementPaymentOptions( igetpaid.IPersistentOptions ):
     """
@@ -345,7 +357,6 @@ class IGetPaidManagementLegalDisclaimerOptions( igetpaid.IPersistentOptions ):
 class IGetPaidManagementOptions( IGetPaidManagementIdentificationOptions,
                                  IGetPaidManagementContentTypes,
                                  IGetPaidManagementShippingMethods,
-                                 IGetPaidManagementShippingSettings,
                                  IGetPaidManagementPaymentOptions,
                                  IGetPaidManagementCustomerInformation,
                                  IGetPaidManagementOrderInformation,

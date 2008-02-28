@@ -113,7 +113,7 @@ class ShippableItemFactory( LineItemFactory ):
         nitem.cost = payable.price
         nitem.quantity = int( quantity )
         nitem.product_code = payable.product_code
-        nitem.weight = payable.weight 
+        nitem.weight = float( payable.weight )
         
         return nitem
                 

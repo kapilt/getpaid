@@ -584,7 +584,7 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         and returns a list of them for the template to display and the user to choose among.
         """
         # just return empty for now as this gets worked on
-        ship_service_names = IGetPaidManagementOptions( self.context ).shipping_methods
+        ship_service_names = IGetPaidManagementOptions( self.context ).shipping_services
         
         if not ship_service_names:
             raise SyntaxError("Misconfigured Store - No Shipping Method Activated")

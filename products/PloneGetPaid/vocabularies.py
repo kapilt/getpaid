@@ -54,6 +54,11 @@ def ShippingMethods( context ):
     adapters = component.getAdapters( (context.context,), interfaces.IShippingMethod )
     methods = set( map(unicode, [ n for n,a in adapters]) )
     return vocabulary.SimpleVocabulary.fromValues( methods )
+    
+def ShippingServices( context ):
+    utilities = component.getUtilitiesFor( interfaces.IShippingRateService )
+    services = set( map( unicode, [n for n,a in utilities ]))
+    return vocabulary.SimpleVocabulary.fromValues( services )    
 
 #def CreditCards( context ):
 #    return vocabulary.SimpleVocabulary.fromValues( (u"Visa", u"Mastercard", u"Discover", u"American Express") )

@@ -20,6 +20,11 @@
       name="getpaid.shipping_methods"
       factory=".vocabularies.ShippingMethods"
       />
+  <!-- Shipping Services -->
+  <vocabulary
+      name="getpaid.shipping_services"
+      factory=".vocabularies.ShippingServices"
+      />
 
   <!-- Tax Schemes -->
   <vocabulary

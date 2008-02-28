@@ -14,6 +14,7 @@ from ZTUtils import make_hidden_input
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.Five.formlib import formbase
+
 from zope.formlib import form
 from Products.Five.viewlet import viewlet
 
@@ -25,10 +26,21 @@ class FormViewlet( viewlet.SimpleAttributeViewlet, formbase.SubPageForm ):
     
     __page_attribute__ = "template"
     
+
+    
     def update( self ):
         super( viewlet.SimpleAttributeViewlet, self).update()
         super( formbase.SubPageForm, self).update()
 
+class StockFormViewlet( FormViewlet ):
+    
+    template = ViewPageTemplateFile('templates/form.pt')    
+    
+    def render( self ):
+        return self.template()
+
+class EditFormViewlet( StockFormViewlet, formbase.EditForm ): pass
+        
 class BaseView( object ):
     # so this mixin fixes some issues with doing zope3 in zope2 for views
     # specifically it puts a debug attribute on the request which some view machinery checks for

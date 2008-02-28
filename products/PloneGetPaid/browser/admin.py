@@ -9,6 +9,7 @@ import os
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.Five.browser import BrowserView
 from Products.Five.formlib import formbase
+from Products.Five.viewlet import manager
 from Products.PloneGetPaid import interfaces, pkg_home
 
 from zope import component
@@ -16,9 +17,10 @@ from zope.formlib import form
 
 import getpaid.core.interfaces as igetpaid
 
+from Products.PloneGetPaid.interfaces import ISettingsShipmentManager, ISettingsPaymentManager
 from Products.PloneGetPaid.i18n import _
 
-from base import BaseView
+from base import BaseView, FormViewlet
 from widgets import SelectWidgetFactory, CountrySelectionWidget, StateSelectionWidget
 
 
@@ -78,35 +80,96 @@ class ContentTypes( BaseSettingsForm ):
     form_fields['donate_types'].custom_widget = SelectWidgetFactory
     form_fields['shippable_types'].custom_widget = SelectWidgetFactory
 
-class ShippingMethods( BaseSettingsForm ):
+class SettingViewletManager( object ):
+    """ Viewlet Manager for Plugin Configuration"""
+
+    def _getNames( self ):
+        raise NotImplemented
+                
+    def filter( self, viewlets ):
+        # filter only active plugins to the ui
+        viewlets = super( SettingViewletManager, self).filter( viewlets )        
+        services = self._getNames()
+        for n,v in viewlets[:]:
+            if n == 'settings':
+                continue
+            if n not in services:
+                viewlets.remove( ( n, v ) )
+        return viewlets            
+        
+    def sort (self, viewlets ):
+        """ sort by name """
+        viewlets.sort( lambda x,y: cmp( int(x[1].weight), int(y[1].weight) ) )
+        return viewlets
+
+_prefix = os.path.dirname( __file__ )
+
+PluginSettingsManagerTemplate = os.path.join( _prefix, "templates", "viewlet-manager.pt")
+
+class _ShippingViewletManager( SettingViewletManager ):
+    
+    def _getNames( self ):
+        settings = interfaces.IGetPaidManagementShippingMethods( self.context )        
+        return settings.shipping_services
+
+ShippingViewletManager = manager.ViewletManager( "ShippingViewletManager",
+                                                 ISettingsShipmentManager,
+                                                 PluginSettingsManagerTemplate,
+                                                 bases=(_ShippingViewletManager,)
+                                                 )
+# class _PaymentViewletManager( SettingViewletManager ):
+#     
+#     def _getNames( self ):
+#         return ()
+#         
+# PaymentViewletManager = manager.ViewletManager( "ShippingViewletManager",
+#                                                  ISettingsShipmentManager,
+#                                                  PluginSettingsManagerTemplate
+#                                                  bases=(ShippingViewletManager,)
+#                                                  )
+
+
+
+
+class ShippingSettings( BrowserView ):
     """
-    get paid management interface
+    container view for all shipping settings (shipment plugin config ui gets
+    pulled in to this view as well).
+    """
+    template = ZopeTwoPageTemplateFile('templates/settings-shipping.pt')    
+    
+    def __call__( self ):
+        return self.template()
+        
+class ShippingServices( FormViewlet, formbase.EditForm ):
+    """
+    viewlet for selecting shipping services 
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementShippingMethods)
     form_fields['shipping_methods'].custom_widget = SelectWidgetFactory
     form_name = _(u'Shipping Methods')
+    
+    template = ZopeTwoPageTemplateFile('templates/form.pt')
 
-class ShippingSettings( BaseSettingsForm ):
-    """
-    get paid management interface, slightly different because our form fields
-    are dynamically set based on the store's setting for a shipping method.
-    """
-    
-    form_fields = form.Fields(interfaces.IGetPaidManagementShippingMethods)
-    form_name = _(u'Shipping Methods')
-    
-    def __call__( self ):
-        self.setupServices()
-        return super( ShippingSettings, self).__call__()
-    
-    # this is going to need to change to acommodate viewlets.  ugh.  ::Liam
-    def setupServices( self ):
-        manage_options = interfaces.IGetPaidManagementShippingMethods( self.context )
-        service_names = manage_options.shipping_methods
-        self.form_fields = form.Fields()
-        self.status = _(u"Shipping settings are getting revamped at the moment...")
-        return
+    def setUpWidgets( self, ignore_request=False ):
+        self.adapters = self.adapters or {} 
+        self.widgets = form.setUpEditWidgets(
+            self.form_fields, self.prefix, self.context, self.request,
+            adapters=self.adapters, ignore_request=ignore_request
+            )
 
+    def update( self ):
+        try:
+            interface = iter( self.form_fields ).next().field.interface
+        except StopIteration:
+            interface = None
+        if interface is not None:
+            self.adapters = { interface : interfaces.IGetPaidManagementOptions( self.context ) } 
+        super( ShippingServices, self).update()
+        
+    def render( self ):
+        return self.template()
+        
 class PaymentOptions( BaseSettingsForm ):
     """
     get paid management interface

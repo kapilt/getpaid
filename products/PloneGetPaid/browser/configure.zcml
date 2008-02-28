@@ -15,6 +15,7 @@
      template="templates/form.pt"
      permission="zope2.View"
      />
+     
    <browser:page
       for="*"
       name="getpaid-form-valuesonly"
