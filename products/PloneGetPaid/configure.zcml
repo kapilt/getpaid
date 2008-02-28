@@ -145,7 +145,7 @@
 
 <!-- Contact Information from Members -->
 <five:implements
-	class="Products.PlonePAS.plugins.ufactory.PloneUser"
+	class="Products.PluggableAuthService.PropertiedUser.PropertiedUser"
 	interface=".interfaces.IStoreMember"
 	/>
 	
@@ -170,7 +170,7 @@
     />
 
 
-!-- Utilities -->
+<!-- Utilities -->
 <utility
     provides=".interfaces.ICountriesStates"
     factory=".vocabularies.CountriesStatesFromFile"/>

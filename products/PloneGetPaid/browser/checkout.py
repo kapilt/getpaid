@@ -17,14 +17,8 @@ from zope.app.renderer.plaintext import PlainTextToHTMLRenderer
 
 from zope import component
 
-
 from zope.schema.interfaces import IField
 from zope.app.apidoc import interface as apidocInterface
-try:
-    from zope.location.interfaces import ILocation
-except ImportError:
-    #plone2.5 compatibility
-    from zope.app.location.interfaces import ILocation
 
 from zc.table import column
 from getpaid.wizard import Wizard, ListViewController, interfaces as wizard_interfaces
@@ -39,8 +33,8 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility, IGetPaidManagementShippingMethods
-
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
+from Products.PloneGetPaid.member import ShipAddressInfo, BillAddressInfo, ContactInfo
 from Products.PloneGetPaid.i18n import _
 
 
@@ -128,28 +122,6 @@ class BillingInfo( options.PropertyBag ):
     def __getstate__( self ):
         # don't store persistently
         raise RuntimeError("Storage Not Allowed")
-
-class ContactInfo( options.PersistentBag ):
-    title = "Contact Information"    
-
-ContactInfo.initclass( interfaces.IUserContactInformation )
-BillingInfo.initclass( interfaces.IUserPaymentInformation )
-
-class ShipAddressInfo( options.PersistentBag ):
-    title = "Shipping Information"
-    interface.implements( ILocation )
-    __parent__ = None
-    __name__ = None
-
-class BillAddressInfo( options.PersistentBag ):
-    title = "Payment Information"
-    interface.implements( ILocation )
-    __parent__ = None
-    __name__ = None
-    
-ShipAddressInfo.initclass( interfaces.IShippingAddress )
-BillAddressInfo.initclass( interfaces.IBillingAddress )
-
 
 class ImmutableBag( object ):
     
@@ -509,7 +481,6 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
     @form.action(_(u"Make Payment"), name="make-payment", condition=form.haveInputWidgets )
     def makePayment( self, action, data ):
         """ create an order, and submit to the processor
-        for async processors we never even got here.???
         """
         manage_options = IGetPaidManagementOptions( self.context )
         processor_name = manage_options.payment_processor
@@ -603,51 +574,39 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
     browser view for selecting a shipping option and setting it as the shipping total for the order.
     """
 
-    form_fields = form.Fields( interfaces.IShippingMethodRate )
-
+    form_fields = form.Fields()
     template = ZopeTwoPageTemplateFile("templates/checkout-shipping-method.pt")
-    shipping_methods = []
-
-
-    def getShippingMethods( self ):
+    shipping_methods = ()
+    
+    def setupShippingOptions( self ):
         """
-        Queries the getpaid.ups utility to get the available shipping methods and returns a list
-        of them for the template to display and the user to choose among.
+        Queries shipping utilities and adapters to get the available shipping methods
+        and returns a list of them for the template to display and the user to choose among.
         """
         # just return empty for now as this gets worked on
-        ship_methods = IGetPaidManagementShippingMethods( self.context ).shipping_methods
-        return []
-        # try:
-        #     shipping_services = list(component.getUtilitiesFor(interfaces.IShippingRateService))
-        # except:
-        #     self.status = _(u"Couldn't get any shipping services.")
-        #     return self.shipping_methods
-        # for item in shipping_services:
-        #     name, service = item
-        #     self.shipping_methods.extend( service.getRates( self.createTransientOrder() ) )
-        # return self.shipping_methods
+        ship_service_names = IGetPaidManagementOptions( self.context ).shipping_methods
+        
+        if not ship_service_names:
+            raise SyntaxError("Misconfigured Store - No Shipping Method Activated")
+            
+        order = self.createTransientOrder()
+        
+        service_options = {}
+        for service_name in ship_service_names:
+            service = component.getUtility( interfaces.IShippingRateService, name=service_name )
+            service_options[ service_name ] = service.getRates( order )
+            
+        self.ship_service_names = ship_service_names
+        self.service_options = service_options
 
     def setShippingMethods( self, data ):
         """
         Set the shipping methods chosen by the user
         """
-        # "what we do with the shipping method selected?"
-        # set it in the request, so that we can restore it in the
-        #print 'data: ' + str(data)
-        #print self.shipping_rate[data]
-        pass
-
-    def setUpWidgets( self, ignore_request=False ):
-        self.adapters = self.adapters is not None and self.adapters or {}
-
-        # grab all the adapters and fields from the entire wizard form sequence (till the current step)
-        adapters = self.getSchemaAdapters()
-        self.widgets = form.setUpEditWidgets(
-            self.form_fields.select( *schema.getFieldNames(interfaces.IShippingMethodRate)),
-            self.prefix, self.context, self.request,
-            adapters=adapters, ignore_request=ignore_request
-            )
-
+        
+    def update( self ):
+        self.setupShippingOptions()
+        super( CheckoutSelectShipping, self).update()
 
     def createTransientOrder( self ):
         order_manager = component.getUtility( interfaces.IOrderManager )
@@ -672,15 +631,8 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
 
         return order
 
-    def update( self ):
-        if not self.adapters:
-            self.adapters = self.getSchemaAdapters()
-        super( CheckoutSelectShipping, self).update()
-
     def getSchemaAdapters( self ):
-        adapters = {}
-        adapters[ interfaces.IShippingMethodRate ] = ShippingRate()
-        return adapters
+        return {}
 
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
