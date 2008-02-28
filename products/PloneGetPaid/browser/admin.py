@@ -83,6 +83,7 @@ class ShippingMethods( BaseSettingsForm ):
     get paid management interface
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementShippingMethods)
+    form_fields['shipping_methods'].custom_widget = SelectWidgetFactory
     form_name = _(u'Shipping Methods')
 
 class ShippingSettings( BaseSettingsForm ):
@@ -98,44 +99,13 @@ class ShippingSettings( BaseSettingsForm ):
         self.setupServices()
         return super( ShippingSettings, self).__call__()
     
-    # check for one of the 3 possible shipping configurations and act accordingly
-    # the most interesting one is for 3rd party rate calculators, in which we create a form with
-    # the options interfaces for all of them that are available
-    # there's probably a nicer way to format it, but I think this is ok for now. ::Liam
+    # this is going to need to change to acommodate viewlets.  ugh.  ::Liam
     def setupServices( self ):
         manage_options = interfaces.IGetPaidManagementShippingMethods( self.context )
-        service_name = manage_options.shipping_method
-        if not service_name or service_name == "None":
-            self.status = _(u"Shipping is disabled - select an option from the main menu.")
-            return
-        elif service_name == "Flat Rate Shipping":
-            self.form_name = _(u'Flat Rate Shipping Settings')
-            try:
-                ship_method = component.getAdapter( self.context, igetpaid.IShippingMethod, service_name )
-            except:
-                self.status = _(u"The currenly configured Shipping Method cannot be found; please check if the corresponding package is installed correctly.")
-                return
-            self.form_fields = form.Fields( ship_method.options_interface )
-            return
-        elif service_name == "3rd Party Shipping Rate Calculators":
-            self.form_name = _(u'3rd Party Shipping Calculator Settings')
-            try:
-                ship_methods = list(component.getAdapters((self.context,), igetpaid.IShippingRateService))
-            except:
-                self.status = _(u"Couldn't get 3rd party calculators - make sure the packages are properly installed.")
-                return
-            if len(ship_methods) < 1:
-                self.status = _(u"There are no 3rd party shipping calculators installed.")
-                return
-            else:
-                self.form_fields = form.Fields( ) # empty the fields first, since we already have the base one in there
-                for item in ship_methods:
-                    name, ship_method = item
-                    self.form_fields += form.Fields( ship_method.options_interface )
-                return
-        else:
-            self.status = _(u"Unrecognized shipping option.")
-            return
+        service_names = manage_options.shipping_methods
+        self.form_fields = form.Fields()
+        self.status = _(u"Shipping settings are getting revamped at the moment...")
+        return
 
 class PaymentOptions( BaseSettingsForm ):
     """

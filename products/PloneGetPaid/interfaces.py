@@ -203,9 +203,13 @@ class IGetPaidManagementContentTypes( igetpaid.IPersistentOptions ):
 class IGetPaidManagementShippingMethods( igetpaid.IPersistentOptions ):
     """
     """
-    shipping_method = schema.Choice( title = _(u"Shipping Method"),
-                                     required = True,
-                                     source = "getpaid.shipping_methods" )
+    shipping_methods = schema.List( 
+        title = _(u"Shipping Methods"),
+        required = True,
+        default = [],
+        description = _(u"Shipping methods to offer for orders in your store"),
+        value_type = schema.Choice( title=u"shipping_methods", source="getpaid.shipping_methods" )
+        )
 
 class IGetPaidManagementShippingSettings( igetpaid.IPersistentOptions ):
     """

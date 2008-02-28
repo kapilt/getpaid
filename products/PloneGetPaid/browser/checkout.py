@@ -39,7 +39,7 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility, IGetPaidManagementShippingMethods
 
 from Products.PloneGetPaid.i18n import _
 
@@ -614,16 +614,18 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         Queries the getpaid.ups utility to get the available shipping methods and returns a list
         of them for the template to display and the user to choose among.
         """
-        #manage_options = IGetPaidManagementShippingMethods( self.context )
-        try:
-            shipping_services = list(component.getAdapters((self.context,), interfaces.IShippingRateService))
-        except:
-            self.status = _(u"Couldn't get any shipping services.")
-            return self.shipping_methods
-        for item in shipping_services:
-            name, service = item
-            self.shipping_methods.extend( service.getRates( self.createTransientOrder() ) )
-        return self.shipping_methods
+        # just return empty for now as this gets worked on
+        ship_methods = IGetPaidManagementShippingMethods( self.context ).shipping_methods
+        return []
+        # try:
+        #     shipping_services = list(component.getUtilitiesFor(interfaces.IShippingRateService))
+        # except:
+        #     self.status = _(u"Couldn't get any shipping services.")
+        #     return self.shipping_methods
+        # for item in shipping_services:
+        #     name, service = item
+        #     self.shipping_methods.extend( service.getRates( self.createTransientOrder() ) )
+        # return self.shipping_methods
 
     def setShippingMethods( self, data ):
         """
