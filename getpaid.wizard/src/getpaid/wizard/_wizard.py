@@ -48,9 +48,13 @@ class DataManager( object ):
         self._state = {}
         self._adapters = None
 
-    def __setitem__( self, k,v ):
+    def __setitem__( self, k, v ):
         self._state[k] = v
-        
+    
+    def __delitem__( self, k ):
+        if k in self._state:
+            del self._state[ k ]
+            
     def get( self, k ):
         return self._state.get( k )
         
@@ -141,6 +145,9 @@ class DataManager( object ):
         if 'cur_step' in self._state:
             ignore.append( 'cur_step' )
         
+        # we don't carry forward actions
+        ignore.append( "%s.actions"%(step.prefix) )
+        
         for f in step.form_fields:
             ignore.append( "%s.%s"%( step.prefix, f.__name__) )
             
@@ -206,7 +213,11 @@ class ControllerBase( object ):
         # transition to a new step
         self.current_step = self.getStep( step_name )
         self.current_step.wizard = self.wizard
-        self.wizard.data_manager['cur_step'] = step_name
+        # reset any saved request variables as they might be invalid in the new state
+        self.wizard.data_manager.reset()
+        self.wizard.data_manager['cur_step'] = step_name        
+        # extract variables for current state from the request
+        self.wizard.data_manager.update()
 
     def getCurrentStepName( self ):
         cur_step_name = self.wizard.data_manager.get('cur_step') or \
