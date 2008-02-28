@@ -287,21 +287,16 @@ class CheckoutController( ListViewController ):
         return False
         
     # overridden icontroller methods        
-    # def getNextStepName( self, step_name ):
-    #     step_name = super( CheckoutController, self).getNextStepName( step_name )
-    #     print step_name,
-    #     if self.checkStep( step_name ):
-    #         print True
-    #         return step_name
-    #     print False
-    #     value = self.getNextStepName( step_name )        
-    #     print value
-    #     return value
-    # 
-    # def getTraversedFormSteps( self ):
-    #     steps = super( CheckoutController, self ).getTraversedFormSteps()
-    #     steps = filter( self.checkStep, steps )
-    #     return steps
+    def getNextStepName( self, step_name ):
+        step_name = super( CheckoutController, self).getNextStepName( step_name )
+        if self.checkStep( step_name ):
+            return step_name
+        return self.getNextStepName( step_name )    
+    
+    def getTraversedFormSteps( self ):
+        steps = super( CheckoutController, self ).getTraversedFormSteps()
+        steps = filter( self.checkStep, steps )
+        return steps
         
     def getStep( self, step_name ):
         step = component.getMultiAdapter(
@@ -371,7 +366,11 @@ class CheckoutAddress( BaseCheckoutForm ):
         # if the user fill the name of the entry mean that we have to save the address
         if not entry:
             return
-        assert isinstance( entry, (str, unicode))
+        elif isinstance( entry, list):
+            entry = filter( None, entry)
+            if not entry:
+                return
+            entry = entry[-1]
         
         uid = getSecurityManager().getUser().getId()
         if uid == 'Anonymous':
@@ -391,7 +390,7 @@ class CheckoutAddress( BaseCheckoutForm ):
             for field in data.keys():
                 if field.startswith('ship_'):
                     ship_address_info.__setattr__(field, data[field])
-        addressBookUsr[entry] = ship_address_info
+        book[entry] = ship_address_info
         self.context.plone_utils.addPortalMessage(_(u'A new address has been saved'))
     
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
