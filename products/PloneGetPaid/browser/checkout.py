@@ -594,7 +594,8 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         service_options = {}
         for service_name in ship_service_names:
             service = component.getUtility( interfaces.IShippingRateService, name=service_name )
-            service_options[ service_name ] = service.getRates( order )
+            rates = service.getRates( order )
+            service_options[ service_name ] = rates
             
         self.ship_service_names = ship_service_names
         self.service_options = service_options

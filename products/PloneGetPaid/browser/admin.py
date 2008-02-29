@@ -14,6 +14,7 @@ from Products.PloneGetPaid import interfaces, pkg_home
 
 from zope import component
 from zope.formlib import form
+from zope.viewlet.interfaces import IViewlet
 
 import getpaid.core.interfaces as igetpaid
 
@@ -85,7 +86,37 @@ class SettingViewletManager( object ):
 
     def _getNames( self ):
         raise NotImplemented
-                
+
+    def update(self):                                                                                                                                                           
+        """See zope.contentprovider.interfaces.IContentProvider"""                                                                                                              
+        self.__updated = True                                                                                                                                                   
+                                                                                                                                                                                
+        # Find all content providers for the region                                                                                                                             
+        viewlets = component.getAdapters(                                                                                                                                  
+            (self.context, self.request, self.__parent__, self),                                                                                                                
+            IViewlet)                                                                                                                                                
+        
+        #  update the setting viewlet first, as that determines 
+        #  which viewlets we end up filtering
+        viewlets = list( viewlets )
+
+        setting_viewlet = [v for n,v in viewlets if n == 'settings'][0]
+        setting_viewlet.update()
+
+        
+        viewlets = self.filter(viewlets)                                                                                                                                        
+        viewlets = self.sort(viewlets)                                                                                                                                          
+                                                                                                                                                                                
+        # Just use the viewlets from now on                                                                                                                                     
+        self.viewlets = [viewlet for name, viewlet in viewlets]                                                                                                                 
+                                                                                                                                                                                
+        # Update all viewlets                                                                                                                                                   
+        for viewlet in self.viewlets:
+            if viewlet == setting_viewlet:
+                continue
+            viewlet.update()
+
+                        
     def filter( self, viewlets ):
         # filter only active plugins to the ui
         viewlets = super( SettingViewletManager, self).filter( viewlets )        
@@ -147,6 +178,7 @@ class ShippingServices( FormViewlet, formbase.EditForm ):
     """
     form_fields = form.Fields(interfaces.IGetPaidManagementShippingMethods)
     form_fields['shipping_methods'].custom_widget = SelectWidgetFactory
+    form_fields['shipping_services'].custom_widget = SelectWidgetFactory    
     form_name = _(u'Shipping Methods')
     
     template = ZopeTwoPageTemplateFile('templates/form.pt')
