@@ -42,7 +42,7 @@ except ImportError:
 from zope.app.container.interfaces import IContainer
 from zope.schema.interfaces import ITextLine
 from zope.schema.vocabulary import SimpleVocabulary
-from fields import PhoneNumber, CreditCardNumber
+from fields import PhoneNumber, CreditCardNumber, weightValidator
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('getpaid')
 
@@ -223,6 +223,10 @@ class IPhysicalPayable( IPayable ):
     """
     """
 
+
+UNIT_POUNDS = _(u"lbs")
+UNIT_KILOGRAMS = _(u"kgs")
+
 class IShippableContent( IPayable ):
     """ Shippable Content
     """
@@ -230,8 +234,11 @@ class IShippableContent( IPayable ):
     sku = schema.TextLine( title = _(u"Product SKU"))
     
     # default unit is country of origin specific... 
-    weight = schema.Float( title = _(u"Weight") )
-
+    weight = schema.Float( title = _(u"Shipping Weight"),
+                           constraint=weightValidator )
+                           
+    weight_unit = schema.Choice( title=_(u"Weight Unit"), values=[ UNIT_POUNDS, UNIT_KILOGRAMS ] )
+    
     def getShipWeight( self ):
         """ Shipping Weight
         """
@@ -245,7 +252,6 @@ class IPayableCreationEvent( IObjectEvent ):
 
     payable = Attribute("object implementing payable interface")    
     payable_interface = Attribute("payable interface the object implements")
-
 
 class IPayableAuditLog( Interface ):
     """ ordered container of changes, most recent first, hook on events.

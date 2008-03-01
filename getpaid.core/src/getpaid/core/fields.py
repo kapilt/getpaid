@@ -33,6 +33,14 @@ class InvalidPhoneNumber(ValidationError):
 class InvalidCreditCardNumber(ValidationError):
     __doc__ = _(u"Invalid Credit Card Number.")
 
+class InvalidWeight( ValidationError ):
+    __doc__ = _(u"Invalid Weight")
+    
+def weightValidator( weight ):
+    if weight <= 0:
+        raise InvalidWeight( weight )
+    return True
+    
 def creditCardValid(card_number):
     """ checks to make sure that the card passes a luhn mod-10 checksum """
     # strip any whitespace
