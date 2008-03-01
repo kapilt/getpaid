@@ -6,6 +6,7 @@ $Id$
 """
 
 
+import decimal
 from cPickle import loads, dumps
 from datetime import timedelta
 
@@ -108,6 +109,24 @@ class BaseCheckoutForm( BaseFormView ):
             return ""
         return super( BaseCheckoutForm, self).render()
 
+    def createTransientOrder( self ):
+        order = Order()
+
+        shopping_cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
+
+        # shopping cart is attached to the session, but we want to switch the storage to the persistent
+        # zodb, we pickle to get a clean copy to store.
+        adapters = self.wizard.data_manager.adapters
+        order.shopping_cart = loads( dumps( shopping_cart ) )
+        order.shipping_address = payment.ShippingAddress.frominstance( adapters[ interfaces.IShippingAddress ] )
+        order.billing_address = payment.BillingAddress.frominstance( adapters[ interfaces.IBillingAddress ] )
+        order.contact_information = payment.ContactInformation.frominstance( adapters[ interfaces.IUserContactInformation ] )
+
+        order.order_id = self.wizard.data_manager.get('order_id')
+        order.user_id = getSecurityManager().getUser().getId()
+
+        return order
+        
 ##############################
 # Some Property Bags - transient adapters
 
@@ -122,6 +141,8 @@ class BillingInfo( options.PropertyBag ):
     def __getstate__( self ):
         # don't store persistently
         raise RuntimeError("Storage Not Allowed")
+
+BillingInfo = BillingInfo.makeclass( interfaces.IUserPaymentInformation )
 
 class ImmutableBag( object ):
     
@@ -316,9 +337,7 @@ class CheckoutAddress( BaseCheckoutForm ):
         return adapters
     
     def update( self ):
-        if not self.adapters:
-            self.adapters = self.wizard.data_manager.adapters
-            self.adapters.values()
+        self.adapters = self.wizard.data_manager.adapters
         super( CheckoutAddress, self).update()
     
     def hasAddressBookEntries(self):
@@ -458,14 +477,14 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         
         # create an order so that tax/shipping utilities have full order information
         # to determine costs (ie. billing/shipping address ).
-        order = self.createOrder()
-        formatter = cart_core.CartFormatter( order,
-                                             self.request,
-                                             cart.values(),
-                                             prefix=self.prefix,
-                                             visible_column_names = [c.name for c in self.columns],
-                                             #sort_on = ( ('name', False)
-                                             columns = self.columns )
+        order = self.createTransientOrder()
+        formatter = OrderFormatter( order,
+                                    self.request,
+                                    cart.values(),
+                                    prefix=self.prefix,
+                                    visible_column_names = [c.name for c in self.columns],
+                                    #sort_on = ( ('name', False)
+                                    columns = self.columns )
         
         formatter.cssClasses['table'] = 'listing'
         return formatter()
@@ -582,6 +601,7 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         """
         Queries shipping utilities and adapters to get the available shipping methods
         and returns a list of them for the template to display and the user to choose among.
+        
         """
         # just return empty for now as this gets worked on
         ship_service_names = IGetPaidManagementOptions( self.context ).shipping_services
@@ -599,8 +619,8 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
             
         self.ship_service_names = ship_service_names
         self.service_options = service_options
-
-    def setShippingMethods( self, data ):
+        
+    def setShippingMethods( self ):
         """
         Set the shipping methods chosen by the user
         """
@@ -609,28 +629,6 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         self.setupShippingOptions()
         super( CheckoutSelectShipping, self).update()
 
-    def createTransientOrder( self ):
-        order_manager = component.getUtility( interfaces.IOrderManager )
-        order = Order()
-
-        shopping_cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
-
-        # shopping cart is attached to the session, but we want to switch the storage to the persistent
-        # zodb, we pickle to get a clean copy to store.
-        adapters = self.wizard.data_manager.adapters
-
-        if not filter(interfaces.IShippableLineItem.providedBy, shopping_cart.values() ): 
-            raise SyntaxError( "No Shippable Items")
-
-        order.shopping_cart = loads( dumps( shopping_cart ) )
-        order.shipping_address = payment.ShippingAddress.frominstance( adapters[ interfaces.IShippingAddress ] )
-        order.billing_address = payment.BillingAddress.frominstance( adapters[ interfaces.IBillingAddress ] )
-        order.contact_information = payment.ContactInformation.frominstance( adapters[ interfaces.IUserContactInformation ] )
-
-        order.order_id = self.wizard.data_manager.get('order_id')
-        order.user_id = getSecurityManager().getUser().getId()
-
-        return order
 
     def getSchemaAdapters( self ):
         return {}
@@ -645,9 +643,57 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
 
     @form.action(_(u"Continue"), name="continue")
     def handle_continue( self, action, data ):
-        self.setShippingMethods( data )
         self.next_step_name = wizard_interfaces.WIZARD_NEXT_STEP
 
+class OrderFormatter( cart_core.CartFormatter ):
+
+    def getTotals( self ):
+        return OrderTotals( self.context, self.request)
+        
+class OrderTotals( object ):
+
+    interface.implements( interfaces.ILineContainerTotals )
+    
+    def __init__( self, context, request ):
+        self.context = context
+        self.shopping_cart = context.shopping_cart
+        self.request = request
+
+    def getTotalPrice( self ):
+        if not self.shopping_cart:
+            return 0
+        
+        total = 0
+        total += self.getSubTotalPrice()
+        total += self.getShippingCost()
+        total += self.getTaxCost()
+        
+        return float( str( total ) )            
+
+    def getSubTotalPrice( self ):
+        if not self.shopping_cart:
+            return 0
+        total = 0
+        for item in self.shopping_cart.values():
+            d = decimal.Decimal ( str(item.cost ) ) * item.quantity
+            total += d        
+        return total
+        
+    def getShippingCost( self ):
+        service_code = self.request.get('shipping_method_code')
+        if not service_code:
+            return 0
+        service_name, service_method = service_code.split('.',1)
+        service = component.getUtility( interfaces.IShippingRateService, service_name )
+        methods = service.getRates( self.context )
+        for m in methods:
+            if m.service_code == service_method:
+                return m.cost
+
+    def getTaxCost( self ):
+        tax_utility = component.getUtility( interfaces.ITaxUtility )
+        return tax_utility.getCost( self )
+        
 class StorePropertyView(BrowserView):
     
     def _getProperty(self, name ):

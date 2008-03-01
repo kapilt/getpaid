@@ -4,7 +4,7 @@ Viewlet / Formlib / zc.table Based Shopping Cart
 $Id$
 """
 
-import os
+import os, decimal
 from urllib import urlencode
 
 from zope import component, interface
@@ -161,16 +161,20 @@ def lineItemPrice( item, formatter ):
 
 class CartFormatter( table.StandaloneSortFormatter ):
 
+    def getTotals( self ):
+        #if interfaces.IShoppingCart.providedBy( self.context ):
+        return interfaces.ILineContainerTotals( self.context )
+        
     def renderExtra( self ):
         if not len( self.context ):
             return super( CartFormatter, self).renderExtra()
         
-        totals = interfaces.ILineContainerTotals( self.context )
+        totals = self.getTotals()
         tax_price, shipping_price, subtotal_price = \
                    totals.getTaxCost(), \
                    totals.getShippingCost(), \
                    totals.getSubTotalPrice()
-        total_price = tax_price + shipping_price + subtotal_price
+        total_price = tax_price + decimal.Decimal( str(shipping_price) ) + subtotal_price
         
         buffer = [ '<div class="getpaid-totals"><table class="listing">']
         buffer.append( '<tr><th>SubTotal</th><td style="border-top:1px solid #8CACBB;">%0.2f</td></tr>'%( subtotal_price ) )
