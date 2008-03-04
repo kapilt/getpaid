@@ -244,11 +244,6 @@ class ControllerBase( object ):
         current_step.update()
         next_step_name = self.getNextStepName( step_name )
         
-        if next_step_name == 'checkout-select-shipping':
-            shipping_services = component.getAdapters((self,), coreinterfaces.IShippingRateService)
-            if not shipping_services:
-                next_step_name = self.getNextStepName(next_step_name)
-        
         if next_step_name == step_name:
             return
         
