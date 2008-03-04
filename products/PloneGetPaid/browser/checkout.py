@@ -603,11 +603,11 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         and returns a list of them for the template to display and the user to choose among.
         
         """
-        # just return empty for now as this gets worked on
         ship_service_names = IGetPaidManagementOptions( self.context ).shipping_services
         
         if not ship_service_names:
-            raise SyntaxError("Misconfigured Store - No Shipping Method Activated")
+            self.status =  "Misconfigured Store - No Shipping Method Activated"
+            return
             
         order = self.createTransientOrder()
         
@@ -615,7 +615,9 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         for service_name in ship_service_names:
             service = component.getUtility( interfaces.IShippingRateService, name=service_name )
             rates = service.getRates( order )
-            service_options[ service_name ] = rates
+            if rates.error is not None:
+                self.status = '%(name)s Error: %(error)s.' % {'name':service_name, 'error':rates.error}
+            service_options[ service_name ] = rates.shipments
             
         self.ship_service_names = ship_service_names
         self.service_options = service_options

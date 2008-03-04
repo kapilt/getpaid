@@ -449,7 +449,9 @@ class IShippingRateService( Interface ):
     """ utility """
 
     def getRates( order ):
-        """ return shipping rate options for an order
+        """ return shipping rate options for an order.  this should return:
+        - a list of IShippingMethodRate as 'shipments'
+        - an error string as 'error'
         """
 
 class IShippingMethodRate( Interface ):
