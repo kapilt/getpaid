@@ -733,7 +733,15 @@ class AddressBookView(BrowserView):
         book = component.getUtility(IAddressBookUtility).get( uid )
         entry_names = list( book.keys() )
         entry_names.sort()
-        return entry_names
+        entry_dict = {}
+        for entry_name in entry_names:
+            second_line = ""
+            if book[entry_name].ship_second_line:
+                second_line = book[entry_name].ship_second_line + "<br />"
+            entry_dict[entry_name] = """%s<br />%s%s<br />""" % (book[entry_name].ship_first_line,second_line, book[entry_name].ship_city + " " + book[entry_name].ship_postal_code + " " + book[entry_name].ship_state )
+
+        return entry_dict
+
 
     def getEntryScripts(self):
         """
@@ -760,7 +768,7 @@ class AddressBookView(BrowserView):
         """
         javaScript = ''
         field_assignations = ''
-        for entry in self.getEntryNames():
+        for entry in self.getEntryNames().keys():
             
             field_assignations += "if (contact_name == '%s') {\n" % entry
             for name in apidocInterface.getElements(interfaces.IShippingAddress, type=IField).keys():

@@ -9,8 +9,9 @@
             /* Define scripts for this here */
             </script>
             
-            <tal:loop repeat="entry view/getEntryNames">
-                <a href="#" tal:content="entry" tal:attributes="onclick python:'assign_variables(\'%s\',this)' % entry"></a><br/>
+            <tal:loop repeat="entry python:view.getEntryNames().iteritems()">
+            <a href="#" tal:content="python:entry[0]" tal:attributes="onclick python:'assign_variables(\'%s\',this)' % entry[0]"></a><div class="addressbookEntryData" tal:content="structure python:entry[1]"></div>
+            <hr />
             </tal:loop>
     
         </div>
