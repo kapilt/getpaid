@@ -106,7 +106,7 @@ class OrderListingComponent( core.EventViewlet ):
                                       self.request,
                                       values,
                                       prefix="form",
-                                      batch_size=5,
+                                      batch_size=10,
                                       visible_column_names = [c.name for c in columns],
                                       #sort_on = ( ('name', False)
                                       columns = columns )
@@ -487,7 +487,9 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
         
     def getContactInformation(self):
         infos = self.order.contact_information
-        return {'name': infos.name}
+        return {'name': infos.name,
+                'email': infos.email,
+                'phone': infos.phone_number}
         
     def getShippingAddress(self):
         infos = self.order.shipping_address

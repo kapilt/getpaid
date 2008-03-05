@@ -25,12 +25,20 @@
         <li>
             <span i18n:translate="text_total_price"> Total Price </span> -
             <span i18n:translate="" tal:content="view/getTotalPrice"> total price </span>
+            <br /><br />
         </li>
         <li>
-          <span i18n:translate="">Contact Name</span> -
-          <span tal:define="contact view/getContactInformation;
-                                    name contact/name|nothing"
-                tal:content="name" />
+          <tal:def define="contact view/getContactInformation;
+                           name contact/name|nothing;
+                           email contact/email;
+                           phone contact/phone;">
+            <span i18n:translate="">Contact Name</span> -
+            <span tal:content="name" /><br />
+            <span i18n:translate="">E-mail</span> -
+            <span tal:content="email" /><br />
+            <span i18n:translate="">Phone Number</span> -
+            <span tal:content="phone" /><br />
+          </tal:def>
     
           <table cellspacing="5px">
             <tr>
