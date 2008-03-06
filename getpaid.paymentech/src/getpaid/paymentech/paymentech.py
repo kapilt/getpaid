@@ -130,7 +130,11 @@ class PaymentechResult(object):
     
     def __init__(self, response):
         self.response = response
-        self.result_resp = xml.dom.minidom.parseString(self.response.read())
+        read_response = self.response.read()
+        # need to do a check on weird characters that paymentech
+        # returns sometime (like \x00)
+        read_response = read_response.replace('\x00', '')
+        self.result_resp = xml.dom.minidom.parseString(read_response)
         # ProcStatus is the only element that is returned in all response scenarios
         self.proc_status = getElement(self.result_resp, 'ProcStatus')
         self.approval_status = getElement(self.result_resp, 'ApprovalStatus')
@@ -161,7 +165,6 @@ class PaymentechAdapter(object):
         """
         # A - Authorization request
         data = createAuthorizeXMLFile('A', self.options, order, payment)
-        
         result = self.process(data, timeout=None)
         if result.proc_status == "0":
             annotation = IAnnotations(order)
