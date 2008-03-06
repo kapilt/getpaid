@@ -595,8 +595,8 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
 
     form_fields = form.Fields()
     template = ZopeTwoPageTemplateFile("templates/checkout-shipping-method.pt")
-    shipping_methods = ()
-    
+    ship_service_names = ()
+
     def setupShippingOptions( self ):
         """
         Queries shipping utilities and adapters to get the available shipping methods
