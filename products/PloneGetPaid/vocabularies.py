@@ -8,6 +8,7 @@ from zope import component
 from zope.interface import implements
 from zope.app import zapi
 from os import path
+import datetime
 
 from zope.schema import vocabulary
 from getpaid.core import interfaces
@@ -175,7 +176,9 @@ class MonthsAndYears(object):
     months = property(months)
 
     def years(self):
-        return self.tuple_unicode_range(2007,2030)
+        start = int(datetime.datetime.today().strftime('%Y'))
+        end = start + 30
+        return self.tuple_unicode_range(start, end)
     years = property(years)
 
 
