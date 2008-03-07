@@ -220,6 +220,10 @@ class CheckoutWizard( Wizard ):
                     order = list( results )[0]
                     base_url = self.context.absolute_url()
                     url = base_url + '/@@getpaid-thank-you?order_id=%s' %(order_id)
+                        
+                    if not 'http://' in url:
+                        url = url.replace("https://", "http://")
+                    
                     self.request.response.redirect( url )
                     self.wizard.data_manager.reset()
                     return False
@@ -231,6 +235,17 @@ class CheckoutWizard( Wizard ):
             return False
             
         self.data_manager['order_id'] = order_id
+        return True
+    
+    def checkUseSSL(self):
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        if IGetPaidManagementOptions(portal).use_ssl_for_checkout:
+            # we need to become https if we are not already
+            # unless we are cancelling or on the thank you page
+            url = self.request.getURL()
+            if not 'https://' in url:
+                url = url.replace("http://", "https://")
+                self.request.response.redirect(url)
         return True
     
     def __call__( self ):
@@ -248,6 +263,9 @@ class CheckoutWizard( Wizard ):
         # the checkout process. also stores the order id in the data mangaer for
         # use by other components.
         if not self.checkOrderId():
+            return
+            
+        if not self.checkUseSSL():
             return
         
         return super( CheckoutWizard, self).__call__()
@@ -386,7 +404,9 @@ class CheckoutAddress( BaseCheckoutForm ):
     
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
-        return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
+        url = self.context.portal_url.getPortalObject().absolute_url()
+        url = url.replace("https://", "http://")
+        return self.request.response.redirect(url)
         
     @form.action(_(u"Continue"), name="continue")
     def handle_continue( self, action, data ):
@@ -491,7 +511,9 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition )
     def handle_cancel( self, action, data):
-        return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
+        url = self.context.portal_url.getPortalObject().absolute_url()
+        url = url.replace("https://", "http://")
+        return self.request.response.redirect(url)
         
     @form.action(_(u"Back"), name="back", validator=null_condition )
     def handle_back( self, action, data):
@@ -570,6 +592,8 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         state = order.finance_state
         f_states = interfaces.workflow_states.order.finance
         base_url = self.context.absolute_url()
+        if not 'http://' in base_url:
+            base_url = base_url.replace("https://", "http://")
 
         if state in (f_states.CANCELLED,
                      f_states.CANCELLED_BY_PROCESSOR,
@@ -637,7 +661,9 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
 
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):
-        return self.request.response.redirect( self.context.portal_url.getPortalObject().absolute_url() )
+        url = self.context.portal_url.getPortalObject().absolute_url()
+        url = url.replace("https://", "http://")
+        return self.request.response.redirect(url)
 
     @form.action(_(u"Back"), name="back")
     def handle_back( self, action, data, validator=null_condition):
