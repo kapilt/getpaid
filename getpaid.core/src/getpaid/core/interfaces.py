@@ -591,7 +591,9 @@ class IUserPaymentInformation( Interface ):
                                     description = _(u"Select month and year"))
 
     cc_cvc = schema.TextLine(title = _(u"Credit Card Verfication Number"),
-                             description = _(u"For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "))
+                             description = _(u"For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "),
+                             min_length = 3,
+                             max_length = 4)
 
 
 class IPaymentTransaction( ILineItemContainer ):
