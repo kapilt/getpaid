@@ -137,6 +137,8 @@ class PaymentechResult(object):
         self.result_resp = xml.dom.minidom.parseString(read_response)
         # ProcStatus is the only element that is returned in all response scenarios
         self.proc_status = getElement(self.result_resp, 'ProcStatus')
+        # ApprovalStatus shows if ProcStatus = 0
+        # 0 – Decline, 1 – Approved, 2 – Message/System Error 
         self.approval_status = getElement(self.result_resp, 'ApprovalStatus')
         self.trans_ref_num = getElement(self.result_resp, 'TxRefNum')
         self.status_msg = getElement(self.result_resp, 'StatusMsg')
@@ -167,13 +169,13 @@ class PaymentechAdapter(object):
         data = createAuthorizeXMLFile('A', self.options, order, payment)
         result = self.process(data, timeout=None)
         if result.proc_status == "0":
-            annotation = IAnnotations(order)
-            annotation[interfaces.keys.processor_txn_id] = result.trans_ref_num
-            annotation[LAST_FOUR] = payment.credit_card[-4:]
-            annotation[APPROVAL_KEY] = result.approval_status
-            return interfaces.keys.results_success
-        else:
-            return result.status_msg
+            if result.approval_status == '1':
+                annotation = IAnnotations(order)
+                annotation[interfaces.keys.processor_txn_id] = result.trans_ref_num
+                annotation[LAST_FOUR] = payment.credit_card[-4:]
+                annotation[APPROVAL_KEY] = result.approval_status
+                return interfaces.keys.results_success
+        return result.status_msg
 
     def capture(self, order, amount):
         #AC - Authorization and Mark for Capture
