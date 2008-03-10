@@ -495,7 +495,8 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
         infos = self.order.shipping_address
         if infos.ship_same_billing:
             return "Same as billing"
-        return {'ship_first_line': infos.ship_first_line,
+        return {'ship_name': infos.ship_name,
+                'ship_first_line': infos.ship_first_line,
                 'ship_second_line': infos.ship_second_line,
                 'ship_city': infos.ship_city,
                 'ship_country': self.vocab_countries.getTerm(infos.ship_country).title,
@@ -504,7 +505,8 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
         
     def getBillingAddress(self):
         infos = self.order.billing_address
-        return {'bill_first_line': infos.bill_first_line,
+        return {'bill_name': infos.bill_name,
+                'bill_first_line': infos.bill_first_line,
                 'bill_second_line': infos.bill_second_line,
                 'bill_city': infos.bill_city,
                 'bill_country': self.vocab_countries.getTerm(infos.bill_country).title,
