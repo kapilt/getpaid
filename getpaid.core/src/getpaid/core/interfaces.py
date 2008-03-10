@@ -511,6 +511,7 @@ class IShippingAddress( IAbstractAddress ):
     """ where to send goods
     """
     ship_same_billing = schema.Bool( title = _(u"Same as billing address"), required=False)
+    ship_name = schema.TextLine( title = _(u"Full Name"), required=False)
     ship_first_line = schema.TextLine( title = _(u"Address 1"), required=False)
     ship_second_line = schema.TextLine( title = _(u"Address 2"), required=False)
     ship_city = schema.TextLine( title = _(u"City"), required=False)
@@ -523,6 +524,7 @@ class IShippingAddress( IAbstractAddress ):
 class IBillingAddress( IAbstractAddress ):
     """ where to bill 
     """
+    bill_name = schema.TextLine( title = _(u"Full Name"))
     bill_first_line = schema.TextLine( title = _(u"Address 1"))
     bill_second_line = schema.TextLine( title = _(u"Address 2"), required=False )
     bill_city = schema.TextLine( title = _(u"City") )
