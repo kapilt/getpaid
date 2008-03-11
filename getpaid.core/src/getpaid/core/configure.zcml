@@ -8,7 +8,7 @@
   <subscriber
      handler=".order.recordOrderWorkflow"
      for=".interfaces.IOrder
-	  hurry.workflow.interfaces.IWorkflowTransitionEvent"
+          hurry.workflow.interfaces.IWorkflowTransitionEvent"
      />
 
   <!-- Fire Automatic finance state transitions -->
@@ -37,12 +37,21 @@
      provides=".interfaces.IOrderWorkflowLog"
      factory=".order.OrderWorkflowLog"
      />
+     
+     
+  <!-- Misc -->
 
   <adapter
      for=".interfaces.IShoppingCart"
      provides=".interfaces.ILineContainerTotals"
      factory=".cart.CartItemTotals"
      />
+     
+
+  <adapter
+     name="default"
+     factory=".router.OriginRouter"
+     />     
 
   <!-- Credit card types -->
   <adapter

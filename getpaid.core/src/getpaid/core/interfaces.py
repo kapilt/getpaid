@@ -665,6 +665,17 @@ class IShippableOrder( IOrder ):
     shipping_service = schema.ASCIILine( title = _(u"Shipping Service"))
     shipping_method = schema.ASCIILine( title = _(u"Shipping Method") )
     shipping_price = schema.ASCIILine( title = _(u"Shipping Price") )
+
+
+class IOriginRouter( Interface ):
+    
+    def getOrigin( ):
+        """
+        determine the origin shipping point for an order..
+        
+        return an IContactInfo and IAddress object to serve as the origin
+        of the order for any fufillment process (shipping, processing).
+        """    
         
 class IRecurringOrder( IOrder ):
     """ marker interface for orders containing recurring line items """
