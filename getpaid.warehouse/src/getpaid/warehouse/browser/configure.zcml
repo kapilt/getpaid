@@ -1,13 +1,58 @@
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:browser="http://namespaces.zope.org/browser">
 
-    <browser:page
-        name="inventory"
-        menu="object"
-        title="Inventory"
-        for="Products.PloneGetPaid.interfaces.IShippableMarker"
-        class=".content.ContentInventory"
-        permission="cmf.ManagePortal"
-        />
+  <browser:page
+    for="Products.PloneGetPaid.interfaces.IShippableMarker"
+    name="inventory"
+    menu="object"
+    title="Inventory"
+    class=".content.ContentInventory"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-warehouse-admin"
+    menu="getpaid_admin"
+    title="Warehouses"
+    class=".warehouse.Container"
+    permission="cmf.ManagePortal"
+    template="container.pt"
+    />
+
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-add-warehouse"
+    class=".warehouse.Add"
+    permission="cmf.ManagePortal"
+    />
+    
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-view-warehouse"
+    class=".warehouse.View"
+    permission="cmf.ManagePortal"
+    />    
+
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-edit-warehouse"
+    class=".warehouse.Edit"
+    permission="cmf.ManagePortal"
+    />
+             
+  <browser:viewletManager
+    name="getpaid.warehouse.container"
+    permission="cmf.ManagePortal"
+    provides="..interfaces.IWarehouseContainerVM"
+    class=".warehouse.ContainerVM"
+    />
+
+  <browser:viewlet
+    name="warehouse-listing"
+    manager="..interfaces.IWarehouseContainerVM"
+    class=".warehouse.Listing"
+    permission="cmf.ManagePortal"
+    />
 
 </configure>           

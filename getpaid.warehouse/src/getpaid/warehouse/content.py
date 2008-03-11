@@ -43,5 +43,5 @@ def handleFufilledOrder( order, event ):
             return
             
         inventory = interfaces.IProductInventory( payable )
-        inventory.store_stock += item.quantity        
-        
+        inventory.store_stock += item.quantity
+

@@ -1,9 +1,26 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     <include package=".browser" />
+    
     <adapter
         for="Products.PloneGetPaid.interfaces.IShippableMarker"
         provides=".interfaces.IProductInventory"
         factory=".content.Inventory"
         />
+        
+  <!-- Plugin Manager -->
+  <adapter
+     for="getpaid.core.interfaces.IStore"
+     provides="getpaid.core.interfaces.IPluginManager"
+     factory=".plugin.WarehousePlugin"
+     name="warehouse"
+     />
+
+  <!-- Install at PloneGetPaid Installation (till we have a plugin mannage ui)-->
+  <subscriber
+     for="getpaid.core.interfaces.IStore
+          getpaid.core.interfaces.IStoreInstalledEvent"
+     handler=".plugin.storeInstalled"
+     />
+             
 </configure>    
     
