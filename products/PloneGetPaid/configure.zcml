@@ -29,36 +29,6 @@
 <include package="zc.comment" />
 -->
 
-<!-- Optional Payment Processors and Dependency Checks-->
-
-<configure zcml:condition="installed gchecky">
-  <include zcml:condition="installed getpaid.googlecheckout" 
-	   package="getpaid.googlecheckout" />
-</configure>
-
-<configure zcml:condition="installed M2Crypto">
-  <include zcml:condition="installed getpaid.authorizedotnet"
-	   package="getpaid.authorizedotnet" />
-</configure>
-
-<include zcml:condition="installed getpaid.paypal"
-	 package="getpaid.paypal" />
-
-<include zcml:condition="installed getpaid.ogone"
-	 package="getpaid.ogone" />
-
-<include zcml:condition="installed getpaid.nullpayment"
-	 package="getpaid.nullpayment" />
-
-<include zcml:condition="installed getpaid.paymentech"
-	 package="getpaid.paymentech" />
-
-<!-- Optional Shipping Modules -->
-<include zcml:condition="installed getpaid.flatrateshipping"
-	 package="getpaid.flatrateshipping" />
-	 
-<include zcml:condition="installed getpaid.ups"
-	 package="getpaid.ups" />	 
 
 <!-- Inject Plone with the nesc interfaces / local site -->
 
@@ -91,6 +61,8 @@
 <!-- UI -->
 <include package=".browser" />
 
+<!-- Load Up Plugins -->
+<include file="plugins.zcml" />
 
 <!-- Vocabularies -->
 <include file="vocabularies.zcml" />
