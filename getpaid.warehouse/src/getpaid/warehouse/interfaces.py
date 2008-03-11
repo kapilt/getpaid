@@ -36,6 +36,6 @@ class IProductInventory( interface.Interface ):
     # update with incoming orders. stock value would always be manually updated.    
     store_stock  = schema.Int( title=_(u"Quantity Available For Sale"), description=_(u"Warehouse stock minus pending orders"), default=0)    
     warehouse = schema.Choice( title=_(u"Warehouse"), source=WarehouseSource,  )
-##
+
 class IWarehouseContainerVM( IViewletManager ):
     """ warehouse utility's viewlet manager """

@@ -7,6 +7,10 @@
         factory=".inventory.Inventory"
         />
         
+    <adapter
+        factory=".router.OriginRouter"
+        />
+        
   <!-- Plugin Manager -->
   <adapter
      for="getpaid.core.interfaces.IStore"

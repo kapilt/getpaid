@@ -1,5 +1,12 @@
 """
 $Id: $
+
+
+
+these views are directly ontop of the warehouse utility and its data, 
+and for the sake of z2/plone.. manage context as needed via form 
+variables. 
+
 """
 
 import os
@@ -18,6 +25,7 @@ from Products.Five.viewlet import manager
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PloneGetPaid.browser import base
+from Products.PloneGetPaid.browser.widgets import CountrySelectionWidget, StateSelectionWidget
 from Products.CMFPlone.utils import safe_unicode
 
 from getpaid.core.payment import Address
@@ -97,7 +105,11 @@ class Edit( base.BaseFormView ):
     
     form_fields = form.Fields( interfaces.IWarehouse )
     form_fields['name'].for_display = True
+    
     form_fields = form.Fields( form_fields['name'], form.Fields( interfaces.IAddress ) )
+    form_fields['state'].custom_widget = StateSelectionWidget
+    form_fields['country'].custom_widget = CountrySelectionWidget    
+    
     form_name = _(u'Warehouse Information')
                 
     def setUpWidgets( self, ignore_request=False ):
