@@ -170,6 +170,7 @@ class CartFormatter( table.StandaloneSortFormatter ):
             return super( CartFormatter, self).renderExtra()
         
         totals = self.getTotals()
+
         tax_price, shipping_price, subtotal_price = \
                    totals.getTaxCost(), \
                    totals.getShippingCost(), \

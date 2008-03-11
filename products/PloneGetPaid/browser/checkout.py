@@ -578,7 +578,7 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         order.order_id = self.wizard.data_manager.get('order_id')
         order.user_id = getSecurityManager().getUser().getId()
         
-        if  self.wizard.data_manager.get('shipping_rate'):
+        if self.wizard.data_manager.get('shipping_rate'):
             interface.directlyProvides( order, interfaces.IShippableOrder )
             order.shipping_service = self.wizard.data_manager.get('shipping_service')
             order.shipping_method = self.wizard.data_manager.get('shipping_rate')
@@ -711,10 +711,10 @@ class OrderTotals( object ):
         service_code = self.request.get('shipping_method_code')
         if not service_code:
             return 0
-        service_name, service_method = service_code.split('.',1)
+        service_name, service_method = service_code.split('.', 1)
         service = component.getUtility( interfaces.IShippingRateService, service_name )
         methods = service.getRates( self.context )
-        for m in methods:
+        for m in methods.shipments:
             if m.service_code == service_method:
                 return m.cost
 
