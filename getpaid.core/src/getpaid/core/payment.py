@@ -30,20 +30,17 @@ an order.
 from getpaid.core import interfaces, options 
 from zope import component, interface
 
-class ShippingAddress( options.PersistentBag ):
+class Address( options.PersistentBag ): pass
+Address.initclass( interfaces.IAddress  )    
     
-    interface.implements( interfaces.IShippingAddress )
-    schema = interfaces.IShippingAddress
+class ShippingAddress( options.PersistentBag ): pass
+ShippingAddress.initclass( interfaces.IShippingAddress )    
+ 
+class BillingAddress( options.PersistentBag ): pass
+BillingAddress.initclass( interfaces.IBillingAddress )    
     
-class BillingAddress( options.PersistentBag ):
-
-    interface.implements( interfaces.IBillingAddress )
-    schema = interfaces.IBillingAddress
-    
-class ContactInformation( options.PersistentBag ):
-    
-    interface.implements( interfaces.IUserContactInformation )
-    schema = interfaces.IUserContactInformation
+class ContactInformation( options.PersistentBag ): pass
+ContactInformation.initclass( interfaces.IUserContactInformation )    
     
 def fireAutomaticTransitions( order, event ):    
     """ fire automatic transitions for a new state """ 

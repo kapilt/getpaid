@@ -56,7 +56,7 @@ def create_fulfillment_workflow( ):
 
     add( workflow.Transition( transition_id = 'deliver-processing-order',
                               title = _(u'Order Processed'),
-                              trigger = iworkflow.SYSTEM,
+                              #trigger = iworkflow.SYSTEM,
                               source = fs.PROCESSING,
                               destination = fs.DELIVERED ) )
     
