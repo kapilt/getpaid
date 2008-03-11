@@ -26,7 +26,10 @@ class OriginRouter( object ):
             fallback_router = component.getAdapter( IOriginRouter, self.context, name="default" )
             return fallback_router.getOrigin()
         assert len(warehouses) == 1, "only origin warehouse allowed per order, atm"
-        return self.getStoreContact(), warehouses.pop().location
+        warehouse = warehouses.pop()
+        contact = self.getStoreContact()
+        contact.name = warehouse.name
+        return contact, warehouse.location
         
     def getOrderWarehouses( self ):
         items = filter( IShippableLineItem.providedBy, self.context.shopping_cart.values())

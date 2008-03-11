@@ -54,5 +54,12 @@
     class=".warehouse.Listing"
     permission="cmf.ManagePortal"
     />
+    
+  <browser:viewlet
+     name="order-warehouse"
+     manager="Products.PloneGetPaid.interfaces.IAdminOrderManager"
+     class=".order.WarehouseInfo"
+     permission="zope2.View"
+     />
 
 </configure>           
