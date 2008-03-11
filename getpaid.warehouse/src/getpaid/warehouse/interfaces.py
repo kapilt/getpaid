@@ -30,12 +30,12 @@ interface.directlyProvides( WarehouseSource, IContextSourceBinder )
 class IProductInventory( interface.Interface ):   
     pickbin = schema.TextLine( title=_(u"Pick Bin"), description=_("") )
     pallet = schema.TextLine( title=_(u"Pallet"), description=_(""))
-    stock  = schema.Int( title=_(u"Quantity in Stock"))
-    warehouse = schema.Choice( title=_(u"Warehouse"), source=WarehouseSource )
+    stock  = schema.Int( title=_(u"Quantity in Stock"), default=0)
+    
     # so the notion is that we automatically adjust this value to give
-    # update with incoming orders. stock value would always be manually updated.
-    store_stock  = schema.Int( title=_(u"Quantity in Stock, minus existing orders"), )
-
+    # update with incoming orders. stock value would always be manually updated.    
+    store_stock  = schema.Int( title=_(u"Quantity Available For Sale"), description=_(u"Warehouse stock minus pending orders"), default=0)    
+    warehouse = schema.Choice( title=_(u"Warehouse"), source=WarehouseSource,  )
 ##
 class IWarehouseContainerVM( IViewletManager ):
     """ warehouse utility's viewlet manager """

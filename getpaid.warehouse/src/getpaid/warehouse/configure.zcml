@@ -4,7 +4,7 @@
     <adapter
         for="Products.PloneGetPaid.interfaces.IShippableMarker"
         provides=".interfaces.IProductInventory"
-        factory=".content.Inventory"
+        factory=".inventory.Inventory"
         />
         
   <!-- Plugin Manager -->
@@ -15,6 +15,16 @@
      name="warehouse"
      />
 
+  <subscriber
+      for="getpaid.core.interfaces.IOrder
+           hurry.workflow.interfaces.IWorkflowTransitionEvent"
+      handler=".inventory.handleNewOrder"/>
+
+  <subscriber
+      for="getpaid.core.interfaces.IOrder
+           hurry.workflow.interfaces.IWorkflowTransitionEvent"
+      handler=".inventory.handleFufilledOrder"/>
+      
   <!-- Install at PloneGetPaid Installation (till we have a plugin mannage ui)-->
   <subscriber
      for="getpaid.core.interfaces.IStore

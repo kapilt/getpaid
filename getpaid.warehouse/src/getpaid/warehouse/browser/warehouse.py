@@ -69,7 +69,7 @@ class Add( base.BaseFormView ):
     
     form_fields = form.Fields( interfaces.IWarehouse )
     form_fields = form_fields.select('name') + form.Fields( interfaces.IAddress )
-    
+
     def setUpWidgets(self, ignore_request=False):
         self.adapters = {}
         self.widgets = form.setUpDataWidgets(
@@ -98,7 +98,8 @@ class Edit( base.BaseFormView ):
     form_fields = form.Fields( interfaces.IWarehouse )
     form_fields['name'].for_display = True
     form_fields = form.Fields( form_fields['name'], form.Fields( interfaces.IAddress ) )
-
+    form_name = _(u'Warehouse Information')
+                
     def setUpWidgets( self, ignore_request=False ):
         self.adapters = self.adapters or {}
         self.widgets = form.setUpEditWidgets(
@@ -123,7 +124,6 @@ class View( base.BaseFormView ):
     """ view a warehouse """
     
     template = ViewPageTemplateFile( admin_template )
-    actions = None
     form_fields = form.Fields( interfaces.IWarehouse )
     form_fields = form.Fields( form_fields.select('name') + form.Fields( interfaces.IAddress ) )
         
@@ -137,7 +137,6 @@ class View( base.BaseFormView ):
 
     def update( self ):
         wid = self.request.get('wid', None)
-
         container = component.getUtility( interfaces.IWarehouseContainer )
         if not wid or not wid in container:
             self.request.response.redirect('@@pgp-warehouse-admin')
@@ -146,11 +145,8 @@ class View( base.BaseFormView ):
                           interfaces.IAddress   : w.location }
         self.hidden_form_vars = {'wid':wid}
         super( View, self).update()
-        
-    @form.action( _(u"Edit"), condition=form.haveInputWidgets )
-    def handle_edit_action(self, action, data):
-        wid = self.request.get('wid', None)
-        if wid is not None:
-            raise Redirect('@@pgp-edit-warehouse?wid=%s'%wid)
-        raise Redirect('@@pgp-warehouse-admin')
+        self.form_name = \
+                u'Warehouse Information (<a href="@@pgp-edit-warehouse?wid=%s">Edit</a>)'%wid
 
+    def isOrdered( self ):
+        return False

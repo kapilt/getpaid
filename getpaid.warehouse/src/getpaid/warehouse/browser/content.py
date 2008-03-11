@@ -12,7 +12,8 @@ from getpaid.warehouse.interfaces import _
 class ContentInventory( PayableFormView, formbase.EditForm ):
     
     form_fields = form.Fields( interfaces.IProductInventory )
-    form_fields = form_fields.omit('store_stock')
+    form_fields['store_stock'].for_display = True
+    
     form_name = "Product Inventory"
     allowed = True
     
@@ -22,5 +23,4 @@ class ContentInventory( PayableFormView, formbase.EditForm ):
         if inventory.stock != data.get('stock', inventory.stock):
             delta = inventory.stock - inventory.store_stock
             inventory.store_stock = data.get('stock') - delta
-        print 'store_stock', inventory.store_stock
         return super(ContentInventory, self).handle_edit_action.success_handler( self, action, data )
