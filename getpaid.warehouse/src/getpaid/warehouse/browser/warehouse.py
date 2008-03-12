@@ -77,6 +77,9 @@ class Add( base.BaseFormView ):
     
     form_fields = form.Fields( interfaces.IWarehouse )
     form_fields = form_fields.select('name') + form.Fields( interfaces.IAddress )
+    form_fields['country'].custom_widget = CountrySelectionWidget
+    form_fields['state'].custom_widget = StateSelectionWidget
+
 
     def setUpWidgets(self, ignore_request=False):
         self.adapters = {}
@@ -107,8 +110,9 @@ class Edit( base.BaseFormView ):
     form_fields['name'].for_display = True
     
     form_fields = form.Fields( form_fields['name'], form.Fields( interfaces.IAddress ) )
+    form_fields['country'].custom_widget = CountrySelectionWidget
     form_fields['state'].custom_widget = StateSelectionWidget
-    form_fields['country'].custom_widget = CountrySelectionWidget    
+        
     
     form_name = _(u'Warehouse Information')
                 
