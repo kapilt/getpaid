@@ -235,9 +235,10 @@ class IShippableContent( IPayable ):
     
     # default unit is country of origin specific... 
     weight = schema.Float( title = _(u"Shipping Weight"),
-                           constraint=weightValidator )
+                           constraint=weightValidator,
+                           description = _(u"Enter a weight, only two decimal places are supported. The unit is specified in the field below."))
                            
-    weight_unit = schema.Choice( title=_(u"Weight Unit"), values=[ UNIT_POUNDS, UNIT_KILOGRAMS ] )
+    weight_unit = schema.Choice( title=_(u"Weight Unit"), values=[ UNIT_POUNDS, UNIT_KILOGRAMS ],description = _(u"Please select the unit in which you specified the shipment weight.") )
     
     def getShipWeight( self ):
         """ Shipping Weight
