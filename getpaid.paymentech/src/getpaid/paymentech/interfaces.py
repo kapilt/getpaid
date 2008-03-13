@@ -17,3 +17,4 @@ class IPaymentechOptions(interfaces.IPaymentProcessorOptions):
     merchant_id = schema.ASCIILine( title=u"Merchant Id" )
     #merchant_key = schema.ASCIILine( title=u"Transaction Key" )
     terminal_id = schema.ASCIILine( title=u"Terminal Id" )
+    check_cvv2 = schema.Bool( title=u"Double Check the Card Verification Number", default=True)

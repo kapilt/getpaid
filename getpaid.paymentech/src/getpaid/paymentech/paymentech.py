@@ -14,6 +14,12 @@ CARD_SEC_VAL = ['Visa', 'Discover', 'Mastercard']
 LAST_FOUR = "getpaid.paymentech.cc_last_four"
 APPROVAL_KEY = "getpaid.paymentech.approval_code"
 
+cvv2_codes = {'M': 'CVV match',
+              'N': 'CVV no match',
+              'P': 'CVV not processed',
+              'S': 'CVV should have been present',
+              'U': 'CVV unsupported by issuer'}
+
 def createAuthorizeXMLFile(message_type, options, order, payment):
     """
     Creates the XML file to send to the Paymentech Interface
@@ -141,6 +147,7 @@ class PaymentechResult(object):
         # 0 – Decline, 1 – Approved, 2 – Message/System Error 
         self.approval_status = getElement(self.result_resp, 'ApprovalStatus')
         self.trans_ref_num = getElement(self.result_resp, 'TxRefNum')
+        self.cvv2_resp_code = getElement(self.result_resp, 'HostCVV2RespCode')
         self.status_msg = getElement(self.result_resp, 'StatusMsg')
 
 class PaymentechAdapter(object):
@@ -170,6 +177,13 @@ class PaymentechAdapter(object):
         result = self.process(data, timeout=None)
         if result.proc_status == "0":
             if result.approval_status == '1':
+                if self.options.check_cvv2:
+                    # we check the cvv2 resp code:
+                    if result.cvv2_resp_code != 'M':
+                        if result.cvv2_resp_code in cvv2_codes:
+                            return cvv2_codes[result.cvv2_resp_code]
+                        else:
+                            return "CVV number incorrect"
                 annotation = IAnnotations(order)
                 annotation[interfaces.keys.processor_txn_id] = result.trans_ref_num
                 annotation[LAST_FOUR] = payment.credit_card[-4:]
