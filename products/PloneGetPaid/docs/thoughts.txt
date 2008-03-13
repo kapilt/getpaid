@@ -1,0 +1,62 @@
+
+--- known incompatibilites
+
+ - five.intid default configuration subscribes to every persistent object, should really be SimpleItem
+
+
+
+--- ideas for future / todo list
+
+ - total price viewlet
+
+ - move configuration settings to properties utility.. makes it easier to access from components
+
+ - async processors need to render form buttons
+
+ - container interface / or multi select widget w/ listing viewlet and options
+   to edit / delete payment methods.
+
+   validate object to handle settings. 
+
+ - need to collect email address and marketing preferences
+
+ - need to allow for easy adaptation to user properties.
+
+ - checkout user property adaptation, user.
+
+ - provide tax rule definition
+
+ - import/export for upgrade - serialization to tarball of various ore.xd files
+
+ - shipping methods implementation
+ 
+ - product catalog implementation
+
+ - Cart totals viewlet manager
+
+ - activating rich text email
+
+ - order rules that fire, can add new line items, discounts. 
+
+ - before checkout event
+
+ - business rules
+
+      - adapters 
+
+ - warehouse interface ( possiblity of multiple .. facade ?)
+
+ - allow back and forth on checkout wizard, needs greedy variable export
+
+ - discount rules
+  
+   - cart quantity discount
+
+   - discounted item / product code 
+
+   - member role / discount
+
+ - mailing list extraction of users with appropriate privacy settings 
+
+---
+
