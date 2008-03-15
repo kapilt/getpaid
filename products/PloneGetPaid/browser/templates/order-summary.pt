@@ -28,10 +28,10 @@
             <br /><br />
         </li>
         <li>
-          <tal:def define="contact view/getContactInformation;
-                           name contact/name|nothing;
-                           email contact/email;
-                           phone contact/phone;">
+          <tal:def define="b_contact view/getContactInformation;
+                           name  b_contact/name|nothing;
+                           email b_contact/email|nothing;
+                           phone b_contact/phone|nothing;">
             <span i18n:translate="">Contact Name</span> -
             <span tal:content="name" /><br />
             <span i18n:translate="">E-mail</span> -

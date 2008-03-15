@@ -486,10 +486,11 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
         return self.order.finance_state
         
     def getContactInformation(self):
-        infos = self.order.contact_information
-        return {'name': infos.name,
-                'email': infos.email,
-                'phone': infos.phone_number}
+        contact = self.order.contact_information
+        contact ={'name': contact.name,
+                  'email': contact.email,
+                  'phone': contact.phone_number}
+        return contact
         
     def getShippingAddress(self):
         infos = self.order.shipping_address

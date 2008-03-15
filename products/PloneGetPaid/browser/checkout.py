@@ -225,11 +225,11 @@ class CheckoutWizard( Wizard ):
                         url = url.replace("https://", "http://")
                     
                     self.request.response.redirect( url )
-                    self.wizard.data_manager.reset()
+                    self.data_manager.reset()
                     return False
                     
             # redirect and reset form variables
-            self.wizard.data_manager.reset()
+            self.data_manager.reset()
             self.request.response.redirect('@@checkout-wizard')
 
             return False
@@ -578,11 +578,18 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         order.order_id = self.wizard.data_manager.get('order_id')
         order.user_id = getSecurityManager().getUser().getId()
         
-        if self.wizard.data_manager.get('shipping_rate'):
+        shipping_code = self.wizard.data_manager.get('shipping_method_code')
+        if shipping_code is not None:
+            # get the names of the selected shipping service
+            shipping_service, shipping_method = decodeShipping( shipping_code )
+            
+            # get the cost
+            shipping_method_obj = getShippingMethod( order, shipping_code )
             interface.directlyProvides( order, interfaces.IShippableOrder )
-            order.shipping_service = self.wizard.data_manager.get('shipping_service')
-            order.shipping_method = self.wizard.data_manager.get('shipping_rate')
-
+            
+            order.shipping_service = shipping_service
+            order.shipping_method = shipping_method
+            order.shipping_cost = shipping_method_obj.cost
             
         notify( ObjectCreatedEvent( order ) )
         
@@ -709,19 +716,30 @@ class OrderTotals( object ):
         
     def getShippingCost( self ):
         service_code = self.request.get('shipping_method_code')
-        if not service_code:
+        method = getShippingMethod( self.context, service_code )        
+        if method is None:
             return 0
-        service_name, service_method = service_code.split('.', 1)
-        service = component.getUtility( interfaces.IShippingRateService, service_name )
-        methods = service.getRates( self.context )
-        for m in methods.shipments:
-            if m.service_code == service_method:
-                return m.cost
+        return method.cost
 
     def getTaxCost( self ):
         tax_utility = component.getUtility( interfaces.ITaxUtility )
         return tax_utility.getCost( self )
-        
+
+def getShippingMethod( order, service_code ):
+    """ decode a shipping code, and return the shipping method to be used or None """
+    if not service_code:
+        return None
+    service_name, service_method = service_code.split('.', 1)
+    service = component.getUtility( interfaces.IShippingRateService, service_name )
+    methods = service.getRates( order )
+    for m in methods.shipments:
+        if m.service_code == service_method:
+            return m
+                
+def decodeShipping( service_code ):
+    service_name, service_method = service_code.split('.', 1)
+    return service_name, service_method
+      
 class StorePropertyView(BrowserView):
     
     def _getProperty(self, name ):
