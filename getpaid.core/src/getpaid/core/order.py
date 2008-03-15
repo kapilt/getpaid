@@ -466,5 +466,8 @@ def recordOrderWorkflow( order, event ):
     audit_log = interfaces.IOrderWorkflowLog( event.object )
     audit_log.add( OrderWorkflowRecord( **data ) )
 
+def newShippableOrder( order, event ):
+    # start fufillment workflow, sends to state NEW
+    order.fulfillment_workflow.fireTransition('create')
 
  

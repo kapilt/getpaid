@@ -17,6 +17,13 @@
      for=".interfaces.IOrder
 	  hurry.workflow.interfaces.IWorkflowTransitionEvent"
      />
+     
+  <!-- Kick off Fulfillment workflow on Shippable Orders -->
+  <subscriber
+      for=".interfaces.IShippableOrder
+           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+      handler=".order.newShippableOrder"
+      />
 
   <!-- Payment Processor Workflow Integration -->
   <subscriber

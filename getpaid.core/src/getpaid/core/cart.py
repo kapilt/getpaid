@@ -88,8 +88,9 @@ class CartItemTotals( object ):
         return total
         
     def getShippingCost( self ):
-        shipping_method = component.getUtility( interfaces.IShippingMethod )
-        return shipping_method.getCost( self )
+        if not interfaces.IShippableOrder.providedBy( self ):
+            return 0
+        return decimal.Decimal( str( self.shipping_cost ) )
 
     def getTaxCost( self ):
         tax_utility = component.getUtility( interfaces.ITaxUtility )
