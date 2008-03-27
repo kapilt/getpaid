@@ -1,0 +1,100 @@
+Authorize.Net ARB Integration
+=============================
+
+Plain XML tests
+---------------
+
+---------------------------------------------------------------------------------------
+The following is the XML sent to successfully create a new subscription.
+---------------------------------------------------------------------------------------
+
+	>>> from time import gmtime, strftime
+	>>> today = strftime("%Y-%m-%d", gmtime())
+	>>> exp_date = strftime("%Y-%m", gmtime())
+	>>> import random
+	>>> amount = random.uniform(0,100)
+
+	>>> createXML = """\
+	... <?xml version="1.0" encoding="utf-8"?>
+	... <ARBCreateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
+	...   <merchantAuthentication>
+	...     <name>%s</name>
+	...     <transactionKey>%s</transactionKey>
+	...   </merchantAuthentication>
+	...   <refId>Sample</refId>
+	...   <subscription>
+	...     <name>SampleSubscription2</name>
+	...     <paymentSchedule>
+	...       <interval>
+	...         <length>1</length>
+	...         <unit>months</unit>
+	...       </interval>
+	...       <startDate>%s</startDate>
+	...       <totalOccurrences>12</totalOccurrences>
+	...       <trialOccurrences>1</trialOccurrences>
+	...     </paymentSchedule>
+	...     <amount>%.2f</amount>
+	...     <trialAmount>0.00</trialAmount>
+	...     <payment>
+	...       <creditCard>
+	...         <cardNumber>4111111111111111</cardNumber>
+	...         <expirationDate>2008-08</expirationDate>
+	...       </creditCard>
+	...     </payment>
+	...     <billTo>
+	...       <firstName>John</firstName>
+	...       <lastName>Smith</lastName>
+	...     </billTo>
+	...   </subscription>
+	... </ARBCreateSubscriptionRequest>""" % (LOGIN, KEY, today, amount)
+
+
+Transaction Keys
+----------------
+
+Each ARB transaction must be accompanied by a merchant login and a
+"transaction key".  This key is obtained from the merchant interface.  After
+importing the ARBProcessor class you must pass it your login and transaction
+key:
+
+    >>> from zc.authorizedotnet.subscription import ARBProcessor,ARBConnection
+    >>> from zc.creditcard import (AMEX, DISCOVER, MASTERCARD,
+    ...                            VISA, UNKNOWN_CARD_TYPE)
+    >>> arbconn = ARBConnection(server=SERVER_NAME, login=LOGIN, key=KEY)
+    >>> result = arbconn.sendTransaction(createXML)
+    >>> result.response_code
+    u'Ok'
+    >>> result.response_reason
+    u'Successful.'
+
+Authorizing
+-----------
+
+To authorize a charge use the ``authorize`` method.  It returns a
+``Transaction`` object.
+
+    >>> arbp = ARBProcessor(server=SERVER_NAME, login=LOGIN, key=KEY)
+    >>> amount = '%.2f' % random.uniform(0,100)
+    >>> result = arbp.create(invoice_num='1234',
+    ...						 amount=amount,
+    ...						 card_num='4007000000027',
+    ...                      exp_date=exp_date,
+    ...						 total_occurrences='12',
+    ...						 trial_occurrences='0',
+    ...						 start_date=today,
+    ...						 length=1,
+    ...						 unit='months',
+    ...						 first_name='Juan Pablo',
+    ...						 last_name='Gimenez')
+
+The result object contains details about the transaction.
+
+    >>> result.response
+    'approved'
+    >>> result.response_reason
+    u'Successful.'
+
+When the card_num is sent in, the result also contains the type of credit card:
+
+    >>> result.card_type == VISA
+    True

@@ -11,6 +11,8 @@ from zope.component import getUtility, getAdapter
 from zope.app.annotation.interfaces import IAnnotations
 
 from zc.authorizedotnet.processing import CcProcessor
+from zc.authorizedotnet.subscription import ARBProcessor
+
 from getpaid.core import interfaces
 
 from interfaces import IAuthorizeNetOptions
@@ -31,6 +33,10 @@ class AuthorizeNetAdapter(object):
         Production = "secure.authorize.net:443",
         Test = "test.authorize.net:443"
         )
+    _arb_sites = dict(
+        Production = "api.authorize.net:443",
+        Test = "apitest.authorize.net:443"
+        )
 
     def __init__(self, context):
         self.context = context
@@ -42,7 +48,7 @@ class AuthorizeNetAdapter(object):
         contact = order.contact_information
         order_id = order.getOrderId()
         contact_fields = 'Contact Name: ' + contact.name + ';  Contact Phone: ' + contact.phone_number  + ';  Contact Email: ' + contact.email
-        
+
         options = dict(
             amount = str(amount),
             card_num = payment.credit_card,
@@ -59,7 +65,7 @@ class AuthorizeNetAdapter(object):
 
 
         result = self.processor.authorize( **options )
-        
+
         # result.response may be
         # - approved
         # - error
@@ -85,7 +91,7 @@ class AuthorizeNetAdapter(object):
         annotations = IAnnotations( order )
         trans_id = annotations[ interfaces.keys.processor_txn_id ]
         approval_code = annotations[ APPROVAL_KEY ]
-        
+
         result = self.processor.captureAuthorized(
             amount = str(amount),
             trans_id = trans_id,
@@ -97,31 +103,86 @@ class AuthorizeNetAdapter(object):
             if annotation.get( interfaces.keys.capture_amount ) is None:
                 annotation[ interfaces.keys.capture_amount ] = amount
             else:
-                annotation[ interfaces.keys.capture_amount ] += amount            
+                annotation[ interfaces.keys.capture_amount ] += amount
             return interfaces.keys.results_success
 
         return result.response_reason
-    
+
     def refund( self, order, amount ):
 
         annotations = IAnnotations( order )
         trans_id = annotations[ interfaces.keys.processor_txn_id ]
         last_four = annotations[ LAST_FOUR ]
-        
+
         result = self.processor.credit(
             amount = str( amount ),
             trans_id = trans_id,
             card_num = last_four
             )
-        
+
         if result.response == SUCCESS:
             annotation = IAnnotations( order )
             if annotation.get( interfaces.keys.capture_amount ) is not None:
-                annotation[ interfaces.keys.capture_amount ] -= amount                        
+                annotation[ interfaces.keys.capture_amount ] -= amount
             return interfaces.keys.results_success
-        
+
         return result.response_reason
-    
+
+    def arb_create(self, order, payment):
+        """
+        """
+        billing = order.billing_address
+        amount = order.getTotalPrice()
+        contact = order.contact_information
+        order_id = order.getOrderId()
+        contact_fields = 'Contact Name: ' + contact.name + ';  Contact Phone: ' + contact.phone_number  + ';  Contact Email: ' + contact.email
+
+        options = dict(
+            amount = str(amount),
+            card_num = payment.credit_card,
+            last_name = payment.name_on_card,
+            phone     = payment.phone_number,
+            exp_date = payment.cc_expiration.strftime('%Y-%m'),
+            address = billing.bill_first_line,
+            city = billing.bill_city,
+            state = billing.bill_state,
+            zip = billing.bill_postal_code,
+            invoice_num = order_id,
+            description = contact_fields
+            )
+
+
+        result = self.processor.authorize( **options )
+
+        # result.response may be
+        # - approved
+        # - error
+        # - declined
+        # - held for review
+        #
+        # Other result fields:
+        #   result.response_reason
+        #   result.approval_code
+        #   result.trans_id
+
+        if result.response == SUCCESS:
+            annotation = IAnnotations( order )
+            annotation[ interfaces.keys.processor_txn_id ] = result.trans_id
+            annotation[ LAST_FOUR ] = payment.credit_card[-4:]
+            annotation[ APPROVAL_KEY ] = result.approval_code
+            return interfaces.keys.results_success
+
+        return result.response_reason
+
+
+    def arb_update(self, order):
+        """
+        """
+
+    def arb_cancel(self, order):
+        """
+        """
+
     @property
     def processor( self ):
         options = IAuthorizeNetOptions(self.context)
@@ -130,3 +191,12 @@ class AuthorizeNetAdapter(object):
                          login=options.merchant_id,
                          key=options.merchant_key)
         return cc
+
+    @property
+    def arb_processor( self ):
+        options = IAuthorizeNetOptions(self.context)
+        server = self._arb_sites.get(options.server_url)
+        arbp = ARBProcessor(server=server,
+                            login=options.merchant_id,
+                            key=options.merchant_key)
+        return arbp

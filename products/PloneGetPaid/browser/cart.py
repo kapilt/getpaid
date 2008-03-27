@@ -148,20 +148,34 @@ def lineItemTotal( item, formatter ):
 def lineItemPrice( item, formatter ):
     return "%0.2f" % (LineItemColumn("cost")(item, formatter))
 
+def lineItemTotal( item, formatter ):
+    return "%0.2f" % (item.quantity * item.cost)
+
+def lineItemFrequency( item, formatter ):
+    try:
+        return "%d" % (item.frequency)
+    except:
+        return "N/A"
+
+def lineItemTotalOccurrences( item, formatter ):
+    try:
+        return "%d" % (item.total_occurrences)
+    except:
+        return "N/A"
 
 class CartFormatter( table.StandaloneSortFormatter ):
 
     def renderExtra( self ):
         if not len( self.context ):
             return super( CartFormatter, self).renderExtra()
-        
+
         totals = interfaces.ILineContainerTotals( self.context )
         tax_price, shipping_price, subtotal_price = \
                    totals.getTaxCost(), \
                    totals.getShippingCost(), \
                    totals.getSubTotalPrice()
         total_price = tax_price + shipping_price + subtotal_price
-        
+
         buffer = [ '<div class="getpaid-totals"><table class="listing">']
         buffer.append( '<tr><th>SubTotal</th><td style="border-top:1px solid #8CACBB;">%0.2f</td></tr>'%( subtotal_price ) )
 
@@ -173,13 +187,13 @@ class CartFormatter( table.StandaloneSortFormatter ):
         if tax_price:
             buffer.append( "<tr><th>Tax</th><td>%0.2f</td></tr>"%( tax_price ) )
         else:
-            buffer.append( "<tr><th>Tax</th><td>%s</td></tr>"%( u"N/A") )            
-            
+            buffer.append( "<tr><th>Tax</th><td>%s</td></tr>"%( u"N/A") )
+
         buffer.append( "<tr><th>Total</th><td>%0.2f</td></tr>"%( total_price ) )
         buffer.append('</table></div>')
-                       
+
         return ''.join( buffer) + super( CartFormatter, self).renderExtra()
-    
+
 class ShoppingCartListing( ContainerViewlet ):
 
     actions = ContainerViewlet.actions.copy()
@@ -191,6 +205,9 @@ class ShoppingCartListing( ContainerViewlet ):
         column.GetterColumn( title=_(u"Name"), getter=lineItemURL ),
         column.GetterColumn( title=_(u"Price"), getter=lineItemPrice ),
         column.GetterColumn( title=_(u"Total"), getter=lineItemTotal ),
+        column.GetterColumn( title=_(u"Frequency"), getter=lineItemFrequency ),
+        column.GetterColumn( title=_(u"Total occurrences"),
+                             getter=lineItemTotalOccurrences ),
        ]
 
     selection_column = columns[0]
@@ -198,7 +215,7 @@ class ShoppingCartListing( ContainerViewlet ):
     template = ZopeTwoPageTemplateFile('templates/cart-listing.pt')
 
     formatter_factory = CartFormatter
-    
+
     def __init__( self, *args, **kw):
         super( ShoppingCartListing, self ).__init__( *args, **kw )
 

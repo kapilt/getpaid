@@ -8,9 +8,9 @@ The applied zope3 interface allows us to use an adapter to add the component arc
 create views and adapters for the content. BuyableContent is delivered virtually, such as
 electronic PDF or simply viewing the content on the site.
 
-ShippableContent describes a physical, tangible item that must be shipped to an address. 
-Gift cards, products like T-Shirts, or paper-based content that goes into an envelope are 
-all examples of ShippableContent. This allows a content object to be added to a shopping cart, 
+ShippableContent describes a physical, tangible item that must be shipped to an address.
+Gift cards, products like T-Shirts, or paper-based content that goes into an envelope are
+all examples of ShippableContent. This allows a content object to be added to a shopping cart,
 shipped, etc.
 
 PremiumContent implies that the consumer of the content has a local role of Premium Member for the
@@ -53,7 +53,7 @@ class LineItemFactory( object ):
         if item_id in self.cart:
             self.cart[ item_id ].quantity += 1
             return
-        
+
         found = False
         for marker, iface in PayableMarkerMap.items():
             if marker.providedBy( content ):
@@ -78,10 +78,10 @@ class LineItemFactory( object ):
         nitem.cost = payable.price
         nitem.quantity = 1
 
-        # 
+        #
         self.cart[ nitem.item_id ] = nitem
         self.cart.last_item = nitem.item_id
-        
+
         return nitem
 
     def delete(self, item_id):
@@ -99,8 +99,8 @@ class LineItemFactory( object ):
                     self.cart.last_item = self.cart.keys()[-1]
                 else:
                     self.cart.last_item = None
-            
- 
+
+
 
 #################################
 # Buyable Content
@@ -119,15 +119,15 @@ class BuyableContentAdapter( BuyableContentStorage ):
     of a buyable in an annotation adapter
     """
     interface.implements( interfaces.IBuyableContent )
-    
+
     def __init__( self, context ):
         self.context = context
-    
+
 
 #################################
 # Shippable Content
 """
-shippable deletions need to track orders not shipped 
+shippable deletions need to track orders not shipped
 """
 
 ShippableContentStorage = options.PersistentOptions.wire( "ShippableContentStorage", "getpaid.content.shippable", interfaces.IShippableContent )
@@ -135,7 +135,7 @@ ShippableContentStorage = options.PersistentOptions.wire( "ShippableContentStora
 class ShippableContentAdapter( ShippableContentStorage ):
 
     interface.implements( interfaces.IShippableContent )
-    
+
     def __init__( self, context ):
         self.context = context
 
@@ -147,7 +147,7 @@ PremiumContentStorage = options.PersistentOptions.wire( "PremiumContentStorage",
 class PremiumContentAdapter( PremiumContentStorage ):
 
     interface.implements( interfaces.IPremiumContent )
-    
+
     def __init__( self, context ):
         self.context = context
 
@@ -172,6 +172,20 @@ class DonatableContentAdapter( DonatableContentStorage ):
     of a donate-able in an annotation adapter
     """
     interface.implements( interfaces.IDonationContent )
+
+    def __init__( self, context ):
+        self.context = context
+
+#################################
+# RecurringPayment Content
+
+RecurringPaymentContentStorage = options.PersistentOptions.wire( "RecurringPaymentContentStorage",
+                                                                 "getpaid.content.recurringpayment",
+                                                                 interfaces.IRecurringPaymentContent )
+
+class RecurringPaymentContentAdapter( RecurringPaymentContentStorage ):
+
+    interface.implements( interfaces.IRecurringPaymentContent )
 
     def __init__( self, context ):
         self.context = context

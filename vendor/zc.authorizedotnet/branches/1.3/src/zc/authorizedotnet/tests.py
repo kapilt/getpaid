@@ -258,6 +258,16 @@ def test_suite():
             setUp = remoteSetUp,
             )
     remote.level = 5
+    arb = doctest.DocFileSuite(
+            'subscription.txt',
+            globs = dict(
+                SERVER_NAME='apitest.authorize.net',
+                ),
+            optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS,
+            checker = checker,
+            setUp = remoteSetUp,
+            )
+    arb.level = 5
     local = doctest.DocFileSuite(
             'README.txt',
             globs = dict(
@@ -270,7 +280,7 @@ def test_suite():
             )
     unit = doctest.DocTestSuite('zc.authorizedotnet.processing',
                                 optionflags=doctest.ELLIPSIS)
-    return unittest.TestSuite((local, remote, unit))
+    return unittest.TestSuite((local, arb, unit))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

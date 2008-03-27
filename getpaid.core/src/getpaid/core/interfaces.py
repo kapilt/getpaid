@@ -44,7 +44,7 @@ class IStoreSettings( IPersistentOptions ):
                                   required = True,
                                   default = u""
                                 )
-    
+
 
 #################################
 # Stuff To Buy
@@ -55,13 +55,13 @@ class IPayable( Interface ):
     a context and the request, to allow for pricing / display customization on a user
     basis.
     """
-    
+
     made_payable_by = schema.TextLine(
         title = _(u"Made Payable By"),
         readonly = True,
         required = False
         )
-    
+
     product_code = schema.TextLine( title = _(u"Product Code"),
                         description=_(u"An organization's unique product identifier (not required since shopping cart uses content UID internally)"),
                         required=False
@@ -83,7 +83,7 @@ class ISubscription( IPayable ):
 class IBuyableContent( IPayable ):
     """ Purchasable Content Delivered Virtually
     """
-    
+
 class IPremiumContent( Interface ):
     """ Premium Content for Subscriptions
     """
@@ -97,10 +97,16 @@ class IShippableContent( IPayable ):
     """
     dimensions = schema.TextLine( title = _(u"Dimensions"))
     sku = schema.TextLine( title = _(u"Product SKU"))
-    
+
     def getShipWeight( self ):
         """ Shipping Weight
         """
+
+class IRecurringPaymentContent( IPayable ):
+    """ Recurring Payment Content
+    """
+    frecuency = schema.TextLine( title = _(u"Frecuency"))
+    total_occurrences = schema.TextLine( title = _(u"Total Occurrences"))
 
 #################################
 # Events
@@ -109,7 +115,7 @@ class IPayableCreationEvent( IObjectEvent ):
     """ sent out when a payable is created
     """
 
-    payable = Attribute("object implementing payable interface")    
+    payable = Attribute("object implementing payable interface")
     payable_interface = Attribute("payable interface the object implements")
 
 
@@ -126,7 +132,7 @@ class IPaymentProcessor( Interface ):
 
     a processor can keep processor specific information on an orders
     annotations.
-    """ 
+    """
 
     def authorize( order, payment_information ):
         """
@@ -142,11 +148,11 @@ class IPaymentProcessor( Interface ):
         """
         reset
         """
-    
+
 class IRecurringPaymentProcessor( IPaymentProcessor ):
     """ a payment processor that can handle recurring line items
     """
-    
+
 class IPaymentProcessorOptions( Interface ):
     """ Options for a Processor
 
@@ -161,11 +167,11 @@ class IWorkflowPaymentProcessorIntegration( Interface ):
         """
         process a workflow event
         """
-    
+
 #################################
 # Info needed for payment processing
 
-    
+
 class ILineItem( Interface ):
     """
     An Item in a Cart
@@ -181,7 +187,7 @@ class ILineItemFactory( Interface ):
     """ encapsulation of creating and adding a line item to a line item container
     from a payable. sort of like an adding view
     """
-    
+
     def create( payable ):
         """
         create a payable from a line item
@@ -194,7 +200,7 @@ class ILineItemContainer( IContainer ):
 class ILineContainerTotals( Interface ):
     # interface for getting prices for a collection of items (aka an order),
     # mostly encapsulation, of other components
-    
+
     def getTotalPrice( ):
         """
         return the total price of all line items in the container
@@ -214,7 +220,7 @@ class ILineContainerTotals( Interface ):
         """
         get the price of all the items in the contaners
         """
-    
+
 class IPayableLineItem( ILineItem ):
     """
     A line item linked to a payable
@@ -229,7 +235,7 @@ class IPayableLineItem( ILineItem ):
 class IRecurringLineItem( IPayableLineItem ):
 
     period = schema.Int( title = _(u"Period as a timedelta"))
-    
+
 
 class IGiftCertificate( ILineItem ):
     """ A Gift Certificate
@@ -250,9 +256,9 @@ class IShoppingCartUtility( Interface ):
         """
         remove the current's users cart from the session if it exists
         """
-        
+
 class IShoppingCart( ILineItemContainer ):
-    """ A Shopping Cart 
+    """ A Shopping Cart
     """
     def size( ):
         """
@@ -290,7 +296,7 @@ class ITaxUtility( Interface ):
 
         the object received may only be a line item container, as opposed to an order object.
         """
-        
+
 
 #################################
 # Payment Information Details
@@ -302,7 +308,7 @@ class IAddress( Interface ):
     second_line = schema.TextLine( title = _(u"Second Line"), required=False )
     city = schema.TextLine( title = _(u"City") )
     country = schema.Choice( title = _(u"Country"),
-                               vocabulary = "getpaid.countries")    
+                               vocabulary = "getpaid.countries")
     state = schema.Choice( title = _(u"State"),
                              vocabulary="getpaid.states")
     postal_code = schema.TextLine( title = _(u"Zip/Postal Code"))
@@ -321,7 +327,7 @@ class IShippingAddress( Interface ):
     ship_postal_code = schema.TextLine( title = _(u"Zip Code"), required=False)
 
 class IBillingAddress( Interface ):
-    """ where to bill 
+    """ where to bill
     """
     bill_first_line = schema.TextLine( title = _(u"First Line"))
     bill_second_line = schema.TextLine( title = _(u"Second Line"), required=False )
@@ -332,43 +338,43 @@ class IBillingAddress( Interface ):
                                   vocabulary="getpaid.states" )
     bill_postal_code = schema.TextLine( title = _(u"Zip Code"))
 
-MarketingPreferenceVocabulary = SimpleVocabulary( 
-                                   map(SimpleVocabulary.createTerm, 
+MarketingPreferenceVocabulary = SimpleVocabulary(
+                                   map(SimpleVocabulary.createTerm,
                                        ( (True, "Yes", _(u"Yes")), (False, "No", _(u"No") ) )
                                        )
                                 )
-                                
-EmailFormatPreferenceVocabulary = SimpleVocabulary( 
-                                   map( lambda x: SimpleVocabulary.createTerm(*x), 
+
+EmailFormatPreferenceVocabulary = SimpleVocabulary(
+                                   map( lambda x: SimpleVocabulary.createTerm(*x),
                                        ( (True, "Yes", _(u"HTML")), (False, "No", _(u"Plain Text") ) )
                                        )
-                                  )                                
+                                  )
 
 class IUserContactInformation( Interface ):
     """docstring for IUserContactInformation"""
-    
+
     name = schema.TextLine( title = _(u"Your Name"))
-    
+
     phone_number = PhoneNumber( title = _(u"Phone Number"),
                                 description = _(u"Only digits allowed - e.g. 3334445555 and not 333-444-5555 "))
-                                
-    email = schema.TextLine( 
+
+    email = schema.TextLine(
                         title=_(u"Email"),
-                        description = _(u"Contact Information") 
+                        description = _(u"Contact Information")
                         )
-        
+
     marketing_preference = schema.Bool(
-                                        title=_(u"Can we contact you with offers"), 
-                                        description=_(u"Can we contact you regarding new offers?"),                            
-                                        ) 
-    
-    email_html_format = schema.Choice( 
-                                        title=_(u"Email Format"), 
+                                        title=_(u"Can we contact you with offers"),
+                                        description=_(u"Can we contact you regarding new offers?"),
+                                        )
+
+    email_html_format = schema.Choice(
+                                        title=_(u"Email Format"),
                                         description=_(u"Would you prefer to receive rich html emails or only plain text"),
                                         vocabulary = EmailFormatPreferenceVocabulary
                                         )
 
-                                
+
 class IUserPaymentInformation( Interface ):
     """ A User's payment information to be optionally collected by the
     payment processor view.
@@ -402,11 +408,11 @@ class IPaymentTransaction( ILineItemContainer ):
                             values = ( _(u"Accepted"),
                                        _(u"Declined"),
                                        _(u"Refunded") ) )
-    
+
 #################################
 #
 class IProductCatalog( Interface ):
-    
+
     def query( **kw ):
         """ query products """
     def __setitem__( product_id, product ):
@@ -474,15 +480,15 @@ class IDonationOrder( Interface ):
 
 class IOrderSetReport( Interface ):
     """ store adapters that can serialize a set of orders into a report"""
-    
+
     title = schema.TextLine()
     mime_type = schema.ASCIILine()
 
     def __call__( orders ):
-        """ 
+        """
         return a rendered report string from the given ordrs
         """
-    
+
 class IOrderWorkflowLog( Interface ):
     """ an event log based history of an order's workflow
     """
@@ -499,7 +505,7 @@ class IOrderWorkflowEntry( Interface ):
     """
     changed_by = schema.ASCIILine( title = _(u"Changed By"), readonly = True )
     change_date = schema.Date( title = _(u"Change Date"), readonly = True)
-    change_kind = schema.TextLine( title=_(u"Change Kind"), readonly=True) 
+    change_kind = schema.TextLine( title=_(u"Change Kind"), readonly=True)
     comment = schema.ASCIILine( title = _(u"Comment"), readonly = True, required=False )
     new_state = schema.ASCIILine( title = _(u"New State"), readonly = True)
     previous_state = schema.ASCIILine( title = _(u"Previous State"), readonly = True )
@@ -531,24 +537,24 @@ class keys:
 
     # how much of the order have we charged
     capture_amount= 'getpaid.capture_amount'
-    
+
     # processor specific txn id for an order
     processor_txn_id = 'getpaid.processor.uid'
-    
+
     # name of processor adapter
     processor_name = 'getpaid.processor.name'
 
     # sucessful call to a processor
     results_success = 1
     results_async = 2
-    
+
 class workflow_states:
 
     class order:
         # order workflows are executed in parallel
 
         class finance:
-            # name of parallel workflow            
+            # name of parallel workflow
             name = "order.finance"
 
             REVIEWING = 'REVIEWING'
@@ -559,16 +565,16 @@ class workflow_states:
             PAYMENT_DECLINED = 'PAYMENT_DECLINED'
             CANCELLED = 'CANCELLED'
             CANCELLED_BY_PROCESSOR = 'CANCELLED_BY_PROCESSOR'
-            
+
         class fulfillment:
             # name of parallel workflow
-            name = "order.fulfillment"            
+            name = "order.fulfillment"
 
             NEW = 'NEW'
             PROCESSING = 'PROCESSING'
             DELIVERED = 'DELIVERED'
             WILL_NOT_DELIVER = 'WILL_NOT_DELIVER'
-            
+
     class item:
         NEW = 'NEW'
         PROCESSING = 'PROCESSING'
@@ -588,4 +594,4 @@ class workflow_states:
         SHIPPED = 'SHIPPED'
         SHIPPABLE = 'SHIPPABLE'
         CHARGED = 'CHARGED'
-            
+

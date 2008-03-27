@@ -61,6 +61,7 @@ class AuthorizeNetConnection(object):
             )
 
     def sendTransaction(self, **kws):
+#        import pdb;pdb.set_trace()
         # if the card number passed in is the "generate an error" card...
         if kws.get('card_num') == '4222222222222':
             # ... turn on test mode (that's the only time that card works)
@@ -82,7 +83,7 @@ class AuthorizeNetConnection(object):
         response = conn.getresponse()
         fields = response.read().split(self.delimiter)
         result = TransactionResult(fields)
-        
+
         if (self.salt is not None
         and not result.validateHash(self.login, self.salt)):
             raise ValueError('MD5 hash is not valid (trans_id = %r)'
@@ -142,7 +143,6 @@ class AuthorizeNetConnection(object):
             fields_pairs.append(('x_line_item', '<|>'.join(item)))
         return urllib.urlencode(fields_pairs)
 
-
 class CcProcessor(object):
     def __init__(self, server, login, key, salt=None, timeout=None):
         self.connection = AuthorizeNetConnection(
@@ -160,7 +160,7 @@ class CcProcessor(object):
         if card_num is not None and len(card_num) >= 4:
             card_type = zc.creditcard.identifyCreditCardType(card_num[:4], len(card_num))
             result.card_type = card_type
-        
+
         return result
 
     def captureAuthorized(self, **kws):

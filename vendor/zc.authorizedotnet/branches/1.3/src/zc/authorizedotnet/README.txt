@@ -277,3 +277,4 @@ floating point representation issues.
     Traceback (most recent call last):
         ...
     ValueError: amount must be a string
+

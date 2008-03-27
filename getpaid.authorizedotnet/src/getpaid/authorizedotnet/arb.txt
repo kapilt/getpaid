@@ -1,0 +1,13 @@
+GetPaid Authorize.Net ARB
+=========================
+
+
+Store Specific Processor Setting Tests
+--------------------------------------
+
+Creating an Order
+=================
+
+	>>> from getpaid.core.order import Order
+	>>> order = Order()
+
