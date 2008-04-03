@@ -50,3 +50,5 @@ class OriginRouter( object ):
                            country = store_settings.contact_country )
         
         return contact, address
+        
+    getOrigin = getStoreSettings
