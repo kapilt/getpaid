@@ -1,0 +1,9 @@
+<metal:page use-macro="context/@@manage-getpaid-settings-template/macros/admin"
+	    i18n:domain="plonegetpaid">
+  <metal:block fill-slot="admin_content">
+
+	<tal:block content="structure provider:getpaid.warehouse.fulfillment">
+	</tal:block>
+
+  </metal:block>
+</metal:page>

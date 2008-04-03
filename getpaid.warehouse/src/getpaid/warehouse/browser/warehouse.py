@@ -42,7 +42,7 @@ class Listing( ContainerViewlet ):
     """ viewlet for managing contents """
     
     actions = ContainerViewlet.actions.copy()
-    template = ViewPageTemplateFile('listing.pt')
+    template = ViewPageTemplateFile('warehouse-actions.pt')
     
     columns = [
         column.SelectionColumn( lambda item: item.name, name="selection"),
