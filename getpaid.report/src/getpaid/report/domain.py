@@ -1,55 +1,51 @@
-from zope import interface
-from getpaid.core import interfaces
-from ore.alchemist import Session
 
-from interfaces import IRDBOrder
+from sqlalchemy import orm
+
 import schema
 
-class Order( object ):
-    interface.implements( IRDBOrder )
-        
+
+class Product( object ):
+    """ """
+    
+orm.mapper( Product, schema.products )
+
+class LogEntry( object ):
+    """ """
+    
+orm.mapper( LogEntry, schema.order_log )
+
 class Address( object ):
-    pass
-    
-class BillingAddress( Address ):
-    interface.implements( interfaces.IBillingAddress )
-    
-class ShippingAddress( Address ):
-    interface.implements( interfaces.IShippingAddress )
+    """ """    
+
+orm.mapper( Address, schema.addresses )
     
 class LineItem( object ):
-    interface.implements( interfaces.ILineItem )
-    
-class ShippableLineItem( object ):
-    interface.implements( interfaces.IShippableLineItem )
-    
-class OrderLogEntry( object ):
-    interface.implements( interfaces.IOrderWorkflowEntry )
+    """ """
 
-class OrderLog( object ):
-    interface.implements( interfaces.IOrderWorkflowLog )
-        
-    def __init__( self, context ):
-        self.context = context
-        
-    def __iter__( self ):
-        return iter( 
-            session.query( OrderLogEntry ).filter( 
-                    schema.order_log.c.order_id == self.context.order_id,
-                    ).order_by( schema.order_log.c.creation_date ).all()
-                    )
-        
-    def last( self ):
-        session = Session()
-        return session.query( OrderLogEntry ).filter( 
-                schema.order_log.c.order_id == self.context.order_id,
-                ).order_by( schema.order_log.c.creation_date ).one()
-            
-class Warehouse( object ):
-    pass
+orm.mapper( LineItem, schema.items )
 
-class WarehouseStock( object ):
-    pass
-        
+
+class Order( object ):
+    """ """    
+
+orm.mapper(
+    Order, schema.orders,
+    properties={
+      'log':orm.relation( LogEntry, backref='order' ),
+      'items':orm.relation( LineItem, backref='order'),
+      'shipping_address':orm.relation( Address, primaryjoin=(schema.orders.c.ship_id==schema.addresses.c.address_id)),
+      'billing_address':orm.relation( Address, primaryjoin=(schema.orders.c.billing_id==schema.addresses.c.address_id)),      
+      }
+    )
+
+class Customer( object ):
+    """ """
+
+orm.mapper(
+    Customer, schema.customers,
+    properties = {
+       'orders':orm.relation( Order )
+    }
+    )
 
     

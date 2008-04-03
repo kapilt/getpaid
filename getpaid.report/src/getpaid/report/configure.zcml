@@ -1,0 +1,15 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <subscriber
+     for="getpaid.core.interfaces.IOrder
+          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+     handler=".sync.handleNewOrder"
+     />
+
+  <subscriber
+     for="getpaid.core.interfaces.IOrder
+          zope.lifecycleevent.interfaces.IWorkflowTransitionEvent"
+     handler=".sync.handleOrderTransition"
+     />
+
+</configure>
