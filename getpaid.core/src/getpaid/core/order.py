@@ -24,7 +24,7 @@
 """
 order utility implementation
 """
-import decimal, datetime, random
+import datetime, random
 
 from persistent import Persistent
 from persistent.list import PersistentList
@@ -176,6 +176,10 @@ class OrderManager( Persistent ):
             if self.get( order_id ) is None:
                 break
         return order_id
+
+    def reindex( self, order ):
+        """ reindex an order """
+        return self.storage.reindex( order )
 
     def __contains__( self, order_id ):
         return order_id in self.storage
@@ -466,8 +470,17 @@ def recordOrderWorkflow( order, event ):
     audit_log = interfaces.IOrderWorkflowLog( event.object )
     audit_log.add( OrderWorkflowRecord( **data ) )
 
-def newShippableOrder( order, event ):
+def reindexOrder( order, event ):
+    manager = component.getUtility( interfaces.IOrderManager )
+    if order.order_id in manager:
+        manager.reindex( order )
+
+def startOrderFulfillmentWorkflow( order, event ):
+    """ start order and item fulfillment workflow """
     # start fufillment workflow, sends to state NEW
     order.fulfillment_workflow.fireTransition('create')
+    for item in order.shopping_cart.values():
+        item.fulfillment_workflow.fireTransition('create')
+        
 
  

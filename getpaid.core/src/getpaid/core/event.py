@@ -52,10 +52,3 @@ class BeforeCheckoutEvent( ObjectEvent ):
 #     
 #     if interfaces.IPayable.providedBy( object ):
 #         notify( PayableCreationEvent( object, object, interfaces.IPayable ) )
-
-        
-        
-    
-    
-    
-    

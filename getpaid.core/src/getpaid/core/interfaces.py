@@ -598,16 +598,6 @@ class IUserPaymentInformation( Interface ):
                              min_length = 3,
                              max_length = 4)
 
-
-class IPaymentTransaction( ILineItemContainer ):
-    """  A Payment that's been applied
-    """
-
-    status = schema.Choice( title = _(u"Payment Status"),
-                            values = ( _(u"Accepted"),
-                                       _(u"Declined"),
-                                       _(u"Refunded") ) )
-    
 #################################
 #
 class IProductCatalog( Interface ):
@@ -631,6 +621,9 @@ class IOrderManager( Interface ):
         """ retrieve an order
         """
 
+    def reindex( order ):
+        """ reindex a modified order
+        """
 # future interface
 #    def __setitem__( order_id, order ):
 #               """ save an order

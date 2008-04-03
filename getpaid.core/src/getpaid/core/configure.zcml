@@ -18,11 +18,18 @@
 	  hurry.workflow.interfaces.IWorkflowTransitionEvent"
      />
      
-  <!-- Kick off Fulfillment workflow on Shippable Orders -->
+  <!-- Reindex Orders on workflow changes -->
   <subscriber
-      for=".interfaces.IShippableOrder
+     for=".interfaces.IOrder
+	  hurry.workflow.interfaces.IWorkflowTransitionEvent"
+     handler=".order.reindexOrder"
+     />
+
+  <!-- Kick off Fulfillment workflow on Orders -->
+  <subscriber
+      for=".interfaces.IOrder
            zope.lifecycleevent.interfaces.IObjectCreatedEvent"
-      handler=".order.newShippableOrder"
+      handler=".order.startOrderFulfillmentWorkflow"
       />
 
   <!-- Payment Processor Workflow Integration -->
