@@ -30,6 +30,7 @@ import Acquisition
 from AccessControl import getSecurityManager
 from ZTUtils import make_hidden_input
 
+from Products.Five.formlib import formbase
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
@@ -355,6 +356,7 @@ class CheckoutAddress( BaseCheckoutForm ):
         return adapters
     
     def update( self ):
+        formbase.processInputs( self.request )
         self.adapters = self.wizard.data_manager.adapters
         super( CheckoutAddress, self).update()
     
