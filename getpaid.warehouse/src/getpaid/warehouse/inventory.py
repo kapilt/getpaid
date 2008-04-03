@@ -30,8 +30,11 @@ def handleNewOrder( order, event ):
         if not ( icore.IShippableLineItem.providedBy( item ) 
                  and icore.IPayableLineItem.providedBy( item ) ):
             continue
-            
-        inventory = interfaces.IProductInventory( item.resolve() )
+
+        payable = item.resolve()
+        if payable is None:
+            continue
+        inventory = interfaces.IProductInventory( payable )
         inventory.store_stock -= item.quantity
 
 def handleFufilledOrder( order, event ):
@@ -51,7 +54,7 @@ def handleFufilledOrder( order, event ):
             
         payable = item.resolve() 
         if payable is None:
-            return
+            continue
             
         inventory = interfaces.IProductInventory( payable )
         inventory.stock -= item.quantity
