@@ -174,7 +174,8 @@ class OrderSearchComponent( core.ComponentViewlet ):
     
     form_fields = form.Fields( 
         schema.Choice( **define( title=u"Created", __name__=u"creation_date",
-                                 values=( [ d[0] for d in date_search_order ] ) ) ),
+                                 values=( [ d[0] for d in date_search_order ] ),
+                                 default="last 7 days") ),
         schema.Choice( **define( title=u"Status", __name__=u"finance_state", values= _finance_values ) ),
         schema.Choice( **define( title=u"Fulfillment", __name__=u"fulfillment_state", values= _fulfillment_values ) ),
         schema.TextLine( **define( title=u"User Id", __name__=u"user_id") ),
