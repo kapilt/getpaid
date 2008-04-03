@@ -718,8 +718,6 @@ class OrderTotals( object ):
         
     def getShippingCost( self ):
         service_code = self.request.get('shipping_method_code')
-        if isinstance( service_code, list):
-            service_code = service_code[-1]
         method = getShippingMethod( self.context, service_code )        
         if method is None:
             return 0
@@ -733,6 +731,8 @@ def getShippingMethod( order, service_code ):
     """ decode a shipping code, and return the shipping method to be used or None """
     if not service_code:
         return None
+    if isinstance( service_code, list):
+        service_code = service_code[-1]    
     service_name, service_method = service_code.split('.', 1)
     service = component.getUtility( interfaces.IShippingRateService, service_name )
     methods = service.getRates( order )
