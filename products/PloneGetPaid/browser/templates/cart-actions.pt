@@ -8,6 +8,8 @@
         id="getpaid.cart.actions">
 
     <div class="form-controls" tal:condition="view/availableActions">
+    
+    <input type="hidden" name="came_from" tal:attributes="value request/came_from|nothing" />
   <!-- action/render doesn't handle i18n translations (fix)
     <input tal:repeat="action view/actions"
            tal:replace="structure action/render"

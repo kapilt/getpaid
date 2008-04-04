@@ -267,7 +267,12 @@ class ShoppingCartActions( FormViewlet ):
             payable = getToolByName(self.context, 'portal_url').getPortalObject()
         else:
             payable = getToolByName( self.context, 'reference_catalog').lookupObject( last_item )
-        return self.request.RESPONSE.redirect(payable.absolute_url()+'/view')
+        if not self.request.get('came_from'):
+            next_url = payable.absolute_url()+'/view'
+        else:
+            next_url = self.request.get('came_from')
+        print data.keys()
+        return self.request.RESPONSE.redirect(next_url)
 
     @form.action(_("Checkout"), condition="doesCartContainItems", name="Checkout")
     def handle_checkout( self, action, data ):
