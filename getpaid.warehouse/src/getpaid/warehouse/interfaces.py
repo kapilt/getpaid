@@ -10,7 +10,7 @@ from zope.viewlet.interfaces import IViewletManager
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema import vocabulary
 
-_ = MessageFactory('getpaid')
+from i18n import _
 
 class IWarehouse( interface.Interface ):
     name = schema.TextLine( title=_(u"Warehouse Name") )
@@ -39,3 +39,9 @@ class IProductInventory( interface.Interface ):
 
 class IWarehouseContainerVM( IViewletManager ):
     """ warehouse utility's viewlet manager """
+
+class IWarehouseFulfillmentVM( IViewletManager ):
+    """ warehouse fulfilmment viewlet manager """
+
+class IOrderFulfillmentVM( IViewletManager ):
+    """ order fulfillment viewlet manager """
