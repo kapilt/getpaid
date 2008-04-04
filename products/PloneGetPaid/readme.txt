@@ -1,6 +1,6 @@
 **GetPaid for Plone**
 
-*Product Description: Version 0.3 (Red Ochre Release)*
+*Product Description: Version 0.6*
 
 Congratulations - you have installed GetPaid for Plone! GetPaid provides you basic commerce functionality (donations, shopping cart, checkout) and order management out of the box while providing a flexible framework for creating custom ecommerce applications. 
 
@@ -18,13 +18,13 @@ How to Start Using GetPaid:
 
  - Install:  From the Plone Quick Installer, install PloneGetPaid. This will also add other tools that GetPaid needs. 
 
- - Setup: From the Plone Setup area, scroll down to the area for configuration of custom products and click on GetPaid. This will take you to the administrative screens for GetPaid. At a minimum, you will need to set what content types will be buyable (on the "Content Types" screen) and the payment processor (setting to Testing Processor will allow you to test the product). If you do not have a mailhost set on your server, you will need to disable the email notifications. Also, if you want to receive email notifications, be sure to enter an email address in the "Site Profile" part in the GetPaid Setup. We recommend that you fill out information in all the screens applicable to your store to provide the best user experience. 
+ - Setup: From the Plone Setup area, scroll down to the area for configuration of custom products and click on GetPaid. This will take you to the administrative screens for GetPaid. At a minimum, you will need to set the required fields on the Site Profle, what content types will be buyable (on the "Content Types" screen) and the payment processor (setting to Testing Processor will allow you to test the product- you will need to click "apply" on this screen if this is the first time setting it up). If you do not have a mailhost set on your server, you will need to disable the email notifications. Also, if you want to receive email notifications, be sure to enter an email address in the "Site Profile" part in the GetPaid Setup; you will also need to set a zip code here if you have shipping enabled. We recommend that you fill out information in all the screens applicable to your store to provide the best user experience. 
 
- - Content: Go to the content of your site. When you click on the "action" menu while viewing a type of content you selected in the "content types" configuration, you will see options to make the content "buyable", a "donation", "shippable", etc. Select the option you want and then fill in the required fields (ie price). 
+ - Content: Go to the content of your site. When you click on the "action" menu while viewing a type of content you selected in the "content types" configuration, you will see options to make the content "buyable", a "donation", "shippable", etc. Select the option you want and then fill in the required fields (ie price and/or other fields). 
 
 Payment Processors:
 
-  GetPaid currently has two working payment processors: Authorize.net and a Test Processor (so you can experience the features before setting up/activating your account). Authorize.net requires you to have a US-based merchant account. Other payment processors are also being integrated (Ogone - which allows European-based merchant accounts, Paymentech, PayPal, GoogleCheckout). It is not the intent of this document to answer all your questions about payment processors, payment gateways, and merchant accounts. We suggest you ask on the development mailing list (see below) for more questions if you are unfamiliar with these. 
+  GetPaid currently has four working payment processors (Authorize.net, Ogone, Paymentech, and GoogleCheckout) plus a Test Processor (so you can experience the features before setting up/activating your account). Authorize.net requires you to have a US-based merchant account. Other payment processors are also being integrated (Ogone - which allows European-based merchant accounts, Paymentech, PayPal, GoogleCheckout). It is not the intent of this document to answer all your questions about payment processors, payment gateways, and merchant accounts. We suggest you ask on the development mailing list (see below) for more questions if you are unfamiliar with these. 
 
 How to Customize Functionality:
 
@@ -51,6 +51,8 @@ Credits:
   Project leaders: Kapil Thangavelu is the chief architect and author of the product. Christopher Johnson is the project organizer. Jon Stahl is the project's NGO Liason.
 
   Lots of people have contributed to this project through our sprints. Thanks to all those who participated in the BBQSprint, Google DocComm Sprint, and i18n Sprint. For more complete list of credits, please see "GetPaid Credits":http://plonegetpaid.com/about/credits/
+
+  This second release has been made possible by a lot of help from the great GetPaid community, including Liam, Lucie, Perrito, and Maurits. We are also grateful for the companies that have used GetPaid and contributed a lot to its improvements, including "ifPeople":http://www.ifpeople.net, "SixFeetUp":http://sixfeetup.com, and "Abstract Edge":http://abstractedge.com . 
 
   Special thanks to our sponsors that helped us "social source" this project!
 
