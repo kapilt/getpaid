@@ -1,4 +1,13 @@
 """
+
+sync options,
+
+ - sync synchronously
+
+ - sync async
+ 
+we want to do several kinds of reports
+
 $Id: $
 """
 
@@ -30,7 +39,9 @@ def copyItem( source, target ):
 
     target.item_zid = source.item_id
 
-def copyProduct( source, target ):
+def copyProduct( item, source, target ):
+
+    #target.product_code = item.
     
     inventory = component.queryAdapter( source, interfaces.IProductInventory )
     target.pick_bin = target.pickbin
@@ -44,7 +55,8 @@ def handleOrderTransition( _order, event ):
 def handleNewOrder( _order, event ):
     """
     """
-
+    s = session.Session()
+    
     order = domain.Order()
 
     # handle addresses
@@ -65,7 +77,21 @@ def handleNewOrder( _order, event ):
         copyItem( _item, item )
         order.items.append( item )
 
-    s = session.Session()
+        # serialize products if we haven't seen them.
+        if not interfaces.IPayableLineItem.providedBy( _item ):
+            continue        
+        if s.query( domain.Product ).query( domain.Product.content_uid == _item.uid ).count():
+            continue
+        
+        payable = _item.resolve()
+        if payable is None:
+            continue
+        
+        product = domain.Product()
+        copyProduct( item, payable, product )
+        
+
+        
     s.begin()
     s.save( order )
     s.commit()

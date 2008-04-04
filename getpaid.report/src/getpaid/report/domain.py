@@ -3,30 +3,28 @@ from sqlalchemy import orm
 
 import schema
 
-
 class Product( object ):
     """ """
     
-orm.mapper( Product, schema.products )
-
 class LogEntry( object ):
     """ """
-    
-orm.mapper( LogEntry, schema.order_log )
 
 class Address( object ):
     """ """    
-
-orm.mapper( Address, schema.addresses )
     
 class LineItem( object ):
     """ """
 
-orm.mapper( LineItem, schema.items )
-
-
 class Order( object ):
     """ """    
+
+class Customer( object ):
+    """ """
+
+orm.mapper( Product, schema.products )    
+orm.mapper( LogEntry, schema.order_log )
+orm.mapper( Address, schema.addresses )
+orm.mapper( LineItem, schema.items )
 
 orm.mapper(
     Order, schema.orders,
@@ -37,9 +35,6 @@ orm.mapper(
       'billing_address':orm.relation( Address, primaryjoin=(schema.orders.c.billing_id==schema.addresses.c.address_id)),      
       }
     )
-
-class Customer( object ):
-    """ """
 
 orm.mapper(
     Customer, schema.customers,

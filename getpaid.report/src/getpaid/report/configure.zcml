@@ -1,5 +1,7 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
+  <include package=".browser" />
+
   <subscriber
      for="getpaid.core.interfaces.IOrder
           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
@@ -8,7 +10,7 @@
 
   <subscriber
      for="getpaid.core.interfaces.IOrder
-          zope.lifecycleevent.interfaces.IWorkflowTransitionEvent"
+          hurry.workflow.interfaces.IWorkflowTransitionEvent"
      handler=".sync.handleOrderTransition"
      />
 
