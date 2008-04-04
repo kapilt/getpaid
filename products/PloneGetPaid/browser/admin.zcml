@@ -120,6 +120,14 @@
      class=".admin_order.OrderCSVComponent"
      permission="zope2.View"
      />
+     
+  <browser:viewlet
+     name="orders-emails-export-csv"
+     manager="..interfaces.IOrdersAdminManager"
+     template="templates/orders-emails-export-csv.pt"
+     class=".admin_order.OrderEmailsCSVComponent"
+     permission="zope2.View"
+     />
 
   <!-- Viewlets for an Order -->
   <browser:viewletManager

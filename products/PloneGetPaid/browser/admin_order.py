@@ -3,6 +3,7 @@ order administration
 """
 
 import datetime, os, inspect, StringIO, csv
+import time
 
 from zope import component, schema, interface
 from zope.app import zapi
@@ -16,6 +17,7 @@ from ore.viewlet import core
 
 from getpaid.core import interfaces
 from getpaid.core.order import OrderQuery as query
+from getpaid.core.interfaces import IOrderManager
 from hurry.workflow.interfaces import IWorkflowInfo
 
 from Products.CMFCore.utils import getToolByName
@@ -145,7 +147,44 @@ class OrderCSVComponent( core.ComponentViewlet ):
 
         # um.. send to user, we need to inform our view, to do the appropriate thing
         # since we can't directly control the response rendering from the viewlet
-        self._parent._download_content = ('text/csv',  io.getvalue() )
+        self._parent._download_content = ('text/csv',  io.getvalue(), 'OrderSearchExport')
+        
+class OrderEmailsCSVComponent(core.ComponentViewlet):
+
+    template = ZopeTwoPageTemplateFile('templates/orders-emails-export-csv.pt')
+    
+    order = 4
+
+    def render(self):
+        return self.template()
+
+    @form.action(_(u"Export All"))
+    def export_all(self, action, data):
+        columns = ['User Id', 
+                   'Contact Name', 
+                   'Contact Email', 
+                   'Marketing Preference', 
+                   'Email Html Format']
+        
+        io = StringIO.StringIO()
+        writer = csv.writer(io)
+        writer.writerow([cname for cname in columns ])
+        unique_emails = set()
+        
+        manager = zapi.getUtility(IOrderManager)
+        for order in manager.storage.values():
+            email = order.contact_information.email.lower()
+            if email not in unique_emails:
+                writer.writerow((order.user_id,
+                                 order.contact_information.name,
+                                 email,
+                                 order.contact_information.marketing_preference,
+                                 order.contact_information.email_html_format))
+                unique_emails.add(email)
+
+        # um.. send to user, we need to inform our view, to do the appropriate thing
+        # since we can't directly control the response rendering from the viewlet
+        self._parent._download_content = ('text/csv',  io.getvalue(), 'OrderEmailsExport')
 
 def define( **kw ):
     kw['required'] = False
@@ -262,6 +301,7 @@ class ManageOrders( BrowserView ):
         self.manager.update()
         if self._download_content is not None:
             self.request.response.setHeader('Content-Type', self._download_content[0] )
+            self.request.RESPONSE.setHeader('Content-Disposition','inline;filename=%s-%s.csv' % (self._download_content[2], time.strftime("%Y%m%d",time.localtime())))
             return self._download_content[1]
         return super( ManageOrders, self).__call__()
 
