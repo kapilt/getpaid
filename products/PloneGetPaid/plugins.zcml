@@ -37,5 +37,9 @@
 <!-- Warehouse Inventory Management -->
 <include zcml:condition="installed getpaid.warehouse"
 	 package="getpaid.warehouse" />	 	 
+
+<!-- Reports - RDB Sync -->
+<include zcml:condition="installed getpaid.report"
+	 package="getpaid.report" />
 	 
 </configure>	 

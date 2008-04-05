@@ -154,10 +154,11 @@ class ImmutableBag( object ):
 
 class CheckoutWizard( Wizard ):
     """
-    a bidirectional checkout wizard. see the controller if you want to customize,
-    the sequence, see the viewlets for a given checkout page to customize a single
-    ui component.
-    
+    a bidirectional checkout wizard, using getpaid.wizard. See the CheckoutController
+    class if you want to customize the sequence of steps. The Wizard itself is mostly
+    a coordination gatekeeper, that enforces checkout constraints transparently
+    to any individual step. 
+        
     steps should export all form variables not from themselves as hidden inputs, to 
     allow for prepopulated forms from previous inputs on that step. 
     
