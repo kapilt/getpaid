@@ -7,7 +7,7 @@
 	      .</span>
 	    </p>
 
-  <div id="getpaid-admin-column-1" style="width:20em; margin:0 .5em; float: left;">
+  <div id="getpaid-admin-column-1">
     <h3 i18n:translate="heading_configure">Reports</h3>
         <ul>
             <li tal:repeat="aview

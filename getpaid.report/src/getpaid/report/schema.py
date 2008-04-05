@@ -2,6 +2,7 @@
 import sqlalchemy as rdb
 
 metadata = rdb.MetaData()
+metadata.bind = rdb.create_engine('postgres://localhost/getpaid', echo=True)
 
 order_ids = rdb.Sequence('order_id_seq', metadata=metadata)
 
@@ -103,11 +104,20 @@ outgoing_shipment = rdb.Table(
   rdb.Column( "shipment_tracking", rdb.String(128) ),
   )
 
-
 def main( ):
-    db = rdb.create_engine('sqlite://', echo=True)
+    import sys    
+    usage = "usage: %s database_uri"%(sys.argv[0])
+
+    args = sys.argv[1:]
+    if len(args) != 1:
+        print usage
+        sys.exit(1)
+        
+    db_uri = args[0]
+    db = rdb.create_engine( db_uri , echo=True)
+    
     metadata.bind = db
-    metadata.create_all()
+    metadata.create_all( checkfirst=True )
     
 if __name__ == '__main__':
     main()

@@ -12,8 +12,10 @@ $Id: $
 """
 
 from getpaid.core import interfaces
-from getpaid.warehouse import interfaces
+from getpaid.warehouse.interfaces import IProductInventory
 from zope import component, schema
+from sqlalchemy import create_engine
+from sqlalchemy.orm import session
 
 import domain
 
@@ -43,7 +45,7 @@ def copyProduct( item, source, target ):
 
     #target.product_code = item.
     
-    inventory = component.queryAdapter( source, interfaces.IProductInventory )
+    inventory = component.queryAdapter( source, IProductInventory )
     target.pick_bin = target.pickbin
     target.stock = source.stock
     target.store_stock= source.store_stock
@@ -56,7 +58,6 @@ def handleNewOrder( _order, event ):
     """
     """
     s = session.Session()
-    
     order = domain.Order()
 
     # handle addresses
@@ -80,7 +81,7 @@ def handleNewOrder( _order, event ):
         # serialize products if we haven't seen them.
         if not interfaces.IPayableLineItem.providedBy( _item ):
             continue        
-        if s.query( domain.Product ).query( domain.Product.content_uid == _item.uid ).count():
+        if s.query( domain.Product ).filter( domain.Product.content_uid == _item.uid ).count():
             continue
         
         payable = _item.resolve()
@@ -90,21 +91,19 @@ def handleNewOrder( _order, event ):
         product = domain.Product()
         copyProduct( item, payable, product )
         
-
-        
     s.begin()
     s.save( order )
     s.commit()
 
+
 def sync( ):
     
     manager = component.getUtility( interfaces.IOrderManager )
-    session = orm.Session()
-    domain.Order
+    session = session.Session()
 
     s = session.Session()
     s.begin()
-    s.save( order )
+    #s.save( order )
     s.commit()
     
     
