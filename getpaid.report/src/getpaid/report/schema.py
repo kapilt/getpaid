@@ -62,13 +62,6 @@ products = rdb.Table(
   rdb.Column("stock_reserve", rdb.Integer )  # minus those that have been ordered  
 )
 
-warehouses = rdb.Table(
-  "warehouses",
-  metadata,
-  rdb.Column("warehouse_id", rdb.Integer, primary_key=True ),
-  rdb.Column("address_id",  rdb.Integer, rdb.ForeignKey('addresses.address_id') ),
-  )
-
 customers = rdb.Table( 
   "customers",
   metadata,
@@ -86,14 +79,22 @@ addresses = rdb.Table(
   metadata,
   rdb.Column("address_id", rdb.Integer, primary_key=True ),
   rdb.Column("first_line", rdb.Unicode(60), nullable=False ),
-  rdb.Column("second_line", rdb.Unicode(60), nullable=False ),
+  rdb.Column("second_line", rdb.Unicode(60), nullable=True ),
   rdb.Column("city", rdb.Unicode(60), nullable=False ),
   rdb.Column("state", rdb.Unicode(6), nullable=False ),
   rdb.Column("country", rdb.Unicode(4), nullable=False ),
-  rdb.Column("postal_code", rdb.Unicode(10) ),
+  rdb.Column("postal_code", rdb.Unicode(10), nullable=False ),
   )
 
-  
+
+# not used ...
+warehouses = rdb.Table(
+  "warehouses",
+  metadata,
+  rdb.Column("warehouse_id", rdb.Integer, primary_key=True ),
+  rdb.Column("address_id",  rdb.Integer, rdb.ForeignKey('addresses.address_id') ),
+  )
+
 outgoing_shipment = rdb.Table(
   "outgoing_shipments",
   metadata,

@@ -1,9 +1,20 @@
-from getpaid.core import cart, order, payment, item
+"""
+$Id: $
+"""
 
-import string, random
+import string, random, unittest, sys
+ 
+from getpaid.core import cart, order, payment, item, interfaces
+from getpaid.report import sync
+
+from zope import interface
+
+from zope.app.testing import placelesssetup, ztapi
+from getpaid.core.tests.base import coreSetUp
 
 class Product( object ):
-    pass
+
+    interface.implements( interfaces.IPayable )
 
 class ProductGenerator( object ):
 
@@ -28,10 +39,26 @@ class ProductGenerator( object ):
                 continue
             break
         return str(uid)
-            
+
+    @property
+    def supplier( self ):
+        return random.choice( ['twax', 'bwax', 'cwax'] )
+
+    @property
+    def product_code( self ):
+        return ''.join( random.sample( string.letters, 5 ) )
+    @property
+    def price( self ):
+        return ( random.random()*10 )
+    
     def new( self ):
         uid = self.uid
         p = Product()
+        
+        p.made_payable_by = self.supplier
+        p.product_code = self.product_code
+        p.price = self.price
+        
         self[ uid ] = p
     
 class Item( item.PayableShippableLineItem ):
@@ -47,7 +74,13 @@ class OrderGenerator( object ):
         _order.shipping_address = self.ship_address
         _order.shopping_cart = self.shopping_cart
         _order.contact_information = self.contact_information
+        _order.setOrderId( self.order_id )
+        
         return _order
+
+    @property
+    def order_id( self ):
+        return random.randint( 1, sys.maxint )
 
     @property
     def shopping_cart( self ):
@@ -83,7 +116,7 @@ class OrderGenerator( object ):
 
     @property
     def zip( self ):
-        ''.join( random.sample( string.digits, 5 ) )
+        return ''.join( random.sample( string.digits, 5 ) )
 
     @property
     def state( self ):
@@ -117,7 +150,40 @@ class OrderGenerator( object ):
         address.bill_country = "US"
         address.bill_postal_code = self.zip
         return address
+
+def setUpReport( ):
+    pass
+
+class ReportTests(unittest.TestCase):
+    
+    def setUp(self):
+        coreSetUp()
+        setUpReport()
         
+        # Set up some preconditions
+        self.products = ProductGenerator()
+        self.orders   = OrderGenerator()
+
+        for i in range( 20 ):
+            self.products.new()
+            
+    def tearDown(self):
+        # Clean up after each test
+        ProductGenerator._products = {}
+        self.order = None
+        self.products = None
+        placelesssetup.tearDown()
+
+    def test_orderSerialization(self):
+        order = self.orders()
+        sync.handleNewOrder( order, None )
+
+
+def test_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(ReportTests))
+    return suite
+
 def main():
     products = ProductGenerator()
     for i in range(random.randint( 20, 100 ) ):
@@ -129,4 +195,5 @@ def main():
         print o, o.getSubTotalPrice(), len( o.shopping_cart), o.shopping_cart.size()
 
 if __name__ == '__main__':
-    main()
+    unittest.main(defaultTest='test_suite')
+
