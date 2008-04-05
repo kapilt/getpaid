@@ -39,7 +39,7 @@ items = rdb.Table(
   rdb.Column("item_id", rdb.Integer, primary_key=True ),
   rdb.Column("item_zid", rdb.String(40) ),
   rdb.Column("order_id",  rdb.Integer, rdb.ForeignKey('orders.order_id'), nullable=False ),
-  rdb.Column("product_id", rdb.Integer, rdb.ForeignKey('products.product_id'), nullable=False  ),
+  rdb.Column("product_id", rdb.Integer, rdb.ForeignKey('products.product_id') ),
   rdb.Column("product_code", rdb.Unicode(30), nullable=False), 
   rdb.Column("name", rdb.Unicode(30), nullable=False),
   rdb.Column("description", rdb.Unicode(100), nullable=False), 

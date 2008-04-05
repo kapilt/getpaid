@@ -95,23 +95,29 @@ def copyOrder( _session, source, target ):
         item = domain.LineItem()
         copyItem( _item, item )
         target.items.append( item )
-
-        # serialize products if we haven't seen them.
+        
         if not interfaces.IPayableLineItem.providedBy( _item ):
             continue
+
+        # try to find an existing record for this line item's product
+        product = _session.query( domain.Product ).filter(
+            domain.Product.content_uid == _item.uid ).first()
         
-        if _session.query( domain.Product ).filter(
-            domain.Product.content_uid == _item.uid ).count():
+        # if we do find one, attach and continue
+        if product is not None:
+            item.product = product
             continue
-        
+
+        # else resolve item to product and serialize product
         payable = _item.resolve()
         if payable is None:
             continue
         
         product = domain.Product()
         copyProduct( _item, payable, product )
+        _session.save( product )
+        item.product = product
         
-    
 def handleOrderTransition( _order, event ):
     """
     """

@@ -24,7 +24,8 @@ class Customer( object ):
 orm.mapper( Product, schema.products )    
 orm.mapper( LogEntry, schema.order_log )
 orm.mapper( Address, schema.addresses )
-orm.mapper( LineItem, schema.items )
+orm.mapper( LineItem, schema.items,
+            properties={'product':orm.relation( Product ) } )
 
 orm.mapper(
     Order, schema.orders,
