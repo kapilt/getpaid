@@ -39,7 +39,7 @@ def handleNewOrder( order, event ):
 
 def handleFufilledOrder( order, event ):
     """
-    when we fufill an order we increment, our sellable stock, to come 
+    when we fufill an order we decrement, our on hand stock, to come 
     inline with our fufillment of this order.
     """            
     if not event.destination in ( 

@@ -3,11 +3,6 @@ getpaid.warehouse todo
 
 - show availability when adding order to cart.
 
-- custom order viewlet listing component showing warehouse location in admin.
-
-- show order warehouse information on user admin order.
-
-
 general getpaid todo
 
 - setup default fulfillment state creation
