@@ -5,7 +5,7 @@ $Id: $
 import string, random, unittest, sys
  
 from getpaid.core import cart, order, payment, item, interfaces
-from getpaid.report import sync
+from getpaid.report import sync, subscriber
 
 from zope import interface
 
@@ -176,7 +176,7 @@ class ReportTests(unittest.TestCase):
 
     def test_orderSerialization(self):
         order = self.orders()
-        sync.handleNewOrder( order, None )
+        subscriber.handleNewOrder( order, None )
 
 
 def test_suite():

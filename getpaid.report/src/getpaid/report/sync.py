@@ -63,6 +63,11 @@ def copyProduct( item, source, target ):
         target.stock = inventory.stock
         target.store_stock= inventory.store_stock
 
+def copyState( source, target ):
+    # handle workflow states
+    target.finance_status = source.finance_state
+    target.fulfillment_status = source.fulfillment_state
+
 def copyOrder( _session, source, target ):
 
     # identity info
@@ -118,35 +123,4 @@ def copyOrder( _session, source, target ):
         _session.save( product )
         item.product = product
         
-def handleOrderTransition( _order, event ):
-    """
-    """
-
-def handleNewOrder( _order, event ):
-    """
-    """
-    s = session.Session()
-    s.begin()
-
-    try:
-        order = domain.Order()
-        copyOrder( s, _order, order )
-    except:
-        s.rollback()
-        raise
-    else:
-        s.save( order )        
-        s.commit()
-
-
-def sync( ):
-    
-    manager = component.getUtility( interfaces.IOrderManager )
-    session = session.Session()
-
-    s = session.Session()
-    s.begin()
-    #s.save( order )
-    s.commit()
-    
     
