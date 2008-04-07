@@ -61,8 +61,12 @@ def copyProduct( source, target, item=None, uid=None ):
     if inventory:
         target.pick_bin = inventory.pickbin
         target.stock = inventory.stock
-        target.store_stock= inventory.store_stock
+        target.stock_reserve= inventory.store_stock
 
+def copyProductInventory( source, target ):
+    target.stock = source.stock
+    target.store_reserve = source.store_stock
+    
 def copyState( source, target ):
     # handle workflow states
     target.finance_status = source.finance_state

@@ -2,6 +2,7 @@ import datetime
 import sqlalchemy as rdb
 
 metadata = rdb.MetaData()
+metadata.bind = rdb.create_engine('postgres://localhost/getpaid')
 
 def now( ):
     return datetime.datetime.now()
@@ -65,7 +66,7 @@ products = rdb.Table(
   rdb.Column("stock_reserve", rdb.Integer )  # minus those that have been ordered  
 )
 
-product_inventory_log = rdb.Table(
+inventory = rdb.Table(
   "product_inventory_log",
   metadata,
   rdb.Column('entry_id',   rdb.Integer, primary_key=True),

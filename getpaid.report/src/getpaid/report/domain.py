@@ -25,7 +25,7 @@ class Customer( object ):
     """ """
 
 orm.mapper( Product, schema.products )
-orm.mapper( InventoryEntry, schema.product_inventory_log,
+orm.mapper( InventoryEntry, schema.inventory,
             properties = {'product':orm.relation( Product ),
                           'order': orm.relation( Order ) } )
 

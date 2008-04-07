@@ -19,6 +19,8 @@ def handleInventoryModified( _inventory, event ):
         if product is None:
             product = domain.Product()
             sync.copyProduct( event.product, product, uid=iid )
+        else:
+            sync.copyProductInventory( _inventory, product )
             
         entry.product = product
         entry.quantity = event.stock_delta
@@ -48,7 +50,9 @@ def handleInventoryOrderModified( _inventory, event ):
         if product is None:
             product = domain.Product()
             sync.copyProduct( product, event.product, uid=iid )        
-
+        else:
+            sync.copyProductInventory( _inventory, product )
+            
         order = s.query( domain.Order ).filter(
             domain.Order.order_zid == event.order.order_id ).first()
         

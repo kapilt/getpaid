@@ -205,6 +205,8 @@ class ReportTests(unittest.TestCase):
         product = self.products.new()
         inventory = Mock()
         inventory.stock = 10
+        inventory.store_stock = 7        
+        
         
         event = InventoryModified(
             inventory,
@@ -226,6 +228,7 @@ class ReportTests(unittest.TestCase):
         product = item.resolve()
         inventory = Mock()
         inventory.stock = 10
+        inventory.store_stock = 7        
         
         event = InventoryOrderModified(
             inventory,

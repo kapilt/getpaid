@@ -6,41 +6,45 @@ from PloneGetPaid.browser.base import BaseFormView
 
 from zope import interface, schema
 from zope.formlib import form
+from getpaid.report import report
 
 class IReportSettings( interface.Interface ):
 
     start_date = schema.Date( title=_(u"Start Date") )
     end_date = schema.Date( title=_(u"Start Date") )    
 
-_fulfillment_report = """
-select orders.creation_date,
-       orders.order_zid,       
-       item_orders.*
-  from orders,
-      (select order_id,
-              count(*) as line_items,
-              sum( items.quantity) as pieces
-       from items group by order_id) as item_orders
-  where orders.order_id = item_orders.order_id;
-    and orders.creation_date > :start_date
-    and orders.creation_date < :end_date
-"""
+def orderLink( item, formatter):
+    return u'<a href="">%s</a>'%(item['orders_zid'])
 
-_fulfillment_report_summary = """
-select count( items ) as line_items,
-       sum( quantity ) as pieces
-  from items, orders
-  where orders.creation_date > :start_date
-    and orders.creation_date < :end_date  
-"""
 class FulfillmentReport( BaseFormView ):
 
     form_fields = form.Fields(  IReportSettings )
+    entries = ()
 
+    columns = [
+        column.GetterColumn( title=_(u"Date"), getter=lambda i,f:i['creation_date'].strftime('%m/%d/%y') ),
+        column.GetterColumn( title=_(u"Order Number"), getter=orderLink ),
+        column.GetterColumn( title=_(u"Line Items"), getter=lambda i,f:i['line_items'] )
+        column.GetterColumn( title=_(u"Packages"), getter=lambda i,f: 1 ),
+        column.GetterColumn( title=_(u"Pieces"), getter=lambda i,f: i['pieces'] )
+        ]
+    
     def listing( self ):
-        pass
+        formatter = table.StandaloneFullFormatter(
+            self.context,
+            self.request,
+            self.entries,
+            prefix='form',
+            visible_column_names = [c.name for c in self.columns]
+            columns = self.columns
+            )
+        formatter.cssClasses['table'] = 'listing'
+        return formatter()
 
     @form.action( _(u"Generate Report"), condition=form.haveInputWidgets )
     def generate_report( self, action, data ):
-        pass
+        self.entries = report.fulfillment_history( data['start_date'], data['end_date'] )
+        self.summary = report.fulfillment_summary( data['start_date'], data['end_date'] )
+        
+                                                   
         
