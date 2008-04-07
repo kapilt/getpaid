@@ -244,7 +244,7 @@ class ReportTests(unittest.TestCase):
         self.assertEqual( _order.order_id, _entry.order_id )
         self.assertTrue( isinstance(_entry.product_id, int ) )
         self.assertEqual( _entry.stock, inventory.stock )
-        self.assertEqual( _entry.quantity, item.quantity )
+        self.assertEqual( _entry.quantity, -item.quantity )
         
         
     def test_orderTransition( self ):
