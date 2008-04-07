@@ -13,7 +13,7 @@ import os
 
 from getpaid.warehouse import interfaces, warehouse
 from getpaid.warehouse.interfaces import _
-
+from getpaid.core.interfaces import IAddress
 
 from zope import component
 from zope.formlib import form
@@ -76,7 +76,7 @@ class Add( base.BaseFormView ):
     template = ViewPageTemplateFile( admin_template )
     
     form_fields = form.Fields( interfaces.IWarehouse )
-    form_fields = form_fields.select('name') + form.Fields( interfaces.IAddress )
+    form_fields = form_fields.select('name') + form.Fields( IAddress )
     form_fields['country'].custom_widget = CountrySelectionWidget
     form_fields['state'].custom_widget = StateSelectionWidget
 
