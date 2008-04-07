@@ -44,11 +44,13 @@ def copyCustomer( source, target ):
         value = getattr( source, f )
         setattr( target, f, value )
 
-def copyProduct( item, source, target ):
+def copyProduct( source, target, item=None, uid=None ):
 
     payable = interfaces.IPayable( source )
-
-    target.content_uid = item.uid
+    uid = item and item.uid or uid
+    assert uid, "must pass in either item or uid"
+    
+    target.content_uid = uid
     target.supplier_uid = payable.made_payable_by
     target.product_code = payable.product_code
     target.type = "payable"
@@ -117,7 +119,7 @@ def copyOrder( _session, source, target ):
             continue
         
         product = domain.Product()
-        copyProduct( _item, payable, product )
+        copyProduct( payable, product, item=_item )
         _session.save( product )
         item.product = product
         

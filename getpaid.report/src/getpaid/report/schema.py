@@ -2,7 +2,7 @@ import datetime
 import sqlalchemy as rdb
 
 metadata = rdb.MetaData()
-metadata.bind = rdb.create_engine('postgres://localhost/getpaid', echo=True)
+metadata.bind = rdb.create_engine('postgres://localhost/getpaid')
 
 def now( ):
     return datetime.datetime.now()
@@ -18,10 +18,11 @@ orders = rdb.Table(
   rdb.Column("ship_id", rdb.Integer, rdb.ForeignKey('addresses.address_id'), nullable=False ), 
   rdb.Column("customer_id", rdb.Integer, rdb.ForeignKey('customers.customer_id'), nullable=False ),
   rdb.Column("creation_date", rdb.DateTime(timezone=True) ),
-  rdb.Column("finance_status", rdb.Unicode(20) ),
-  rdb.Column("fulfillment_status", rdb.Unicode(20) )
+  rdb.Column("finance_status", rdb.String(20) ),
+  rdb.Column("fulfillment_status", rdb.String(20) )
   )
-  
+
+# not used  
 order_log = rdb.Table(
   "order_log",
   metadata,
@@ -43,7 +44,7 @@ items = rdb.Table(
   rdb.Column("item_zid", rdb.String(40) ),
   rdb.Column("order_id",  rdb.Integer, rdb.ForeignKey('orders.order_id'), nullable=False ),
   rdb.Column("product_id", rdb.Integer, rdb.ForeignKey('products.product_id') ),
-  rdb.Column("product_code", rdb.Unicode(30), nullable=False), 
+  rdb.Column("product_code", rdb.String(30), nullable=False), 
   rdb.Column("name", rdb.Unicode(30), nullable=False),
   rdb.Column("description", rdb.Unicode(100), nullable=False), 
   rdb.Column("cost", rdb.Float(precision=2), nullable=False ),
@@ -54,7 +55,7 @@ products = rdb.Table(
   "products",
   metadata,
   rdb.Column("product_id", rdb.Integer, primary_key=True ),
-  rdb.Column("product_code",rdb.Unicode(30), unique=True, nullable=False ),
+  rdb.Column("product_code",rdb.String(30), unique=True, nullable=False ),
   rdb.Column("supplier_uid", rdb.Unicode(60) ),
   rdb.Column("content_uid", rdb.Integer, nullable=False ),  # five.intid reference
   rdb.Column("type", rdb.String(30), nullable=False ),
@@ -86,7 +87,7 @@ customers = rdb.Table(
   rdb.Column('phone_number', rdb.Unicode(15) ),
   rdb.Column('email', rdb.Unicode(30) ),
   rdb.Column('marketing_preference', rdb.Boolean, default=False ),
-  rdb.Column('email_html_format', rdb.Unicode(5) )
+  rdb.Column('email_html_format', rdb.Boolean )
   )
     
 addresses = rdb.Table( 
@@ -96,9 +97,9 @@ addresses = rdb.Table(
   rdb.Column("first_line", rdb.Unicode(60), nullable=False ),
   rdb.Column("second_line", rdb.Unicode(60), nullable=True ),
   rdb.Column("city", rdb.Unicode(60), nullable=False ),
-  rdb.Column("state", rdb.Unicode(6), nullable=False ),
-  rdb.Column("country", rdb.Unicode(4), nullable=False ),
-  rdb.Column("postal_code", rdb.Unicode(10), nullable=False ),
+  rdb.Column("state", rdb.String(6), nullable=False ),
+  rdb.Column("country", rdb.String(4), nullable=False ),
+  rdb.Column("postal_code", rdb.String(10), nullable=False ),
   )
 
 

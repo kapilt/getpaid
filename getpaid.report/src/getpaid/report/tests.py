@@ -5,12 +5,16 @@ $Id: $
 import string, random, unittest, sys
  
 from getpaid.core import cart, order, payment, item, interfaces
-from getpaid.report import subscriber
-
+from getpaid.report import subscriber, domain
+from getpaid.warehouse.interfaces import InventoryModified, InventoryOrderModified
 from zope import interface
 
+from zope.app.intid.interfaces import IIntIds
 from zope.app.testing import placelesssetup, ztapi
 from getpaid.core.tests.base import coreSetUp
+from sqlalchemy.orm import session
+
+import sqlalchemy as rdb
 
 class Product( object ):
 
@@ -42,11 +46,12 @@ class ProductGenerator( object ):
 
     @property
     def supplier( self ):
-        return random.choice( ['twax', 'bwax', 'cwax'] )
+        return unicode( random.choice( ['twax', 'bwax', 'cwax'] ) )
 
     @property
     def product_code( self ):
         return ''.join( random.sample( string.letters, 5 ) )
+    
     @property
     def price( self ):
         return ( random.random()*10 )
@@ -58,13 +63,23 @@ class ProductGenerator( object ):
         p.made_payable_by = self.supplier
         p.product_code = self.product_code
         p.price = self.price
-        
+        p.uid = uid
         self[ uid ] = p
+        return p
+    
+class ProductIntId( object ):
+
+    interface.implements( IIntIds )
+
+    def queryId( self, ob ):
+        return ob.uid
     
 class Item( item.PayableShippableLineItem ):
 
     def resolve( self ):
         return ProductGenerator.find( self.uid )
+
+class Mock( object ): pass
 
 class OrderGenerator( object ):
 
@@ -94,8 +109,8 @@ class OrderGenerator( object ):
                 shopping_cart[ item.uid ].quantity += item.quantity
                 continue
             
-            item.name = random.choice( ("Laser", "Book", "Rabbit", "Snake", "Lizard") )
-            item.description = ''.join( random.sample( string.letters, 30) )
+            item.name = random.choice( (u"Laser", u"Book", u"Rabbit", u"Snake", u"Lizard") )
+            item.description = u''.join( random.sample( string.letters, 30) )
             item.weight = random.random()*3.0
             item.product_code = ''.join( random.sample( string.letters, 8) )
             item.cost = random.randint( 1, 100 )
@@ -108,7 +123,7 @@ class OrderGenerator( object ):
         first_name = random.choice( ("Mary", "Mike", "John", "Steve", "Elizabeth" ) )
         last_name  = random.choice( ("Smith", "Burton", "Appleseed", "Xavier" ) )
         phone  = ''.join( random.sample( string.digits, 9 ) )
-        contact.name = "%s %s"%( first_name, last_name )
+        contact.name = u"%s %s"%( first_name, last_name )
         contact.phone = phone
         contact.marketing_preference = random.choice( (True, False ) )
         contact.email_html_format = random.choice( (True, False ) )
@@ -124,12 +139,12 @@ class OrderGenerator( object ):
 
     @property
     def city( self ):
-        return random.choice( ("York", "Lancester", "Shire", "Burg" ) )
+        return random.choice( (u"York", u"Lancester", u"Shire", u"Burg" ) )
     
     @property
     def address_line( self ):
         numeral = ''.join( random.sample( string.digits, 3) )
-        return "%s Kittyhawk St"%numeral        
+        return u"%s Kittyhawk St"%numeral        
 
     @property
     def ship_address( self ):
@@ -152,7 +167,7 @@ class OrderGenerator( object ):
         return address
 
 def setUpReport( ):
-    pass
+    ztapi.provideUtility( IIntIds, ProductIntId() )
 
 class ReportTests(unittest.TestCase):
     
@@ -177,6 +192,72 @@ class ReportTests(unittest.TestCase):
     def test_orderSerialization(self):
         order = self.orders()
         subscriber.handleNewOrder( order, None )
+        s = session.Session()
+        _order = s.query( domain.Order ).filter(
+            domain.Order.order_zid == order.order_id ).first()
+        self.assertNotEqual( _order, None )
+        self.assertEqual( len( order.shopping_cart ), len( _order.items ) )
+
+    def test_inventoryModified( self ):
+        product = self.products.new()
+        inventory = Mock()
+        inventory.stock = 10
+        
+        event = InventoryModified(
+            inventory,
+            product,
+            10
+            )
+
+        _entry = subscriber.handleInventoryModified( inventory, event )
+
+        self.assertEqual( _entry.action, u"added")
+        self.assertEqual( _entry.stock, 10 )
+        self.assertEqual( _entry.quantity, 10 )
+        self.assertEqual( _entry.product.content_uid, product.uid )
+        
+    def test_inventoryOrderModified( self ):
+
+        order = self.orders()
+        item = order.shopping_cart.values()[0]
+        product = item.resolve()
+        inventory = Mock()
+        inventory.stock = 10
+        
+        event = InventoryOrderModified(
+            inventory,
+            product,
+            order,
+            item.quantity 
+            )
+
+        # serialize the order
+        _order = subscriber.handleNewOrder( order, None )
+
+        # serialize the inventory modified event
+        _entry = subscriber.handleInventoryOrderModified( inventory, event )
+
+        # verify serialization
+        self.assertEqual( _order.order_id, _entry.order_id )
+        self.assertTrue( isinstance(_entry.product_id, int ) )
+        self.assertEqual( _entry.stock, inventory.stock )
+        self.assertEqual( _entry.quantity, item.quantity )
+        
+        
+    def test_orderTransition( self ):
+        order = self.orders()
+        subscriber.handleNewOrder( order, None )        
+        order.finance_workflow.fireTransition('create')
+        order.fulfillment_workflow.fireTransition('create')
+        subscriber.handleOrderTransition( order, None )
+
+        s = session.Session()
+        _order = s.query( domain.Order ).filter(
+            domain.Order.order_zid == order.order_id ).first()
+        self.assertNotEqual( _order, None )
+
+        self.assertEqual( _order.finance_status, order.finance_state )
+        self.assertEqual( _order.fulfillment_status, order.fulfillment_state )
 
 
 def test_suite():

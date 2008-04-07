@@ -3,6 +3,18 @@
   <include package=".browser" />
 
   <subscriber
+     for="getpaid.warehouse.interfaces.IProductInventory
+	  getpaid.warehouse.interfaces.IInventoryModified"
+     handler=".subscriber.handleInventoryModified"
+     />
+
+  <subscriber
+     for="getpaid.warehouse.interfaces.IProductInventory
+	  getpaid.warehouse.interfaces.IInventoryOrderModified"
+     handler=".subscriber.handleInventoryOrderModified"
+     />
+
+  <subscriber
      for="getpaid.core.interfaces.IOrder
           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
      handler=".subscriber.handleNewOrder"
