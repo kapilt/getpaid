@@ -4,16 +4,19 @@ from sqlalchemy import orm
 import schema
 
 class Product( object ):
-    """ """
+    """ a product to be purchased """
+
+class InventoryEntry( object ):
+    """ product inventory log entry """
     
 class LogEntry( object ):
-    """ """
+    """ order history log """
 
 class Address( object ):
-    """ """    
+    """ an address """    
     
 class LineItem( object ):
-    """ """
+    """ an item in an order """
 
 class Order( object ):
     """ """    
@@ -21,9 +24,13 @@ class Order( object ):
 class Customer( object ):
     """ """
 
-orm.mapper( Product, schema.products )    
+orm.mapper( Product, schema.products )
+orm.mapper( InventoryEntry, schema.product_inventory_log,
+            properties = {'product':orm.relation( Product ) } )
+
 orm.mapper( LogEntry, schema.order_log )
 orm.mapper( Address, schema.addresses )
+
 orm.mapper( LineItem, schema.items,
             properties={'product':orm.relation( Product ) } )
 

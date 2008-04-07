@@ -5,7 +5,7 @@ $Id: $
 import string, random, unittest, sys
  
 from getpaid.core import cart, order, payment, item, interfaces
-from getpaid.report import sync, subscriber
+from getpaid.report import subscriber
 
 from zope import interface
 

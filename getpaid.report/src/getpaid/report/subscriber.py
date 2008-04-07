@@ -6,7 +6,7 @@ def handleInventoryModified( _inventory, event ):
     """
     when an inventory is modified, we record inventory adjustments to the database
     """
-    def _( ):
+    def _( s ):
         pass
 
     _interact( _ )
@@ -16,7 +16,7 @@ def handleInventoryOrderModified( _inventory, event ):
     when an order is fufilled, we record inventory levels to the database
     """
     
-    def _( ):
+    def _( s ):
         pass
 
     _interact( _ )
@@ -25,9 +25,9 @@ def handleOrderTransition( _order, event ):
     """
     when an order is transition, we record the state changes to the database
     """
-    def _( ):
+    def _( s ):
         order = s.query( domain.Order ).filter(
-            domain.Order.order_zid = _order.order_id ).first()
+            domain.Order.order_zid == _order.order_id ).first()
         if order is None:
             return
         sync.copyState( _order, order )
@@ -37,7 +37,7 @@ def handleNewOrder( _order, event ):
     """
     when a new order is created, we serialize it do the database.
     """
-    def _():
+    def _( s ):
         order = domain.Order()
         sync.copyOrder( s, _order, order )
         return order
@@ -48,7 +48,7 @@ def _interact( func ):
     s.begin()
 
     try:
-        value = func()
+        value = func( s )
     except:
         s.rollback()
         raise

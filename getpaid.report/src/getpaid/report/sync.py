@@ -14,8 +14,6 @@ $Id: $
 from getpaid.core import interfaces
 from getpaid.warehouse.interfaces import IProductInventory
 from zope import component, schema
-from sqlalchemy import create_engine
-from sqlalchemy.orm import session
 
 import domain
 

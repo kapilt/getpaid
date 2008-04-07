@@ -1,8 +1,11 @@
-
+import datetime
 import sqlalchemy as rdb
 
 metadata = rdb.MetaData()
 metadata.bind = rdb.create_engine('postgres://localhost/getpaid', echo=True)
+
+def now( ):
+    return datetime.datetime.now()
 
 order_ids = rdb.Sequence('order_id_seq', metadata=metadata)
 
@@ -62,6 +65,18 @@ products = rdb.Table(
   rdb.Column("stock_reserve", rdb.Integer )  # minus those that have been ordered  
 )
 
+product_inventory_log = rdb.Table(
+  "product_inventory_log",
+  metadata,
+  rdb.Column('entry_id',   rdb.Integer, primary_key=True),
+  rdb.Column('date',       rdb.DateTime, default=now ),
+  rdb.Column("order_id",   rdb.Integer, rdb.ForeignKey('orders.order_id') ),
+  rdb.Column("product_id", rdb.Integer, rdb.ForeignKey('products.product_id'), nullable=False),
+  rdb.Column("quantity",   rdb.Integer, nullable=False ),
+  rdb.Column("stock",      rdb.Integer, nullable=False ), 
+  rdb.Column("action",     rdb.Unicode(15), nullable=False )
+  )
+
 customers = rdb.Table( 
   "customers",
   metadata,
@@ -118,6 +133,7 @@ def main( ):
     db = rdb.create_engine( db_uri , echo=True)
     
     metadata.bind = db
+    metadata.drop_all( checkfirst=True )    
     metadata.create_all( checkfirst=True )
     
 if __name__ == '__main__':
