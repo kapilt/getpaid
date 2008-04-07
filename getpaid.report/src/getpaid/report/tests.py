@@ -5,7 +5,7 @@ $Id: $
 import string, random, unittest, sys
  
 from getpaid.core import cart, order, payment, item, interfaces
-from getpaid.report import subscriber, domain
+from getpaid.report import subscriber, domain, schema
 from getpaid.warehouse.interfaces import InventoryModified, InventoryOrderModified
 from zope import interface
 
@@ -174,11 +174,13 @@ class ReportTests(unittest.TestCase):
     def setUp(self):
         coreSetUp()
         setUpReport()
-        
+        schema.metadata.bind = rdb.create_engine( 'sqlite://')
+        schema.metadata.create_all()
+
         # Set up some preconditions
         self.products = ProductGenerator()
         self.orders   = OrderGenerator()
-
+        
         for i in range( 20 ):
             self.products.new()
             
@@ -188,7 +190,8 @@ class ReportTests(unittest.TestCase):
         self.order = None
         self.products = None
         placelesssetup.tearDown()
-
+        schema.metadata.bind = None
+        
     def test_orderSerialization(self):
         order = self.orders()
         subscriber.handleNewOrder( order, None )

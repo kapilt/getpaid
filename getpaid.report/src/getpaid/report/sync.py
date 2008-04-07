@@ -1,12 +1,12 @@
 """
 
-sync options,
+sync options.
 
  - sync synchronously
 
  - sync async
- 
-we want to do several kinds of reports
+
+benefit to async syncing, is any errors in sync won't hose an order.
 
 $Id: $
 """
