@@ -4,6 +4,7 @@ $Id: $
 
 from zope import interface, schema, component
 from getpaid.core import interfaces
+from getpaid.core.interfaces import IAddress
 from zope.component.interfaces import IObjectEvent
 from zope.app.container.interfaces import IContainer
 from zope.viewlet.interfaces import IViewletManager
