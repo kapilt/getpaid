@@ -2,11 +2,13 @@
 $Id: $
 """
 
-from PloneGetPaid.browser.base import BaseFormView
+from Products.PloneGetPaid.browser.base import BaseFormView
 
 from zope import interface, schema
 from zope.formlib import form
+from zc.table import column, table
 from getpaid.report import report
+from getpaid.report.i18n import _
 
 class IReportSettings( interface.Interface ):
 
@@ -24,7 +26,7 @@ class FulfillmentReport( BaseFormView ):
     columns = [
         column.GetterColumn( title=_(u"Date"), getter=lambda i,f:i['creation_date'].strftime('%m/%d/%y') ),
         column.GetterColumn( title=_(u"Order Number"), getter=orderLink ),
-        column.GetterColumn( title=_(u"Line Items"), getter=lambda i,f:i['line_items'] )
+        column.GetterColumn( title=_(u"Line Items"), getter=lambda i,f:i['line_items'] ),
         column.GetterColumn( title=_(u"Packages"), getter=lambda i,f: 1 ),
         column.GetterColumn( title=_(u"Pieces"), getter=lambda i,f: i['pieces'] )
         ]
@@ -35,7 +37,7 @@ class FulfillmentReport( BaseFormView ):
             self.request,
             self.entries,
             prefix='form',
-            visible_column_names = [c.name for c in self.columns]
+            visible_column_names = [c.name for c in self.columns],
             columns = self.columns
             )
         formatter.cssClasses['table'] = 'listing'

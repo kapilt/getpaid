@@ -38,6 +38,7 @@ def copyItem( source, target ):
         setattr( target, f, value )
 
     target.item_zid = source.uid
+    target.product_code = source.__name__
 
 def copyCustomer( source, target ):
     for f in schema.getFields( interfaces.IUserContactInformation ).keys():
@@ -45,14 +46,13 @@ def copyCustomer( source, target ):
         setattr( target, f, value )
 
 def copyProduct( source, target, item=None, uid=None ):
-
     payable = interfaces.IPayable( source )
     uid = item and item.uid or uid
     assert uid, "must pass in either item or uid"
-    
+
     target.content_uid = uid
     target.supplier_uid = payable.made_payable_by
-    target.product_code = payable.product_code
+    target.product_code = payable.product_code or payable.context.UID()
     target.type = "payable"
     target.price = payable.price
 

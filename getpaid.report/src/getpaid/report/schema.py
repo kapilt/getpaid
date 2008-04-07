@@ -44,7 +44,7 @@ items = rdb.Table(
   rdb.Column("item_zid", rdb.String(40) ),
   rdb.Column("order_id",  rdb.Integer, rdb.ForeignKey('orders.order_id'), nullable=False ),
   rdb.Column("product_id", rdb.Integer, rdb.ForeignKey('products.product_id') ),
-  rdb.Column("product_code", rdb.String(30), nullable=False), 
+  rdb.Column("product_code", rdb.String(33), nullable=False), 
   rdb.Column("name", rdb.Unicode(30), nullable=False),
   rdb.Column("description", rdb.Unicode(100), nullable=False), 
   rdb.Column("cost", rdb.Float(precision=2), nullable=False ),
@@ -55,7 +55,7 @@ products = rdb.Table(
   "products",
   metadata,
   rdb.Column("product_id", rdb.Integer, primary_key=True ),
-  rdb.Column("product_code",rdb.String(30), unique=True, nullable=False ),
+  rdb.Column("product_code",rdb.String(33), unique=True, nullable=False ),
   rdb.Column("supplier_uid", rdb.Unicode(60) ),
   rdb.Column("content_uid", rdb.Integer, nullable=False ),  # five.intid reference
   rdb.Column("type", rdb.String(30), nullable=False ),

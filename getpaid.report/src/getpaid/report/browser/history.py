@@ -5,7 +5,6 @@ $Id: $
 from Products.Five.browser import BrowserView
 
 from zc.table import column, table
-from zope.formlib import form
 
 from getpaid.report import report
 from getpaid.report.i18n import _
@@ -31,7 +30,7 @@ class ProductHistoryReport( BrowserView ):
             self.request,
             entries,
             prefix='form',
-            visible_column_names = [c.name for c in self.columns]
+            visible_column_names = [c.name for c in self.columns],
             columns = self.columns
             )
 

@@ -2,14 +2,14 @@
 $Id: $
 """
 
-from zope import interface, schema, component
+from zope import component
 from zope.app.intid.interfaces import IIntIds
 from sqlalchemy.orm import session
 import sqlalchemy as rdb
 import domain, schema
 
 def product_history( product ):
-    iid = component.getUtility( IntIds ).queryId( self.context )
+    iid = component.getUtility( IIntIds ).queryId( product )
     s = session.Session()
     entries = s.query( domain.InventoryEntry ).select_from(
         schema.inventory.join( schema.products )
@@ -35,7 +35,7 @@ select orders.creation_date,
 def fulfillment_history( start_date, end_date ):
     connection = schema.metadata.bind.contextual_connect()
     results = connection.execute( _fulfillment_report,
-                                  start_date = start_date
+                                  start_date = start_date,
                                   end_date = end_date )
     return list(results)
 
@@ -50,7 +50,7 @@ select count( items ) as line_items,
 def fulfillment_summary( start_date, end_date ):
     connection = schema.metadata.bind.contextual_connect()
     results = connection.execute( _fulfillment_report_summary,
-                                 start_date = start_date
+                                 start_date = start_date,
                                  end_date = end_date )
     return list(results)
 
