@@ -65,7 +65,7 @@ def copyProduct( source, target, item=None, uid=None ):
 
 def copyProductInventory( source, target ):
     target.stock = source.stock
-    target.store_reserve = source.store_stock
+    target.stock_reserve = source.store_stock
     
 def copyState( source, target ):
     # handle workflow states

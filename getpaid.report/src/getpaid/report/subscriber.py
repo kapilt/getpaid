@@ -61,6 +61,7 @@ def handleInventoryOrderModified( _inventory, event ):
         entry.quantity = -event.stock_delta
         entry.stock = _inventory.stock
         entry.action = u"delivered"
+
         return entry
     
     return _interact( _ )

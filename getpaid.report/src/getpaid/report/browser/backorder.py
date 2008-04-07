@@ -13,9 +13,9 @@ class BackorderReport( BrowserView ):
     report_name = _(u"Backordered Products")
     
     columns = [
-        column.GetterColumn( title=_(u"Product Code"), getter=lambda i,f:i.date.strftime('%m/%d/%y') ),
-        column.GetterColumn( title=_(u"Description"), getter=lambda i,f:'' ),
-        column.GetterColumn( title=_(u"Total Backordered"), getter=lambda i,f:i.quantity ),
+        column.GetterColumn( title=_(u"Product Code"), getter=lambda i,f:i.product_code ),
+        column.GetterColumn( title=_(u"Description"), getter=lambda i,f:i.resolve().Title() ),
+        column.GetterColumn( title=_(u"Total Backordered"), getter=lambda i,f:abs(i.stock_reserve) ),
         ]
 
     def listing( self ):
