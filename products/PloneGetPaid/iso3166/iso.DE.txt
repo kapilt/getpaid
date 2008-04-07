@@ -9,7 +9,7 @@ ISO3166-2 regions for DE
    DE-HH : Hamburg
    DE-HE : Hessen
    DE-MV : Mecklenburg-Vorpommern
-   DE-NI : Niedereachsen
+   DE-NI : Niedersachsen
    DE-NW : Nordrhein-Westfalen
    DE-RP : Rheinland-Pfalz
    DE-SL : Saarland
