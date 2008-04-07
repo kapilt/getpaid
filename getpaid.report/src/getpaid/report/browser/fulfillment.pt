@@ -10,8 +10,14 @@ g<metal:page use-macro="context/@@manage-getpaid-settings-template/macros/admin"
   <div id="getpaid-admin-column-1">
     <h3 i18n:translate="heading_configure">Fulfillment Report </h3>
 
-      <div tal:replace="structure view/listing">
-      </div>
+    <metal:block use-macro="context/@@getpaid-form/form">    
+        Form
+    </metal:block>
+
+    <div tal:condition="view/entries" 
+	 tal:replace="structure view/listing">
+        Results
+     </div>
   </div>	    
 
   </metal:block>

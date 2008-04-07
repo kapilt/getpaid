@@ -3,6 +3,7 @@ $Id: $
 """
 
 from Products.PloneGetPaid.browser.base import BaseFormView
+from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 
 from zope import interface, schema
 from zope.formlib import form
@@ -21,6 +22,8 @@ def orderLink( item, formatter):
 class FulfillmentReport( BaseFormView ):
 
     form_fields = form.Fields(  IReportSettings )
+    template = ZopeTwoPageTemplateFile('fulfillment.pt')
+    
     entries = ()
 
     columns = [
@@ -30,7 +33,14 @@ class FulfillmentReport( BaseFormView ):
         column.GetterColumn( title=_(u"Packages"), getter=lambda i,f: 1 ),
         column.GetterColumn( title=_(u"Pieces"), getter=lambda i,f: i['pieces'] )
         ]
-    
+
+    def setUpWidgets(self, ignore_request=False):
+        self.adapters = {}
+        self.widgets = form.setUpDataWidgets(
+            self.form_fields, self.prefix, self.context, self.request,
+            ignore_request=ignore_request
+            )
+
     def listing( self ):
         formatter = table.StandaloneFullFormatter(
             self.context,

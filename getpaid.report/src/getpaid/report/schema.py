@@ -22,20 +22,20 @@ orders = rdb.Table(
   rdb.Column("fulfillment_status", rdb.String(20) )
   )
 
-# not used  
-order_log = rdb.Table(
-  "order_log",
-  metadata,
-  rdb.Column("log_id", rdb.Integer, primary_key=True),
-  rdb.Column("order_id", rdb.Integer, rdb.ForeignKey('orders.order_id'), nullable=False ),
-  rdb.Column("changed_by", rdb.Unicode(20) ),
-  rdb.Column("change_date", rdb.DateTime( timezone=True) ),
-  rdb.Column("chage_kind", rdb.Unicode(30) ),
-  rdb.Column("comment", rdb.Unicode(90) ),  
-  rdb.Column("new_state", rdb.String(20) ),
-  rdb.Column("previous_state", rdb.String(20) ),  
-  rdb.Column("transition", rdb.String(20) )
-  )
+## # not used  
+## order_log = rdb.Table(
+##   "order_log",
+##   metadata,
+##   rdb.Column("log_id", rdb.Integer, primary_key=True),
+##   rdb.Column("order_id", rdb.Integer, rdb.ForeignKey('orders.order_id'), nullable=False ),
+##   rdb.Column("changed_by", rdb.Unicode(20) ),
+##   rdb.Column("change_date", rdb.DateTime( timezone=True) ),
+##   rdb.Column("chage_kind", rdb.Unicode(30) ),
+##   rdb.Column("comment", rdb.Unicode(90) ),  
+##   rdb.Column("new_state", rdb.String(20) ),
+##   rdb.Column("previous_state", rdb.String(20) ),  
+##   rdb.Column("transition", rdb.String(20) )
+##   )
 
 items = rdb.Table( 
   "items",
@@ -103,23 +103,23 @@ addresses = rdb.Table(
   )
 
 
-# not used ...
-warehouses = rdb.Table(
-  "warehouses",
-  metadata,
-  rdb.Column("warehouse_id", rdb.Integer, primary_key=True ),
-  rdb.Column("address_id",  rdb.Integer, rdb.ForeignKey('addresses.address_id') ),
-  )
+## # not used ...
+## warehouses = rdb.Table(
+##   "warehouses",
+##   metadata,
+##   rdb.Column("warehouse_id", rdb.Integer, primary_key=True ),
+##   rdb.Column("address_id",  rdb.Integer, rdb.ForeignKey('addresses.address_id') ),
+##   )
 
-outgoing_shipment = rdb.Table(
-  "outgoing_shipments",
-  metadata,
-  rdb.Column( "shipment_id",  rdb.Integer, primary_key=True),
-  rdb.Column( "order_id",  rdb.Integer, rdb.ForeignKey('orders.order_id') ),      
-  rdb.Column( "warehouse_id",  rdb.Integer, rdb.ForeignKey('warehouses.warehouse_id') ),
-  rdb.Column( "to_address", rdb.Integer, rdb.ForeignKey('addresses.address_id') ),
-  rdb.Column( "shipment_tracking", rdb.String(128) ),
-  )
+## outgoing_shipment = rdb.Table(
+##   "outgoing_shipments",
+##   metadata,
+##   rdb.Column( "shipment_id",  rdb.Integer, primary_key=True),
+##   rdb.Column( "order_id",  rdb.Integer, rdb.ForeignKey('orders.order_id') ),      
+##   rdb.Column( "warehouse_id",  rdb.Integer, rdb.ForeignKey('warehouses.warehouse_id') ),
+##   rdb.Column( "to_address", rdb.Integer, rdb.ForeignKey('addresses.address_id') ),
+##   rdb.Column( "shipment_tracking", rdb.String(128) ),
+##   )
 
 def main( ):
     import sys    

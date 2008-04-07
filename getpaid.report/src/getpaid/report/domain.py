@@ -14,8 +14,8 @@ class Product( object ):
 class InventoryEntry( object ):
     """ product inventory log entry """
     
-class LogEntry( object ):
-    """ order history log """
+## class LogEntry( object ):
+##     """ order history log """
 
 class Address( object ):
     """ an address """    
@@ -34,7 +34,7 @@ orm.mapper( InventoryEntry, schema.inventory,
             properties = {'product':orm.relation( Product ),
                           'order': orm.relation( Order ) } )
 
-orm.mapper( LogEntry, schema.order_log )
+#orm.mapper( LogEntry, schema.order_log )
 orm.mapper( Address, schema.addresses )
 
 orm.mapper( LineItem, schema.items,
@@ -43,7 +43,7 @@ orm.mapper( LineItem, schema.items,
 orm.mapper(
     Order, schema.orders,
     properties={
-      'log':orm.relation( LogEntry, backref='order' ),
+#      'log':orm.relation( LogEntry, backref='order' ),
       'items':orm.relation( LineItem, backref='order'),
       'shipping_address':orm.relation( Address, primaryjoin=(schema.orders.c.ship_id==schema.addresses.c.address_id)),
       'billing_address':orm.relation( Address, primaryjoin=(schema.orders.c.billing_id==schema.addresses.c.address_id)),
