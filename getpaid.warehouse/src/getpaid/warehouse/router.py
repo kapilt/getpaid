@@ -25,7 +25,7 @@ class OriginRouter( object ):
         if not warehouses:
             fallback_router = component.getAdapter( self.context, IOriginRouter, name="default" )
             return fallback_router.getOrigin()
-        assert len(warehouses) == 1, "only origin warehouse allowed per order, atm"
+        assert len(warehouses) == 1, "only one origin warehouse allowed per order, atm"
         warehouse = warehouses.pop()
         contact = self.getStoreContact()
         contact.name = warehouse.name

@@ -1,3 +1,6 @@
+"""
+$Id: $
+"""
 
 from persistent import Persistent
 

@@ -1,6 +1,7 @@
 
 from getpaid.core import options
 from getpaid.core import interfaces as icore
+from zope.event import notify
 
 import interfaces
 
@@ -13,8 +14,8 @@ Inventory = options.PersistentOptions.wire(
 def handleNewOrder( order, event ):
     """
     keep track of the amount product we have on hand *MINUS* our 
-    outstanding orders. ie. what product do we have to sell, if
-    include unfufilled orders.
+    outstanding orders. ie. what product do we have to sell, 
+    including our unfufilled orders.
     
     what constitutes a new order, an order which is the chargeable 
     finance state.
@@ -37,6 +38,9 @@ def handleNewOrder( order, event ):
         inventory = interfaces.IProductInventory( payable )
         inventory.store_stock -= item.quantity
 
+        if inventory.store_stock < 0 and inventory.store_stock + item.quantity >= 0:
+            notify( interfaces.InventoryBackordered( inventory, payable ) )
+
 def handleFufilledOrder( order, event ):
     """
     when we fufill an order we decrement, our on hand stock, to come 
@@ -58,4 +62,9 @@ def handleFufilledOrder( order, event ):
             
         inventory = interfaces.IProductInventory( payable )
         inventory.stock -= item.quantity
+
+        notify(
+            interfaces.InventoryOrderModified( inventory, payable, order, item.quantity )
+            )
+            
         
