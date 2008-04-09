@@ -49,7 +49,7 @@ def handleInventoryOrderModified( _inventory, event ):
         # installs into legacy
         if product is None:
             product = domain.Product()
-            sync.copyProduct( product, event.product, uid=iid )        
+            sync.copyProduct( event.product, product, uid=iid )        
         else:
             sync.copyProductInventory( _inventory, product )
             
