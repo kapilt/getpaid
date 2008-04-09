@@ -45,8 +45,8 @@ items = rdb.Table(
   rdb.Column("order_id",  rdb.Integer, rdb.ForeignKey('orders.order_id'), nullable=False ),
   rdb.Column("product_id", rdb.Integer, rdb.ForeignKey('products.product_id') ),
   rdb.Column("product_code", rdb.String(33), nullable=False), 
-  rdb.Column("name", rdb.Unicode(30), nullable=False),
-  rdb.Column("description", rdb.Unicode(100), nullable=False), 
+  rdb.Column("name", rdb.UnicodeText, nullable=False),
+  rdb.Column("description", rdb.UnicodeText, nullable=False), 
   rdb.Column("cost", rdb.Float(precision=2), nullable=False ),
   rdb.Column("quantity", rdb.Integer, nullable=False)
   )
@@ -83,9 +83,9 @@ customers = rdb.Table(
   metadata,
   rdb.Column('customer_id', rdb.Integer, primary_key=True),
   rdb.Column('user_id', rdb.Unicode(80), nullable=True),
-  rdb.Column('name', rdb.Unicode(80), nullable=True),
+  rdb.Column('name', rdb.Unicode(100), nullable=True),
   rdb.Column('phone_number', rdb.Unicode(15) ),
-  rdb.Column('email', rdb.Unicode(30) ),
+  rdb.Column('email', rdb.Unicode(60) ),
   rdb.Column('marketing_preference', rdb.Boolean, default=False ),
   rdb.Column('email_html_format', rdb.Boolean )
   )
@@ -94,9 +94,9 @@ addresses = rdb.Table(
   "addresses",
   metadata,
   rdb.Column("address_id", rdb.Integer, primary_key=True ),
-  rdb.Column("first_line", rdb.Unicode(60), nullable=False ),
-  rdb.Column("second_line", rdb.Unicode(60), nullable=True ),
-  rdb.Column("city", rdb.Unicode(60), nullable=False ),
+  rdb.Column("first_line", rdb.Unicode(200), nullable=False ),
+  rdb.Column("second_line", rdb.Unicode(200), nullable=True ),
+  rdb.Column("city", rdb.Unicode(120), nullable=False ),
   rdb.Column("state", rdb.String(6), nullable=False ),
   rdb.Column("country", rdb.String(4), nullable=False ),
   rdb.Column("postal_code", rdb.String(10), nullable=False ),

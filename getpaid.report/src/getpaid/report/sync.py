@@ -76,6 +76,7 @@ def copyOrder( _session, source, target ):
 
     # identity info
     target.order_zid = source.order_id
+    
     target.creation_date = source.creation_date
     
     # handle workflow states
@@ -98,6 +99,7 @@ def copyOrder( _session, source, target ):
     customer = domain.Customer()
     copyCustomer( source.contact_information, customer )
     target.contact_information = customer
+    target.contact_information.user_id = source.user_id
     
     # handle line items
     for _item in source.shopping_cart.values():
