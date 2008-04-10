@@ -35,11 +35,16 @@ def handleNewOrder( order, event ):
         payable = item.resolve()
         if payable is None:
             continue
+        
         inventory = interfaces.IProductInventory( payable )
         inventory.store_stock -= item.quantity
-
-        if inventory.store_stock < 0 and inventory.store_stock + item.quantity >= 0:
+        
+        if inventory.store_stock < 0 and (inventory.store_stock + item.quantity) >= 0:
             notify( interfaces.InventoryBackordered( inventory, payable ) )
+
+        notify(
+            interfaces.InventoryAvailabilityModified( inventory, payable, order, item.quantity )
+            )
 
 def handleFufilledOrder( order, event ):
     """
@@ -64,7 +69,7 @@ def handleFufilledOrder( order, event ):
         inventory.stock -= item.quantity
 
         notify(
-            interfaces.InventoryOrderModified( inventory, payable, order, item.quantity )
+            interfaces.InventoryOrderFufilled( inventory, payable, order, item.quantity )
             )
             
         

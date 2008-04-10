@@ -45,9 +45,17 @@ class IInventoryModified( IObjectEvent ):
     product = schema.Object( interfaces.IShippableContent )
     stock_delta = schema.Int()
 
-class IInventoryOrderModified( IObjectEvent ):
+class IInventoryAvailabilityModified( IObjectEvent ):
     """
-    inventory modified by order processing, sent after the modification
+    inventory availability changed by an order
+    """
+    product = schema.Object( interfaces.IShippableContent )
+    order = schema.Object( interfaces.IOrder )
+    stock_delta = schema.Int()
+    
+class IInventoryOrderFulfilled( IObjectEvent ):
+    """
+    inventory stock changed by order fulfillment
     """
     product = schema.Object( interfaces.IShippableContent )
     order = schema.Object( interfaces.IOrder )
@@ -70,15 +78,23 @@ class InventoryModified( object ):
         self.stock_delta = stock_delta
 
 class InventoryOrderModified( object ):
-
-    interface.implements( IInventoryOrderModified )
     
     def __init__( self, inventory, product, order, stock_delta=0 ):
         self.object = inventory
         self.product = product
         self.order = order
         self.stock_delta = stock_delta
-        
+
+class InventoryAvailabilityModified( InventoryOrderModified ):
+    
+    interface.implements( IInventoryAvailabilityModified )
+
+
+class InventoryOrderFulfilled( InventoryOrderModified ):
+    
+    interface.implements( IInventoryOrderFulfilled )
+
+    
 class InventoryBackordered( object ):
     
     interface.implements( IInventoryBackordered )
