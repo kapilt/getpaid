@@ -520,7 +520,7 @@ class IShippingAddress( IAbstractAddress ):
                                     vocabulary = "getpaid.countries", required=False)
     ship_state = schema.Choice( title = _(u"State"),
                                   vocabulary="getpaid.states", required=False)
-    ship_postal_code = schema.TextLine( title = _(u"Zip Code"), required=False)
+    ship_postal_code = schema.TextLine( title = _(u"Zip/Postal Code"), required=False)
 
 class IBillingAddress( IAbstractAddress ):
     """ where to bill 
@@ -533,7 +533,7 @@ class IBillingAddress( IAbstractAddress ):
                                     vocabulary = "getpaid.countries")
     bill_state = schema.Choice( title = _(u"State"),
                                   vocabulary="getpaid.states" )
-    bill_postal_code = schema.TextLine( title = _(u"Zip Code"))
+    bill_postal_code = schema.TextLine( title = _(u"Zip/Postal Code"))
 
 MarketingPreferenceVocabulary = SimpleVocabulary( 
                                    map(SimpleVocabulary.createTerm, 
