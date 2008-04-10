@@ -241,7 +241,7 @@ class ReportTests(unittest.TestCase):
         _order = subscriber.handleNewOrder( order, None )
 
         # serialize the inventory modified event
-        _entry = subscriber.handleInventoryOrderModified( inventory, event )
+        _entry = subscriber.handleInventoryOrderFulfilled( inventory, event )
 
         # verify serialization
         self.assertEqual( _order.order_id, _entry.order_id )

@@ -3,25 +3,14 @@ from zope import component
 from zope.app.intid.interfaces import IIntIds
 
 import domain, sync
-
+    
 def handleInventoryModified( _inventory, event ):
     """
     when an inventory is modified, we record inventory adjustments to the database
     """
     def _( s ):
         entry = domain.InventoryEntry()
-
-        # fetch the db product 
-        iid = component.getUtility( IIntIds ).queryId( event.product )
-        product = s.query( domain.Product ).filter(
-            domain.Product.content_uid == iid ).first()
-        
-        if product is None:
-            product = domain.Product()
-            sync.copyProduct( event.product, product, uid=iid )
-        else:
-            sync.copyProductInventory( _inventory, product )
-            
+        product = _fetchSync( s, event )
         entry.product = product
         entry.quantity = event.stock_delta
         entry.action = u"added"
@@ -30,7 +19,21 @@ def handleInventoryModified( _inventory, event ):
     
     return _interact( _ )
 
-def handleInventoryOrderModified( _inventory, event ):
+def handleInventoryAvailabilityModified( _inventory, event ):
+    """
+    when an item's availability changes, this is distinct from event which
+    creates a product log entry, in that only the availability is changing
+    not the actual amount on hand.
+    """
+    def _( s ):
+        product = _fetchSync( s, event )
+        sync.copyProductInventory( _inventory, product )
+        return product
+    
+    return _interact( _ )
+
+
+def handleInventoryOrderFulfilled( _inventory, event ):
     """
     when an order is fufilled, we record inventory levels of products
     items to the database. the event is generated per product.
@@ -103,3 +106,16 @@ def _interact( func ):
             s.save_or_update( value )
         s.commit()
     return value
+
+def _fetchSync( s, e ):
+    # fetch the db product 
+    iid = component.getUtility( IIntIds ).queryId( e.product )
+    product = s.query( domain.Product ).filter(
+        domain.Product.content_uid == iid ).first()
+    
+    if product is None:
+        product = domain.Product()
+        sync.copyProduct( e.product, product, uid=iid )
+    else:
+        sync.copyProductInventory( e.object, product )
+    return product

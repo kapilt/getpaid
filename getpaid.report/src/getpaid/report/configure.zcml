@@ -10,8 +10,14 @@
 
   <subscriber
      for="getpaid.warehouse.interfaces.IProductInventory
-	  getpaid.warehouse.interfaces.IInventoryOrderModified"
-     handler=".subscriber.handleInventoryOrderModified"
+	  getpaid.warehouse.interfaces.IInventoryOrderFulfilled"
+     handler=".subscriber.handleInventoryOrderFulfilled"
+     />
+
+  <subscriber
+     for="getpaid.warehouse.interfaces.IProductInventory
+	  getpaid.warehouse.interfaces.IInventoryAvailabilityModified"
+     handler=".subscriber.handleInventoryAvailabilityModified"
      />
 
   <subscriber
