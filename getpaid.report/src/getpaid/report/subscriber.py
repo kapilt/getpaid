@@ -65,7 +65,7 @@ def handleInventoryOrderModified( _inventory, event ):
         return entry
     
     return _interact( _ )
-    
+
 def handleOrderTransition( _order, event ):
     """
     when an order is transition, we record the state changes to the database

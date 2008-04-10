@@ -114,14 +114,25 @@ def copyOrder( _session, source, target ):
         product = _session.query( domain.Product ).filter(
             domain.Product.content_uid == _item.uid ).first()
         
-        # if we do find one, attach and continue
+        # if we do find one, attach
         if product is not None:
             item.product = product
-            continue
-
+            
+            # if we are a shippable item we need to track inventory..
+            # else continue to next
+            if not interfaces.IShippableLineItem.providedBy( _item ):
+                continue
+            
         # else resolve item to product and serialize product
         payable = _item.resolve()
         if payable is None:
+            continue
+
+        # copy product
+        if product is not None:
+            inventory = component.queryAdapter( source, IProductInventory )
+            if inventory:
+                copyProductInventory( inventory, product )
             continue
         
         product = domain.Product()
