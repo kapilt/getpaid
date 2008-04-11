@@ -147,8 +147,9 @@ class PaymentechResult(object):
         # 0 – Decline, 1 – Approved, 2 – Message/System Error 
         self.approval_status = getElement(self.result_resp, 'ApprovalStatus')
         self.trans_ref_num = getElement(self.result_resp, 'TxRefNum')
-        self.cvv2_resp_code = getElement(self.result_resp, 'HostCVV2RespCode')
+        self.cvv2_resp_code = getElement(self.result_resp, 'CVV2RespCode')
         self.status_msg = getElement(self.result_resp, 'StatusMsg')
+        self.card_brand = getElement(self.result_resp, 'CardBrand')
 
 class PaymentechAdapter(object):
     interface.implements(interfaces.IPaymentProcessor)
@@ -177,7 +178,8 @@ class PaymentechAdapter(object):
         result = self.process(data, timeout=None)
         if result.proc_status == "0":
             if result.approval_status == '1':
-                if self.options.check_cvv2:
+                if self.options.check_cvv2 and result.card_brand != 'AX':
+                    # On AMEX Paymentech don't check the cvv2
                     # we check the cvv2 resp code:
                     if result.cvv2_resp_code != 'M':
                         if result.cvv2_resp_code in cvv2_codes:
