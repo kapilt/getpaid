@@ -140,6 +140,10 @@ function selectionError()
 <table border="0" class="ordered-selection-field"
        tal:define="view_name python: view.name">
   <tr>
+    <td i18n:translate="" class="discreet">Available</td><td/>
+    <td i18n:translate="" class="discreet">Selected</td><td/>
+  </tr>
+  <tr>
     <td>
       <select id="from" name="from" size="5" multiple=""
           tal:attributes="name python:'%s.from'%view_name;
