@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: getpaid.core VERSION\n"
 "POT-Creation-Date: 2007-12-13 20:02+0000\n"
-"PO-Revision-Date: 2007-10-13 17:05+0200\n"
+"PO-Revision-Date: 2008-04-13 02:15+0100\n"
 "Last-Translator: Ricardo Alves <rsa@eurotux.com>\n"
 "Language-Team: Eurotux Development Team <udp@eurotux.com>\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr "Aceite"
 
 #: ./interfaces.py:66
 msgid "An organization's unique product identifier (not required since shopping cart uses content UID internally)"
-msgstr ""
+msgstr "Um identificador único de produto na organização (não obrigatório, uma vez que os carrinhos de compras utilizam o UID dos conteúdos internamente)."
 
 #: ./workflow/order.py:75
 msgid "Authorize"
@@ -166,7 +166,7 @@ msgstr "Primeira Linha"
 
 #: ./interfaces.py:394
 msgid "For MC, Visa, and DC, this is a 3-digit number on back of the card.  For AmEx, this is a 4-digit code on front of card. "
-msgstr ""
+msgstr "Para MC, Visa e DC, é um número com 3 dígitos. Para AmEx, é um número de 4 dígitos na parte frontal do cartão."
 
 #: ./order.py:432
 msgid "Fulfillment"
@@ -182,7 +182,7 @@ msgstr "HTML"
 
 #: ./interfaces.py:223
 msgid "Integer Id for a Product"
-msgstr ""
+msgstr "Identificador para o produto"
 
 #: ./fields.py:11
 msgid "Invalid Credit Card Number."
@@ -310,7 +310,7 @@ msgstr "Reembolsado"
 
 #: ./interfaces.py:313
 msgid "Same as billing address"
-msgstr ""
+msgstr "O mesmo que o endereço de cobrança."
 
 #: ./interfaces.py:302
 msgid "Second Line"
@@ -326,7 +326,7 @@ msgstr "Enviar"
 
 #: ./interfaces.py:39
 msgid "Shipping Method"
-msgstr ""
+msgstr "Método de Entrega"
 
 #: ./interfaces.py:306
 msgid "State"
@@ -334,7 +334,7 @@ msgstr "Estado"
 
 #: ./interfaces.py:43
 msgid "Store/Organization Name"
-msgstr ""
+msgstr "Nome da Organização/Loja"
 
 #: ./interfaces.py:173
 msgid "Unique Item Id"
