@@ -32,11 +32,11 @@ msgstr "Uma lista de anos"
 #. Default: "A problem occurred with your payment"
 #: ./browser/templates/checkout-cancelled-declined.pt:7
 msgid "A problem occurred with your payment"
-msgstr ""
+msgstr "Ocorreu um problema com o seu pagamento"
 
 #: ./interfaces.py:216
 msgid "Accepted Credit Cards"
-msgstr ""
+msgstr "Cartões de Crédito Permitidos"
 
 #: ./browser/content.py:85
 msgid "Activate"
@@ -48,7 +48,7 @@ msgstr "Permitir Fecho Anónimo"
 
 #: ./interfaces.py:83
 msgid "Amount"
-msgstr ""
+msgstr "Quantia"
 
 # zope.formlib
 # Apply button
@@ -163,7 +163,7 @@ msgstr "Criado"
 
 #: ./interfaces.py:219
 msgid "Credit cards accepted for payment"
-msgstr ""
+msgstr "Cartões de crédito aceites para pagamento."
 
 #: ./interfaces.py:263
 msgid "Currency Symbol"
@@ -220,11 +220,11 @@ msgstr "Tipos de Conteúdo para Doação"
 
 #: ./interfaces.py:82
 msgid "Donation Level Name"
-msgstr ""
+msgstr "Nome do Nível de Doação"
 
 #: ./interfaces.py:87
 msgid "Donation Levels"
-msgstr ""
+msgstr "Níveis de Doação"
 
 #: ./browser/admin.py:175
 msgid "Email Notifications"
