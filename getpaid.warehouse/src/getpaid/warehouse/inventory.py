@@ -69,7 +69,7 @@ def handleFufilledOrder( order, event ):
         inventory.stock -= item.quantity
 
         notify(
-            interfaces.InventoryOrderFufilled( inventory, payable, order, item.quantity )
+            interfaces.InventoryOrderFulfilled( inventory, payable, order, item.quantity )
             )
             
         
