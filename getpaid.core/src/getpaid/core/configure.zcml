@@ -28,7 +28,7 @@
   <!-- Kick off Fulfillment workflow on Orders -->
   <subscriber
       for=".interfaces.IOrder
-           zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+           zope.app.event.interfaces.IObjectCreatedEvent"
       handler=".order.startOrderFulfillmentWorkflow"
       />
 
