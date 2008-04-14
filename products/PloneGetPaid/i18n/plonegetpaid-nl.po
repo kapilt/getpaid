@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PloneGetPaid VERSION\n"
 "POT-Creation-Date: 2007-12-13 19:59+0000\n"
-"PO-Revision-Date: 2007-12-19 13:31+0000\n"
+"PO-Revision-Date: 2008-04-14 22:09+0200\n"
 "Last-Translator: Maurits van Rees <m.van.rees@zestsoftware.nl>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -670,7 +670,7 @@ msgstr "Zoeken"
 #. Default: "Summary"
 #: ./browser/templates/order-summary.pt:3
 msgid "legend_summary"
-msgstr "Sammenvatting"
+msgstr "Samenvatting"
 
 #: ./interfaces.py:356
 msgid "months"
