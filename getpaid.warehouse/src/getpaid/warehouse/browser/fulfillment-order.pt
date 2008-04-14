@@ -6,6 +6,12 @@
 	<tal:block content="structure provider:getpaid.order.fulfillment">
 	</tal:block>
 
+    <div class="documentActions">
+       <a href="javascript:this.print()" i18n:domain="plone" i18n:translate="">
+           Print this page
+       </a>
+    </div>
+
   </metal:block>
 
 </metal:page>
