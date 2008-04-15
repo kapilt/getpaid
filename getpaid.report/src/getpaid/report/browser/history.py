@@ -12,7 +12,8 @@ from getpaid.report.i18n import _
 def orderLink( item, formatter):
     if item.order_id is None:
         return item.action
-    return u'<a href="">%s</a>'%(item.order.order_zid)
+    oid = item.order.order_zid
+    return u'<a href="@@admin-manage-order/%s/@@fulfillment">%s</a>'%( oid, oid )
 
 class ProductHistoryReport( BrowserView ):
 

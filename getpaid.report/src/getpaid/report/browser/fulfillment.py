@@ -12,16 +12,16 @@ from getpaid.report import report
 from getpaid.report.i18n import _
 
 class IReportSettings( interface.Interface ):
-
     start_date = schema.Date( title=_(u"Start Date") )
     end_date = schema.Date( title=_(u"End Date") )    
 
 def orderLink( item, formatter):
-    return u'<a href="">%s</a>'%(item['order_zid'])
+    oid = item['order_zid']
+    return u'<a href="@@admin-manage-order/%s/@@fulfillment">%s</a>'%( oid, oid )
 
 class FulfillmentReport( BaseFormView ):
 
-    form_description=_(u"Select the dates to view the fulfilled orders. Date Format is MM-DD-YY")
+    form_description=_(u"Select the dates to view the fulfilled orders. Date Format is YY-MM-DD")
     form_fields = form.Fields(  IReportSettings )
     template = ZopeTwoPageTemplateFile('fulfillment.pt')
     
