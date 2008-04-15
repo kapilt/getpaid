@@ -86,7 +86,11 @@ def copyOrder( _session, source, target ):
     # handle addresses
     billing_address = domain.Address()
     copyAddress( source.billing_address, billing_address, 'bill' )
-    target.billing_address = billing_address
+
+    # ifpeople doesn't like the integrity constraint, as their
+    # shipping free orders sans billing in some cases
+    if billing_address.first_line:
+        target.billing_address = billing_address
     
     shipping_address = domain.Address()
     if source.shipping_address.ship_same_billing:
