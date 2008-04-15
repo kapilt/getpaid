@@ -532,7 +532,39 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
                   'email': contact.email,
                   'phone': contact.phone_number}
         return contact
+    
+    def getShippingService(self):
+        if not hasattr(self.order,"shipping_service"):
+            return "N/A"
+        infos = self.order.shipping_service
+        if infos:
+            return infos
+
+    def getShippingMethod(self):
+        shipping_method_obj = None
+        interface.directlyProvides( self.order, interfaces.IShippableOrder )
+        service = component.getUtility( interfaces.IShippingRateService, self.order.shipping_service )
+        methods = service.getRates( self.order )
+        for m in methods.shipments:
+            if m.service_code == self.order.shipping_method:
+                shipping_method_obj = m
+
         
+        if shipping_method_obj:
+            return shipping_method_obj.service
+        else:
+            return "N/A"
+    
+    def getShipmentWeight(self):
+        """
+        Lets return the weight in lbs for the moment
+        """
+        totalShipmentWeight = 0
+        for eachProduct in self.order.shopping_cart.values():
+            weightValue = eachProduct.weight * eachProduct.quantity
+            totalShipmentWeight += weightValue
+        return totalShipmentWeight
+
     def getShippingAddress(self):
         infos = self.order.shipping_address
         if infos.ship_same_billing:

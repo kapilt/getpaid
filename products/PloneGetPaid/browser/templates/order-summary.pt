@@ -90,6 +90,17 @@
             </tr>
           </table>
         </li>
+        <tal:cond condition="view/getShippingMethod">
+        <li>
+            <span i18n:translate="text_fulfillment_shipping_method"> Shipping Service </span> -
+            <span tal:content="view/getShippingMethod" />
+        </li>
+        <li>
+            <span i18n:translate="text_fulfillment_shipping_weight"> Shipment Weight </span> -
+            <span tal:content="view/getShipmentWeight" />
+        </li>
+        </tal:cond>
+
     </ul>
 
 </fieldset>
