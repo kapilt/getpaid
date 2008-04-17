@@ -7,9 +7,8 @@ from Products.CMFCore.utils import getToolByName
 
 def checkDiscount(self, event):
     """
-    Check if an item has a discount on it:
-     * change the total depending on that
-     * add a discount line in the cart
+    Check if an item has a discount on it and 
+    change the total depending on that
     """
     item = event.object
     ref_obj = item.resolve()
