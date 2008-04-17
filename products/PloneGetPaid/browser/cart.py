@@ -268,7 +268,9 @@ class ShoppingCartActions( FormViewlet ):
         else:
             payable = getToolByName( self.context, 'reference_catalog').lookupObject( last_item )
         if not self.request.get('came_from'):
-            next_url = payable.absolute_url()+'/view'
+            next_url = payable.absolute_url() 
+            #Used to have /view at the end but this was breaking
+            #sites with custom views
         else:
             next_url = self.request.get('came_from')
         print data.keys()
