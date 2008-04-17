@@ -26,6 +26,9 @@
 
 <include zcml:condition="installed getpaid.paymentech"
 	 package="getpaid.paymentech" />
+	 
+<include zcml:condition="installed getpaid.discount"
+	 package="getpaid.discount" />
 
 <!-- Optional Shipping Modules -->
 <include zcml:condition="installed getpaid.flatrateshipping"
