@@ -439,6 +439,11 @@ class IShipmentContainer(  IContainer ):
 class IShipment( ILineItemContainer ):
     """ a (partial|complete) shipment of ishippable line items of an order
     """
+    tracking_code = schema.TextLine( description=_(u"Tracking Number") )
+    service_code = schema.ASCIILine( description=_(u"Service Code (2 Letter)"))
+    service = schema.TextLine( description=_(u"Service Name"))
+    shipping_cost = schema.Float( description=_(u"Cost of Delivery") )
+    creation_date = schema.Datetime( description=_(u"Creation Date") )
 
 class IShippingMethod( Interface ):
 
@@ -648,8 +653,6 @@ class IOrder( Interface ):
     fulfillment_state = schema.TextLine( title = _(u"Fulfillment State"), readonly=True)
     processor_order_id = schema.ASCIILine( title = _(u"Processor Order Id") )
     processor_id = schema.ASCIILine( readonly=True )
-    
-
 
 # Various Order Classification Markers..
 
@@ -660,6 +663,8 @@ class IShippableOrder( IOrder ):
     shipping_method = schema.ASCIILine( title = _(u"Shipping Method") )
     shipping_price = schema.ASCIILine( title = _(u"Shipping Price") )
 
+    shipments = schema.Object( IShipmentContainer )
+    
 
 class IOriginRouter( Interface ):
     
@@ -717,6 +722,7 @@ class IOrderWorkflowEntry( Interface ):
 
 class IPhoneNumber(ITextLine):
     """A Text line field that handles phone number input."""
+    
 classImplements(PhoneNumber,IPhoneNumber)
 
 

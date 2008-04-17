@@ -31,6 +31,7 @@ from persistent import Persistent
 from zope.interface import implements
 from zope import component
 
+from zope.app.container.interfaces import ILocation
 try:
     from zope.annotation.interfaces import IAttributeAnnotatable
 except ImportError:
@@ -68,6 +69,13 @@ class LineItem( Persistent ):
     @property
     def fulfillment_workflow( self ):
         return IWorkflowInfo( self )
+
+    def clone( self ):
+        clone = self.__class__.__new__( self.__class__ )
+        clone.__setstate__( self.__getstate__() )
+        if ILocation.providedBy( clone ):
+            del clone.__name__, clone.__parent__
+        return clone
 
 class ShippableLineItem( LineItem ):
     
