@@ -62,13 +62,39 @@
      manager="..interfaces.IOrderFulfillmentVM"
      class=".fulfillment.OrderSummary"
      permission="cmf.ManagePortal"
+     order="10"
     />
+
+  <browser:viewlet
+     name="order-backorder"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.BackorderList"
+     permission="cmf.ManagePortal"
+     order="20"
+     />
 
   <browser:viewlet
      name="order-picklist"
      manager="..interfaces.IOrderFulfillmentVM"
      class=".fulfillment.OrderPickList"
      permission="cmf.ManagePortal"
+     order="30"
+     />
+
+  <browser:viewlet
+     name="order-shipments"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.OrderShipments"
+     permission="cmf.ManagePortal"
+     order="40"
+     />
+
+  <browser:viewlet
+     name="order-shipped"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.ShippedItems"
+     permission="cmf.ManagePortal"
+     order="50"
      />
 
   <!-- Warehouse Administration -->

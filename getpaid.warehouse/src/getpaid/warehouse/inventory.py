@@ -3,7 +3,7 @@ from getpaid.core import options
 from getpaid.core import interfaces as icore
 from zope.event import notify
 
-import interfaces
+import interfaces, shipment
 
 Inventory = options.PersistentOptions.wire( 
                 "Inventory", 
@@ -19,6 +19,8 @@ def handleNewOrder( order, event ):
     
     what constitutes a new order, an order which is the chargeable 
     finance state.
+
+    attaches shipments to a new shippable order
     """
     
     if event.destination != icore.workflow_states.order.finance.CHARGEABLE:
@@ -26,6 +28,9 @@ def handleNewOrder( order, event ):
 
     if not event.source in ( icore.workflow_states.order.finance.REVIEWING, ):
         return 
+
+    if icore.IShippableOrder.providedBy( order ):
+        order.shipments = shipment.OrderShipments()
             
     for item in order.shopping_cart.values():
         if not ( icore.IShippableLineItem.providedBy( item ) 

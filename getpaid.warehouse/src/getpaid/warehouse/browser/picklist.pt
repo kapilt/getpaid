@@ -1,0 +1,31 @@
+
+<fieldset i18n:domain="plonegetpaid">
+  <legend tal:content="view/collection_name">Contents</legend>
+
+  <div class="portalMessage" tal:content="view/status"
+       tal:condition="view/status"> </div>
+
+  <form action="."
+        tal:attributes="action request/URL" method="post"
+        class="edit-form" enctype="multipart/form-data"
+        id="getpaid.cart.actions">
+
+
+   <div tal:replace="structure view/listing"> 
+   </div>
+   
+   <div class="fufill-form">
+    <metal:block use-macro="context/@@getpaid-form/form-body">    
+    </metal:block>     
+   </div>
+   
+    <div class="fulfill-form-controls" tal:condition="view/availableActions">
+      <input tal:repeat="action view/actions"
+             tal:replace="structure action/render"
+             />
+    </div>
+
+  </form>
+
+   <br />
+</fieldset>
