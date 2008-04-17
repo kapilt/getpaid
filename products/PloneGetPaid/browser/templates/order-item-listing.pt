@@ -1,5 +1,5 @@
 <fieldset i18n:domain="plonegetpaid">
-  <legend i18n:translate="legend_contents"> Contents </legend>
+  <legend tal:content="view/collection_name">Contents</legend>
 
   <form action="."
         tal:attributes="action request/URL" method="post"

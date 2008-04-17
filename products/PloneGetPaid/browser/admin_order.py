@@ -681,7 +681,6 @@ class OrderContentsComponent( core.ComponentViewlet ):
     interface.implements( )
     
     template = ZopeTwoPageTemplateFile('templates/order-item-listing.pt')
-
     
     columns = [
         column.SelectionColumn( lambda item: item.item_id, name="selection"),
@@ -698,6 +697,8 @@ class OrderContentsComponent( core.ComponentViewlet ):
     states = None # tuple of item fulfillment states that we use to get items we display
     show_finance_states = () # which order finance states we display in
     show_fulfillment_states = () # which order fulfillment states we display in
+
+    collection_name = _(u"Contents")
     
     def render( self ):
         return self.__of__( self.__parent__ ).template() 
@@ -707,7 +708,6 @@ class OrderContentsComponent( core.ComponentViewlet ):
             return kw['order_fulfillment_state'] in self.show_fulfillment_states
         if self.show_finance_states and kw['order_finance_state']:
             return kw['order_finance_state'] in self.show_finance_states
-
         if self.states:
             self.line_items = self.managerItemsByStates( self.states )
             if not self.line_items:

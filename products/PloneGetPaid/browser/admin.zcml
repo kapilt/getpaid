@@ -178,7 +178,6 @@
 
   <!-- 
   item fulfillment example for m2
-
   <browser:viewlet
      name="order-new-items"
      manager="..interfaces.IAdminOrderManager"
