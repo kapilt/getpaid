@@ -29,6 +29,7 @@ from getpaid.core.order import Order
 import Acquisition
 from AccessControl import getSecurityManager
 from ZTUtils import make_hidden_input
+from ZTUtils import make_query as mq
 
 from Products.Five.formlib import formbase
 from Products.Five.browser import BrowserView
@@ -247,7 +248,7 @@ class CheckoutWizard( Wizard ):
             url = self.request.getURL()
             if not 'https://' in url:
                 url = url.replace("http://", "https://")
-                self.request.response.redirect(url)
+                self.request.response.redirect('%s?%s' % (url, mq(self.request.form)))
         return True
     
     def __call__( self ):
