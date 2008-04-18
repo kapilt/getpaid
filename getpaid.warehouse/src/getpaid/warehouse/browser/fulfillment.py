@@ -174,11 +174,7 @@ class ShippedItems( order.OrderContentsComponent ):
     
     def show( self, inline=False, **kw ):
         if not inline:
-            return True
-        
-        self.line_items = self.manager.itemsByStates(
-            (workflow_states.item.SHIPPED,),
-            )
+            return True        
         if len( self.line_items ) == 0:
             return False
         return True
@@ -190,6 +186,9 @@ class ShippedItems( order.OrderContentsComponent ):
     
     def update( self ):
         self.actions = ()
+        self.line_items = self.manager.itemsByStates(
+            (workflow_states.item.SHIPPED,),
+            )
         return super( order.OrderContentsComponent, self).update()    
         
 class OrderPickList( order.OrderContentsComponent ):
@@ -218,8 +217,6 @@ class OrderPickList( order.OrderContentsComponent ):
     def show( self, inline=False, **kw ):
         if not inline:
             return True
-        
-        self.line_items = self.filteredItems()
         if len(self.line_items):
             return True
         return False
@@ -246,7 +243,7 @@ class OrderPickList( order.OrderContentsComponent ):
             columns = copy( self.columns )
             columns.pop(0)
             self.columns = columns
-            
+        self.line_items = self.filteredItems()
         return super( order.OrderContentsComponent, self).update()
 
     def condition_create_shipment( self, action ):
