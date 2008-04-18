@@ -298,10 +298,10 @@ class OrderPickList( order.OrderContentsComponent ):
         # if we have no more items         
         items = self.manager.itemsByStates( ( workflow_states.item.NEW, ) )
         if not len(items):
-            if self.context.fulfillment_state == workflow_states.order.NEW:
+            if self.context.fulfillment_state == workflow_states.order.fulfillment.NEW:
                 self.context.fulfillment_workflow.fireTransition('process-order')
                 
-            if self.context.fulfillment_state == workflow_states.order.PROCESSING:
+            if self.context.fulfillment_state == workflow_states.order.fulfillment.PROCESSING:
                 self.context.fulfillment_workflow.fireTransition('deliver-processing-order')                
         
 def g_created( item, formatter ):
