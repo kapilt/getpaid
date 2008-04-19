@@ -460,6 +460,11 @@ class IShippingRateService( Interface ):
         - an error string as 'error'
         """
 
+    def getMethodName( method_id ):
+        """
+        given a shipping method service code, returns a shipping method label/name
+        """
+
 class IShippingMethodRate( Interface ):
     """
      Service Code: UPS Next Day Air
