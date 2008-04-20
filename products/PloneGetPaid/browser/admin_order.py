@@ -565,6 +565,10 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
         """
         Lets return the weight in lbs for the moment
         """
+        # check the traversable wrrapper
+        if not interfaces.IShippableOrder.providedBy( self.order ):
+            return _(u"N/A")
+
         totalShipmentWeight = 0
         for eachProduct in self.order.shopping_cart.values():
             weightValue = eachProduct.weight * eachProduct.quantity
