@@ -12,6 +12,7 @@ from zope.schema import vocabulary
 from zope.viewlet.interfaces import IViewlet
 from zope.formlib import form
 
+from zExceptions import Unauthorized
 from zc.table import table, column
 from ore.viewlet import core
 
@@ -492,13 +493,19 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
     prefix = "ordersummary"
 
     def render( self ):
-        self.order = self.__parent__.context
-        pm = getToolByName(self.order, "portal_membership")
+        
+        # pull out the real order object from the traversable wrapper
+        self.order = self.context._object
+        
+        pm = getToolByName(self.context, "portal_membership")
+
+        # this check really shouldn't be hardcoded here.. -kapilt
         user = pm.getAuthenticatedMember()
         if not 'Manager' in user.getRoles():
             user_id = user.getId()
             if 'Anonymous' in user.getRoles() or user_id != self.getUserId():
-                raise "Unauthorized"
+                raise Unauthorized, "Arbitrary Order Access Only for Managers"
+            
         utility = zapi.getUtility(ICountriesStates)
         self.vocab_countries = TitledVocabulary.fromTitles(utility.countries)
         self.vocab_states = TitledVocabulary.fromTitles(utility.states())
@@ -541,19 +548,18 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
             return infos
 
     def getShippingMethod(self):
-        shipping_method_obj = None
-        interface.directlyProvides( self.order, interfaces.IShippableOrder )
-        service = component.getUtility( interfaces.IShippingRateService, self.order.shipping_service )
-        methods = service.getRates( self.order )
-        for m in methods.shipments:
-            if m.service_code == self.order.shipping_method:
-                shipping_method_obj = m
-
+        # check the traversable wrrapper
+        if not interfaces.IShippableOrder.providedBy( self.order ):
+            return _(u"N/A")
         
-        if shipping_method_obj:
-            return shipping_method_obj.service
-        else:
-            return "N/A"
+        service = component.queryUtility( interfaces.IShippingRateService,
+                                          self.order.shipping_service )
+        
+        # play nice if the a shipping method is removed from the store
+        if not service: 
+            return _(u"N/A")
+        
+        return service.getMethodName( self.order.shipping_method )
     
     def getShipmentWeight(self):
         """

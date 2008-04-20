@@ -26,8 +26,6 @@ class FormViewlet( viewlet.SimpleAttributeViewlet, formbase.SubPageForm ):
     
     __page_attribute__ = "template"
     
-
-    
     def update( self ):
         super( viewlet.SimpleAttributeViewlet, self).update()
         super( formbase.SubPageForm, self).update()
