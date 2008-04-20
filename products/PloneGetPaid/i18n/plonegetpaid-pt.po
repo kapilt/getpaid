@@ -326,7 +326,7 @@ msgstr "Configuracão da Agência de Pagamentos"
 
 #: ./browser/admin.py:115
 msgid "Please Select Payment Processor in Payment Options Settings"
-msgstr "Eleger uma Agência de pagamentos na página de Configuração de Pagamentos"
+msgstr "Escolher uma Agência de pagamentos na página de Configuração de Pagamentos"
 
 #: ./interfaces.py:268
 msgid "Positive Currency Format"
@@ -644,7 +644,7 @@ msgstr "Próximos passos"
 #. Default: "Finance"
 #: ./browser/templates/order-finance.pt:3
 msgid "legend_order_finance"
-msgstr "Finanças"
+msgstr "Contas"
 
 #. Default: "Fulfillment"
 #: ./browser/templates/order-fulfillment.pt:3
@@ -746,7 +746,7 @@ msgstr "anos"
 #. Default: "Your finance state is"
 #: ./browser/templates/checkout-thank-you.pt:11
 msgid "your_finance_state_is"
-msgstr "O estado das suas finanças é"
+msgstr "O estado do seu pedido é"
 
 #. Default: "Your order id is"
 #: ./browser/templates/checkout-thank-you.pt:17
