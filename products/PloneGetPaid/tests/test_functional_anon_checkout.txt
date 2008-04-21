@@ -54,7 +54,6 @@ Setting required settings. (Especially anonymous checkout)
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Email Notifications').click()
     >>> browser.getControl(name='form.merchant_email_notification').displayValue = ['Do not send merchant email notification of a completed transaction']
-    >>> browser.getControl(name='form.customer_email_notification').displayValue = ['Do not send customer email notification of a completed transaction']
     >>> browser.getControl('Apply').click()
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Legal Disclaimers').click()
@@ -138,7 +137,9 @@ And we do our anonymous checkout
     >>> browser.getControl('Checkout').click()
 
 We check that the fields are not empty since now we are logged in
-    
+
+    >>> print membership.getMemberById('testmanager').getProperty('email')
+    testmember@getpaid.org
     >>> browser.getControl(name='form.email').value.strip() == 'testmember@getpaid.org'
     True
     >>> browser.getControl(name='form.bill_first_line').value.strip() == 'here on earth'

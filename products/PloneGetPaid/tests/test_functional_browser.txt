@@ -106,6 +106,8 @@ Test make shippable
     >>> browser.getControl('Price').value = '1'
     >>> browser.getControl('Dimensions').value = '1 lb'
     >>> browser.getControl('Product SKU').value = '1234'
+    >>> browser.getControl('Shipping Weight').value = '1234'
+    >>> browser.getControl('Weight Unit').displayValue = ['lbs']
     >>> browser.getControl('Activate').click()
 
 Test for expected results
