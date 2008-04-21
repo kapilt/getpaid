@@ -273,7 +273,6 @@ class ShoppingCartActions( FormViewlet ):
             #sites with custom views
         else:
             next_url = self.request.get('came_from')
-        print data.keys()
         return self.request.RESPONSE.redirect(next_url)
 
     @form.action(_("Checkout"), condition="doesCartContainItems", name="Checkout")
