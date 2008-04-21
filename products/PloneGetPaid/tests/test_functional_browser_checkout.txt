@@ -114,6 +114,7 @@ Continue where we left of after clicking Donate.
     >>> browser.getControl('Phone Number').value = '1234567'
     >>> browser.getControl('Phone Number').value = '12345678'
     >>> browser.getControl(name='form.email').value = 'test@test.com'
+    >>> browser.getControl(name='form.bill_name').value = 'Test'
     >>> browser.getControl(name='form.bill_first_line').value = 'Test'
     >>> browser.getControl(name='form.bill_city').value = 'Test'
     >>> browser.getControl(name='form.bill_state').value = ('US-HI',)
@@ -144,6 +145,7 @@ Continue filling in the current form.
     >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
     >>> browser.getControl(name='form.cc_expiration_month').value = ('02',)
     >>> browser.getControl(name='form.cc_expiration_year').value = ('2009',)
+    >>> browser.getControl(name='form.bill_phone_number').value = '555555555'
 
 Use real test credit card numbers, available from http://developer.authorize.net/faqs/#7429
 
@@ -236,6 +238,7 @@ We move to the next form and fill in the current form.
     >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
     >>> browser.getControl(name='form.cc_expiration_month').value = ('02',)
     >>> browser.getControl(name='form.cc_expiration_year').value = ('2009',)
+    >>> browser.getControl(name='form.bill_phone_number').value = '555555555'
 
 Use real test credit card numbers, available from http://developer.authorize.net/faqs/#7429
 
@@ -245,6 +248,7 @@ Use real test credit card numbers, available from http://developer.authorize.net
     >>> browser.getControl('Make Payment').click()
 
 Donation checkout completed. Now check order
+
 
     >>> browser.getLink('here').click()
     >>> browser.url.startswith('http://nohost/plone/@@getpaid-order/')

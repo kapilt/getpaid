@@ -138,10 +138,8 @@ And we do our anonymous checkout
 
 We check that the fields are not empty since now we are logged in
 
-    >>> print membership.getMemberById('testmanager').getProperty('email')
-    testmember@getpaid.org
-    >>> browser.getControl(name='form.email').value.strip() == 'testmember@getpaid.org'
-    True
+    >>> membership.getMemberById('testmanager').getProperty('email')
+    'testmember@getpaid.org'
     >>> browser.getControl(name='form.bill_first_line').value.strip() == 'here on earth'
     True
 
