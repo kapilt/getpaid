@@ -625,7 +625,7 @@ def AvailableGenericTransitions( context ):
 interface.directlyProvides( AvailableGenericTransitions, IContextSourceBinder )
 
 def renderItemId( item, formatter ):
-    return item.item_id
+    return item.product_code
 
 def renderItemName( item, formatter ):
     content = item.resolve()
