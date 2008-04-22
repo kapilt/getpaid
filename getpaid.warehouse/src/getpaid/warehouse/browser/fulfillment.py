@@ -34,6 +34,8 @@ $Id: $
 
 from copy import copy
 
+import time
+
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.PloneGetPaid.browser import admin_order as order
@@ -54,7 +56,17 @@ from warehouse import manager_template
 
 
 class WarehouseFulfillment( BrowserView ):
-    pass
+    _download_content = None
+
+    def __call__( self ):
+        self.manager = WarehouseFulfillmentVM( self.context, self.request, self )
+        self.manager.update()
+        if self._download_content is not None:
+            self.request.response.setHeader('Content-Type', self._download_content[0] )
+            self.request.RESPONSE.setHeader('Content-Disposition','inline;filename=%s-%s.csv' % (self._download_content[2], time.strftime("%Y%m%d",time.localtime())))
+            return self._download_content[1]
+        return super( WarehouseFulfillment, self).__call__()
+
 
 class OrderFulfillment( BrowserView ):
     pass
