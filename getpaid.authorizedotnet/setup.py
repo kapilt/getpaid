@@ -8,8 +8,6 @@ setup(
     namespace_packages=['getpaid'],
     include_package_data=True,
     install_requires = [ 'setuptools',
-                         'zope.interface',
-                         'zope.component',
                          ],
     zip_safe = False,
     )
