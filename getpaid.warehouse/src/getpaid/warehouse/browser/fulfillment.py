@@ -37,6 +37,7 @@ from copy import copy
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.PloneGetPaid.browser import admin_order as order
+from Products.PloneGetPaid.browser import widgets
 from Products.Five.viewlet import manager, viewlet 
 
 from zope import schema
@@ -49,6 +50,8 @@ from getpaid.warehouse.i18n import _
 from getpaid.warehouse import interfaces, shipment
 
 from warehouse import manager_template
+
+
 
 class WarehouseFulfillment( BrowserView ):
     pass
@@ -210,6 +213,9 @@ class OrderPickList( order.OrderContentsComponent ):
     
     form_fields = form.Fields( IShipment )
     form_fields = form_fields.omit('creation_date', 'service_code', 'service')
+    
+    #Very important not to forget this, otherwise we have only on decimal place on price
+    form_fields['shipping_cost'].custom_widget = widgets.PriceWidget
     
     form_name = _(u"Create Shipment") # inner fieldset form label
     form_description = _(u"Select Items to Ship, and Enter Shipping Details")
