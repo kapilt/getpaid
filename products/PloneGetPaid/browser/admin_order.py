@@ -571,8 +571,9 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
 
         totalShipmentWeight = 0
         for eachProduct in self.order.shopping_cart.values():
-            weightValue = eachProduct.weight * eachProduct.quantity
-            totalShipmentWeight += weightValue
+            if interfaces.IShippableLineItem.providedBy( eachProduct ):
+                weightValue = eachProduct.weight * eachProduct.quantity
+                totalShipmentWeight += weightValue
         return totalShipmentWeight
 
     def getShippingAddress(self):
