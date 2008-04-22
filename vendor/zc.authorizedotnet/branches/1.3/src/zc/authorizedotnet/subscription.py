@@ -102,6 +102,7 @@ class ARBConnection(object):
     def createSubscriptionRequest(self, **kws):
         """
         """
+        
         xml = self.header
         xml += """
 <ARBCreateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">"""
