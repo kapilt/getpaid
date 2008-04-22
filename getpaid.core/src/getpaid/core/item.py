@@ -30,7 +30,7 @@ class LineItem( Persistent ):
     """
     implements( interfaces.ILineItem, IAttributeAnnotatable )
 
-    
+
     # default attribute values, item_id is required and has no default
     name = ""
     description = ""
@@ -45,7 +45,7 @@ class LineItem( Persistent ):
     def fulfillment_workflow( self ):
         return IWorkflowInfo( self )
 
-    
+
 class PayableLineItem( LineItem ):
     """
     an item in the cart for a payable
@@ -54,9 +54,14 @@ class PayableLineItem( LineItem ):
 
     # required
     uid = None
-    
+
     def resolve( self ):
         utility = component.getUtility( IIntIds )
         return utility.queryObject( self.uid )
-        
-        
+
+class RecurrentPayableLineItem( PayableLineItem ):
+    """
+    an item in the cart for a recurrent payable
+    """
+    implements( interfaces.IRecurrentPayableLineItem )
+

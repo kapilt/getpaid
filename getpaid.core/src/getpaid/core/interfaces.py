@@ -232,9 +232,10 @@ class IPayableLineItem( ILineItem ):
         """ return the payable object, or None if can't be found.
         """
 
-class IRecurringLineItem( IPayableLineItem ):
+class IRecurrentPayableLineItem( IPayableLineItem ):
 
-    period = schema.Int( title = _(u"Period as a timedelta"))
+    frecuency = schema.Int( title = _(u"Period as a timedelta"))
+    total_occurrences = schema.Int( title = _(u"Occurrences"))
 
 
 class IGiftCertificate( ILineItem ):
@@ -595,3 +596,26 @@ class workflow_states:
         SHIPPABLE = 'SHIPPABLE'
         CHARGED = 'CHARGED'
 
+class IRecurrentPaymentsManager( Interface ):
+    """
+    Persistent utility for storage and query of Recurrent Payments
+    TODO: more info...
+    """
+
+    def query( **kw ):
+        """
+        Query the recurrent payments
+        TODO: more info...
+        """
+
+    def get( payment_id ):
+        """
+        Retrieve an recurrent payment
+        TODO: more info...
+        """
+
+    def store( order ):
+         """
+         Save an order
+         TODO: more info...
+         """

@@ -1,0 +1,122 @@
+Order Management in GetPaid
+===========================
+
+Getpaid's core functionality is represented as an order management
+system.
+
+Creating an Order
+=================
+
+	>>> from getpaid.core.order import Order
+	>>> order = Order()
+
+Carts and Line Items
+====================
+
+An order consists of line items. line items can come from a variety of
+sources, content space payables, gift certificates, ie. anything we
+potentially want to purchase, we'll use RecurrentPayableLineItem here...
+
+	>>> from getpaid.core.item import RecurrentPayableLineItem
+	>>> item = RecurrentPayableLineItem()
+
+Let's set some attributes expected on line items. The only system invariant
+here is that item_id should be unique when referring to purchasing the same
+item:
+
+	>>> item.item_id = "event-devtalk-2007-1"
+	>>> item.name = "Event Registration"
+	>>> item.cost = 25.00
+	>>> item.quantity = 5
+	>>> item.description = "Development Talk"
+	>>> item.frecuency = 1 # in months
+	>>> item.total_occurrences = 12
+
+Line Items are stored in a line item container, such as a shopping cart
+of shipment:
+
+	>>> from getpaid.core.cart import ShoppingCart
+	>>> cart = ShoppingCart()
+	>>> cart[ item.item_id ] = item
+
+we can ask the cart how many items it has:
+
+	>>> cart.size()
+	5
+
+Let's attach our cart to the order:
+
+	>>> order.shopping_cart = cart
+
+and now we can ask the order, its total price:
+
+	>>> order.getSubTotalPrice()
+	Decimal("125.0")
+
+Customer Information
+====================
+
+We need some additional information for an order to successfully process it:
+
+	>>> from getpaid.core import payment
+	>>> bill_address = payment.BillingAddress()
+	>>> bill_address.bill_first_line = '1418 W Street NW'
+	>>> bill_address.bill_city = 'Washington'
+	>>> bill_address.bill_state = "DC"
+	>>> bill_address.bill_country = "US"
+	>>> bill_address.bill_postal_code = '20009'
+	>>>
+	>>>
+	>>> contact_info = payment.ContactInformation()
+	>>>
+	>>> order.contact_information = contact_info
+	>>> order.billing_address = bill_address
+
+If we don't need to ship anything to the user, then we can forgo
+setting a shipping address.
+
+Now we'll test the order workflow...
+
+	>>> from getpaid.core.interfaces import IOrderWorkflowLog
+	>>> olog = IOrderWorkflowLog( order )
+
+Before we fire the 'create' transition we don't have a workflow states
+for finance and fulfillment
+
+	>>> state = order.fulfillment_state
+	>>> print state
+	None
+
+	>>> state = order.finance_state
+	>>> print state
+	None
+
+Empty log...
+	>>> list( iter( olog ) )
+	[]
+
+Firing the 'create' transition in the finance workflow should put us
+in the REVIEWING state
+
+	 >>> order.finance_workflow.fireTransition('create')
+	 >>> state = order.finance_state
+	 >>> print state
+	 REVIEWING
+
+	>>> list( iter( olog ) ).len()
+	1
+
+	>>> list( iter( olog ) )[0]
+
+Firing some more transitions to test the finance workflow.
+
+	 >>> order.finance_workflow.fireTransition('authorize')
+	 >>> state = order.finance_state
+	 >>> print state
+	 CHARGEABLE
+
+
+	 >>> order.finance_workflow.fireTransition('charge-chargeable')
+	 >>> state = order.finance_state
+	 >>> print state
+	 CHARGING
