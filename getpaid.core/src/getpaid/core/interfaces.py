@@ -465,6 +465,12 @@ class IShippingRateService( Interface ):
         given a shipping method service code, returns a shipping method label/name
         """
 
+    def getTrackingUrl( track_number ):
+        """
+        given a track number this should return, if available for this service
+        a url that can be used to track the shipment
+        """
+
 class IShippingMethodRate( Interface ):
     """
      Service Code: UPS Next Day Air
@@ -787,6 +793,20 @@ class workflow_states:
             PROCESSING = 'PROCESSING'
             DELIVERED = 'DELIVERED'
             WILL_NOT_DELIVER = 'WILL_NOT_DELIVER'
+
+    class shippable_order:
+          
+        class fulfillment:
+            # name of parallel workflow
+            name = "order.fulfillment"            
+
+            NEW = 'NEW'
+            PROCESSING = 'PROCESSING'
+            #This is actually The same as delivered for order,
+            SHIPPED = 'SHIPPED'
+            WILL_NOT_DELIVER = 'WILL_NOT_DELIVER'
+
+
             
     class item:
         NEW = 'NEW'

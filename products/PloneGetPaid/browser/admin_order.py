@@ -575,6 +575,31 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
                 weightValue = eachProduct.weight * eachProduct.quantity
                 totalShipmentWeight += weightValue
         return totalShipmentWeight
+       
+    def getShimpentTrackNumbers(self):
+        """
+        Returns a list of tracking numbers for the shipment, if not available
+        it will return a one element list with the N/A string, just to maintain
+        consistency on the value being iterable
+        """
+        if not interfaces.IShippableOrder.providedBy( self.order ):
+            return None
+        shipments = []
+        for shipment in self.order.shipments.values():
+            service = component.queryUtility( interfaces.IShippingRateService,
+                                          self.order.shipping_service )
+        
+            if service: 
+                tracking_url = service.getTrackingUrl( shipment.tracking_code ) 
+                displayable_service = """<a href="%s">%s</a>""" % (tracking_url,shipment.tracking_code)
+            else:
+                displayable_service = "%s" % shipment.tracking_code
+
+            shipments.append(displayable_service)
+
+        if len(shipments) == 0:
+            shipments = None
+        return shipments
 
     def getShippingAddress(self):
         infos = self.order.shipping_address

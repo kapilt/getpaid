@@ -73,6 +73,46 @@ def create_fulfillment_workflow( ):
 
     return transitions
 
+#Separate workflow for shippable orders, I has different names on some of the 
+#states and also a few states more
+def create_shippable_fulfillment_workflow( ):
+
+    fs = workflow_states.shippable_order.fulfillment
+
+    transitions = []
+    add = transitions.append
+
+    add( workflow.Transition( transition_id = 'create',
+                              title= _(u'Create'),
+                              source = None,
+                              destination = fs.NEW ) )
+
+    # needs condition on charged finance state..
+    add( workflow.Transition( transition_id = 'process-order',
+                              title = _(u'Process Order'),
+                              source = fs.NEW,
+                              destination = fs.PROCESSING ) )
+
+    add( workflow.Transition( transition_id = 'deliver-processing-order',
+                              title = _(u'Order Processed'),
+                              #trigger = iworkflow.SYSTEM,
+                              source = fs.PROCESSING,
+                              destination = fs.SHIPPED ) )
+    
+    add( workflow.Transition( transition_id = 'cancel-order',
+                              title = _(u'Will Not Deliver'),
+                              destination = fs.WILL_NOT_DELIVER,
+                              source = fs.PROCESSING ) )
+
+    add( workflow.Transition( transition_id = 'cancel-new-order',
+                              title = _(u'Will Not Deliver'),
+                              source = fs.NEW,
+                              destination = fs.WILL_NOT_DELIVER
+                              ) )
+
+    return transitions
+
+
 def create_finance_workflow( ):
 
     fs = workflow_states.order.finance
@@ -172,6 +212,11 @@ class FulfillmentWorkflow( workflow.Workflow ):
     def __init__( self ):
         super( FulfillmentWorkflow, self).__init__( create_fulfillment_workflow())
 
+class ShippableFulfillmentWorkflow( workflow.Workflow ):
+    interface.implements( iworkflow.IWorkflow )
+    def __init__( self ):
+        super( ShippableFulfillmentWorkflow, self).__init__( create_shippable_fulfillment_workflow())
+
 class FinanceWorkflow( workflow.Workflow ):
     interface.implements( iworkflow.IWorkflow )
     def __init__( self ):
@@ -183,6 +228,12 @@ FulfillmentWorkflowAdapter, FulfillmentState, FulfillmentInfo = workflow.Paralle
     workflow.AdaptedWorkflow( FulfillmentWorkflow() ),
     workflow_states.order.fulfillment.name,
     )
+
+ShippableFulfillmentWorkflowAdapter, ShippableFulfillmentState, ShippableFulfillmentInfo = workflow.ParallelWorkflow(
+    workflow.AdaptedWorkflow( ShippableFulfillmentWorkflow() ),
+    workflow_states.order.fulfillment.name,
+    )
+
 
 FinanceWorkflowAdapter, FinanceState, FinanceInfo = workflow.ParallelWorkflow(
     workflow.AdaptedWorkflow( FinanceWorkflow() ),
