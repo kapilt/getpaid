@@ -97,7 +97,7 @@ def create_shippable_fulfillment_workflow( ):
                               title = _(u'Order Processed'),
                               #trigger = iworkflow.SYSTEM,
                               source = fs.PROCESSING,
-                              destination = fs.SHIPPED ) )
+                              destination = fs.DELIVERED ) )
     
     add( workflow.Transition( transition_id = 'cancel-order',
                               title = _(u'Will Not Deliver'),

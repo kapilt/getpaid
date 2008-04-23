@@ -803,7 +803,7 @@ class workflow_states:
             NEW = 'NEW'
             PROCESSING = 'PROCESSING'
             #This is actually The same as delivered for order,
-            SHIPPED = 'SHIPPED'
+            DELIVERED = 'SHIPPED'
             WILL_NOT_DELIVER = 'WILL_NOT_DELIVER'
 
 
