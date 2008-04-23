@@ -11,7 +11,7 @@ import interfaces
 
 def ConfigurationPreferences( site ):
 
-    settings = component.queryUtility( interfaces.IGetPaidManagementOptions )
+    settings = component.queryUtility(interfaces.IGetPaidManagementOptions, site)
 
     if settings is None: # we have an unmigrated site.. fallback gracefully
         return OldConfigurationPreferences( site )

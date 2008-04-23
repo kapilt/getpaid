@@ -127,7 +127,7 @@ in the Address book utility should be the entry
 
     >>> from zope import component
     >>> from Products.PloneGetPaid.interfaces import IAddressBookUtility
-    >>> adressBookUtility = component.getUtility(IAddressBookUtility)
+    >>> adressBookUtility = component.queryUtility(IAddressBookUtility,context=self.portal)
     >>> addressBookUser = adressBookUtility.get('testmanager')
     >>> address = addressBookUser['my first entry']
     >>> address != None 
