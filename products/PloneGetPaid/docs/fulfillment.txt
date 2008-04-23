@@ -1,0 +1,5 @@
+**Handling the Fulfillment side of Orders with GetPaid**
+
+This document assumes you have set up a GetPaid site and have orders
+to process. If this isn't the case, please start with installation.txt
+and work through the documentation from there.

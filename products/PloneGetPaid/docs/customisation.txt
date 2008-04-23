@@ -1,0 +1,21 @@
+**Customising a GetPaid Site**
+
+This document assumes you have already set up a Plone site with
+GetPaid. If you haven't, please read setup.txt
+
+Most functionality and features of GetPaid can be easily
+customized. To do so, you should be familiar with the Zope 3 Component
+Architecture.
+
+By writing your own adapters for GetPaid, you use a custom way of
+storing member data (ie a relational database), handling pricing (to
+implement specific discounting options, for example), introducing new
+payment processors, and much more.
+
+Documentation on GetPaid customization best practices is available
+here:
+
+http://plone.org/products/getpaid/documentation/how-to/best-practices-for-customizing-getpaid
+
+
+
