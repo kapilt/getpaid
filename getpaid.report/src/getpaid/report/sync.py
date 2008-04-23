@@ -103,7 +103,7 @@ def copyOrder( _session, source, target ):
     customer = domain.Customer()
     copyCustomer( source.contact_information, customer )
     target.contact_information = customer
-    target.contact_information.user_id = source.user_id
+    target.contact_information.user_id = source.user_id and unicode(source.user_id) or source.user_id
     
     # handle line items
     for _item in source.shopping_cart.values():
