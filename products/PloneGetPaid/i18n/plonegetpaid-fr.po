@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PloneGetPaid VERSION\n"
-"POT-Creation-Date: 2008-04-24 17:42+0000\n"
+"POT-Creation-Date: 2008-04-24 19:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Lucie Lejard <lucie@sixfeetup.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,6 +44,11 @@ msgstr "Cartes bancaires acceptées"
 #: ./browser/content.py:103
 msgid "Activate"
 msgstr "Activer"
+
+#. Default: "Addressbook entry name"
+#: ./browser/templates/checkout-address.pt:50
+msgid "Addressbook entry name"
+msgstr "Nom de l'entrée dans le carnet d'adresses"
 
 #: ./interfaces.py:243
 msgid "Allow Anonymous Checkout"
@@ -381,7 +386,7 @@ msgstr ""
 
 #: ./browser/cart.py:356
 msgid "Previous Order Loaded into Cart"
-msgstr ""
+msgstr "La commande précédante a été chargée dans le panier"
 
 #: ./browser/admin_order.py:92
 msgid "Price"
@@ -399,6 +404,11 @@ msgstr "Quantité"
 #: ./browser/admin.py:276
 msgid "Sales Tax Configuration"
 msgstr "Configuration des taxes pour la vente"
+
+#. Default: "Save to address book"
+#: ./browser/templates/checkout-address.pt:55
+msgid "Save to address book"
+msgstr "Enregistrer dans le carnet d'adresses"
 
 #: ./browser/cart.py:309
 msgid "Select a previous order to fill your cart."
