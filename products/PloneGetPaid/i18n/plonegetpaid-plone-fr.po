@@ -19,31 +19,31 @@ msgstr ""
 "Domain: plone\n"
 
 msgid "Make Buyable"
-msgstr "Rendre Achetable"
+msgstr "Rendre achetable"
 
 msgid "Make Not Buyable"
-msgstr "Rendre Non Achetable"
+msgstr "Rendre non achetable"
 
 msgid "Make Not Premium Members Only"
 msgstr ""
 
 msgid "Make Not Shippable Product"
-msgstr "Rendre Non Livrable"
+msgstr "Rendre non livrable"
 
 msgid "Make Shippable Product"
-msgstr "Rendre Livrable"
+msgstr "Rendre livrable"
 
 msgid "Make this a Donation"
-msgstr "En faire une Donation"
+msgstr "En faire une donation"
 
 msgid "Make this not a Donation"
-msgstr "Ne Pas En faire une Donation"
+msgstr "Ne pas en faire une donation"
 
 msgid "Manage Cart"
-msgstr "Voir mon Panier"
+msgstr "Voir mon panier"
 
 msgid "Order History"
-msgstr "Historique des Commandes"
+msgstr "Historique des commandes"
 
 msgid "Orders"
 msgstr "Commandes"
@@ -52,5 +52,5 @@ msgid "Payable"
 msgstr "Payable"
 
 msgid "Settings"
-msgstr "Paramètrage"
+msgstr "Paramétrage"
 
