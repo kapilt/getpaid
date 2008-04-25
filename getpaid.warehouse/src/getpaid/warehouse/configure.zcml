@@ -35,6 +35,7 @@
           getpaid.core.interfaces.IStoreInstalledEvent"
      handler=".plugin.storeInstalled"
      />
-             
+   <!-- We include the Generic Setup profile required to show the action tabs in plone 3 -->
+   <include file="profiles.zcml"/>           
 </configure>    
     

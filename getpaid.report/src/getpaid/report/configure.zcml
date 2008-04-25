@@ -31,5 +31,6 @@
           hurry.workflow.interfaces.IWorkflowTransitionEvent"
      handler=".subscriber.handleOrderTransition"
      />
-
+     <!-- Here we register the profile for this package so we have actions  -->
+ <include file="profiles.zcml"/>
 </configure>
