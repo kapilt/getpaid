@@ -58,7 +58,8 @@ class JobPostCheckout(object):
         nitem.description = self.context.Description()
         nitem.cost = price
         nitem.quantity = 1
-
+        nitem.product_code = nitem.item_id
+        
         # add to cart
         cart[ nitem.item_id ] = nitem
         cart.last_item = nitem.item_id        
