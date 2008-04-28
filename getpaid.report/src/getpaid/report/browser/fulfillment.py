@@ -21,7 +21,7 @@ def orderLink( item, formatter):
 
 class FulfillmentReport( BaseFormView ):
 
-    form_description=_(u"Select the dates to view the fulfilled orders. Date Format is YY-MM-DD")
+    form_description=_(u"Select the dates to view the fulfilled orders. Date Format is YYYY-MM-DD")
     form_fields = form.Fields(  IReportSettings )
     template = ZopeTwoPageTemplateFile('fulfillment.pt')
     
