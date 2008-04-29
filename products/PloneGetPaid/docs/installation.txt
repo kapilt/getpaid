@@ -129,3 +129,5 @@ have a Zope instance, feel free to skip the relevant steps.
   $ cp -R getpaid.buildout/src/zc.table/src/zc $INSTANCE/lib/python
   $ cp -Rf getpaid.buildout/src/zc.resourcelibrary/src/zc $INSTANCE/lib/python
   $ cp -Rf getpaid.buildout/src/yoma.batching/src/yoma $INSTANCE/lib/python
+
+At this point, you'll need to restart your zope instance.
