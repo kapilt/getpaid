@@ -102,8 +102,8 @@ class IShippableContent( IPayable ):
         """ Shipping Weight
         """
 
-class IRecurringPaymentContent( IPayable ):
-    """ Recurring Payment Content
+class IRecurrentPaymentContent( IPayable ):
+    """ Recurrent Payable Content
     """
     frecuency = schema.TextLine( title = _(u"Frecuency"))
     total_occurrences = schema.TextLine( title = _(u"Total Occurrences"))
@@ -149,7 +149,7 @@ class IPaymentProcessor( Interface ):
         reset
         """
 
-class IRecurringPaymentProcessor( IPaymentProcessor ):
+class IRecurrentPaymentProcessor( IPaymentProcessor ):
     """ a payment processor that can handle recurring line items
     """
 
@@ -470,7 +470,7 @@ class IOrder( Interface ):
 class IShippableOrder( Interface ):
     """ marker interface for orders which need shipping """
 
-class IRecurringOrder( Interface ):
+class IRecurrentOrder( Interface ):
     """ marker interface for orders containing recurring line items """
 
 class IVirtualOrder( Interface ):
@@ -595,27 +595,3 @@ class workflow_states:
         SHIPPED = 'SHIPPED'
         SHIPPABLE = 'SHIPPABLE'
         CHARGED = 'CHARGED'
-
-class IRecurrentPaymentsManager( Interface ):
-    """
-    Persistent utility for storage and query of Recurrent Payments
-    TODO: more info...
-    """
-
-    def query( **kw ):
-        """
-        Query the recurrent payments
-        TODO: more info...
-        """
-
-    def get( payment_id ):
-        """
-        Retrieve an recurrent payment
-        TODO: more info...
-        """
-
-    def store( order ):
-         """
-         Save an order
-         TODO: more info...
-         """

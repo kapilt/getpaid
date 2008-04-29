@@ -1,9 +1,3 @@
-Order Management in GetPaid
-===========================
-
-Getpaid's core functionality is represented as an order management
-system.
-
 Creating an Order
 =================
 
@@ -103,10 +97,12 @@ in the REVIEWING state
 	 >>> print state
 	 REVIEWING
 
-	>>> list( iter( olog ) ).len()
+	>>> loglist = list(iter(olog ))
+	>>> len(loglist)
 	1
 
-	>>> list( iter( olog ) )[0]
+	>>> loglist[0].new_state
+	'REVIEWING'
 
 Firing some more transitions to test the finance workflow.
 
@@ -115,8 +111,26 @@ Firing some more transitions to test the finance workflow.
 	 >>> print state
 	 CHARGEABLE
 
-
 	 >>> order.finance_workflow.fireTransition('charge-chargeable')
 	 >>> state = order.finance_state
 	 >>> print state
 	 CHARGING
+
+	>>> loglist = list(iter(olog ))
+	>>> len(loglist)
+	3
+
+	>>> loglist[0].new_state
+	'REVIEWING'
+	>>> loglist[1].new_state
+	'CHARGEABLE'
+	>>> loglist[2].new_state
+	'CHARGING'
+
+Now testing order manager...
+
+   	>>> from zope import component
+   	>>> from getpaid.core import interfaces
+	>>> order_manager = component.getUtility( interfaces.IOrderManager )
+	>>> # order.order_id = u'1'
+   	>>> # order_manager.store( order )

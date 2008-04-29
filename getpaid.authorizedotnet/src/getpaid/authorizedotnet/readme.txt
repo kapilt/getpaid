@@ -127,7 +127,7 @@ Voiding an Order
 ----------------
 
 
-Recurring Payment Order
+Recurrent Payable Order
 -----------------------
 
 Now let's create a recurrent order to process:
