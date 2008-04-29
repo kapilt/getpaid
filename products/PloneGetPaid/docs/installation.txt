@@ -115,7 +115,7 @@ have a Zope instance, feel free to skip the relevant steps.
   $ cp -R getpaid.core/src/getpaid $INSTANCE/lib/python/
   $ cp -Rf getpaid.io/src/getpaid $INSTANCE/lib/python/
   $ cp -Rf getpaid.wizard/src/getpaid $INSTANCE/lib/python/
-  $ cp -Rf getpaid.nullpayment/src/getpaid/ $INSTANCE/lib/python/
+  $ cp -Rf getpaid.nullpayment/src/getpaid $INSTANCE/lib/python/
 
   The following are included as part of the GetPaid Subversion
   checkout but they can also be seperately installed in the same way
