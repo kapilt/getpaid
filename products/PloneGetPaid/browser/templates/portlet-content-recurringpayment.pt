@@ -5,7 +5,7 @@
 <body>
 <div metal:define-macro="portlet" tal:condition="view/isPayable">
 
-	<!--  Recurring Payment Content Portlet -->
+	<!-- Recurrent Payable Content Portlet -->
     <dl class="portlet" id="portlet-cart">
 
         <dt class="portletHeader">

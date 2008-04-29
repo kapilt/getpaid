@@ -96,12 +96,12 @@ Test for expected results in home page.  There should be a link to reverse it an
     'testpage1'
 
     >>> testpage = self.portal.testpage1
-    >>> IRecurringPaymentMarker = interfaces.IRecurringPaymentMarker
+    >>> IRecurrentPaymentMarker = interfaces.IRecurrentPaymentMarker
     >>> from Products.Five.utilities.marker import mark
-    >>> mark(testpage, IRecurringPaymentMarker)
-    >>> IRecurringPaymentMarker(testpage)
+    >>> mark(testpage, IRecurrentPaymentMarker)
+    >>> IRecurrentPaymentMarker(testpage)
     <ATDocument at ...>
-    >>> IRecurringPaymentMarker.providedBy( testpage )
+    >>> IRecurrentPaymentMarker.providedBy( testpage )
     True
 
 Test for recurring payment in the actions dropdown...
@@ -112,19 +112,19 @@ We have the text and is a link...
 
     >>> testpage = self.portal.testpage2
     >>> browser.open(testpage.absolute_url())
-    >>> browser.getLink('Recurring Payment')
-	<Link text='Recurring Payment' ...>
+    >>> browser.getLink('Make Recurrent Payable')
+	<Link text='Make Recurrent Payable' ...>
 
 We don't have a "disable" button link...
-    >>> browser.getLink('Make Not Recurring Payment')
+    >>> browser.getLink('Make Not Recurrent Payable')
     Traceback (most recent call last):
     ...
     LinkNotFoundError
 
-    >>> browser.getLink('Recurring Payment').click()
+    >>> browser.getLink('Make Recurrent Payable').click()
 
 We are going to activate a recurring payment?
-    >>> browser.getForm(action='activate-recurring-payment')
+    >>> browser.getForm(action='activate-recurrent-payment')
 	<zope.testbrowser.browser.Form ...>
 
 Yes, so fill up the form...
@@ -135,27 +135,27 @@ Yes, so fill up the form...
     >>> browser.getControl('Activate').click()
 
 We can disable...
-    >>> browser.getLink(url='@@deactivate-recurring-payment')
-	<Link text='Make Not Recurring Payment' ...>
+    >>> browser.getLink(url='@@deactivate-recurrent-payment')
+	<Link text='Make Not Recurrent Payable' ...>
 
 But we can't enable again...
-    >>> browser.getLink(url='@@activate-recurring-payment')
+    >>> browser.getLink(url='@@activate-recurrent-payment')
     Traceback (most recent call last):
     ...
     LinkNotFoundError
 
-    >>> browser.getLink(url='@@deactivate-recurring-payment').click()
+    >>> browser.getLink(url='@@deactivate-recurrent-payment').click()
 
 We can't disable it twice...
-    >>> browser.getLink(url='@@deactivate-recurring-payment')
+    >>> browser.getLink(url='@@deactivate-recurrent-payment')
     Traceback (most recent call last):
     ...
     LinkNotFoundError
 
 But we can enable again...
-    >>> browser.getLink(url='@@activate-recurring-payment')
-	<Link text='Recurring Payment' ...>
-    >>> browser.getLink(url='@@activate-recurring-payment').click()
+    >>> browser.getLink(url='@@activate-recurrent-payment')
+	<Link text='Make Recurrent Payable' ...>
+    >>> browser.getLink(url='@@activate-recurrent-payment').click()
 
 fill up the form...
     >>> browser.getControl(name='form.price').value = '2'
@@ -167,7 +167,7 @@ fill up the form...
 And we will test the checkout process now...
 First, we have the portlet?
 
-	>>> "Recurring Payment Content Portlet" in browser.contents
+	>>> "Recurrent Payable Content Portlet" in browser.contents
 	True
 
 Then add it to the cart...

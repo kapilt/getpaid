@@ -46,8 +46,8 @@
 
   <browser:page
      for="*"
-     name="activate-recurring-payment"
-     class=".content.RecurringPaymentCreation"
+     name="activate-recurrent-payment"
+     class=".content.RecurrentPaymentCreation"
      permission="cmf.ModifyPortalContent"
      />
 
@@ -144,8 +144,8 @@
 
   <browser:page
      for="*"
-     name="deactivate-recurring-payment"
-     class=".content.RecurringPaymentDestruction"
+     name="deactivate-recurrent-payment"
+     class=".content.RecurrentPaymentDestruction"
      permission="cmf.ModifyPortalContent"
      />
 
@@ -183,7 +183,7 @@
 
   <browser:page
     name="portlet-contentwidget"
-    for="..interfaces.IRecurringPaymentMarker"
+    for="..interfaces.IRecurrentPaymentMarker"
     class=".content.ContentPortlet"
     template="templates/portlet-content-recurringpayment.pt"
     permission="zope2.View"

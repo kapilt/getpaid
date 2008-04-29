@@ -122,8 +122,8 @@
 
 <adapter
    for="Products.CMFCore.interfaces.IContentish"
-   provides="getpaid.core.interfaces.IRecurringPaymentContent"
-   factory=".content.RecurringPaymentContentAdapter"
+   provides="getpaid.core.interfaces.IRecurrentPaymentContent"
+   factory=".content.RecurrentPaymentContentAdapter"
    />
 
 <!-- Content to Line Item Adapter -->

@@ -66,8 +66,8 @@ class IShippableMarker( IPayableMarker ):
 class IDonatableMarker( IPayableMarker ):
     """ donate-able interface added to shippable content """
 
-class IRecurringPaymentMarker( IPayableMarker ):
-    """ IRecurringPayment interface added to IRecurringPayment content """
+class IRecurrentPaymentMarker( IPayableMarker ):
+    """ IRecurrentPayment interface added to IRecurrentPayment content """
 
 class IStoreMember( Interface ):
     """ marker interface so we can adapt to members """
@@ -91,7 +91,7 @@ class IEnhancedDonation( igetpaid.IDonationContent ):
                                     required=False,
                                     default=list() )
 
-PayableMarkers = [ IBuyableMarker, IPremiumMarker, IShippableMarker, IDonatableMarker, IRecurringPaymentMarker ]
+PayableMarkers = [ IBuyableMarker, IPremiumMarker, IShippableMarker, IDonatableMarker, IRecurrentPaymentMarker ]
 
 PayableMarkerMap = dict(
      (
@@ -99,7 +99,7 @@ PayableMarkerMap = dict(
       (IPremiumMarker, igetpaid.IPremiumContent),
       (IShippableMarker, igetpaid.IShippableContent),
       (IDonatableMarker, igetpaid.IDonationContent),
-      (IRecurringPaymentMarker, igetpaid.IRecurringPaymentContent)
+      (IRecurrentPaymentMarker, igetpaid.IRecurrentPaymentContent)
     )
 )
 

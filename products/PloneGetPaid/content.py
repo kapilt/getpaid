@@ -177,15 +177,15 @@ class DonatableContentAdapter( DonatableContentStorage ):
         self.context = context
 
 #################################
-# RecurringPayment Content
+# RecurrentPayable Content
 
-RecurringPaymentContentStorage = options.PersistentOptions.wire( "RecurringPaymentContentStorage",
-                                                                 "getpaid.content.recurringpayment",
-                                                                 interfaces.IRecurringPaymentContent )
+RecurrentPaymentContentStorage = options.PersistentOptions.wire( "RecurrentPaymentContentStorage",
+                                                                 "getpaid.content.recurrentpayment",
+                                                                 interfaces.IRecurrentPaymentContent )
 
-class RecurringPaymentContentAdapter( RecurringPaymentContentStorage ):
+class RecurrentPaymentContentAdapter( RecurrentPaymentContentStorage ):
 
-    interface.implements( interfaces.IRecurringPaymentContent )
+    interface.implements( interfaces.IRecurrentPaymentContent )
 
     def __init__( self, context ):
         self.context = context

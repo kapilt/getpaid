@@ -91,11 +91,8 @@ Buy
 Set item quantity to 0 so the product is removed from the cart
     >>> import sre
     >>> regex = sre.compile("edit\..*?\.quantity")
-    >>> try:
-    >>>     editName = regex.findall(browser.contents)[0]
-    >>>     browser.getControl(name=editName).value = '0'
-    >>>     browser.getControl('Update').click()
-    >>>     'subtotal' in browser.contents
-    >>> except:
-    >>>     True
+    >>> editName = regex.findall(browser.contents)[0]
+	>>> browser.getControl(name=editName).value = '0'
+	>>> browser.getControl('Update').click()
+    >>> 'subtotal' in browser.contents
     False

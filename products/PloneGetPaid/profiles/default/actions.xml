@@ -56,19 +56,19 @@
                 visible="True">
             <permission>Modify portal content</permission>
         </action>
-        <action title="Recurring Payment"
-                action_id="getpaid_recurring_payment"
+        <action title="Make Recurrent Payable"
+                action_id="getpaid_recurrent_payment"
                 category="object_buttons"
-                condition_expr="python:path('object/@@getpaid_control').allowMakeRecurringPayment()"
-                url_expr="string:$object_url/@@activate-recurring-payment"
+                condition_expr="python:path('object/@@getpaid_control').allowMakeRecurrentPayable()"
+                url_expr="string:$object_url/@@activate-recurrent-payment"
                 visible="True">
             <permission>Modify portal content</permission>
         </action>
-        <action title="Make Not Recurring Payment"
-                action_id="getpaid_make_not_recurring_payment"
+        <action title="Make Not Recurrent Payable"
+                action_id="getpaid_make_not_recurrent_payment"
                 category="object_buttons"
-                condition_expr="python:path('object/@@getpaid_control').allowMakeNotRecurringPayment()"
-                url_expr="string:$object_url/@@deactivate-recurring-payment"
+                condition_expr="python:path('object/@@getpaid_control').allowMakeNotRecurrentPayable()"
+                url_expr="string:$object_url/@@deactivate-recurrent-payment"
                 visible="True">
             <permission>Modify portal content</permission>
         </action>

@@ -247,12 +247,12 @@ class ContentControl( BrowserView ):
 
     isDonatable.__roles__ = None
 
-    def isRecurringPayment( self ):
+    def isRecurrentPayable( self ):
         """
         """
-        return interfaces.IRecurringPaymentMarker.providedBy( self.context )
+        return interfaces.IRecurrentPaymentMarker.providedBy( self.context )
 
-    isRecurringPayment.__roles__ = None
+    isRecurrentPayable.__roles__ = None
 
     def _allowChangePayable( self, types ):
         """
@@ -275,21 +275,22 @@ class ContentControl( BrowserView ):
 
     allowMakeNotBuyable.__roles__ = None
 
-    def allowMakeRecurringPayment( self ):
+    def allowMakeRecurrentPayable( self ):
         """
         """
         return self._allowChangePayable(self.options.buyable_types) \
-               and not self.isRecurringPayment() and not self.request.URL0.endswith('@@activate-recurring-payment')
+               and not self.isRecurrentPayable() \
+               and not self.request.URL0.endswith('@@activate-recurring-payment')
 
-    allowMakeRecurringPayment.__roles__ = None
+    allowMakeRecurrentPayable.__roles__ = None
 
-    def allowMakeNotRecurringPayment( self ):
+    def allowMakeNotRecurrentPayable( self ):
         """
         """
         return self._allowChangePayable(self.options.buyable_types) \
-               and self.isRecurringPayment()
+               and self.isRecurrentPayable()
 
-    allowMakeNotRecurringPayment.__roles__ = None
+    allowMakeNotRecurrentPayable.__roles__ = None
 
     def allowMakeShippable( self ):
         """
@@ -373,16 +374,16 @@ class ContentPortlet( BrowserView ):
     def isPayable(self):
         return self.payable is not None
 
-class RecurringPaymentForm( PayableForm ):
+class RecurrentPaymentForm( PayableForm ):
     """ recurring payment content operations """
-    form_fields = form.Fields( igetpaid.IRecurringPaymentContent )
-    interface = igetpaid.IRecurringPaymentContent
-    marker = interfaces.IRecurringPaymentMarker
+    form_fields = form.Fields( igetpaid.IRecurrentPaymentContent )
+    interface = igetpaid.IRecurrentPaymentContent
+    marker = interfaces.IRecurrentPaymentMarker
 
-class RecurringPaymentCreation( RecurringPaymentForm, PayableCreation ):
+class RecurrentPaymentCreation( RecurrentPaymentForm, PayableCreation ):
     actions = PayableCreation.actions
     update  = PayableCreation.update
 
-class RecurringPaymentEdit( PayableForm ): pass
-class RecurringPaymentDestruction( PayableDestruction ):
-    marker = interfaces.IRecurringPaymentMarker
+class RecurrentPaymentEdit( PayableForm ): pass
+class RecurrentPaymentDestruction( PayableDestruction ):
+    marker = interfaces.IRecurrentPaymentMarker

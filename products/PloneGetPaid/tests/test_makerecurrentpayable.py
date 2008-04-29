@@ -23,12 +23,12 @@ def test_mark_object_recurrentpayable():
     'testpage'
 
     >>> testpage = self.portal.testpage
-    >>> IRecurringPaymentMarker = interfaces.IRecurringPaymentMarker
+    >>> IRecurrentPaymentMarker = interfaces.IRecurrentPaymentMarker
     >>> from Products.Five.utilities.marker import mark
-    >>> mark(testpage, IRecurringPaymentMarker)
-    >>> IRecurringPaymentMarker(testpage)
+    >>> mark(testpage, IRecurrentPaymentMarker)
+    >>> IRecurrentPaymentMarker(testpage)
     <ATDocument at ...>
-    >>> IRecurringPaymentMarker.providedBy( testpage )
+    >>> IRecurrentPaymentMarker.providedBy( testpage )
     True
     """
 
