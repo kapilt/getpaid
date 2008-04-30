@@ -98,13 +98,6 @@ class BaseCheckoutForm( BaseFormView ):
     def _getWidgetsByInterface( self, interface ):
         return [w for w in self.widgets if w.context.interface == interface ]
         
-    def setUpWidgets( self, ignore_request=False ):
-        self.adapters = self.adapters is not None and self.adapters or {}
-        self.widgets = form.setUpEditWidgets(
-            self.form_fields, self.prefix, self.context, self.request,
-            adapters=self.adapters, ignore_request=ignore_request
-            )
-        
     def render( self ):
         if self._next_url:
             self.request.RESPONSE.redirect( self._next_url )
