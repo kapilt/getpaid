@@ -3,19 +3,195 @@
 This document assumes you have already set up a Plone site with
 GetPaid. If you haven't, please read setup.txt
 
-Most functionality and features of GetPaid can be easily
-customized. To do so, you should be familiar with the Zope 3 Component
-Architecture.
+Most functionality and features of GetPaid can be customized, although
+it can often take a fair amount of work. You should be familiar with
+the Zope 3 Component Architecture and should be prepared to follow a
+lot of the convoluted code paths in GetPaid.
 
-By writing your own adapters for GetPaid, you use a custom way of
-storing member data (ie a relational database), handling pricing (to
-implement specific discounting options, for example), introducing new
-payment processors, and much more.
+However, the examples below will hopefully help!
 
-Documentation on GetPaid customization best practices is available
-here:
+If you're looking to develop a new shipping method, shipping rate
+service, payment processor or tax method, the best process is to find
+an existing component, copy it and then alter that to suite your
+needs.
 
-http://plone.org/products/getpaid/documentation/how-to/best-practices-for-customizing-getpaid
+Once you've developed your new component, you'll need to enable it by
+either working it into a buildout recipe or including the necessary
+zcml. Including the zcml can either be done by inserting the following
+into the configure.zcml of a product you've created or into your
+site.zcml:
 
+<include package="your.package" />
 
+Creating your own product is one of the commonest ways of customising
+the behaviour of GetPaid. To do this, create a folder in your Zope
+instance's Products directory and put an empty file called __init__.py
+within it. 
 
+You'll also want to create a file in the folder called configure.zcml
+which has the following in it:
+
+<configure xmlns="http://namespaces.zope.org/zope"
+	   xmlns:zcml="http://namespaces.zope.org/zcml"
+	   xmlns:five="http://namespaces.zope.org/five">
+<!-- insert your customisations here -->
+</configure>
+
+Finally, you should also create file in the folder called
+overrides.zcml containing the following:
+
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five">
+
+<!-- insert you overrides here
+</configure>
+
+The remainder of this file contains specific examples of
+customisations and assume you're working with a product created as
+described above called MyProduct. Whenever you make changes to a
+product, you'll need to restart your Zope instance for them to take
+effect.
+
+Customising the cart listing
+
+  - create a skins folder in your product
+
+  - copy the cart-listing.pt from
+    Products/PloneGetPaid/browser/templates to the skins folder of
+    your product.
+
+  - customise your new cart-listing.pt as required.
+
+  - create a file called browser.py in your product with the following
+    contents:
+
+    from Products.PloneGetPaid.browser.cart import ShoppingCartListing
+
+    class MyShoppingCartListing(ShoppingCartListing):
+      template = ZopeTwoPageTemplateFile('skins/cart-listing.pt')
+  
+  - add the following to your product's overrides.zcml:
+ 
+  <browser:viewlet
+       name="10cart-listing"
+       manager="Products.PloneGetPaid.interfaces.IGetPaidCartViewletManager"
+       template="skins/cart-listing.pt"
+       class="Products.MyProduct.browser.MyShoppingCartListing"
+       permission="zope2.View"
+       />
+
+Changing the list of available countries for addresses
+
+  - add a file called vocabularies.py to your product containing the
+    following:
+  
+    from Products.PloneGetPaid.vocabularies import TitledVocabulary
+
+    MY_COUNTRIES = [ ('AR', u'ARGENTINA'),
+		     ('AU', u'AUSTRALIA'),
+		     ('BR', u'BRAZIL'),   
+		     ('CA', u'CANADA'),
+		     ('IL', u'ISRAEL'),
+		     ('NZ', u'NEW ZEALAND'),
+		     ('GB', u'UNITED KINGDOM'),
+		     ('US', u'UNITED STATES'),
+		     ('ZA', u'SOUTH AFRICA') ]
+
+    def Countries( context ):
+      return TitledVocabulary.fromTitles(MY_COUNTRIES)
+
+  - add the following to your product's overrides.zcml:
+
+    <vocabulary
+	 name="getpaid.countries"
+	 factory=".vocabularies.Countries"
+     />
+
+Customising the fields and layout of the first checkout page
+
+  - create a skins folder in your product
+
+  - copy the checkout-address.pt from
+    Products/PloneGetPaid/browser/templates to the skins folder of
+    your product.
+
+  - customise your new checkout-address.pt if required.
+
+  - add a file called browser.py to your product containing the
+    following as altered to suit your needs: 
+
+    from getpaid.core import options
+    from getpaid.core.interfaces import IBillingAddress
+    from getpaid.core.interfaces import IShippingAddress
+    from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
+    from Products.PloneGetPaid.browser.checkout import CheckoutAddress as OriginalCheckoutAddress
+    from Products.PloneGetPaid.member import ShipAddressInfo,BillAddressInfo
+    from zope import schema
+    from zope.app.location.interfaces import ILocation
+    from zope.formlib import form
+    from zope.interface import Interface,implements
+    from zope.i18nmessageid import MessageFactory
+    _ = MessageFactory('myproduct')
+    
+    class IUserContactInformation( Interface ):
+        """docstring for IUserContactInformation"""
+
+        # you can put whatever fields you require here
+        
+        name = schema.TextLine(
+            title=_(u"Name")
+            )
+        
+        phone_number = schema.TextLine(
+            title=_(u"Phone Number"),
+            )
+                                    
+        email = schema.TextLine( 
+            title=_(u"Email"),
+            )
+        
+    class ContactInfo( options.PersistentBag ):
+        title = "Contact Information" 
+        implements( ILocation )
+        __parent__ = None
+        __name__ = None
+        
+    ContactInfo.initclass(IUserContactInformation)
+    
+    class CheckoutAddress(OriginalCheckoutAddress):
+
+        # you can do further customisations here to make
+        # changes to any part of the first screen of the checkout process
+        
+        template = ZopeTwoPageTemplateFile("skins/checkout-address.pt")
+    
+        # any of these interfaces can be customised, but you'll need
+        # to create PersistentBag classes for them above    
+
+        form_fields = form.Fields( IBillingAddress,
+                                   IShippingAddress,
+                                   IUserContactInformation )
+        
+        def getSchemaAdapters( self ):
+            adapters = {}
+            # (see Products.PloneGetPaid.browser.checkout.CheckoutAddress.getSchemaAdapters
+            #  for a more expansive original version of this code)
+            adapters[IUserContactInformation] = ContactInfo()
+            adapters[IShippingAddress] = ShipAddressInfo()
+            adapters[IBillingAddress ] = BillAddressInfo()
+            return adapters
+
+  - update your checkout-address.pt to use any interfaces you've
+    customised above.
+
+  - now add the following to your product's overrides.zcml:
+
+    <browser:page
+     for="*"
+     name="checkout-address-info"
+     class=".browser.checkout.CheckoutAddress"
+     permission="zope2.View"
+     />
+  
+  - convoluted, isn't it :-(
