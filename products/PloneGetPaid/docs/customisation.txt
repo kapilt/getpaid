@@ -126,6 +126,7 @@ Customising the fields and layout of the first checkout page
     from getpaid.core.interfaces import IShippingAddress
     from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
     from Products.PloneGetPaid.browser.checkout import CheckoutAddress as OriginalCheckoutAddress
+    from Products.PloneGetPaid.browser.widgets import CountrySelectionWidget, StateSelectionWidget
     from Products.PloneGetPaid.member import ShipAddressInfo,BillAddressInfo
     from zope import schema
     from zope.app.location.interfaces import ILocation
@@ -173,6 +174,13 @@ Customising the fields and layout of the first checkout page
                                    IShippingAddress,
                                    IUserContactInformation )
         
+	# you'll need to do this rediculour dance to keep the
+	# custom widgets on the "state" and "country" fields
+        form_fields['ship_country'].custom_widget = CountrySelectionWidget
+        form_fields['bill_country'].custom_widget = CountrySelectionWidget
+        form_fields['ship_state'].custom_widget = StateSelectionWidget
+        form_fields['bill_state'].custom_widget = StateSelectionWidget
+    
         def getSchemaAdapters( self ):
             adapters = {}
             # (see Products.PloneGetPaid.browser.checkout.CheckoutAddress.getSchemaAdapters
