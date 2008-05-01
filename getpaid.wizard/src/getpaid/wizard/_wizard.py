@@ -255,20 +255,6 @@ class ControllerBase( object ):
 
         self.getCurrentStep().update()
         
-    def getActions( self ):
-        """
-        return an iterable of formlib actions and suggested positions/order
-        """
-        previous_action = next_action = None
-        
-        if self.hasPreviousStep():
-            previous_action = form.action(u"Back", name="back")
-            yield previous_action, 0
-
-        if self.hasNextStep():
-            next_action = form.action(u"Continue", name="continue")
-            yield next_action, -1
-
 class ViewControllerBase( ControllerBase ):
 
     def getStep( self, step_name ):
