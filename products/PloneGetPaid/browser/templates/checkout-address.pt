@@ -71,24 +71,20 @@
       <tr>
 	<td colspan="2" align="right">
 
-	  <div id="actionsView">
-	    <span class="actionButtons"
-		  tal:condition="view/availableActions">
-  <!-- action/render doesn't handle i18n translations (fix)
-    <input tal:repeat="action view/actions"
-           tal:replace="structure action/render"
-           />
-  -->
-      <tal:loop tal:repeat="action view/availableActions">
-		<input type="submit" class="button context"
-			   id="" name="" value=""
-			   tal:attributes="id action/__name__;
-			   				   name action/__name__;
-			   				   value python:str(action.label);"
-			   i18n:attributes="value" />
-	  </tal:loop>
-	    </span>
-	  </div>
+        <div id="actionsView">
+          <span class="actionButtons"
+                  tal:define="actions view/availableActions"
+                  tal:condition="actions">
+              <tal:loop repeat="action actions">
+                <input type="submit" class="button context"
+                       tal:define="name action/__name__"
+                       tal:attributes="id name;
+                                       name name;
+                                       value python:str(action.label);"
+                       i18n:attributes="value" />
+              </tal:loop>
+            </span>
+          </div>
 
 	</td>
       </tr>
