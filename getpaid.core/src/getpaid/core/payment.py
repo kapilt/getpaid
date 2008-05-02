@@ -83,6 +83,11 @@ class DefaultFinanceProcessorIntegration( object ):
         if event.destination != interfaces.workflow_states.order.finance.CHARGING:
             return
 
+        # on orders without any cost, forgo invoking the payment processor
+        price = self.order.getTotalPrice()
+        if not price > 0:
+            return
+
         # ick.. get a hold of the store
         # this is a little gross, we need some access to context, so we fetch line items
         # till we find something that resolves to an object, and try to get the store from that
