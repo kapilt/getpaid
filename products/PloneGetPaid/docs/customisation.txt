@@ -108,49 +108,35 @@ Changing the list of available countries for addresses
 	 factory=".vocabularies.Countries"
      />
 
-Customising the fields and layout of the first checkout page
+Customising contact information and address fields in the checkout wizard
 
-  - create a skins folder in your product
-
-  - copy the checkout-address.pt from
-    Products/PloneGetPaid/browser/templates to the skins folder of
-    your product.
-
-  - customise your new checkout-address.pt if required.
-
-  - add a file called browser.py to your product containing the
+  - add a file called checkout.py to your product containing the
     following as altered to suit your needs: 
 
     from getpaid.core import options
-    from getpaid.core.interfaces import IBillingAddress
-    from getpaid.core.interfaces import IShippingAddress
-    from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
     from Products.PloneGetPaid.browser.checkout import CheckoutAddress as OriginalCheckoutAddress
     from Products.PloneGetPaid.browser.widgets import CountrySelectionWidget, StateSelectionWidget
-    from Products.PloneGetPaid.member import ShipAddressInfo,BillAddressInfo
+    from Products.PloneGetPaid.preferences import DefaultFormSchemas
     from zope import schema
     from zope.app.location.interfaces import ILocation
     from zope.formlib import form
     from zope.interface import Interface,implements
     from zope.i18nmessageid import MessageFactory
     _ = MessageFactory('myproduct')
-    
+
+  
+    # We customise IUserContactInformation here, but the same process
+    # can work for IShippingAddress, IBillingAddress, etc
+
     class IUserContactInformation( Interface ):
-        """docstring for IUserContactInformation"""
 
         # you can put whatever fields you require here
+        # but beware that certain parts of GetPaid require fields
+        # with specific names
         
-        name = schema.TextLine(
-            title=_(u"Name")
-            )
-        
-        phone_number = schema.TextLine(
-            title=_(u"Phone Number"),
-            )
-                                    
-        email = schema.TextLine( 
-            title=_(u"Email"),
-            )
+        name = schema.TextLine(title=_(u"Name"))
+        phone_number = schema.TextLine(title=_(u"Phone Number"),)                                
+        email = schema.TextLine(title=_(u"Email"),)
         
     class ContactInfo( options.PersistentBag ):
         title = "Contact Information" 
@@ -160,46 +146,34 @@ Customising the fields and layout of the first checkout page
         
     ContactInfo.initclass(IUserContactInformation)
     
+    class FormSchemas(DefaultFormSchemas):
+
+        interfaces = dict(DefaultFormSchemas.interfaces)
+        interfaces['contact_information']=IUserContactInformation
+
+        bags = dict(DefaultFormSchemas.bags)
+        bags['contact_information']=ContactInfo
+
+    # This class is only needed if you remove or change fields
+    # with custom widgets
+
     class CheckoutAddress(OriginalCheckoutAddress):
-
-        # you can do further customisations here to make
-        # changes to any part of the first screen of the checkout process
-        
-        template = ZopeTwoPageTemplateFile("skins/checkout-address.pt")
     
-        # any of these interfaces can be customised, but you'll need
-        # to create PersistentBag classes for them above    
-
-        form_fields = form.Fields( IBillingAddress,
-                                   IShippingAddress,
-                                   IUserContactInformation )
-        
-	# you'll need to do this rediculour dance to keep the
-	# custom widgets on the "state" and "country" fields
-        form_fields['ship_country'].custom_widget = CountrySelectionWidget
-        form_fields['bill_country'].custom_widget = CountrySelectionWidget
-        form_fields['ship_state'].custom_widget = StateSelectionWidget
-        form_fields['bill_state'].custom_widget = StateSelectionWidget
+        def customise_widgets(self,fields):
+            fields['ship_country'].custom_widget = CountrySelectionWidget
+            fields['bill_country'].custom_widget = CountrySelectionWidget
+            fields['ship_state'].custom_widget = StateSelectionWidget
+            fields['bill_state'].custom_widget = StateSelectionWidget
     
-        def getSchemaAdapters( self ):
-            adapters = {}
-            # (see Products.PloneGetPaid.browser.checkout.CheckoutAddress.getSchemaAdapters
-            #  for a more expansive original version of this code)
-            adapters[IUserContactInformation] = ContactInfo()
-            adapters[IShippingAddress] = ShipAddressInfo()
-            adapters[IBillingAddress ] = BillAddressInfo()
-            return adapters
-
-  - update your checkout-address.pt to use any interfaces you've
-    customised above.
-
   - now add the following to your product's overrides.zcml:
 
+    <utility
+       provides="getpaid.core.interfaces.IFormSchemas"
+       factory=".checkout.FormSchemas"/>
+
+    <!-- only needed if you've had to fiddle with widgets -->
     <browser:page
-     for="*"
-     name="checkout-address-info"
-     class=".browser.checkout.CheckoutAddress"
-     permission="zope2.View"
-     />
-  
-  - convoluted, isn't it :-(
+       for="*"
+       name="checkout-address-info"
+       class=".browser.CheckoutAddress"
+       permission="zope2.View"/>

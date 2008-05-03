@@ -176,6 +176,24 @@ class IStoreUninstallEvent( IObjectEvent ):
 class StoreUninstalled( ObjectEvent ):
     implements( IStoreUninstallEvent )
 
+class IFormSchemas(Interface):
+    """
+    Utility for getting hold of the form schemas for a particular
+    section. Any schema interface with fields that an implementor
+    may want to chang should be given a section here rather than
+    drectly using a hard-coded interface all over the place.
+    """
+
+    def getInterface(section):
+        """
+        Return the schema interface for the section specified.
+        """
+
+    def getPersistentBagClass(section):
+        """
+        Return the subclass of options.PersistentBag to use
+        for storing field information for the specified section.
+        """
 
 #################################
 # Stuff To Buy
@@ -508,7 +526,6 @@ class ITaxUtility( Interface ):
 
 #################################
 # Payment Information Details
-
 class IAbstractAddress( Interface ):
     """ base/common interface for all addresses"""
     

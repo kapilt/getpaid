@@ -151,6 +151,10 @@
     provides=".interfaces.IMonthsAndYears"
     factory=".vocabularies.MonthsAndYears"/>
 
+<utility
+    provides="getpaid.core.interfaces.IFormSchemas"
+    factory=".preferences.DefaultFormSchemas"/>
+
 <!-- Notifications -->
 <subscriber
    for="getpaid.core.interfaces.IOrder

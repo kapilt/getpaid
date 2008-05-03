@@ -6,7 +6,7 @@ $Id$
 """
 
 
-import decimal
+import decimal,operator
 from cPickle import loads, dumps
 from datetime import timedelta
 
@@ -37,7 +37,6 @@ from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewP
 from Products.CMFCore.utils import getToolByName
 
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
-from Products.PloneGetPaid.member import ShipAddressInfo, BillAddressInfo, ContactInfo
 from Products.PloneGetPaid.i18n import _
 
 
@@ -53,9 +52,11 @@ def named( klass ):
     return "%s.%s"%(klass.__module__, klass.__name__)
     
 class BaseCheckoutForm( BaseFormView ):
-    
+
     template = None # must be overridden
 
+    sections = ()
+    
     hidden_form_vars = None
     adapters = None
     next_step_name = None # next step in wizard
@@ -70,6 +71,22 @@ class BaseCheckoutForm( BaseFormView ):
         self.setupLocale( request )
         self.setupEnvironment( request )
 
+    @property
+    def form_fields(self):
+        fields = getattr(self,'__form_fields',None)
+        if fields:
+            return fields
+        args = []
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
+        for section in self.sections:
+            args.append(formSchemas.getInterface(section))
+        fields = form.Fields(*args)
+        customise_widgets = getattr(self,'customise_widgets',None)
+        if customise_widgets is not None:
+            customise_widgets(fields)
+        self.__form_fields = fields
+        return fields
+    
     def hidden_inputs( self ):
         if not self.hidden_form_vars: return ''
         return make_hidden_input( **self.hidden_form_vars )
@@ -81,8 +98,17 @@ class BaseCheckoutForm( BaseFormView ):
         self.hidden_form_vars = mapping
         
     def getSchemaAdapters( self ):
-        return self.adapters
-        
+        adapters = {}        
+        user = getSecurityManager().getUser()
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
+        for section in self.sections:
+            interface = formSchemas.getInterface(section)
+            adapter = component.queryAdapter(user,interface)
+            if adapter is None:
+                adapter = formSchemas.getBagClass(section)()
+            adapters[interface]=adapter
+        return adapters
+    
     def invariantErrors( self ):
         errors = []
         for error in self.errors:
@@ -90,6 +116,10 @@ class BaseCheckoutForm( BaseFormView ):
                 errors.append( error )
         return errors
     
+    def getWidgetsBySectionName(self,name):
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
+        return self._getWidgetsByInterface(formSchemas.getInterface(name))
+        
     def getWidgetsByIName( self, name ):
         for iface in self.wizard.data_manager.adapters.keys():
             if name == named( iface ):
@@ -108,14 +138,17 @@ class BaseCheckoutForm( BaseFormView ):
         order = Order()
 
         shopping_cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
 
         # shopping cart is attached to the session, but we want to switch the storage to the persistent
         # zodb, we pickle to get a clean copy to store.
         adapters = self.wizard.data_manager.adapters
         order.shopping_cart = loads( dumps( shopping_cart ) )
-        order.shipping_address = payment.ShippingAddress.frominstance( adapters[ interfaces.IShippingAddress ] )
-        order.billing_address = payment.BillingAddress.frominstance( adapters[ interfaces.IBillingAddress ] )
-        order.contact_information = payment.ContactInformation.frominstance( adapters[ interfaces.IUserContactInformation ] )
+
+        for section in ('contact_information','billing_address','shipping_address'):
+            interface = formSchemas.getInterface(section)
+            bag = formSchemas.getBagClass(section).frominstance(adapters[interface])
+            setattr(order,section,bag)
 
         order.order_id = self.wizard.data_manager.get('order_id')
         order.user_id = getSecurityManager().getUser().getId()
@@ -319,36 +352,15 @@ class CheckoutAddress( BaseCheckoutForm ):
     a processor.
     """
     
-    form_fields = form.Fields( interfaces.IBillingAddress,
-                               interfaces.IShippingAddress,
-                               interfaces.IUserContactInformation )
+    sections = ('billing_address','shipping_address','contact_information')
     
-    form_fields['ship_country'].custom_widget = CountrySelectionWidget
-    form_fields['bill_country'].custom_widget = CountrySelectionWidget
-    form_fields['ship_state'].custom_widget = StateSelectionWidget
-    form_fields['bill_state'].custom_widget = StateSelectionWidget
+    def customise_widgets(self,fields):
+        fields['ship_country'].custom_widget = CountrySelectionWidget
+        fields['bill_country'].custom_widget = CountrySelectionWidget
+        fields['ship_state'].custom_widget = StateSelectionWidget
+        fields['bill_state'].custom_widget = StateSelectionWidget
     
     template = ZopeTwoPageTemplateFile("templates/checkout-address.pt")
-    
-    def getSchemaAdapters( self ):
-        adapters = {}        
-        user = getSecurityManager().getUser()   
-        contact_info = component.queryAdapter( user, interfaces.IUserContactInformation )
-        if contact_info is None:
-            contact_info = ContactInfo()
-            
-        billing_address = component.queryAdapter( user, interfaces.IBillingAddress)
-        if billing_address is None:
-            billing_address = BillAddressInfo()
-        
-        shipping_address = component.queryAdapter( user, interfaces.IShippingAddress )
-        if shipping_address is None:
-            shipping_address = ShipAddressInfo()
-            
-        adapters[ interfaces.IUserContactInformation ] = contact_info
-        adapters[ interfaces.IShippingAddress ] = shipping_address
-        adapters[ interfaces.IBillingAddress ] = billing_address
-        return adapters
     
     def update( self ):
         formbase.processInputs( self.request )
@@ -387,7 +399,8 @@ class CheckoutAddress( BaseCheckoutForm ):
             return
             
         # here we get the shipping address
-        ship_address_info = ShipAddressInfo()
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
+        ship_address_info = formSchemas.getBagClass('shipping_address')()
         if data['ship_same_billing']:
             for field in data.keys():
                 if field.startswith('bill_'):
@@ -444,8 +457,10 @@ def sanitize_custom_widgets( fields ):
     
 class CheckoutReviewAndPay( BaseCheckoutForm ):
     
-    form_fields = form.Fields( interfaces.IUserPaymentInformation )
-    form_fields['cc_expiration'].custom_widget = CCExpirationDateWidget
+    sections = ('payment',)
+
+    def customise_widgets(self,fields):
+        fields['cc_expiration'].custom_widget = CCExpirationDateWidget
 
     template = ZopeTwoPageTemplateFile("templates/checkout-review-pay.pt")
     
@@ -455,10 +470,11 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         column.GetterColumn( title=_(u"Price"), getter=cart_core.lineItemPrice ),
         column.GetterColumn( title=_(u"Total"), getter=cart_core.lineItemTotal ),
        ]
-    
+
     def getSchemaAdapters( self ):
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
         adapters = {}
-        adapters[ interfaces.IUserPaymentInformation ] = BillingInfo(self.context)
+        adapters[formSchemas.getInterface('payment')] = formSchemas.getBagClass('payment')(self.context)
         return adapters
         
     def setUpWidgets( self, ignore_request=False ):
@@ -468,19 +484,23 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         adapters = self.wizard.data_manager.adapters
         fields   = self.wizard.data_manager.fields
         
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
         # edit widgets for payment info
         self.widgets = form.setUpEditWidgets(
-            self.form_fields.select( *schema.getFieldNames( interfaces.IUserPaymentInformation)),
+            self.form_fields.select( *schema.getFieldNames(formSchemas.getInterface('payment'))),
             self.prefix, self.context, self.request,
             adapters=adapters, ignore_request=ignore_request
             )
         
         # display widgets for bill/ship address
-        bill_ship_fields = fields.select( *schema.getFieldNamesInOrder( interfaces.IBillingAddress ) ) + \
-                           fields.select( *schema.getFieldNamesInOrder( interfaces.IShippingAddress ) )
-                           
+        bill_ship_fields = []
+        for i in (formSchemas.getInterface('billing_address'),
+                  formSchemas.getInterface('shipping_address')):
+            bill_ship_fields.append(fields.select(*schema.getFieldNamesInOrder(i)))
         # make copies of custom widgets.. (typically for edit, we want display)
-        bill_ship_fields = sanitize_custom_widgets( bill_ship_fields )
+        bill_ship_fields = sanitize_custom_widgets(
+            reduce(operator.__add__,bill_ship_fields)
+            )
         
         self.widgets += form.setUpEditWidgets(
             bill_ship_fields,  self.prefix, self.context, self.request,
@@ -538,7 +558,8 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         
         # extract data to our adapters
         
-        result = processor.authorize( order, adapters[ interfaces.IUserPaymentInformation ] )
+        formSchemas = component.getUtility(interfaces.IFormSchemas)
+        result = processor.authorize( order, adapters[formSchemas.getInterface('payment')] )
         if result is interfaces.keys.results_async:
             # shouldn't ever happen, on async processors we're already directed to the third party
             # site on the final checkout step, all interaction with an async processor are based on processor
@@ -559,22 +580,9 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
         
     def createOrder( self ):
         order_manager = component.getUtility( interfaces.IOrderManager )
-        order = Order()
-        
-        shopping_cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
-        
-        # shopping cart is attached to the session, but we want to switch the storage to the persistent
-        # zodb, we pickle to get a clean copy to store.
-        adapters = self.wizard.data_manager.adapters
-                
-        order.shopping_cart = loads( dumps( shopping_cart ) )
-        order.shipping_address = payment.ShippingAddress.frominstance( adapters[ interfaces.IShippingAddress ] )
-        order.billing_address = payment.BillingAddress.frominstance( adapters[ interfaces.IBillingAddress ] )
-        order.contact_information = payment.ContactInformation.frominstance( adapters[ interfaces.IUserContactInformation ] )
-        
-        order.order_id = self.wizard.data_manager.get('order_id')
-        order.user_id = getSecurityManager().getUser().getId()
-        
+
+        order = self.createTransientOrder()
+
         shipping_code = self.wizard.data_manager.get('shipping_method_code')
         if shipping_code is not None:
             # get the names of the selected shipping service
@@ -610,7 +618,6 @@ class CheckoutReviewAndPay( BaseCheckoutForm ):
                      f_states.CHARGED):
             return base_url + '/@@getpaid-thank-you?order_id=%s&finance_state=%s' %(order.order_id, state)
         
-
 class ShippingRate( options.PropertyBag ):
     title = "Shipping Rate"
 
@@ -621,7 +628,6 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
     browser view for selecting a shipping option and setting it as the shipping total for the order.
     """
 
-    form_fields = form.Fields()
     template = ZopeTwoPageTemplateFile("templates/checkout-shipping-method.pt")
     ship_service_names = ()
 
@@ -659,9 +665,6 @@ class CheckoutSelectShipping( BaseCheckoutForm ):
         self.setupShippingOptions()
         super( CheckoutSelectShipping, self).update()
 
-
-    def getSchemaAdapters( self ):
-        return {}
 
     @form.action(_(u"Cancel"), name="cancel", validator=null_condition)
     def handle_cancel( self, action, data):

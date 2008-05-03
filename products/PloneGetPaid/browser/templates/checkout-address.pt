@@ -24,7 +24,7 @@
     <table>
 	<tr>
 		<td colspan="2">
-	  		<fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IUserContactInformation')">
+	  		<fieldset tal:define="widgets python: view.getWidgetsBySectionName('contact_information')">
 	    		<legend i18n:translate=""> Contact Information </legend>
 	    		<div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
 	  		</fieldset>
@@ -32,14 +32,14 @@
 	</tr>
     <tr>
 	<td valign="top">
-	  <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IBillingAddress')">
+	  <fieldset tal:define="widgets python: view.getWidgetsBySectionName('billing_address')">
 	    <legend i18n:translate=""> Billing Address </legend>
 	    <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
 	  </fieldset>
        </td>
 
   <td>
-    <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IShippingAddress')">
+    <fieldset tal:define="widgets python: view.getWidgetsBySectionName('shipping_address')">
       <legend i18n:translate=""> Mailing Address </legend>
       <div id="mailing-address">
         <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
