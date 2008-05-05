@@ -6,9 +6,11 @@ import unittest
 from Testing import ZopeTestCase
 from Testing.ZopeTestCase import ZopeDocTestSuite
 from Testing.ZopeTestCase import FunctionalDocFileSuite
+from Testing.ZopeTestCase import ZopeDocFileSuite
 from zope.app.testing import placelesssetup, ztapi
 from Products.Five import zcml
 from Products.Five import fiveconfigure
+from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
 
 from getpaid.core.tests import base
 
@@ -19,37 +21,29 @@ from base import PloneGetPaidTestCase
 from base import PloneGetPaidFunctionalTestCase
 
 
-#ZopeTestCase.installProduct('five.intid')
-
-class RecurrentOrderFunctionalTestCase(PloneGetPaidFunctionalTestCase):
+class RecurrentOrderFunctionalTestCase(FunctionalTestCase):
     """Base class for functional integration tests for the 'PloneGetPaid' product.
     This may provide specific set-up and tear-down operations, or provide
     convenience methods.
     """
-
     def afterSetUp( self ):
-#        placelesssetup.setUp()
+#        placelesssetup.tearDown()
         fiveconfigure.debug_mode = True
-#        import Products.Five
-#        import Products.GenericSetup
+        import five.intid
+        zcml.load_config('configure.zcml', five.intid)
         import Products.PloneGetPaid
-#        import pdb;pdb.set_trace()
-#        zcml.load_config('meta.zcml', Products.Five)
-#        zcml.load_config('configure.zcml', Products.Five)
-#        zcml.load_config('meta.zcml', Products.Five.viewlet)
-#        zcml.load_config('meta.zcml', Products.GenericSetup)
-#        zcml.load_config('configure.zcml', Products.GenericSetup)
         zcml.load_config('configure.zcml', Products.PloneGetPaid)
         fiveconfigure.debug_mode = False
 
         baseAfterSetUp(self)
+#        ZopeTestCase.installProduct('five.intid')
         self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
 
 def test_suite():
     return unittest.TestSuite((
-            FunctionalDocFileSuite('test_recurrentorder.txt',
-                                   package='Products.PloneGetPaid.tests',
-                                   #setUp=base.coreSetUp,
-                                   #tearDown=placelesssetup.tearDown,
-                                   test_class=RecurrentOrderFunctionalTestCase),
+            ZopeDocFileSuite('recurrent/test_recurrentorder.txt',
+                             package='Products.PloneGetPaid.tests',
+#                            setUp=base.coreSetUp,
+                             #tearDown=placelesssetup.tearDown,
+                             test_class=RecurrentOrderFunctionalTestCase),
         ))
