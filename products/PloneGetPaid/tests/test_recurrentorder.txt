@@ -1,6 +1,13 @@
 Order Management in GetPaid
 ===========================
 
+
+First setup...
+Install PloneGetPaid, whatever returns doesn't care...
+
+  >>> portal.portal_quickinstaller.installProduct('PloneGetPaid')
+  '...'
+
 Getpaid's core functionality is represented as an order management
 system.
 
