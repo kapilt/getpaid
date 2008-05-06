@@ -259,7 +259,7 @@ class CheckoutWizard( Wizard ):
                     
             # redirect and reset form variables
             self.data_manager.reset()
-            self.request.response.redirect('@@checkout-wizard')
+            self.request.response.redirect('@@getpaid-checkout-wizard')
 
             return False
             
