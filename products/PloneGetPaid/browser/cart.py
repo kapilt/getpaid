@@ -72,7 +72,9 @@ class ShoppingCartAddItem( ShoppingCart ):
     def addToCart( self ):
         # create a line item and add it to the cart
         item_factory = component.getMultiAdapter( (self.cart, self.context), interfaces.ILineItemFactory )
-        item_factory.create()
+        # check quantity from request
+        qty = int(self.request.get('quantity', 1))
+        item_factory.create(quantity=qty)
 
 
 class ShoppingCartAddItemAndGoToCheckout(ShoppingCartAddItem):

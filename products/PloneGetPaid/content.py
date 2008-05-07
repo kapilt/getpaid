@@ -52,7 +52,7 @@ class LineItemFactory( object ):
 
     def create( self, quantity=1 ):
         
-        if self.checkIncrementCart( self.content ):
+        if self.checkIncrementCart( self.content, quantity=quantity ):
             return
         
         payable = self.checkPayable( self.content )
@@ -61,10 +61,10 @@ class LineItemFactory( object ):
         
         return nitem
         
-    def checkIncrementCart( self, content ):
+    def checkIncrementCart( self, content, quantity=1 ):
         item_id = content.UID()
         if item_id in self.cart:
-            self.cart[ item_id ].quantity += 1
+            self.cart[ item_id ].quantity += quantity
             return True
         
     def checkPayable( self, content):
