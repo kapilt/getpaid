@@ -177,3 +177,40 @@ Customising contact information and address fields in the checkout wizard
        name="checkout-address-info"
        class=".browser.CheckoutAddress"
        permission="zope2.View"/>
+
+Customising the buyable portlet ("add to cart" link)
+
+  - Make a copy of portlet-content-buyable.pt from
+    ${product_dir}/PloneGetPaid/browser/templates to the templates folder of your product
+    
+  - To register this copy as the template for the existing portlet,
+    you need to make modifications to your configure.zcml file.
+    - Make sure that the plone namespace is declared in the root xml tag
+        <configure
+            [...]
+            xmlns:plone="http://namespaces.plone.org/plone"
+            />
+    - Make sure that the portlet is loaded by adding this line :
+        <include package="Products.PloneGetPaid.browser.portlets" />
+    - Register your template with the plone:portletRenderer directive :
+        <plone:portletRenderer
+            portlet="Products.PloneGetPaid.browser.portlets.buy.IBuyablePortlet"
+            layer=".interfaces.IThemeSpecific"
+            template="templates/portlet-content-buyable.pt"
+            />
+        (this requires that you have an IThemeSpecific interface, as explained in
+         http://plone.org/documentation/how-to/override-the-portlets-in-plone-3.0 )
+    
+  - After restarting Zope, your template should appear instead of the default one.
+  
+  - You can add a quantity input box that let users decide how many items to add
+    to their cart with a simple change to the portlet template.
+    
+    Replace the old Add to Cart link with the following form :
+    
+        <form tal:attributes="action string:${context/absolute_url}/@@getpaid-cart-add" method="post">
+            <input type="text" value="1" size="2" name="quantity" />
+            <input type="hidden" name="add_item" value="True" />
+            <input type="submit" value="Add to Cart"
+                   i18n:attributes="value label_add_to_cart" />
+        </form>
