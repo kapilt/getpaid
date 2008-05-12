@@ -7,6 +7,7 @@ $Id$
 
 
 import decimal,operator
+import cgi
 from cPickle import loads, dumps
 from datetime import timedelta
 
@@ -28,8 +29,8 @@ from getpaid.core.order import Order
 
 import Acquisition
 from AccessControl import getSecurityManager
-from ZTUtils import make_hidden_input
 from ZTUtils import make_query as mq
+from ZTUtils.Zope import complex_marshal
 
 from Products.Five.formlib import formbase
 from Products.Five.browser import BrowserView
@@ -50,6 +51,38 @@ def null_condition( *args ):
 
 def named( klass ):
     return "%s.%s"%(klass.__module__, klass.__name__)
+    
+def make_hidden_input(*args, **kwargs):
+    '''Construct a set of hidden input elements, with marshalling markup.
+
+    If there are positional arguments, they must be dictionaries.
+    They are combined with the dictionary of keyword arguments to form
+    a dictionary of query names and values.
+
+    Query names (the keys) must be strings.  Values may be strings,
+    integers, floats, or DateTimes, and they may also be lists or
+    namespaces containing these types.  All arguments are marshalled with
+    complex_marshal().
+    '''
+
+    d = {}
+    for arg in args:
+        d.update(arg)
+    d.update(kwargs)
+
+    hq = lambda x:cgi.escape(x, quote=True)
+    qlist = complex_marshal(d.items())
+    for i in range(len(qlist)):
+        k, m, v = qlist[i]
+        try:
+            # try to convert to unicode first, because str() of the unicode string may fail
+            v = unicode(v)
+        except UnicodeDecodeError:
+            v = str(v)
+        qlist[i] = ('<input type="hidden" name="%s%s" value="%s">'
+                    % (hq(k), m, hq(v)))
+
+    return '\n'.join(qlist)
     
 class BaseCheckoutForm( BaseFormView ):
 
