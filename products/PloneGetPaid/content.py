@@ -87,9 +87,22 @@ class LineItemFactory( object ):
         # without access to context.
         nitem.uid = component.getUtility( IIntIds ).register( self.content )
         
+        def getUnicodeString( s ):
+            """Try to convert a string to unicode from utf-8, as this is what Archetypes uses"""
+            if type( s ) is type( u'' ):
+                # this is already a unicode string, no need to convert it
+                return s
+            elif type( s ) is type( '' ):
+                # this is a string, let's try to convert it to unicode
+                try:
+                    return s.decode( 'utf-8' )
+                except UnicodeDecodeError, e:
+                    # not utf-8... return as is and hope for the best
+                    return s
+
         # copy over information regarding the item
-        nitem.name = self.content.Title()
-        nitem.description = self.content.Description()
+        nitem.name = getUnicodeString( self.content.Title() )
+        nitem.description = getUnicodeString( self.content.Description() )
         nitem.cost = payable.price
         nitem.quantity = int( quantity )
         nitem.product_code = payable.product_code
