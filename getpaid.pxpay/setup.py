@@ -18,6 +18,7 @@ setup(
                          'zope.interface',
                          'zope.component',
                          'zc.ssl',
+                         'elementtree',
                          ],
     zip_safe = False,
     )

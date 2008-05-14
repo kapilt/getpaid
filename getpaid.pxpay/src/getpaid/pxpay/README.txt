@@ -32,4 +32,5 @@ Requirements:
 1) A developer account with PaymentExpress
 2) GetPaid core
 3) zc.ssl
-4) I think that's about it.
+4) elementtree
+5) I think that's about it.
