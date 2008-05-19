@@ -69,10 +69,18 @@ class ShoppingCartAddItem( ShoppingCart ):
             self.addToCart()
         return super( ShoppingCartAddItem, self ).__call__()
 
+#    def addToCart( self ):
+#        # create a line item and add it to the cart
+#        import pdb;pdb.set_trace()
+#        item_factory = interfaces.ILineItemFactory( self.cart )
+#        item_factory.create( self.context )
     def addToCart( self ):
         # create a line item and add it to the cart
-        item_factory = interfaces.ILineItemFactory( self.cart )
-        item_factory.create( self.context )
+        item_factory = component.getMultiAdapter((self.cart, self.context),
+                                                 interfaces.ILineItemFactory )
+        # check quantity from request
+        qty = int(self.request.get('quantity', 1))
+        item_factory.create(quantity=qty)
 
 
 class ShoppingCartAddItemAndGoToCheckout(ShoppingCartAddItem):
@@ -234,8 +242,7 @@ class ShoppingCartListing( ContainerViewlet ):
             self.quantity_column.update(self.container.values(), data)
             for item_id in self.container:
                 if self.container[item_id].quantity == 0:
-                    item_factory = interfaces.ILineItemFactory( self.container )
-                    item_factory.delete(item_id)
+                    del self.container[ item_id ]
         except:
             raise
             self.form_reset = True

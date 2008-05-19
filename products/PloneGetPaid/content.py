@@ -40,20 +40,94 @@ from getpaid.core import options
 
 from interfaces import PayableMarkerMap, IDonationLevel
 
+#class LineItemFactory( object ):
+#    """
+#    adapts to cart and content (payable marker marked), and creates a line item
+#    from said item for cart.
+#    """
+#    def __init__( self, cart ):
+#        self.cart = cart
+#
+#    def create( self, content ):
+#        item_id = content.UID()
+#        if item_id in self.cart:
+#            self.cart[ item_id ].quantity += 1
+#            return
+#
+#        found = False
+#        for marker, iface in PayableMarkerMap.items():
+#            if marker.providedBy( content ):
+#                found = True
+#                break
+#
+#        if not found:
+#            raise RuntimeError("Invalid Context For Cart Add")
+#
+#        payable = iface( content )
+#
+#        nitem = item.PayableLineItem()
+#        nitem.item_id = content.UID() # archetypes uid
+#
+#        # we use intids to reference content that we can dereference cleanly
+#        # without access to context.
+#        nitem.uid = component.getUtility( IIntIds ).register( content )
+#
+#        # copy over information regarding the item
+#        nitem.name = content.Title()
+#        nitem.description = content.Description()
+#        nitem.cost = payable.price
+#        nitem.quantity = 1
+#
+#        #
+#        self.cart[ nitem.item_id ] = nitem
+#        self.cart.last_item = nitem.item_id
+#
+#        return nitem
+#
+#    def delete(self, item_id):
+#        """
+#        This methods removes an item from the cart and updates last_item to the last item
+#        of the ShoppingCart or None if we where at the last one.
+#        """
+#        #From where we are deleting the object it is much easyer to get the item_id than
+#        #the item
+#        #item_id = content.UID()
+#        if item_id in self.cart:
+#            del self.cart[item_id]
+#            if self.cart.last_item == item_id:
+#                if len(self.cart)>0:
+#                    self.cart.last_item = self.cart.keys()[-1]
+#                else:
+#                    self.cart.last_item = None
+
 class LineItemFactory( object ):
     """
     adapts to cart and content (payable marker marked), and creates a line item
     from said item for cart.
     """
-    def __init__( self, cart ):
-        self.cart = cart
 
-    def create( self, content ):
-        item_id = content.UID()
-        if item_id in self.cart:
-            self.cart[ item_id ].quantity += 1
+    def __init__( self, cart, content ):
+        self.cart = cart
+        self.content = content
+
+    def create( self, quantity=1 ):
+
+        if self.checkIncrementCart( self.content, quantity=quantity ):
             return
 
+        payable = self.checkPayable( self.content )
+        nitem = self.createLineItem( payable, quantity)
+        self.cart[ nitem.item_id ] = nitem
+
+        return nitem
+
+    def checkIncrementCart( self, content, quantity=1 ):
+        item_id = content.UID()
+        if item_id in self.cart:
+            self.cart[ item_id ].quantity += quantity
+            return True
+
+    def checkPayable( self, content):
         found = False
         for marker, iface in PayableMarkerMap.items():
             if marker.providedBy( content ):
@@ -63,43 +137,64 @@ class LineItemFactory( object ):
         if not found:
             raise RuntimeError("Invalid Context For Cart Add")
 
-        payable = iface( content )
+        return iface( content )
 
+    def createLineItem( self, payable, quantity ):
         nitem = item.PayableLineItem()
-        nitem.item_id = content.UID() # archetypes uid
+        nitem.item_id = self.content.UID() # archetypes uid
 
         # we use intids to reference content that we can dereference cleanly
         # without access to context.
-        nitem.uid = component.getUtility( IIntIds ).register( content )
+        nitem.uid = component.getUtility( IIntIds ).register( self.content )
+
+        def getUnicodeString( s ):
+            """Try to convert a string to unicode from utf-8, as this is what Archetypes uses"""
+            if type( s ) is type( u'' ):
+                # this is already a unicode string, no need to convert it
+                return s
+            elif type( s ) is type( '' ):
+                # this is a string, let's try to convert it to unicode
+                try:
+                    return s.decode( 'utf-8' )
+                except UnicodeDecodeError, e:
+                    # not utf-8... return as is and hope for the best
+                    return s
 
         # copy over information regarding the item
-        nitem.name = content.Title()
-        nitem.description = content.Description()
+        nitem.name = getUnicodeString( self.content.Title() )
+        nitem.description = getUnicodeString( self.content.Description() )
         nitem.cost = payable.price
-        nitem.quantity = 1
-
-        #
-        self.cart[ nitem.item_id ] = nitem
-        self.cart.last_item = nitem.item_id
+        nitem.quantity = int( quantity )
+        nitem.product_code = payable.product_code
 
         return nitem
 
-    def delete(self, item_id):
-        """
-        This methods removes an item from the cart and updates last_item to the last item
-        of the ShoppingCart or None if we where at the last one.
-        """
-        #From where we are deleting the object it is much easyer to get the item_id than
-        #the item
-        #item_id = content.UID()
-        if item_id in self.cart:
-            del self.cart[item_id]
-            if self.cart.last_item == item_id:
-                if len(self.cart)>0:
-                    self.cart.last_item = self.cart.keys()[-1]
-                else:
-                    self.cart.last_item = None
+class RecurrentPayableItemFactory( LineItemFactory ):
 
+    def __init__(self, cart, content):
+        self.cart = cart
+        self.content = content
+
+    def createLineItem( self, payable, quantity ):
+
+        nitem = item.RecurrentPayableLineItem()
+        nitem.item_id = self.content.UID() # archetypes uid
+
+        # we use intids to reference content that we can dereference cleanly
+        # without access to context.
+        nitem.uid = component.getUtility( IIntIds ).register( self.content )
+
+        # copy over information regarding the item
+        nitem.name = self.content.Title()
+        nitem.description = self.content.Description()
+        nitem.cost = payable.price
+        nitem.quantity = int( quantity )
+        nitem.product_code = payable.product_code
+        nitem.frecuency = payable.frecuency
+        nitem.total_occurrences = payable.total_occurrences
+        nitem.unit = 'months' # XXX: put on a field
+
+        return nitem
 
 
 #################################
