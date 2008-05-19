@@ -12,6 +12,7 @@
 #
 ##############################################################################
 
+import os
 import httplib
 import urllib
 from xml.dom import minidom
@@ -87,7 +88,10 @@ class ARBConnection(object):
             server, port = self.server.split(':')
             conn = httplib.HTTPConnection(server, port)
         else:
-            conn = zc.ssl.HTTPSConnection(self.server, timeout=self.timeout)
+            conn = zc.ssl.HTTPSConnection(self.server,
+                                          timeout=self.timeout,
+                                          cert_file=os.path.join(os.path.dirname(__file__),
+                                                                 'cert.pem'))
         conn.putrequest('POST', '/xml/v1/request.api')
         conn.putheader('content-type', 'text/xml')
         conn.putheader('content-length', len(xml))
@@ -102,7 +106,7 @@ class ARBConnection(object):
     def createSubscriptionRequest(self, **kws):
         """
         """
-        
+
         xml = self.header
         xml += """
 <ARBCreateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">"""

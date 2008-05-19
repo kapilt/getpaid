@@ -43,6 +43,9 @@ class AuthorizeNetAdapter(object):
 
     def authorize(self, order, payment):
 
+        if interfaces.IRecurrentOrder.providedBy(order):
+            return self.arb_create(order, payment)
+
         billing = order.billing_address
         amount = order.getTotalPrice()
         contact = order.contact_information
@@ -135,7 +138,9 @@ class AuthorizeNetAdapter(object):
         amount = order.getTotalPrice()
         contact = order.contact_information
         order_id = order.getOrderId()
-        contact_fields = 'Contact Name: ' + contact.name + ';  Contact Phone: ' + contact.phone_number  + ';  Contact Email: ' + contact.email
+        contact_fields = 'Contact Name: ' + contact.name + \
+                         ';  Contact Phone: ' + contact.phone_number  + \
+                         ';  Contact Email: ' + contact.email
 
         options = dict(
             amount = str(amount),
@@ -152,7 +157,7 @@ class AuthorizeNetAdapter(object):
             )
 
 
-        result = self.processor.authorize( **options )
+        result = self.arb_processor.create( **options )
 
         # result.response may be
         # - approved

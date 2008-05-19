@@ -21,6 +21,7 @@ from hurry.workflow import interfaces
 import random, string, datetime
 
 from zope import component
+from zope import interface
 
 from getpaid.core.interfaces import IOrder, IOrderManager, IOrderWorkflowLog, workflow_states
 from getpaid.core import order, cart, item as line_item
@@ -76,7 +77,7 @@ def createRecurrentOrders( how_many=10 ):
         o.shopping_cart = sc = cart.ShoppingCart()
 
         for i in range(0, 10):
-            item = line_item.LineItem()
+            item = line_item.RecurrentPayableLineItem()
             item.name = "p%s"%random.choice( string.letters )
             item.quantity = random.randint(1,25)
             item.cost = random.randint(30, 100)
@@ -86,10 +87,10 @@ def createRecurrentOrders( how_many=10 ):
             sc[item.item_id] = item
 
         o.user_id = "u%s"%random.choice( string.letters )
-        #o.finance_workflow.fireTransition('create')
-        #o.fulfillment_workflow.fireTransition('create')
 
         manager.store( o )
+        from getpaid.core.interfaces import IRecurrentOrder
+        interface.directlyProvides(o, IRecurrentOrder)
 
         yield o
 
