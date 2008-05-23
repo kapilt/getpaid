@@ -39,6 +39,7 @@ from getpaid.core import interfaces, item
 from getpaid.core import options
 
 from interfaces import PayableMarkerMap, IDonationLevel
+from Products.PloneGetPaid import sessions
 
 class LineItemFactory( object ):
     """
@@ -58,7 +59,7 @@ class LineItemFactory( object ):
         payable = self.checkPayable( self.content )
         nitem = self.createLineItem( payable, quantity)
         self.cart[ nitem.item_id ] = nitem
-        
+        sessions.set_came_from_url(self.content)
         return nitem
         
     def checkIncrementCart( self, content, quantity=1 ):

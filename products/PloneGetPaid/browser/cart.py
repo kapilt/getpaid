@@ -26,6 +26,8 @@ from Products.CMFCore.utils import getToolByName
 
 from Products.PloneGetPaid.interfaces import PayableMarkers, IGetPaidCartViewletManager
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IConditionalViewlet
+from Products.PloneGetPaid import sessions
+
 from Products.PloneGetPaid.i18n import _
 from Products.CMFPlone.utils import safe_unicode
 
@@ -264,17 +266,19 @@ class ShoppingCartActions( FormViewlet ):
         # redirect the user to the last thing they were viewing if there is not
         # such thing to the came_from variable and if this doesn't exist neither
         # to the portal base url, it is better than nothing
-        last_item = getattr(self.__parent__.cart,'last_item',None)
-        if not last_item:
-            payable = getToolByName(self.context, 'portal_url').getPortalObject()
+        came_from = sessions.get_came_from_url(self.context)
+        if came_from:
+            next_url = came_from
         else:
-            payable = getToolByName( self.context, 'reference_catalog').lookupObject( last_item )
-        if not self.request.get('came_from'):
-            next_url = payable.absolute_url() 
-            #Used to have /view at the end but this was breaking
-            #sites with custom views
-        else:
-            next_url = self.request.get('came_from')
+            last_item = getattr(self.__parent__.cart,'last_item',None)
+            if not last_item:
+                payable = getToolByName(self.context, 'portal_url').getPortalObject()
+            else:
+                payable = getToolByName( self.context, 'reference_catalog').lookupObject( last_item )
+            if not self.request.get('came_from'):
+                next_url = payable.absolute_url() 
+            else:
+                next_url = self.request.get('came_from')
         return self.request.RESPONSE.redirect(next_url)
 
     @form.action(_("Checkout"), condition="doesCartContainItems", name="Checkout")
