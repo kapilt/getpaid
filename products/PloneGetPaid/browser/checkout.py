@@ -478,7 +478,6 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
                                           interfaces.IPaymentProcessor,
                                           processor_name )
         self.extractData( data )
-        import pdb;pdb.set_trace()
 
         order = self.createOrder()
         order.processor_id = processor_name
@@ -486,7 +485,6 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
 
         # extract data to our adapters
 
-#        import pdb;pdb.set_trace()
         result = processor.authorize( order, self.adapters[ interfaces.IUserPaymentInformation ] )
         if result is interfaces.keys.results_async:
             # shouldn't ever happen, on async processors we're already directed to the third party

@@ -191,7 +191,10 @@ class RecurrentPayableItemFactory( LineItemFactory ):
         nitem.quantity = int( quantity )
         nitem.product_code = payable.product_code
         nitem.frecuency = payable.frecuency
-        nitem.total_occurrences = payable.total_occurrences
+        try:
+            nitem.total_occurrences = payable.total_occurrences
+        except:
+            nitem.total_occurrences = 1000 # == infinite
         nitem.unit = 'months' # XXX: put on a field
 
         return nitem
