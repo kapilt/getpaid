@@ -174,7 +174,7 @@ class OrderSearchComponent( core.ComponentViewlet ):
         ("next year", datetime.timedelta( -365 )),
         )
 
-    renewals_search_map = dict( renewals_search_order )
+    renewals_search_map = dict( date_search_order + renewals_search_order )
 
     results = None
     filtered = False
@@ -202,6 +202,8 @@ class OrderSearchComponent( core.ComponentViewlet ):
     def handle_filter_action( self, action, data ):
         if data.get('creation_date'):
             data['creation_date'] = self.date_search_map.get( data['creation_date'] )
+        if data.get('renewal_date'):
+            data['renewal_date'] = self.renewals_search_map.get( data['renewal_date'] )
         self.filtered = True
         self.results = query.search( data )
 

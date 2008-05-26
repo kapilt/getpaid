@@ -46,7 +46,7 @@ carry hidden to force transition to required, allow linear links to be used thou
 
 import sys
 from cPickle import loads, dumps
-
+import datetime
 
 from zope.dottedname import resolve
 from zope.event import notify
@@ -526,7 +526,11 @@ class CheckoutReviewAndPay( OrderIdManagerMixin, BaseCheckoutForm ):
 
         order.order_id = self.getOrderId()
         order.user_id = getSecurityManager().getUser().getId()
+
         notify( ObjectCreatedEvent( order ) )
+        if interfaces.IRecurrentOrder.providedBy(order):
+            first_item = order.shopping_cart.values()[0] # we only support one recurrent item...
+            order.renewal_date = order.creation_date + datetime.timedelta(30 * float(first_item.frecuency))
 
         return order
 

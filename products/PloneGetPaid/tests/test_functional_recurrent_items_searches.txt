@@ -133,6 +133,10 @@ Verify order was for what we checked out.
 
 	>>> 'CHARGED' in browser.contents
 	True
+    >>> from re import compile, search, DOTALL
+    >>> pattern = compile('.*<div>\s*<span>\s*Your order id is\s*</span>\s*([0-9]*)\s*</div>',
+    ...                   DOTALL)
+    >>> order_id=search(pattern, browser.contents).groups()[0]
 
 This completes test of donation checkout. Verified that item was
 listed on order for user.
@@ -142,8 +146,22 @@ listed on order for user.
     >>> browser.getLink('Preferences').click()
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Orders').click()
+    >>> order_id in browser.contents
+    True
+
+    >>> browser.getControl('Created').value = ['last 7 days']
+    >>> browser.getControl('Filter').click()
+    >>> order_id in browser.contents
+    True
 
     >>> browser.getControl('Renewal date').options
     ['', 'last 7 days', 'last month', 'last 3 months', 'last year', 'next 7 days', 'next month', 'next 3 months', 'next year']
     >>> browser.getControl('Renewal date').value = ['next year']
     >>> browser.getControl('Filter').click()
+    >>> order_id in browser.contents
+    True
+
+    >>> browser.getControl('Renewal date').value = ['next 3 months']
+    >>> browser.getControl('Filter').click()
+    >>> order_id in browser.contents
+    False
