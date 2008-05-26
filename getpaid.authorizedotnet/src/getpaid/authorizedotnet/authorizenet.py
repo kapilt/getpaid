@@ -6,6 +6,8 @@ else return an error message so higher levels can interpret/record/notify user/e
 $Id: $
 """
 
+from time import gmtime, strftime
+
 from zope import interface
 from zope.component import getUtility, getAdapter
 from zope.app.annotation.interfaces import IAnnotations
@@ -91,6 +93,9 @@ class AuthorizeNetAdapter(object):
 
     def capture( self, order, amount ):
 
+        if interfaces.IRecurrentOrder.providedBy(order):
+            return self.arb_capture(order, amount)
+
         annotations = IAnnotations( order )
         trans_id = annotations[ interfaces.keys.processor_txn_id ]
         approval_code = annotations[ APPROVAL_KEY ]
@@ -134,6 +139,8 @@ class AuthorizeNetAdapter(object):
     def arb_create(self, order, payment):
         """
         """
+        item = order.shopping_cart.values()[0]
+
         billing = order.billing_address
         amount = order.getTotalPrice()
         contact = order.contact_information
@@ -142,10 +149,11 @@ class AuthorizeNetAdapter(object):
                          ';  Contact Phone: ' + contact.phone_number  + \
                          ';  Contact Email: ' + contact.email
 
+        today = strftime("%Y-%m-%d", gmtime())
+
         options = dict(
             amount = str(amount),
             card_num = payment.credit_card,
-            last_name = payment.name_on_card,
             phone     = payment.phone_number,
             exp_date = payment.cc_expiration.strftime('%Y-%m'),
             address = billing.bill_first_line,
@@ -153,9 +161,15 @@ class AuthorizeNetAdapter(object):
             state = billing.bill_state,
             zip = billing.bill_postal_code,
             invoice_num = order_id,
-            description = contact_fields
+            description = contact_fields,
+            total_occurrences=item.total_occurrences,
+            trial_occurrences='0',
+            start_date=today,
+            length=item.frecuency,
+            unit='months',
+            first_name=payment.name_on_card.rsplit(' ', 1)[0],
+            last_name=payment.name_on_card.rsplit(' ', 1)[1],
             )
-
 
         result = self.arb_processor.create( **options )
 
@@ -174,7 +188,7 @@ class AuthorizeNetAdapter(object):
             annotation = IAnnotations( order )
             annotation[ interfaces.keys.processor_txn_id ] = result.trans_id
             annotation[ LAST_FOUR ] = payment.credit_card[-4:]
-            annotation[ APPROVAL_KEY ] = result.approval_code
+            annotation[ APPROVAL_KEY ] = result.response_code
             return interfaces.keys.results_success
 
         return result.response_reason
@@ -187,6 +201,19 @@ class AuthorizeNetAdapter(object):
     def arb_cancel(self, order):
         """
         """
+
+    def arb_capture( self, order, amount ):
+
+        annotations = IAnnotations( order )
+        trans_id = annotations[ interfaces.keys.processor_txn_id ]
+        approval_code = annotations[ APPROVAL_KEY ]
+
+        annotation = IAnnotations( order )
+        if annotation.get( interfaces.keys.capture_amount ) is None:
+            annotation[ interfaces.keys.capture_amount ] = amount
+        else:
+            annotation[ interfaces.keys.capture_amount ] += amount
+        return interfaces.keys.results_success
 
     @property
     def processor( self ):

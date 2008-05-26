@@ -89,6 +89,23 @@ class OrderQueryTests( base.GetPaidTestCase ):
         results = order.query.search( renewal_date = ( start_date, end_date ) )
         self.assertEqual( len(results), 2 )
 
+    def testRenewalDateToday( self ):
+        self.orders[0].renewal_date = datetime.datetime.now()
+        self.manager.storage.reindex( self.orders[0] )
+
+        # find already expired orders
+        now = datetime.datetime.now()
+        start_date = now - datetime.timedelta( 1 )
+        end_date = now - datetime.timedelta( -1 )
+        results = order.query.search( renewal_date = ( start_date, end_date ) )
+        self.assertEqual( len(results), 1 )
+
+        self.orders[2].renewal_date = datetime.datetime.now()
+        self.manager.storage.reindex( self.orders[2] )
+
+        results = order.query.search( renewal_date = ( start_date, end_date ) )
+        self.assertEqual( len(results), 2 )
+
 def test_suite():
     return unittest.TestSuite((
         # Unit tests

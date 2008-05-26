@@ -286,7 +286,11 @@ class OrderQuery( object ):
             value = delta
         else:
             now = datetime.datetime.now()
-            value = ( now-delta, now )
+            if (now - delta) < now:
+                value = ( now-delta, now )
+            else:
+                value = ( now, now-delta )
+
         manager = component.getUtility( interfaces.IOrderManager )
         return manager.storage.apply( { 'renewal_date': value } )
 

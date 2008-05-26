@@ -114,6 +114,8 @@ class ARBConnection(object):
         xml += """
 <refId>%s</refId>
 <subscription>"""  % (kws.get('invoice_num', ''))
+        if kws.get('invoice_num', ''):
+            xml += "<name>%s</name>" % kws.get('invoice_num', '')
         xml += self.schedule % (kws.get('length', 0),
                                 kws.get('unit', 'months'),
                                 kws.get('start_date', ''),
