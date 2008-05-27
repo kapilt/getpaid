@@ -14,7 +14,7 @@ from base import PloneGetPaidTestCase
 from Products.PloneGetPaid import interfaces
 from getpaid.core.interfaces import IShoppingCartUtility, IFormSchemas
 
-class TestCart(PloneGetPaidTestCase):
+class TestFormSchemas(PloneGetPaidTestCase):
 
     def mySetup(self):
         self.pprint = pprint
@@ -40,6 +40,6 @@ class TestCart(PloneGetPaidTestCase):
 
 def test_suite():
     return unittest.TestSuite((
-            ZopeDocTestSuite(test_class=TestCart,
+            ZopeDocTestSuite(test_class=TestFormSchemas,
                              optionflags=optionflags),
         ))
