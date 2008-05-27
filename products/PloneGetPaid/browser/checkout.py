@@ -88,7 +88,6 @@ class BaseCheckoutForm( BaseFormView ):
 
     template = None # must be overridden
 
-    sections = ()
     form_schemas_name = None
 
     hidden_form_vars = None
@@ -394,7 +393,6 @@ class CheckoutAddress( BaseCheckoutForm ):
     a processor.
     """
 
-    sections = ('billing_address','shipping_address','contact_information')
     form_schemas_name = 'checkout-address-form-schemas'
 
     def customise_widgets(self,fields):
@@ -502,7 +500,6 @@ def sanitize_custom_widgets( fields ):
 
 class CheckoutReviewAndPay( BaseCheckoutForm ):
 
-    sections = ('payment',)
     form_schemas_name = 'checkout-review-and-pay-form-schemas'
 
     def customise_widgets(self,fields):
