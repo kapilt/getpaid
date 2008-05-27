@@ -1,8 +1,0 @@
-<configure xmlns="http://namespaces.zope.org/zope">
-
-  <vocabulary
-    name="getpaid.googlecheckout.currencies"
-    factory=".vocabulary.currencyChoices"
-    />
-
-</configure>

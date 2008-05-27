@@ -1,8 +1,0 @@
-Credits
--------
-
-Martijn Faassen - initial and main developer
-Jan-Wijbrand Kolman - suggestions and feedback
-
-The hurry.workflow library for Zope 3 was originally developed at
-Infrae (http://www.infrae.com).

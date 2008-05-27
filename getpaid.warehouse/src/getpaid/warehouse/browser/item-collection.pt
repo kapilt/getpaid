@@ -1,5 +1,0 @@
-<fieldset i18n:domain="plonegetpaid">
-  <legend tal:content="view/collection_name">Contents</legend>
-   <div tal:replace="structure view/listing"> 
-   </div>
-</fieldset>
