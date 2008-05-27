@@ -153,7 +153,14 @@
 
 <utility
     provides="getpaid.core.interfaces.IFormSchemas"
-    factory=".preferences.DefaultFormSchemas"/>
+    factory=".preferences.CheckoutReviewAndPayFormSchemas"
+    name="checkout-review-and-pay-form-schemas"/>
+
+<utility
+    provides="getpaid.core.interfaces.IFormSchemas"
+    factory=".preferences.CheckoutAddressFormSchemas"
+    name="checkout-address-form-schemas"/>
+
 
 <!-- Notifications -->
 <subscriber
