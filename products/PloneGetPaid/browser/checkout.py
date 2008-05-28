@@ -37,7 +37,8 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile,ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
-from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
+from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility, \
+     ICreateTransientOrder
 from Products.PloneGetPaid.i18n import _
 
 
@@ -83,6 +84,39 @@ def make_hidden_input(*args, **kwargs):
                     % (hq(k), m, hq(v)))
 
     return '\n'.join(qlist)
+
+class CreateTransientOrder( object ):
+    """
+    A transient order used by checkout forms and finally persisted
+    """
+
+    interface.implements(ICreateTransientOrder)
+    component.adapts(wizard_interfaces.IWizard)
+
+    def __init__(self, wizard):
+        self.wizard = wizard
+
+    def __call__(self):
+        order = Order()
+        shopping_cart_utility = \
+                component.getUtility( interfaces.IShoppingCartUtility )
+        shopping_cart = shopping_cart_utility.get( self.wizard.context )
+        checkout_address_form_schemas = \
+                component.getUtility(interfaces.IFormSchemas,
+                                     name='checkout-address-form-schemas')
+        # shopping cart is attached to the session, but we want to
+        # switch the storage to the persistent zodb, we pickle to get
+        # a clean copy to store.
+        adapters = self.wizard.data_manager.adapters
+        order.shopping_cart = loads( dumps( shopping_cart ) )
+        for section, interface in checkout_address_form_schemas.interfaces.items():
+            bag = checkout_address_form_schemas.getBagClass(section).frominstance(
+                adapters[interface])
+            setattr(order,section,bag)
+        order.order_id = self.wizard.data_manager.get('order_id')
+        order.user_id = getSecurityManager().getUser().getId()
+        return order
+
 
 class BaseCheckoutForm( BaseFormView ):
 
@@ -175,26 +209,7 @@ class BaseCheckoutForm( BaseFormView ):
         return super( BaseCheckoutForm, self).render()
 
     def createTransientOrder( self ):
-        order = Order()
-
-        shopping_cart = component.getUtility( interfaces.IShoppingCartUtility ).get( self.context )
-        checkout_address_form_schemas = component.getUtility(interfaces.IFormSchemas,
-                                                             name='checkout-address-form-schemas')
-
-        # shopping cart is attached to the session, but we want to switch the storage to the persistent
-        # zodb, we pickle to get a clean copy to store.
-        adapters = self.wizard.data_manager.adapters
-        order.shopping_cart = loads( dumps( shopping_cart ) )
-
-        for section, interface in checkout_address_form_schemas.interfaces.items():
-            bag = checkout_address_form_schemas.getBagClass(section).frominstance(
-                adapters[interface])
-            setattr(order,section,bag)
-
-        order.order_id = self.wizard.data_manager.get('order_id')
-        order.user_id = getSecurityManager().getUser().getId()
-
-        return order
+        return ICreateTransientOrder(self.wizard)()
 
 ##############################
 # Some Property Bags - transient adapters
