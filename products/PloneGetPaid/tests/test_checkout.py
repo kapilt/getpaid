@@ -125,7 +125,7 @@ class TestCheckout(PloneGetPaidTestCase):
         behaved and have been persisted on the order.
 
         >>> order.gift_options
-       <Products.PloneGetPaid.tests.test_checkout.GiftOptions object at ...>
+        <Products.PloneGetPaid.tests.test_checkout.GiftOptions object at ...>
         """
 
     def test_full_first_step(self):
