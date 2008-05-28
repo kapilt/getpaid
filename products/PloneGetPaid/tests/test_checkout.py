@@ -5,20 +5,73 @@ import unittest
 from pprint import pprint
 
 from zope.component import getUtility, getMultiAdapter
+from zope.component import getGlobalSiteManager
+from zope.interface import Interface, implements
+from zope import schema
+
 from Testing.ZopeTestCase import ZopeDocTestSuite
 from Products.Five.utilities.marker import mark
 
 from utils import optionflags
 from base import PloneGetPaidTestCase
 
-from Products.PloneGetPaid import interfaces
 from getpaid.core.interfaces import IShoppingCartUtility, IFormSchemas
 from getpaid.core.item import LineItem
+from getpaid.core import options
+from Products.PloneGetPaid.preferences import CheckoutAddressFormSchemas
+from Products.PloneGetPaid import interfaces
+
+# a form schema override
+
+# here we want to add in some gift options to the billing address form
+# of the checkout and for these to be persisted in the order object.
+
+class IGiftOptions(Interface):
+
+    include_gift_card = schema.Bool(
+        title=u"Tick here to include a gift card to the recipient",
+        default=False)
+    comment = schema.Text(title = u"Write any other special requests here")
+
+
+class GiftOptions( options.PersistentBag ):
+    title = "Gift Options"
+    implements( IGiftOptions )
+    __parent__ = None
+    __name__ = None
+
+GiftOptions.initclass(IGiftOptions)
+
+class NewCheckoutAddressFormSchemas(CheckoutAddressFormSchemas):
+
+    interfaces = dict(CheckoutAddressFormSchemas.interfaces)
+    interfaces['gift_options']=IGiftOptions
+
+    bags = dict(CheckoutAddressFormSchemas.bags)
+    bags['gift_options']=GiftOptions
+
+def override_address_schema_utility(context):
+    """
+    Usually you would do this in an overrides.zml
+
+    <utility
+        provides="getpaid.core.interfaces.IFormSchemas"
+        factory=".overrides.NewCheckoutAddressFormSchemas"
+        name="checkout-address-form-schemas"
+        />
+    """
+    gsm = getGlobalSiteManager()
+    gsm.registerUtility(NewCheckoutAddressFormSchemas(),
+                        IFormSchemas,
+                        name='checkout-address-form-schemas')
+
+# end form schema override
 
 class TestCheckout(PloneGetPaidTestCase):
 
     def mySetup(self):
         self.pprint = pprint
+        override_address_schema_utility(self.portal)
         self.setRoles(('Manager',))
         id = self.portal.invokeFactory('Document', 'doc')
         options = interfaces.IGetPaidManagementOptions(self.portal)
@@ -67,6 +120,12 @@ class TestCheckout(PloneGetPaidTestCase):
         <getpaid.core.cart.ShoppingCart object at ...>
         >>> order.order_id == self.order_id
         True
+
+        Check that the added gift options schema and options have
+        behaved and have been persisted on the order.
+
+        >>> order.gift_options
+       <Products.PloneGetPaid.tests.test_checkout.GiftOptions object at ...>
         """
 
     def test_full_first_step(self):
