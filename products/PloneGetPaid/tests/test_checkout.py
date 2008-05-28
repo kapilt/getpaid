@@ -56,7 +56,7 @@ class TestCheckout(PloneGetPaidTestCase):
         return create_transient_order()
 
     def test_create_transent_order(self):
-        """Test that a cart is not instantiated if not requested
+        """Test th creation of a transient order.
         >>> self.mySetup()
         >>> self.checkout
         <Products.Five.metaclass.CheckoutWizard object at ...>
@@ -67,6 +67,14 @@ class TestCheckout(PloneGetPaidTestCase):
         <getpaid.core.cart.ShoppingCart object at ...>
         >>> order.order_id == self.order_id
         True
+        """
+
+    def test_full_first_step(self):
+        """Test that a first step with appropriate form data
+        instantiates the schema adapters correctly and generates a
+        nice looking transient order.
+
+        XXX TODO
         """
 
 def test_suite():
