@@ -1,19 +1,6 @@
 <configure xmlns="http://namespaces.zope.org/zope"
   xmlns:five="http://namespaces.zope.org/five">
 
-   <adapter
-      factory=".pxpay.PXPayStandardOptions"
-      provides=".interfaces.IPXPayStandardOptions"
-      for="getpaid.core.interfaces.IStore"
-   />
-
-   <adapter
-      factory=".pxpay.PXPayStandardProcessor"
-      provides="getpaid.core.interfaces.IPaymentProcessor"
-      for="getpaid.core.interfaces.IStore"
-      name="PaymentExpress PXPay Options"
-   />
-
    <include package=".browser" />
    <include file="vocabulary.zcml" />
 
