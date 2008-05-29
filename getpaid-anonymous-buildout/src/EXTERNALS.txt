@@ -25,7 +25,8 @@ hurry.workflow http://getpaid.googlecode.com/svn/trunk/vendor/hurry.workflow/bra
 # payment processors
 getpaid.googlecheckout http://getpaid.googlecode.com/svn/trunk/getpaid.googlecheckout
 getpaid.authorizedotnet http://getpaid.googlecode.com/svn/trunk/getpaid.authorizedotnet/
-getpaid.paypal http://getpaid.googlecode.com/svn/trunk/getpaid.paypal
+#Commented this since it is not on the repo for the moment
+#getpaid.paypal http://getpaid.googlecode.com/svn/trunk/getpaid.paypal
 getpaid.nullpayment http://getpaid.googlecode.com/svn/trunk/getpaid.nullpayment
 getpaid.paymentech http://getpaid.googlecode.com/svn/trunk/getpaid.paymentech
 getpaid.ogone http://getpaid.googlecode.com/svn/trunk/getpaid.ogone
