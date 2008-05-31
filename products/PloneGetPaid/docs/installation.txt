@@ -111,11 +111,11 @@ have a Zope instance, feel free to skip the relevant steps.
 
   This checkout will take an (unnecessarilly) long period of time.
 
-  $ cp -R products/PloneGetPaid $INSTANCE/Products/
+  $ cp -R products/PloneGetPaid/ $INSTANCE/Products/
   $ cp -R getpaid.core/src/getpaid $INSTANCE/lib/python/
   $ cp -Rf getpaid.io/src/getpaid $INSTANCE/lib/python/
   $ cp -Rf getpaid.wizard/src/getpaid $INSTANCE/lib/python/
-  $ cp -Rf getpaid.nullpayment/src/getpaid $INSTANCE/lib/python/
+  $ cp -Rf getpaid.nullpayment/src/getpaid/ $INSTANCE/lib/python/
 
   The following are included as part of the GetPaid Subversion
   checkout but they can also be seperately installed in the same way
@@ -123,11 +123,9 @@ have a Zope instance, feel free to skip the relevant steps.
   install them in site-packages.
 
   $ cp -R getpaid.buildout/src/hurry.workflow/src/hurry $INSTANCE/lib/python  
-  $ cp -R getpaid.buildout/src/ore.xd/src/ore $INSTANCE/lib/python
-  $ cp -Rf getpaid.buildout/src/ore.viewlet/src/ore $INSTANCE/lib/python
+  $ cp -R getpaid.buildout/src/ore.xd/src/ore/ $INSTANCE/lib/python
+  $ cp -Rf getpaid.buildout/src/ore.viewlet/src/ore/ $INSTANCE/lib/python
   $ cp -R getpaid.buildout/src/five.intid/five $INSTANCE/lib/python
-  $ cp -R getpaid.buildout/src/zc.table/src/zc $INSTANCE/lib/python
-  $ cp -Rf getpaid.buildout/src/zc.resourcelibrary/src/zc $INSTANCE/lib/python
-  $ cp -Rf getpaid.buildout/src/yoma.batching/src/yoma $INSTANCE/lib/python
-
-At this point, you'll need to restart your zope instance.
+  $ cp -R getpaid.buildout/src/zc.table/src/zc/ $INSTANCE/lib/python
+  $ cp -Rf getpaid.buildout/src/zc.resourcelibrary/src/zc/ $INSTANCE/lib/python
+  $ cp -Rf getpaid.buildout/src/yoma.batching/src/yoma/ $INSTANCE/lib/python

@@ -39,7 +39,6 @@ from getpaid.core import interfaces, item
 from getpaid.core import options
 
 from interfaces import PayableMarkerMap, IDonationLevel
-from Products.PloneGetPaid import sessions
 
 class LineItemFactory( object ):
     """
@@ -53,19 +52,19 @@ class LineItemFactory( object ):
 
     def create( self, quantity=1 ):
         
-        if self.checkIncrementCart( self.content, quantity=quantity ):
+        if self.checkIncrementCart( self.content ):
             return
         
         payable = self.checkPayable( self.content )
         nitem = self.createLineItem( payable, quantity)
         self.cart[ nitem.item_id ] = nitem
-        sessions.set_came_from_url(self.content)
+        
         return nitem
         
-    def checkIncrementCart( self, content, quantity=1 ):
+    def checkIncrementCart( self, content ):
         item_id = content.UID()
         if item_id in self.cart:
-            self.cart[ item_id ].quantity += quantity
+            self.cart[ item_id ].quantity += 1
             return True
         
     def checkPayable( self, content):
@@ -88,22 +87,9 @@ class LineItemFactory( object ):
         # without access to context.
         nitem.uid = component.getUtility( IIntIds ).register( self.content )
         
-        def getUnicodeString( s ):
-            """Try to convert a string to unicode from utf-8, as this is what Archetypes uses"""
-            if type( s ) is type( u'' ):
-                # this is already a unicode string, no need to convert it
-                return s
-            elif type( s ) is type( '' ):
-                # this is a string, let's try to convert it to unicode
-                try:
-                    return s.decode( 'utf-8' )
-                except UnicodeDecodeError, e:
-                    # not utf-8... return as is and hope for the best
-                    return s
-
         # copy over information regarding the item
-        nitem.name = getUnicodeString( self.content.Title() )
-        nitem.description = getUnicodeString( self.content.Description() )
+        nitem.name = self.content.Title()
+        nitem.description = self.content.Description()
         nitem.cost = payable.price
         nitem.quantity = int( quantity )
         nitem.product_code = payable.product_code

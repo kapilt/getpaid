@@ -33,7 +33,7 @@ class OgoneStandardProcessor(object):
         Ogone requires en_EN or en_US language id
         We are parsing the request to get the right
         """
-        languages = IUserPreferredLanguages(self.context.REQUEST)
+        languages = IUserPreferredLanguages(self.context.request)
         langs = languages.getPreferredLanguages()
         if langs:
             language = langs[0]
@@ -91,8 +91,7 @@ class OgoneStandardProcessor(object):
         order_manager.store( order )
         order.finance_workflow.fireTransition("authorize")
         getUtility(IShoppingCartUtility).destroy(self.context)
-        self.context.REQUEST.RESPONSE.redirect(url)
-        return keys.results_async
+        self.context.request.response.redirect(url)
 
     def capture(self, order, amount):
         """

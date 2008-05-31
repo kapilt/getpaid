@@ -42,27 +42,49 @@
     
           <table width="50%" cellpadding="10px">
             <tr>
-              <td width="25%" valign="top">
+              <td width="25%" valign="top"
+                  tal:define="bill_ad view/getBillingAddress;
+                              bill_name bill_ad/bill_name|nothing;
+                              bill_first_line bill_ad/bill_first_line|nothing;
+                              bill_second_line bill_ad/bill_second_line|nothing;
+                              bill_city bill_ad/bill_city|nothing;
+                              bill_country bill_ad/bill_country|nothing;
+                              bill_state bill_ad/bill_state|nothing;
+                              bill_postal_code bill_ad/bill_postal_code|nothing;">
                 <span i18n:translate="">Billing Address</span><br /><br />
-                <tal:i repeat="line view/getBillingAddress">
-                  <tal:c condition="line">
-                  <span tal:content="line" /><br />
-                  </tal:c>
-                </tal:i>
+                <span tal:content="bill_name" /><br />
+                <span tal:content="bill_first_line" /><br />
+                <tal:cond condition="bill_second_line">
+                  <span tal:content="bill_second_line" /><br />
+                </tal:cond>
+                <span tal:content="bill_city" />, <span tal:content="bill_state" />  <span tal:content="bill_postal_code" /><br />
+                <span tal:content="bill_country" /><br />
               </td>
               <td width="25%"
                   valign="top" 
                   tal:define="ship_ad view/getShippingAddress;">
                   <span i18n:translate="">Mailing Address</span><br /><br />
-                  <tal:cond condition="ship_ad">
-                    <tal:i repeat="line ship_ad">
-                      <tal:c condition="line">
-                        <span tal:content="line" /><br />
-                      </tal:c>
-                    </tal:i>
+                  <tal:cond condition="python:ship_ad != 'Same as billing'">
+                    <tal:def define="ship_name ship_ad/ship_name|nothing;
+                                     ship_first_line ship_ad/ship_first_line|nothing;
+                                     ship_second_line ship_ad/ship_second_line|nothing;
+                                     ship_city ship_ad/ship_city|nothing;
+                                     ship_country ship_ad/ship_country|nothing;
+                                     ship_state ship_ad/ship_state|nothing;
+                                     ship_postal_code ship_ad/ship_postal_code|nothing">
+                               
+                      <span tal:content="ship_name" /><br />
+                      <span tal:content="ship_first_line" /><br />
+                      <tal:cond condition="ship_second_line">
+                        <span tal:content="ship_second_line" /><br />
+                      </tal:cond>
+                      <span tal:content="ship_city" />, <span tal:content="ship_state" />  <span tal:content="ship_postal_code" /><br />
+                      <span tal:content="ship_country" /><br />
+                
+                    </tal:def>
                   </tal:cond>
-                  <tal:cond condition="not:ship_ad">
-                    <span i18n:translate="">Same as billing</span>
+                  <tal:cond condition="python:ship_ad == 'Same as billing'">
+                    <span tal:content="ship_ad" />
                   </tal:cond>
               </td>
             </tr>

@@ -58,7 +58,7 @@ class TestNotification(PloneGetPaidTestCase):
 
         >>> from getpaid.core.tests.base import createOrders
         >>> from Products.PloneGetPaid.notifications import sendNotification
-        >>> from Products.PloneGetPaid.member import ContactInfo
+        >>> from Products.PloneGetPaid.browser.checkout import ContactInfo
         >>> order = createOrders(how_many=2).next()
         >>> order.user_id = 'testmanager'
         >>> order.contact_information = ContactInfo()

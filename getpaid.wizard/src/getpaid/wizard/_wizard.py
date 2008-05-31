@@ -5,7 +5,6 @@ except ImportError:
     #plone2.5 compatibility
     from zope.app.publisher.interfaces.browser import IBrowserView
 from zope.formlib import form
-from Products.Five.formlib import formbase 
 
 from getpaid.core import interfaces as coreinterfaces
 
@@ -107,12 +106,6 @@ class DataManager( object ):
         data_adapters = {}
         fields = form.Fields()
         for step in self.controller.getTraversedFormSteps():
-            # call processInputs to convert request.form to unicode
-            formbase.processInputs( step.request )
-            # Five only convert request.form to unicode, but (some) formlib widgets use request
-            # so we need to get unicode values from request.form and copy them to request
-            for key in step.request.form.keys():
-                step.request[ key ] = step.request.form[ key ]
             if not interfaces.IWizardFormStep.providedBy( step ):
                 continue
             data_adapters.update( step.getSchemaAdapters() )
@@ -168,7 +161,7 @@ class DataManager( object ):
             if next:
                 continue
             # grabs from request not form to allow overriding by components
-            passed[ k ] = step.request[ k ]
+            passed[ k ] = step.request[ k ] 
         self._state.update( passed )
         
 class ControllerBase( object ):
@@ -262,6 +255,20 @@ class ControllerBase( object ):
 
         self.getCurrentStep().update()
         
+    def getActions( self ):
+        """
+        return an iterable of formlib actions and suggested positions/order
+        """
+        previous_action = next_action = None
+        
+        if self.hasPreviousStep():
+            previous_action = form.action(u"Back", name="back")
+            yield previous_action, 0
+
+        if self.hasNextStep():
+            next_action = form.action(u"Continue", name="continue")
+            yield next_action, -1
+
 class ViewControllerBase( ControllerBase ):
 
     def getStep( self, step_name ):

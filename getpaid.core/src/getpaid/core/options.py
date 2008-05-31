@@ -139,17 +139,3 @@ class PersistentOptions( object ):
 
     wire = classmethod( wire )
     
-class FormSchemas:
-    # Abstract Base Class!
-
-    implements( interfaces.IFormSchemas )
-
-    interfaces = {}
-    bags = {}
-    
-    def getInterface(self,section):
-        return self.interfaces[section]
-
-    def getBagClass(self,section):
-        return self.bags[section]
-    

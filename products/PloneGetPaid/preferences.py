@@ -5,10 +5,7 @@ Annotation Property Storage and Site Configuration Settings
 $Id$
 """
 
-from browser.checkout import BillingInfo
-from getpaid.core import interfaces as core_interfaces
-from getpaid.core.options import PersistentOptions, PersistentBag,FormSchemas
-from member import ShipAddressInfo, BillAddressInfo, ContactInfo
+from getpaid.core.options import PersistentOptions, PersistentBag
 from zope import component
 import interfaces
 
@@ -42,20 +39,4 @@ class StoreSettings( _StoreSettings ):
         return self._v_site
 
     def manage_fixupOwnershipAfterAdd( self ): pass
-
-class DefaultFormSchemas(FormSchemas):
-
-    interfaces = {
-        'billing_address':core_interfaces.IBillingAddress,
-        'shipping_address':core_interfaces.IShippingAddress,
-        'contact_information':core_interfaces.IUserContactInformation,
-        'payment':core_interfaces.IUserPaymentInformation,
-        }
-
-    bags = {
-        'billing_address':BillAddressInfo,
-        'shipping_address':ShipAddressInfo,
-        'contact_information':ContactInfo,
-        'payment':BillingInfo,
-        }
 

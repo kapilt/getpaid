@@ -18,15 +18,15 @@
 
       <div>
 	 <div style="float:left; width:30%">
-	  <fieldset tal:define="widgets python: view.getWidgetsBySectionName('billing_address')">
+	  <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IBillingAddress')">
 	    <legend i18n:translate=""> Billing Address </legend>
 	    <div metal:use-macro="context/@@getpaid-form-valuesonly/fieldset"> </div>
 	  </fieldset>
 	 </div>
    <div style="float: left; padding-left: 3em; width: 30%;"
         tal:define="ship_same_billing request/form.ship_same_billing|nothing;
-                shipping_address python: ship_same_billing and 'billing_address' or 'shipping_address'">
-      <fieldset tal:define="widgets python: view.getWidgetsBySectionName(shipping_address)">
+                shipping_address python: ship_same_billing and 'getpaid.core.interfaces.IBillingAddress' or 'getpaid.core.interfaces.IShippingAddress'">
+      <fieldset tal:define="widgets python: view.getWidgetsByIName(shipping_address)">
         <legend i18n:translate=""> Mailing Address </legend>
         <tal:block tal:repeat="widget widgets">
             <tal:sameAsBill tal:condition="not:repeat/widget/start">
@@ -47,7 +47,7 @@
       </div>
 
       <div>
-	  <fieldset tal:define="widgets python: view.getWidgetsBySectionName('payment')">
+	  <fieldset tal:define="widgets python: view.getWidgetsByIName('getpaid.core.interfaces.IUserPaymentInformation')">
 	    <legend i18n:translate=""> Payment Details </legend>
 	    <div metal:use-macro="context/@@getpaid-form/fieldset"> </div>
 	  </fieldset>

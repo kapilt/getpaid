@@ -25,20 +25,12 @@ from setuptools import setup, find_packages
 
 setup(
     name="getpaid.core",
-    version="0.6.0",
-    author="Getpaid Community",
-    author_email="getpaid-dev@googlegroups.com",
-    description="Ecommerce Framework",
-    classifiers = [
-        "Framework :: Zope2",
-        "Framework :: Zope3",
-        "Framework :: Plone"
-        ],
-    url="http://code.google.com/p/getpaid",
+    version="0.3.0",
     packages=find_packages('src'),
     package_dir={'':'src'},
     namespace_packages=['getpaid'],
     include_package_data=True,
-    install_requires = [ 'setuptools'],
+    install_requires = [ 'setuptools',
+                         ],
     zip_safe = False,
     )

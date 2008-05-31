@@ -26,8 +26,6 @@ from Products.CMFCore.utils import getToolByName
 
 from Products.PloneGetPaid.interfaces import PayableMarkers, IGetPaidCartViewletManager
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IConditionalViewlet
-from Products.PloneGetPaid import sessions
-
 from Products.PloneGetPaid.i18n import _
 from Products.CMFPlone.utils import safe_unicode
 
@@ -74,9 +72,7 @@ class ShoppingCartAddItem( ShoppingCart ):
     def addToCart( self ):
         # create a line item and add it to the cart
         item_factory = component.getMultiAdapter( (self.cart, self.context), interfaces.ILineItemFactory )
-        # check quantity from request
-        qty = int(self.request.get('quantity', 1))
-        item_factory.create(quantity=qty)
+        item_factory.create()
 
 
 class ShoppingCartAddItemAndGoToCheckout(ShoppingCartAddItem):
@@ -266,19 +262,17 @@ class ShoppingCartActions( FormViewlet ):
         # redirect the user to the last thing they were viewing if there is not
         # such thing to the came_from variable and if this doesn't exist neither
         # to the portal base url, it is better than nothing
-        came_from = sessions.get_came_from_url(self.context)
-        if came_from:
-            next_url = came_from
+        last_item = getattr(self.__parent__.cart,'last_item',None)
+        if not last_item:
+            payable = getToolByName(self.context, 'portal_url').getPortalObject()
         else:
-            last_item = getattr(self.__parent__.cart,'last_item',None)
-            if not last_item:
-                payable = getToolByName(self.context, 'portal_url').getPortalObject()
-            else:
-                payable = getToolByName( self.context, 'reference_catalog').lookupObject( last_item )
-            if not self.request.get('came_from'):
-                next_url = payable.absolute_url() 
-            else:
-                next_url = self.request.get('came_from')
+            payable = getToolByName( self.context, 'reference_catalog').lookupObject( last_item )
+        if not self.request.get('came_from'):
+            next_url = payable.absolute_url() 
+            #Used to have /view at the end but this was breaking
+            #sites with custom views
+        else:
+            next_url = self.request.get('came_from')
         return self.request.RESPONSE.redirect(next_url)
 
     @form.action(_("Checkout"), condition="doesCartContainItems", name="Checkout")
@@ -288,6 +282,23 @@ class ShoppingCartActions( FormViewlet ):
         portal = getToolByName( self.context, 'portal_url').getPortalObject()
         url = portal.absolute_url() + '/@@getpaid-checkout-wizard'
         return self.request.RESPONSE.redirect( url )
+
+##     we used to not allow anonymous checkouts, would be nice to have this configurable..
+
+##     @form.action("Checkout", condition="isLoggedInAndHasItems", name="AuthCheckout")
+
+##     @form.action("Checkout", condition="isAnonymous", name="AnonCheckout")
+##     def handle_login_checkout( self, action, data ):
+##         # go to sign in with redirect url to checkout
+##         portal = getToolByName( self.context, 'portal_url').getPortalObject()
+##         url = portal.absolute_url()
+##         url = "%s/%s?%s=%s/%s"%( url,
+##                                  'login_form',
+##                                  'came_from',
+##                                  url,
+##                                  '@@getpaid-checkout-wizard' )
+##         return self.request.RESPONSE.redirect( url )
+
 
 class OrderTemplate( FormViewlet ):
     
