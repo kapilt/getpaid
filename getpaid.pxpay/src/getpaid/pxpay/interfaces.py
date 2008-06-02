@@ -26,7 +26,3 @@ class IPXPayStandardOptions(interfaces.IPaymentProcessorOptions):
         vocabulary = "getpaid.pxpay.currencies",
        )
 
-class IPXPayStandardProcessor(interfaces.IPaymentProcessor):
-    """
-    PXPay Standard Processor
-    """

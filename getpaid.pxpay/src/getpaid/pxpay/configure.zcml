@@ -4,4 +4,16 @@
    <include package=".browser" />
    <include file="vocabulary.zcml" />
 
+  <adapter
+     for="getpaid.core.interfaces.IStore"
+     provides=".interfaces.IPXPayStandardOptions"
+     factory=".pxpay.PXPayStandardOptions"
+     />
+
+  <adapter
+     for="getpaid.core.interfaces.IStore"
+     provides="getpaid.core.interfaces.IPaymentProcessor"
+     factory=".pxpay.PXPayPaymentAdapter"
+     name="PXPay Processor"
+     />
 </configure>
