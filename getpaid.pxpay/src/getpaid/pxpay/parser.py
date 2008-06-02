@@ -27,7 +27,8 @@ class FieldModel:
         errors.append({})
         err = errors[-1]
         if model.tag != element.tag:
-            err['tag'] = "Element tag '%s' does not match model tag '%s'" % (element.tag, model.tag)
+            err['tag'] = "Element tag '%s' does not match model tag '%s'" \
+                         % (element.tag, model.tag)
         if model.get('data', False) == "required":
             if not element.text:
                 err['data'] = "Element tag '%s' requires data" % element.tag
@@ -56,8 +57,9 @@ class FieldModel:
             elif datatype == 'float':
                 try:
                     float(element.text)
-                    if model.get('maxval', False):
-                        if float(maxval) < float(element.tex):
+                    maxval =  model.get('maxval', False)
+                    if maxval:
+                        if float(maxval) < float(element.text):
                             err['maxval'] = "Element tag '%s' only allows a maximum value of '%f'" % (element.tag, model.get('maxval'))
                 except ValueError, e:
                     err['datatype'] = "Element tag '%s' requires its data to be a float" % element.tag
@@ -77,8 +79,8 @@ class FieldModel:
             if child.get('required', False) == 'required':
                 if elementchild is None:
                     err.setdefault('required', []).append("Element tag '%s' requires a child with tag '%s'" % (element.tag, child.tag))
-            if elementchild:
-                errors = self.validate(elementchild, child, errors)
+            if elementchild is not None:
+                state_validate, errors = self.validate(elementchild, child, errors)
         all_errors = [error for error in errors if error]
         return all_errors and (False, all_errors) or (True, all_errors)
 
@@ -86,9 +88,6 @@ class BaseMessage:
 
     def __init__(self, xmlstate=None, validstate=True):
         self._model = FieldModel(self.modeltext)
-        valid, errors =  self.config_validate()
-        if not valid:
-            raise Exception("Invalid base data model supplied, errors were: %s" % (errors, ))
         if xmlstate is not None:
             self._state = ET.ElementTree(ET.XML(xmlstate))
             # If state is being pre-supplied, then it ought to validate,
@@ -99,14 +98,11 @@ class BaseMessage:
             # No root node!
             self._state = ET.ElementTree()
 
-    def config_validate(self):
-        return self._model.validate(self._model.basemodel)
-
     def state_validate(self):
         return self._model.validate(self._state.getroot())
 
     def setRoot(self, node_name, node_attrs={}, clear_all=False):
-        # Total. Fucking. Wart.
+        # Total Wart.
         try:
             root = self._findElement('/')
         except AssertionError, e:
@@ -138,7 +134,7 @@ class BaseMessage:
         # one with self.setRoot(), instead.
         parent = self._findElement(node_path)
         if parent:
-            return parent.remove(node_name)
+            return parent.remove(parent.find(node_name))
         else:
             return False
 

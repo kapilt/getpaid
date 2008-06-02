@@ -1,0 +1,105 @@
+The parser is responsible for parsing and validating the XML data
+received or created for pxpya transactions. It uses internal models
+against which it tests the data.
+
+    >>> from getpaid.pxpay import parser
+    >>> from getpaid.pxpay.config import *
+
+    >>> from zope.component import getAdapter
+    >>> from pprint import pprint
+
+    Some fake data to use
+
+    >>> data = {
+    ...     'PxPayServerType':TEST_SERVER_TYPE,
+    ...     'PxPayUserId':'testid',
+    ...     'PxPayKey':'testkey',
+    ...     'PxPaySiteCurrency':u"NZD",
+    ...     'order_id':'test_order_1',
+    ...     'total_price':321.00,
+    ...     }
+
+Initial request model
+
+    >>> initial_request = parser.InitialRequest()
+
+    The internal model looks like:
+
+    >>> print initial_request.modeltext
+    <BLANKLINE>
+    <GenerateRequest required="required" maxdata="0">
+        <PxPayUserId datatype="str" maxdata="32" required="required" />
+        <PxPayKey datatype="str" maxdata="64" required="required" />
+        <AmountInput datatype="float" maxdata="13" maxval="99999.99" required="required" />
+        <BillingId datatype="str" maxdata="32" />
+        <CurrencyInput datatype="str" maxdata="4" datavalues="CAD CHF EUR FRF GBP HKD JPY NZD SGD USD ZAR AUD WST VUV TOP SBD PNG MYR KWD FJD" required="required" />
+        <DpsBillingId datatype="str" maxdata="16" />
+        <DpsTxnRef datatype="str" maxdata="16" />
+        <EmailAddress datatype="str" maxdata="255" />
+        <EnableAddBillCard datatype="int" datavalues="0 1" maxdata="1" />
+        <MerchantReference datatype="str" maxdata="64" required="required" />
+        <TxnData1 datatype="str" maxdata="255" />
+        <TxnData2 datatype="str" maxdata="255" />
+        <TxnData3 datatype="str" maxdata="255" />
+        <TxnType datatype="str" datavalues="Auth Complete Purchase" />
+        <TxnId datatype="str" maxdata="16" />
+        <UrlFail datatype="str" maxdata="255" required="required" />
+        <UrlSuccess datatype="str" maxdata="255" required="required" />
+    </GenerateRequest>
+    <BLANKLINE>
+
+    Set up the actual request model ... this is termed a "state"
+
+    >>> initial_request.setRoot('GenerateRequest')
+    >>> initial_request.addNode('/', 'PxPayUserId',
+    ...                         node_data=data['PxPayUserId'])
+    <Element PxPayUserId at ...>
+    >>> initial_request.addNode('/', 'PxPayKey',
+    ...                         node_data=data['PxPayKey'])
+    <Element PxPayKey at ...>
+    >>> initial_request.addNode('/', 'AmountInput',
+    ...                         node_data=data['total_price'])
+    <Element AmountInput at ...>
+    >>> initial_request.addNode('/', 'CurrencyInput',
+    ...                         node_data=data['PxPaySiteCurrency'])
+    <Element CurrencyInput at ...>
+    >>> initial_request.addNode('/', 'MerchantReference',
+    ...                         node_data="Test Transaction")
+    <Element MerchantReference at ...>
+    >>> initial_request.addNode('/', 'TxnType',
+    ...                         node_data="Purchase")
+    <Element TxnType at ...>
+    >>> initial_request.addNode('/', 'TxnId',
+    ...                         node_data=data['total_price'])
+    <Element TxnId at ...>
+    >>> initial_request.addNode('/', 'UrlFail',
+    ...                         node_data='/@@getpaid-checkout-wizard')
+    <Element UrlFail at ...>
+    >>> initial_request.addNode('/', 'UrlSuccess',
+    ...                         node_data='/@@getpaid-checkout-wizard')
+    <Element UrlSuccess at ...>
+
+    We can validate that this conforms to the model
+
+    >>> state_valid, errors = initial_request.state_validate()
+    >>> state_valid
+    True
+    >>> errors
+    []
+
+    Lets demonstrate an error
+
+    >>> initial_request.delNode('/', 'CurrencyInput')
+
+    >>> _ = initial_request.addNode('/', 'CurrencyInput',
+    ...                             node_data='NotACurrency')
+
+    >>> '<CurrencyInput>NotACurrency</CurrencyInput>' in initial_request.generateXML()
+    True
+
+    >>> state_valid, errors = initial_request.state_validate()
+    >>> state_valid
+    False
+    >>> pprint(errors)
+    [{'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'",
+      'maxdata': "Element tag 'CurrencyInput' has too much data: 12, when the maximum allowed is: 4)"}]
