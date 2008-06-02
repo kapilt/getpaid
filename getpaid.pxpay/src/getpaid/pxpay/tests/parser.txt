@@ -70,7 +70,7 @@ Initial request model
     ...                         node_data="Purchase")
     <Element TxnType at ...>
     >>> initial_request.addNode('/', 'TxnId',
-    ...                         node_data=data['total_price'])
+    ...                         node_data='tr_1234')
     <Element TxnId at ...>
     >>> initial_request.addNode('/', 'UrlFail',
     ...                         node_data='/@@getpaid-checkout-wizard')
@@ -103,3 +103,40 @@ Initial request model
     >>> pprint(errors)
     [{'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'",
       'maxdata': "Element tag 'CurrencyInput' has too much data: 12, when the maximum allowed is: 4)"}]
+
+
+    Lets test a completely broken request
+
+    >>> initial_request = parser.InitialRequest()
+    >>> initial_request.setRoot('GenerateRequest')
+    >>> initial_request.addNode('/', 'PxPayUserId',
+    ...                         node_data='this can be anything')
+    >>> initial_request.addNode('/', 'PxPayKey',
+    ...                         node_data='this can be anything')
+    >>> initial_request.addNode('/', 'AmountInput',
+    ...                         node_data='not a number')
+    >>> initial_request.addNode('/', 'CurrencyInput',
+    ...                         node_data='not a currency')
+    >>> initial_request.addNode('/', 'MerchantReference',
+    ...                         node_data="Test Transaction")
+    >>> initial_request.addNode('/', 'TxnType',
+    ...                         node_data="Not a TxnType")
+    >>> initial_request.addNode('/', 'TxnId',
+    ...                         node_data='this can be anything')
+    >>> initial_request.addNode('/', 'UrlFail',
+    ...                         node_data='not-a-url')
+    >>> initial_request.addNode('/', 'UrlSuccess',
+    ...                         node_data='not-a-url')
+
+    We can validate that this conforms to the model
+
+    >>> state_valid, errors = initial_request.state_validate()
+    >>> state_valid
+
+    >>> pprint(errors)
+    [{'datatype': "Element tag 'AmountInput' requires its data to be a float"},
+     {'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'",
+      'maxdata': "Element tag 'CurrencyInput' has too much data: 14, when the maximum allowed is: 4)"},
+     {'datavalues': "Element tag 'TxnType' requires its data to be only one of '['Auth', 'Complete', 'Purchase']'"},
+     {'maxdata': "Element tag 'TxnId' has too much data: 20, when the maximum allowed is: 16)"}]
+
