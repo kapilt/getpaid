@@ -13,7 +13,7 @@ http://www.dps.co.nz/technical_resources/ecommerce_hosted/pxpay.html
 
     Some fake data to use
 
-    >>> data = {
+    >>> paymentdata = {
     ...     'PxPayServerType':TEST_SERVER_TYPE,
     ...     'PxPayUserId':'testid',
     ...     'PxPayKey':'testkey',
@@ -60,16 +60,16 @@ of the payment to be made.
 
     >>> initial_request.setRoot('GenerateRequest')
     >>> initial_request.addNode('/', 'PxPayUserId',
-    ...                         node_data=data['PxPayUserId'])
+    ...                         node_data=paymentdata['PxPayUserId'])
     <Element PxPayUserId at ...>
     >>> initial_request.addNode('/', 'PxPayKey',
-    ...                         node_data=data['PxPayKey'])
+    ...                         node_data=paymentdata['PxPayKey'])
     <Element PxPayKey at ...>
     >>> initial_request.addNode('/', 'AmountInput',
-    ...                         node_data=data['total_price'])
+    ...                         node_data=paymentdata['total_price'])
     <Element AmountInput at ...>
     >>> initial_request.addNode('/', 'CurrencyInput',
-    ...                         node_data=data['PxPaySiteCurrency'])
+    ...                         node_data=paymentdata['PxPaySiteCurrency'])
     <Element CurrencyInput at ...>
     >>> initial_request.addNode('/', 'MerchantReference',
     ...                         node_data="Test Transaction")
@@ -103,18 +103,16 @@ of the payment to be made.
     >>> initial_request.delNode('/', 'CurrencyInput')
 
     >>> _ = initial_request.addNode('/', 'CurrencyInput',
-    ...                             node_data='NotACurrency')
+    ...                             node_data='XXXX')
 
-    >>> '<CurrencyInput>NotACurrency</CurrencyInput>' in initial_request.generateXML()
+    >>> '<CurrencyInput>XXXX</CurrencyInput>' in initial_request.generateXML()
     True
 
     >>> state_valid, errors = initial_request.state_validate()
     >>> state_valid
     False
     >>> pprint(errors)
-    [{'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'",
-      'maxdata': "Element tag 'CurrencyInput' has too much data: 12, when the maximum allowed is: 4)"}]
-
+    [{'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'"}]
 
     Lets test a completely broken request
 
@@ -125,19 +123,19 @@ of the payment to be made.
     >>> _ = initial_request.addNode('/', 'PxPayKey',
     ...                             node_data='this can be anything')
     >>> _ = initial_request.addNode('/', 'AmountInput',
-    ...                             node_data='not a number')
+    ...                             node_data='XXXX')
     >>> _ = initial_request.addNode('/', 'CurrencyInput',
-    ...                             node_data='not a currency')
+    ...                             node_data='XXXX')
     >>> _ = initial_request.addNode('/', 'MerchantReference',
     ...                             node_data="Test Transaction")
     >>> _ = initial_request.addNode('/', 'TxnType',
-    ...                             node_data="Not a TxnType")
+    ...                             node_data="XXXX")
     >>> _ = initial_request.addNode('/', 'TxnId',
     ...                             node_data='this can be anything')
     >>> _ = initial_request.addNode('/', 'UrlFail',
-    ...                             node_data='not-a-url')
+    ...                             node_data='XXXX')
     >>> _ = initial_request.addNode('/', 'UrlSuccess',
-    ...                             node_data='not-a-url')
+    ...                             node_data='XXXX')
 
     We can validate that this conforms to the model
 
@@ -146,11 +144,9 @@ of the payment to be made.
     False
     >>> pprint(errors)
     [{'datatype': "Element tag 'AmountInput' requires its data to be a float"},
-     {'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'",
-      'maxdata': "Element tag 'CurrencyInput' has too much data: 14, when the maximum allowed is: 4)"},
+     {'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'"},
      {'datavalues': "Element tag 'TxnType' requires its data to be only one of '['Auth', 'Complete', 'Purchase']'"},
      {'maxdata': "Element tag 'TxnId' has too much data: 20, when the maximum allowed is: 16)"}]
-
 
 Initial Response
 ----------------
@@ -215,3 +211,127 @@ by pxpay.
     True
     >>> initial_response.request_url
     'https://www.paymentexpress.com/pxpay/pxpay.aspx?userid=TestAccount&request=e88cd9f2f6f301c712ae2106ab2b6137d86e954d2163d1042f73cce130b2c 88c06daaa226629644dc741b16deb77ca14ce4c59db84929eb0280837b92bd2ffec 2fae0b9173c066dab48a0b6d2c0f1006d4d26a8c75269196cc540451030958d257c1 86f587ad92cfa7472b101ef72e45cda3bf905862c2bf58fc214870292d6646f7c4ad 02a75e42fc64839fc50cea8c17f65c6a9b83b9c124e2f20844b63538e13a8cff17ec d8f165aee525632fd3661b591626f5fb77725ade21648fed94553f43bfa69acf3557 0ff8fdcbaf8a13a3fa7deb244017e41749e652a3549a5dbe20c6c3a7a66aa5901e3f 87150f7fc'
+
+
+Return Response
+---------------
+
+Once we have redirected the user to the url in the Initial Response we
+expect an asyncronous request by the user when they are redirected
+back from pxpay following the submission of their payment details.
+This request will have an encrypted packet of data relevant to this
+users's process that we need to send to pxpay for it to decode.
+
+    >>> encrypted_data = "df6cc75b4f9e23b66c0a84955a7b1ab663f27dba0d710ac4ee911c7 48d98f8432872b2b64380e3ae39aaa0c0ba5d093c6bd8b9141a74232ca1632bf1 1f8e4ad5f5c5399d659d44b0307ffb2f44a998dd75d3c9a06c56a3672b6c1ae13 f135e8f7023c75c03401cf3334ac9021c8fa5d1be2056a35035c0dfb024d5305 9371d262bf1680fa2b6a3a8c608066e7dcf8221eb9ed6193452d09dbb6f377ea 8bfe5116fe19ef625adbc84bc3b6af9e35a0dde9fd003302da1039ff6"
+
+    >>> return_request = parser.ReturnRequest()
+    >>> return_request.setRoot('ProcessResponse')
+    >>> return_request.addNode('/', 'PxPayUserId', node_data = paymentdata['PxPayUserId'])
+    <Element PxPayUserId at ...>
+    >>> return_request.addNode('/', 'PxPayKey', node_data=paymentdata['PxPayKey'])
+    <Element PxPayKey at ...>
+    >>> return_request.addNode('/', 'Response',  node_data=encrypted_data)
+    <Element Response at ...>
+    >>> state_valid, errors = return_request.state_validate()
+    >>> state_valid
+    True
+    >>> pprint(errors)
+    []
+
+
+    Try bad data.
+
+    XXX Note: invalid input does not generate errors.
+
+    >>> return_request = parser.ReturnRequest()
+    >>> return_request.setRoot('ProcessResponse')
+    >>> _ = return_request.addNode('/', 'PxPayUserId', node_data = 'this is not a paxpay user id')
+    >>> _ = return_request.addNode('/', 'PxPayKey', node_data= 'this is not a pxpay key')
+    >>> _ = return_request.addNode('/', 'Response',  node_data='')
+    >>> state_valid, errors = return_request.state_validate()
+    >>> state_valid
+    True
+    >>> pprint(errors)
+    []
+
+
+Return Response
+---------------
+
+Once the Return Request has been sent, we expect a response back that
+is a decoding of the encrypted data passed in that request. This
+decoding tells us whether a payment by a user was successful or not.
+
+
+    >>> data = """<Response valid="1"><Success>1</Success><TxnType>Purchase</TxnType><CurrencyInput>NZD</CurrencyInput><MerchantReference>Test Transaction</MerchantReference><TxnData1>28 Grange Rd</TxnData1><TxnData2>Auckland</TxnData2><TxnData3>NZ</TxnData3><AuthCode>053646</AuthCode><CardName>Visa</CardName><CurrencyName>NZD</CurrencyName><TxnId>P777575CA3DDA78C</TxnId><EmailAddress></EmailAddress><DpsTxnRef>000000040119429b</DpsTxnRef><BillingId></BillingId><DpsBillingId></DpsBillingId><CardHolderName>TEST</CardHolderName><AmountSettlement>2.06</AmountSettlement><CurrencySettlement>NZD</CurrencySettlement><ResponseText>APPROVED</ResponseText></Response>"""
+
+    >>> return_response = parser.ReturnResponse(data)
+    >>> state_valid, errors = return_response.state_validate()
+    >>> state_valid
+    True
+    >>> pprint(errors)
+    []
+
+    Test invalid data
+
+    >>> data = """<Response ><Success>x</Success><TxnType>XXXX</TxnType><CurrencyInput>XXXX</CurrencyInput><MerchantReference>Test Transaction</MerchantReference><TxnData1>28 Grange Rd</TxnData1><TxnData2>Auckland</TxnData2><TxnData3>NZ</TxnData3><AuthCode>xxxxxxxx</AuthCode><CardName>XXXX</CardName><CurrencyName>XXXX</CurrencyName><TxnId>XXXX</TxnId><EmailAddress>XXXX</EmailAddress><DpsTxnRef>XXXX</DpsTxnRef><BillingId></BillingId><DpsBillingId></DpsBillingId><CardHolderName>TEST</CardHolderName><AmountSettlement>XXXX</AmountSettlement><CurrencySettlement>XXXX</CurrencySettlement><ResponseText>APPROVED</ResponseText></Response>"""
+
+    >>> return_response = parser.ReturnResponse(data)
+    >>> state_valid, errors = return_response.state_validate()
+    >>> state_valid
+    False
+    >>> pprint(errors)
+    [{'attributes': ["Element tag 'Response' requires an attribute named 'valid' with a value of only one of '['0', '1']'"]},
+     {'datatype': "Element tag 'Success' requires its data to be an integer",
+      'datavalues': "Element tag 'Success' requires its data to be only one of '['0', '1']'"},
+     {'datavalues': "Element tag 'TxnType' requires its data to be only one of '['Auth', 'Complete', 'Purchase']'"},
+     {'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'"},
+     {'datatype': "Element tag 'AmountSettlement' requires its data to be a float"},
+     {'datavalues': "Element tag 'CurrencySettlement' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'"}]
+
+
+    set up valid data again
+
+    >>> data = """<Response valid="1"><Success>1</Success><TxnType>Purchase</TxnType><CurrencyInput>NZD</CurrencyInput><MerchantReference>Test Transaction</MerchantReference><TxnData1>28 Grange Rd</TxnData1><TxnData2>Auckland</TxnData2><TxnData3>NZ</TxnData3><AuthCode>053646</AuthCode><CardName>Visa</CardName><CurrencyName>NZD</CurrencyName><TxnId>P777575CA3DDA78C</TxnId><EmailAddress>customer@email.com</EmailAddress><DpsTxnRef>000000040119429b</DpsTxnRef><BillingId>12345</BillingId><DpsBillingId>123456</DpsBillingId><CardHolderName>TEST</CardHolderName><AmountSettlement>2.06</AmountSettlement><CurrencySettlement>NZD</CurrencySettlement><ResponseText>APPROVED</ResponseText></Response>"""
+
+    >>> return_response = parser.ReturnResponse(data)
+    >>> return_response.is_valid_response
+    True
+    >>> return_response.transaction_successful
+    True
+    >>> return_response.transaction_type
+    'Purchase'
+    >>> return_response.transaction_currencyinput
+    'NZD'
+    >>> return_response.transaction_merchantreference
+    'Test Transaction'
+    >>> return_response.transaction_txn_data_1
+    '28 Grange Rd'
+    >>> return_response.transaction_txn_data_2
+    'Auckland'
+    >>> return_response.transaction_txn_data_3
+    'NZ'
+    >>> return_response.transaction_authcode
+    '053646'
+    >>> return_response.transaction_cardname
+    'Visa'
+    >>> return_response.transaction_currencyname
+    'NZD'
+    >>> return_response.transaction_id
+    'P777575CA3DDA78C'
+    >>> return_response.transaction_email_address
+    'customer@email.com'
+    >>> return_response.transaction_dps_reference
+    '000000040119429b'
+    >>> return_response.transaction_billing_id
+    '12345'
+    >>> return_response.transaction_dps_billing_id
+    '123456'
+    >>> return_response.transaction_cardholder_name
+    'TEST'
+    >>> return_response.transaction_amountsettlement
+    2.0600000000000001
+    >>> return_response.transaction_currency_settlement
+    'NZD'
+    >>> return_response.transaction_response_text
+    'APPROVED'

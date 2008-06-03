@@ -155,7 +155,7 @@ class BaseMessage:
 
     def __len__(self):
         return len(self.__str__())
-        
+
 class InitialRequest(BaseMessage):
     """The initial transaction setup request
     """
@@ -206,8 +206,13 @@ class InitialResponse(BaseMessage):
         return self.getNode('/', 'URI').text
 
 class ReturnRequest(BaseMessage):
-    """The request sent to validate the transaction after the user
-       has returned to us
+    """
+    When the user is redirected back to our site after they have
+    entered payment details, we receive a 'request' parameter that has
+    an encrypted response that we use to ask pxpay for details about
+    the success or failure of the users payment submission.
+
+    see http://www.dps.co.nz/technical_resources/ecommerce_hosted/pxpay.html#ProcessResponse
     """
     modeltext = """
 <ProcessResponse required="required" maxdata="0">
@@ -217,8 +222,9 @@ class ReturnRequest(BaseMessage):
 </ProcessResponse>
 """
 class ReturnResponse(BaseMessage):
-    """The response from DPS indicating whether the transaction
-       was successful or not
+    """The response from DPS from submitting a
+       ReturnRequest(ProcessResponse in pxpay speak) indicating
+       whether the transaction was successful or not
     """
     modeltext = """
 <Response required="required" maxdata="0" attributes="valid 0|1" valid="1">
@@ -242,6 +248,89 @@ class ReturnResponse(BaseMessage):
     <ResponseText datatype="str" maxdata="32" />
 </Response>
 """
+
+    @property
+    def is_valid_response(self):
+        """
+        Does the current data indicate the pxpay Request to be valid?
+        """
+        return self.getRoot().get('valid') == '1'
+
+    @property
+    def transaction_successful(self):
+        return self.getNode('/', 'Success').text == '1'
+
+    @property
+    def transaction_type(self):
+        return self.getNode('/', 'TxnType').text
+
+    @property
+    def transaction_currencyinput(self):
+        return self.getNode('/', 'CurrencyInput').text
+
+    @property
+    def transaction_merchantreference(self):
+        return self.getNode('/', 'MerchantReference').text
+
+    @property
+    def transaction_txn_data_1(self):
+        return self.getNode('/', 'TxnData1').text
+
+    @property
+    def transaction_txn_data_2(self):
+        return self.getNode('/', 'TxnData2').text
+
+    @property
+    def transaction_txn_data_3(self):
+        return self.getNode('/', 'TxnData3').text
+
+    @property
+    def transaction_authcode(self):
+        return self.getNode('/', 'AuthCode').text
+
+    @property
+    def transaction_cardname(self):
+        return self.getNode('/', 'CardName').text
+
+    @property
+    def transaction_currencyname(self):
+        return self.getNode('/', 'CurrencyName').text
+
+    @property
+    def transaction_id(self):
+        return self.getNode('/', 'TxnId').text
+
+    @property
+    def transaction_email_address(self):
+        return self.getNode('/', 'EmailAddress').text
+
+    @property
+    def transaction_dps_reference(self):
+        return self.getNode('/', 'DpsTxnRef').text
+
+    @property
+    def transaction_billing_id(self):
+        return self.getNode('/', 'BillingId').text
+
+    @property
+    def transaction_dps_billing_id(self):
+        return self.getNode('/', 'DpsBillingId').text
+
+    @property
+    def transaction_cardholder_name(self):
+        return self.getNode('/', 'CardHolderName').text
+
+    @property
+    def transaction_amountsettlement(self):
+        return float(self.getNode('/', 'AmountSettlement').text)
+
+    @property
+    def transaction_currency_settlement(self):
+        return self.getNode('/', 'CurrencySettlement').text
+
+    @property
+    def transaction_response_text(self):
+        return self.getNode('/', 'ResponseText').text
 
 if __name__ == '__main__':
     # Do selftest of embedded datamodel:
