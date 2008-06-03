@@ -84,7 +84,32 @@ class FieldModel(object):
         all_errors = [error for error in errors if error]
         return all_errors and (False, all_errors) or (True, all_errors)
 
+
+
 class BaseMessage(object):
+    """
+    A base class for pxpay xml messages
+
+    >>> from getpaid.pxpay import parser
+    >>> from elementtree import ElementTree as ET
+    >>> message = parser.BaseMessage()
+    >>> print message.generateXML()
+    <none />
+    >>> message.setRoot('top', {'a':'1','b':'2'})
+    >>> print message.generateXML()
+    <top a="1" b="2" />
+    >>> message.addNode('/','bling')
+    <Element bling at ...>
+    >>> print message.generateXML()
+    <top a="1" b="2"><bling /></top>
+    >>> message.setRoot('newtop')
+    >>> print message.generateXML()
+    <newtop a="1" b="2"><bling /></newtop>
+    >>> print message.getRoot().tag
+    newtop
+    """
+
+    modeltext = "<none/>"
 
     def __init__(self, xmlstate=None, validatestate=True):
         self._model = FieldModel(self.modeltext)
@@ -95,29 +120,19 @@ class BaseMessage(object):
             if validatestate:
                 self.state_validate()
         else:
-            # No root node!
-            self._state = ET.ElementTree()
+            self._state = ET.ElementTree(ET.Element('none'))
 
     def state_validate(self):
         return self._model.validate(self._state.getroot())
 
-    def setRoot(self, node_name, node_attrs={}, clear_all=False):
-        # Total Wart.
-        try:
-            root = self._findElement('/')
-        except AssertionError, e:
-            # ElementTree.py #647 asserts that _root is not None
-            root = None
-        newroot = ET.Element(node_name, node_attrs)
-        children = []
-        if not clear_all and root:
-            children = root.getchildren()
-        for child in children:
-            newroot.append(child)
-        self._state = ET.ElementTree(newroot)
+    def setRoot(self, node_name, node_attrs=None):
+        root = self._state.getroot()
+        root.tag = node_name
+        if node_attrs:
+            root.attrib.update(node_attrs)
 
     def getRoot(self):
-        return self.getNode('', '')
+        return self._state.getroot()
 
     def addNode(self, node_path, node_name, node_attrs={}, node_data=''):
         parent = self._findElement(node_path)
@@ -156,6 +171,71 @@ class BaseMessage(object):
     def __len__(self):
         return len(self.__str__())
 
+def to_float(value):
+    return float(value)
+
+class MessageProperty(object):
+    """
+    Computed attributes that access or set the underlying values in
+    the message xml model.
+
+    We can do this since all messages are flat, i.e. they have only
+    one depth of children and all values are text nodes.
+
+    >>> from getpaid.pxpay import parser
+    >>> class MessageModel(parser.BaseMessage):
+    ...
+    ...     p1 = parser.MessageProperty('bling')
+    ...     p2 = parser.MessageProperty('blong')
+    ...     p3 = parser.MessageProperty('number',
+    ...                                 transform=parser.to_float)
+    >>> message = MessageModel()
+    >>> message.setRoot('top')
+    >>> print message.generateXML()
+    <top />
+    >>> message.p1 = 'hello'
+    >>> message.p2 = 'there'
+    >>> message.generateXML()
+    '<top><bling>hello</bling><blong>there</blong></top>'
+    >>> print message.p1
+    hello
+    >>> print message.p2
+    there
+    >>> message.p1 = 'over'
+    >>> print message.p1
+    over
+    >>> message.p3 = '1'
+    >>> message.generateXML()
+    '<top><bling>over</bling><blong>there</blong><number>1</number></top>'
+    >>> print message.p3
+    1.0
+    >>> type(message.p3)
+    <type 'float'>
+    """
+    def __init__(self, nodename, parentpath='/', transform=None):
+        self._nodename = nodename
+        self._parentpath = parentpath
+        self._transform = transform
+
+    def __get__(self, inst, klass):
+        if inst is None:
+            return self
+        value = inst.getNode(self._parentpath, self._nodename).text
+        if self._transform:
+            return self._transform(value)
+        else:
+            return value
+
+    def __set__(self, inst, value):
+        node = inst.getNode(self._parentpath, self._nodename)
+        if node is not None:
+            node.text = unicode(value)
+            return
+        else:
+            inst.addNode(self._parentpath, self._nodename, node_data=value)
+
+
+
 class InitialRequest(BaseMessage):
     """The initial transaction setup request
     """
@@ -180,6 +260,23 @@ class InitialRequest(BaseMessage):
     <UrlSuccess datatype="str" maxdata="255" required="required" />
 </GenerateRequest>
 """
+    pxpay_user_id = MessageProperty('PxPayUserId')
+    pxpay_key = MessageProperty('PxPayKey')
+    amount_input = MessageProperty('AmountInput')
+    currency_input = MessageProperty('CurrencyInput')
+    dps_billing_id =  MessageProperty('DpsBillingId')
+    dps_transaction_reference = MessageProperty('DpsTxnRef')
+    email_address = MessageProperty('EmailAddress')
+    enable_add_bill_card = MessageProperty('EnableAddBillCard')
+    merchant_reference = MessageProperty('MerchantReference')
+    transaction_data_1 = MessageProperty('TxnData1')
+    transaction_data_2 = MessageProperty('TxnData2')
+    transaction_data_3 = MessageProperty('TxnData3')
+    transaction_type = MessageProperty('TxnType')
+    transaction_id = MessageProperty('TxnId')
+    url_failure = MessageProperty('UrlFail')
+    url_success = MessageProperty('UrlSuccess')
+
     def __init__(self, data=None):
         super(InitialRequest, self).__init__(data)
         if not data:
@@ -196,6 +293,8 @@ class InitialResponse(BaseMessage):
     <URI required="required" datatype="str" />
 </Request>
 """
+
+    uri = MessageProperty('URI')
 
     def __init__(self, data=None):
         super(InitialResponse, self).__init__(data)
@@ -214,7 +313,7 @@ class InitialResponse(BaseMessage):
         """
         Return the uri we need to redirect the user to
         """
-        return self.getNode('/', 'URI').text
+        return self.uri
 
 class ReturnRequest(BaseMessage):
     """
@@ -232,6 +331,10 @@ class ReturnRequest(BaseMessage):
     <Response required="required" datatype="str" />
 </ProcessResponse>
 """
+
+    pxpay_user_id = MessageProperty('PxPayUserId')
+    pxpay_key = MessageProperty('PxPayKey')
+    response = MessageProperty('Response')
 
     def __init__(self, data=None):
         super(ReturnRequest, self).__init__(data)
@@ -266,6 +369,26 @@ class ReturnResponse(BaseMessage):
     <ResponseText datatype="str" maxdata="32" />
 </Response>
 """
+    success = MessageProperty('Success')
+    transaction_type = MessageProperty('TxnType')
+    transaction_currencyinput = MessageProperty('CurrencyInput')
+    transaction_merchantreference = MessageProperty('MerchantReference')
+    transaction_txn_data_1 = MessageProperty('TxnData1')
+    transaction_txn_data_2 = MessageProperty('TxnData2')
+    transaction_txn_data_3 = MessageProperty('TxnData3')
+    transaction_authcode = MessageProperty('AuthCode')
+    transaction_cardname = MessageProperty('CardName')
+    transaction_currencyname = MessageProperty('CurrencyName')
+    transaction_id = MessageProperty('TxnId')
+    transaction_email_address = MessageProperty('EmailAddress')
+    transaction_dps_reference = MessageProperty('DpsTxnRef')
+    transaction_billing_id = MessageProperty('BillingId')
+    transaction_dps_billing_id = MessageProperty('DpsBillingId')
+    transaction_cardholder_name = MessageProperty('CardHolderName')
+    transaction_amountsettlement = MessageProperty('AmountSettlement',
+                                                   transform=to_float)
+    transaction_currency_settlement = MessageProperty('CurrencySettlement')
+    transaction_response_text = MessageProperty('ResponseText')
 
     def __init__(self, data=None):
         super(ReturnResponse, self).__init__(data)
@@ -281,79 +404,8 @@ class ReturnResponse(BaseMessage):
 
     @property
     def transaction_successful(self):
-        return self.getNode('/', 'Success').text == '1'
+        return self.success == '1'
 
-    @property
-    def transaction_type(self):
-        return self.getNode('/', 'TxnType').text
-
-    @property
-    def transaction_currencyinput(self):
-        return self.getNode('/', 'CurrencyInput').text
-
-    @property
-    def transaction_merchantreference(self):
-        return self.getNode('/', 'MerchantReference').text
-
-    @property
-    def transaction_txn_data_1(self):
-        return self.getNode('/', 'TxnData1').text
-
-    @property
-    def transaction_txn_data_2(self):
-        return self.getNode('/', 'TxnData2').text
-
-    @property
-    def transaction_txn_data_3(self):
-        return self.getNode('/', 'TxnData3').text
-
-    @property
-    def transaction_authcode(self):
-        return self.getNode('/', 'AuthCode').text
-
-    @property
-    def transaction_cardname(self):
-        return self.getNode('/', 'CardName').text
-
-    @property
-    def transaction_currencyname(self):
-        return self.getNode('/', 'CurrencyName').text
-
-    @property
-    def transaction_id(self):
-        return self.getNode('/', 'TxnId').text
-
-    @property
-    def transaction_email_address(self):
-        return self.getNode('/', 'EmailAddress').text
-
-    @property
-    def transaction_dps_reference(self):
-        return self.getNode('/', 'DpsTxnRef').text
-
-    @property
-    def transaction_billing_id(self):
-        return self.getNode('/', 'BillingId').text
-
-    @property
-    def transaction_dps_billing_id(self):
-        return self.getNode('/', 'DpsBillingId').text
-
-    @property
-    def transaction_cardholder_name(self):
-        return self.getNode('/', 'CardHolderName').text
-
-    @property
-    def transaction_amountsettlement(self):
-        return float(self.getNode('/', 'AmountSettlement').text)
-
-    @property
-    def transaction_currency_settlement(self):
-        return self.getNode('/', 'CurrencySettlement').text
-
-    @property
-    def transaction_response_text(self):
-        return self.getNode('/', 'ResponseText').text
 
 if __name__ == '__main__':
     # Do selftest of embedded datamodel:

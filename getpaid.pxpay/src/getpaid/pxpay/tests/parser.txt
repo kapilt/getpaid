@@ -22,6 +22,7 @@ http://www.dps.co.nz/technical_resources/ecommerce_hosted/pxpay.html
     ...     'total_price':321.00,
     ...     }
 
+
 Initial Request
 ---------------
 
@@ -58,33 +59,15 @@ of the payment to be made.
 
     Set up the actual request model ... this is termed a "state"
 
-    >>> initial_request.addNode('/', 'PxPayUserId',
-    ...                         node_data=paymentdata['PxPayUserId'])
-    <Element PxPayUserId at ...>
-    >>> initial_request.addNode('/', 'PxPayKey',
-    ...                         node_data=paymentdata['PxPayKey'])
-    <Element PxPayKey at ...>
-    >>> initial_request.addNode('/', 'AmountInput',
-    ...                         node_data=paymentdata['total_price'])
-    <Element AmountInput at ...>
-    >>> initial_request.addNode('/', 'CurrencyInput',
-    ...                         node_data=paymentdata['PxPaySiteCurrency'])
-    <Element CurrencyInput at ...>
-    >>> initial_request.addNode('/', 'MerchantReference',
-    ...                         node_data="Test Transaction")
-    <Element MerchantReference at ...>
-    >>> initial_request.addNode('/', 'TxnType',
-    ...                         node_data="Purchase")
-    <Element TxnType at ...>
-    >>> initial_request.addNode('/', 'TxnId',
-    ...                         node_data='tr_1234')
-    <Element TxnId at ...>
-    >>> initial_request.addNode('/', 'UrlFail',
-    ...                         node_data='/@@getpaid-checkout-wizard')
-    <Element UrlFail at ...>
-    >>> initial_request.addNode('/', 'UrlSuccess',
-    ...                         node_data='/@@getpaid-checkout-wizard')
-    <Element UrlSuccess at ...>
+    >>> initial_request.pxpay_user_id = paymentdata['PxPayUserId']
+    >>> initial_request.pxpay_key = paymentdata['PxPayKey']
+    >>> initial_request.amount_input = paymentdata['total_price']
+    >>> initial_request.currency_input = paymentdata['PxPaySiteCurrency']
+    >>> initial_request.merchant_reference = "Test Transaction"
+    >>> initial_request.transaction_type = "Purchase"
+    >>> initial_request.transaction_id = 'tr_1234'
+    >>> initial_request.url_failure = '/@@getpaid-checkout-wizard'
+    >>> initial_request.url_success = '/@@getpaid-checkout-wizard'
 
     >>> print initial_request.generateXML()
     <GenerateRequest><PxPayUserId>testid</PxPayUserId><PxPayKey>testkey</PxPayKey><AmountInput>321.0</AmountInput><CurrencyInput>NZD</CurrencyInput><MerchantReference>Test Transaction</MerchantReference><TxnType>Purchase</TxnType><TxnId>tr_1234</TxnId><UrlFail>/@@getpaid-checkout-wizard</UrlFail><UrlSuccess>/@@getpaid-checkout-wizard</UrlSuccess></GenerateRequest>
@@ -99,14 +82,9 @@ of the payment to be made.
 
     Lets demonstrate an error
 
-    >>> initial_request.delNode('/', 'CurrencyInput')
-
-    >>> _ = initial_request.addNode('/', 'CurrencyInput',
-    ...                             node_data='XXXX')
-
+    >>> initial_request.currency_input = 'XXXX'
     >>> '<CurrencyInput>XXXX</CurrencyInput>' in initial_request.generateXML()
     True
-
     >>> state_valid, errors = initial_request.state_validate()
     >>> state_valid
     False
@@ -116,24 +94,15 @@ of the payment to be made.
     Lets test a completely broken request
 
     >>> initial_request = parser.InitialRequest()
-    >>> _ = initial_request.addNode('/', 'PxPayUserId',
-    ...                             node_data='this can be anything')
-    >>> _ = initial_request.addNode('/', 'PxPayKey',
-    ...                             node_data='this can be anything')
-    >>> _ = initial_request.addNode('/', 'AmountInput',
-    ...                             node_data='XXXX')
-    >>> _ = initial_request.addNode('/', 'CurrencyInput',
-    ...                             node_data='XXXX')
-    >>> _ = initial_request.addNode('/', 'MerchantReference',
-    ...                             node_data="Test Transaction")
-    >>> _ = initial_request.addNode('/', 'TxnType',
-    ...                             node_data="XXXX")
-    >>> _ = initial_request.addNode('/', 'TxnId',
-    ...                             node_data='this can be anything')
-    >>> _ = initial_request.addNode('/', 'UrlFail',
-    ...                             node_data='XXXX')
-    >>> _ = initial_request.addNode('/', 'UrlSuccess',
-    ...                             node_data='XXXX')
+    >>> initial_request.pxpay_user_id = 'XXXX'
+    >>> initial_request.pxpay_key = 'XXXX'
+    >>> initial_request.amount_input = 'XXXX'
+    >>> initial_request.currency_input = 'XXXX'
+    >>> initial_request.merchant_reference = 'XXXX'
+    >>> initial_request.transaction_type = 'XXXX'
+    >>> initial_request.transaction_id = 'XXXX'
+    >>> initial_request.url_failure = 'XXXX'
+    >>> initial_request.url_success = 'XXXX'
 
     We can validate that this conforms to the model
 
@@ -143,8 +112,7 @@ of the payment to be made.
     >>> pprint(errors)
     [{'datatype': "Element tag 'AmountInput' requires its data to be a float"},
      {'datavalues': "Element tag 'CurrencyInput' requires its data to be only one of '['CAD', 'CHF', 'EUR', 'FRF', 'GBP', 'HKD', 'JPY', 'NZD', 'SGD', 'USD', 'ZAR', 'AUD', 'WST', 'VUV', 'TOP', 'SBD', 'PNG', 'MYR', 'KWD', 'FJD']'"},
-     {'datavalues': "Element tag 'TxnType' requires its data to be only one of '['Auth', 'Complete', 'Purchase']'"},
-     {'maxdata': "Element tag 'TxnId' has too much data: 20, when the maximum allowed is: 16)"}]
+     {'datavalues': "Element tag 'TxnType' requires its data to be only one of '['Auth', 'Complete', 'Purchase']'"}]
 
 Initial Response
 ----------------
@@ -223,12 +191,9 @@ users's process that we need to send to pxpay for it to decode.
     >>> encrypted_data = "df6cc75b4f9e23b66c0a84955a7b1ab663f27dba0d710ac4ee911c7 48d98f8432872b2b64380e3ae39aaa0c0ba5d093c6bd8b9141a74232ca1632bf1 1f8e4ad5f5c5399d659d44b0307ffb2f44a998dd75d3c9a06c56a3672b6c1ae13 f135e8f7023c75c03401cf3334ac9021c8fa5d1be2056a35035c0dfb024d5305 9371d262bf1680fa2b6a3a8c608066e7dcf8221eb9ed6193452d09dbb6f377ea 8bfe5116fe19ef625adbc84bc3b6af9e35a0dde9fd003302da1039ff6"
 
     >>> return_request = parser.ReturnRequest()
-    >>> return_request.addNode('/', 'PxPayUserId', node_data = paymentdata['PxPayUserId'])
-    <Element PxPayUserId at ...>
-    >>> return_request.addNode('/', 'PxPayKey', node_data=paymentdata['PxPayKey'])
-    <Element PxPayKey at ...>
-    >>> return_request.addNode('/', 'Response',  node_data=encrypted_data)
-    <Element Response at ...>
+    >>> return_request.pxpay_user_id = paymentdata['PxPayUserId']
+    >>> return_request.pxpay_key = paymentdata['PxPayKey']
+    >>> return_request.response = encrypted_data
     >>> state_valid, errors = return_request.state_validate()
     >>> state_valid
     True
@@ -241,9 +206,9 @@ users's process that we need to send to pxpay for it to decode.
     XXX Note: invalid input does not generate errors.
 
     >>> return_request = parser.ReturnRequest()
-    >>> _ = return_request.addNode('/', 'PxPayUserId', node_data = 'this is not a paxpay user id')
-    >>> _ = return_request.addNode('/', 'PxPayKey', node_data= 'this is not a pxpay key')
-    >>> _ = return_request.addNode('/', 'Response',  node_data='')
+    >>> return_request.pxpay_user_id = 'XXXX'
+    >>> return_request.pxpay_key = 'XXXX'
+    >>> return_request.response = 'XXXX'
     >>> state_valid, errors = return_request.state_validate()
     >>> state_valid
     True
