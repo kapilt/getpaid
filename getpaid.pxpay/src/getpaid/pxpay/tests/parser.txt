@@ -58,7 +58,6 @@ of the payment to be made.
 
     Set up the actual request model ... this is termed a "state"
 
-    >>> initial_request.setRoot('GenerateRequest')
     >>> initial_request.addNode('/', 'PxPayUserId',
     ...                         node_data=paymentdata['PxPayUserId'])
     <Element PxPayUserId at ...>
@@ -117,7 +116,6 @@ of the payment to be made.
     Lets test a completely broken request
 
     >>> initial_request = parser.InitialRequest()
-    >>> initial_request.setRoot('GenerateRequest')
     >>> _ = initial_request.addNode('/', 'PxPayUserId',
     ...                             node_data='this can be anything')
     >>> _ = initial_request.addNode('/', 'PxPayKey',
@@ -225,7 +223,6 @@ users's process that we need to send to pxpay for it to decode.
     >>> encrypted_data = "df6cc75b4f9e23b66c0a84955a7b1ab663f27dba0d710ac4ee911c7 48d98f8432872b2b64380e3ae39aaa0c0ba5d093c6bd8b9141a74232ca1632bf1 1f8e4ad5f5c5399d659d44b0307ffb2f44a998dd75d3c9a06c56a3672b6c1ae13 f135e8f7023c75c03401cf3334ac9021c8fa5d1be2056a35035c0dfb024d5305 9371d262bf1680fa2b6a3a8c608066e7dcf8221eb9ed6193452d09dbb6f377ea 8bfe5116fe19ef625adbc84bc3b6af9e35a0dde9fd003302da1039ff6"
 
     >>> return_request = parser.ReturnRequest()
-    >>> return_request.setRoot('ProcessResponse')
     >>> return_request.addNode('/', 'PxPayUserId', node_data = paymentdata['PxPayUserId'])
     <Element PxPayUserId at ...>
     >>> return_request.addNode('/', 'PxPayKey', node_data=paymentdata['PxPayKey'])
@@ -244,7 +241,6 @@ users's process that we need to send to pxpay for it to decode.
     XXX Note: invalid input does not generate errors.
 
     >>> return_request = parser.ReturnRequest()
-    >>> return_request.setRoot('ProcessResponse')
     >>> _ = return_request.addNode('/', 'PxPayUserId', node_data = 'this is not a paxpay user id')
     >>> _ = return_request.addNode('/', 'PxPayKey', node_data= 'this is not a pxpay key')
     >>> _ = return_request.addNode('/', 'Response',  node_data='')

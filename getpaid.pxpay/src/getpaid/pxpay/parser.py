@@ -84,15 +84,15 @@ class FieldModel(object):
         all_errors = [error for error in errors if error]
         return all_errors and (False, all_errors) or (True, all_errors)
 
-class BaseMessage:
+class BaseMessage(object):
 
-    def __init__(self, xmlstate=None, validstate=True):
+    def __init__(self, xmlstate=None, validatestate=True):
         self._model = FieldModel(self.modeltext)
         if xmlstate is not None:
             self._state = ET.ElementTree(ET.XML(xmlstate))
             # If state is being pre-supplied, then it ought to validate,
             # unless the caller has specifically asserted that it does not:
-            if validstate:
+            if validatestate:
                 self.state_validate()
         else:
             # No root node!
@@ -180,6 +180,11 @@ class InitialRequest(BaseMessage):
     <UrlSuccess datatype="str" maxdata="255" required="required" />
 </GenerateRequest>
 """
+    def __init__(self, data=None):
+        super(InitialRequest, self).__init__(data)
+        if not data:
+            self.setRoot('GenerateRequest')
+
 
 
 class InitialResponse(BaseMessage):
@@ -191,6 +196,12 @@ class InitialResponse(BaseMessage):
     <URI required="required" datatype="str" />
 </Request>
 """
+
+    def __init__(self, data=None):
+        super(InitialResponse, self).__init__(data)
+        if not data:
+            self.setRoot('Request')
+
     @property
     def is_valid_response(self):
         """
@@ -221,6 +232,13 @@ class ReturnRequest(BaseMessage):
     <Response required="required" datatype="str" />
 </ProcessResponse>
 """
+
+    def __init__(self, data=None):
+        super(ReturnRequest, self).__init__(data)
+        if not data:
+            self.setRoot('ProcessResponse')
+
+
 class ReturnResponse(BaseMessage):
     """The response from DPS from submitting a
        ReturnRequest(ProcessResponse in pxpay speak) indicating
@@ -248,6 +266,11 @@ class ReturnResponse(BaseMessage):
     <ResponseText datatype="str" maxdata="32" />
 </Response>
 """
+
+    def __init__(self, data=None):
+        super(ReturnResponse, self).__init__(data)
+        if not data:
+            self.setRoot('Response')
 
     @property
     def is_valid_response(self):
