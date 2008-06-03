@@ -1,6 +1,6 @@
 from elementtree import ElementTree as ET
 
-class FieldModel:
+class FieldModel(object):
     def __init__(self, xmlrepr):
         self.basemodel = ET.XML(xmlrepr)
 
@@ -184,12 +184,26 @@ class InitialRequest(BaseMessage):
 
 class InitialResponse(BaseMessage):
     """The response from the inital transaction setup request
+    see: http://www.dps.co.nz/technical_resources/ecommerce_hosted/pxpay.html#Request
     """
     modeltext = """
 <Request required="required" maxdata="0" attributes="valid 0|1" valid="1">
     <URI required="required" datatype="str" />
 </Request>
 """
+    @property
+    def is_valid_response(self):
+        """
+        Does the current data indicate the pxpay Request to be valid?
+        """
+        return self.getRoot().get('valid') == '1'
+
+    @property
+    def request_url(self):
+        """
+        Return the uri we need to redirect the user to
+        """
+        return self.getNode('/', 'URI').text
 
 class ReturnRequest(BaseMessage):
     """The request sent to validate the transaction after the user
