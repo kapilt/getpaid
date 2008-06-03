@@ -1,6 +1,9 @@
 The parser is responsible for parsing and validating the XML data
-received or created for pxpya transactions. It uses internal models
+received or created for pxpay transactions. It uses internal models
 against which it tests the data.
+
+For documentation on the XML packets in the pxpay transaction see
+http://www.dps.co.nz/technical_resources/ecommerce_hosted/pxpay.html
 
     >>> from getpaid.pxpay import parser
     >>> from getpaid.pxpay.config import *
@@ -19,7 +22,12 @@ against which it tests the data.
     ...     'total_price':321.00,
     ...     }
 
-Initial request model
+Initial Request
+---------------
+
+The first part of the pxpay process is to send an initial request.
+This contains data about the pxpay account being used and the details
+of the payment to be made.
 
     >>> initial_request = parser.InitialRequest()
 
@@ -78,6 +86,9 @@ Initial request model
     >>> initial_request.addNode('/', 'UrlSuccess',
     ...                         node_data='/@@getpaid-checkout-wizard')
     <Element UrlSuccess at ...>
+
+    >>> print initial_request.generateXML()
+    <GenerateRequest><PxPayUserId>testid</PxPayUserId><PxPayKey>testkey</PxPayKey><AmountInput>321.0</AmountInput><CurrencyInput>NZD</CurrencyInput><MerchantReference>Test Transaction</MerchantReference><TxnType>Purchase</TxnType><TxnId>tr_1234</TxnId><UrlFail>/@@getpaid-checkout-wizard</UrlFail><UrlSuccess>/@@getpaid-checkout-wizard</UrlSuccess></GenerateRequest>
 
     We can validate that this conforms to the model
 
@@ -139,4 +150,52 @@ Initial request model
       'maxdata': "Element tag 'CurrencyInput' has too much data: 14, when the maximum allowed is: 4)"},
      {'datavalues': "Element tag 'TxnType' requires its data to be only one of '['Auth', 'Complete', 'Purchase']'"},
      {'maxdata': "Element tag 'TxnId' has too much data: 20, when the maximum allowed is: 16)"}]
+
+
+Initial Response
+----------------
+
+When the pxpay processor receives an Intial Request it responds with
+some xml that points us to a URL that we need to redirect the user to
+so they can enter their payment details. This is termed "Request" data
+by pxpay.
+
+    >>> data = """<Request valid="1"><URI>https://www.paymentexpress.com/pxpay/pxpay.aspx?userid=TestAccount&amp;request=e88cd9f2f6f301c712ae2106ab2b6137d86e954d2163d1042f73cce130b2c 88c06daaa226629644dc741b16deb77ca14ce4c59db84929eb0280837b92bd2ffec 2fae0b9173c066dab48a0b6d2c0f1006d4d26a8c75269196cc540451030958d257c1 86f587ad92cfa7472b101ef72e45cda3bf905862c2bf58fc214870292d6646f7c4ad 02a75e42fc64839fc50cea8c17f65c6a9b83b9c124e2f20844b63538e13a8cff17ec d8f165aee525632fd3661b591626f5fb77725ade21648fed94553f43bfa69acf3557 0ff8fdcbaf8a13a3fa7deb244017e41749e652a3549a5dbe20c6c3a7a66aa5901e3f 87150f7fc</URI></Request>"""
+
+    >>> initial_response = parser.InitialResponse(data)
+    >>> state_valid, errors = initial_response.state_validate()
+    >>> state_valid
+    True
+    >>> pprint(errors)
+    []
+
+    Make sure a broken response doesn't validate
+
+    >>> data = """<Request><URI>https://www.paymentexpress.com/pxpay/pxpay.aspx?userid=TestAccount&amp;request=e88cd9f2f6f301c712ae2106ab2b6137d86e954d2163d1042f73cce130b2c 88c06daaa226629644dc741b16deb77ca14ce4c59db84929eb0280837b92bd2ffec 2fae0b9173c066dab48a0b6d2c0f1006d4d26a8c75269196cc540451030958d257c1 86f587ad92cfa7472b101ef72e45cda3bf905862c2bf58fc214870292d6646f7c4ad 02a75e42fc64839fc50cea8c17f65c6a9b83b9c124e2f20844b63538e13a8cff17ec d8f165aee525632fd3661b591626f5fb77725ade21648fed94553f43bfa69acf3557 0ff8fdcbaf8a13a3fa7deb244017e41749e652a3549a5dbe20c6c3a7a66aa5901e3f 87150f7fc</URI></Request>"""
+
+    >>> initial_response = parser.InitialResponse(data)
+    >>> state_valid, errors = initial_response.state_validate()
+    >>> state_valid
+    False
+    >>> pprint(errors)
+    [{'attributes': ["Element tag 'Request' requires an attribute named 'valid' with a value of only one of '['0', '1']'"]}]
+
+    >>> data = """<empty></empty>"""
+    >>> initial_response = parser.InitialResponse(data)
+    >>> state_valid, errors = initial_response.state_validate()
+    >>> state_valid
+    False
+    >>> pprint(errors)
+    [{'attributes': ["Element tag 'empty' requires an attribute named 'valid' with a value of only one of '['0', '1']'"],
+      'required': ["Element tag 'empty' requires a child with tag 'URI'"],
+      'tag': "Element tag 'empty' does not match model tag 'Request'"}]
+
+
+    Empty data raises an exception
+
+    >>> data = ""
+    >>> initial_response = parser.InitialResponse(data)
+    Traceback (most recent call last):
+    ...
+    ExpatError: no element found: line 1, column 0
 
