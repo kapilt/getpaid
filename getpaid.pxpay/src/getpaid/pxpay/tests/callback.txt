@@ -76,3 +76,32 @@ Process Response
     REVIEWING  -->  CHARGEABLE
     CHARGEABLE  -->  CHARGING
     CHARGING  -->  CHARGED
+
+
+Test a declined payment
+
+    >>> order = create_test_order(self.portal, order_id='234567891')
+    >>> order.finance_workflow.fireTransition( "create" )
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+
+    >>> order_manager = getUtility( IOrderManager )
+    >>> order_manager.store( order )
+    >>> order.finance_workflow.fireTransition('authorize')
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CHARGEABLE
+    CHARGEABLE  -->  CHARGING
+
+    >>> process_response = getMultiAdapter((self.portal, request),
+    ...                                    name="pxpayprocessresponse")
+    >>> process_response.pxpay_gateway.set_offline_testmode(
+    ...     True,
+    ...     data={'returnresponse':'payment-declined'})
+    >>> process_response()
+
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CHARGEABLE
+    CHARGEABLE  -->  CHARGING
+    CHARGING  -->  PAYMENT_DECLINED

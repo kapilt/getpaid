@@ -52,7 +52,7 @@ def create_test_order(context, order_id='1111111111'):
     creates an order with a line item using a new cart.
     """
     item = LineItem()
-    item.item_id = "jug-of-beer-1"
+    item.item_id = order_id
     item.name = "Jug of beer"
     item.cost = 5.00
     item.quantity = 5

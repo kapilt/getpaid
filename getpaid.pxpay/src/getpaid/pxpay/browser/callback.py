@@ -3,6 +3,8 @@ The pxpay payment processor involves call backs to the site which
 result in an update on the status of an order during and after a
 payment transaction.
 """
+import logging
+
 from zope.component import getUtility
 
 from Products.Five.browser import BrowserView
@@ -14,6 +16,8 @@ from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
      IPXPayWebInterfaceGateway
 from getpaid.pxpay.exceptions import PXPayException, \
      PXPayInvalidMessageException
+
+log = logging.getLogger('getpaid.pxpay')
 
 class ProcessResponse(BrowserView):
     """
@@ -41,7 +45,10 @@ class ProcessResponse(BrowserView):
         if not state_valid:
             raise PXPayException(errors)
         data = self.pxpay_gateway.send_message(process_response_message)
+        log.info("About to send: %s" % process_response_message)
+
         response_message = parser.ReturnResponse(data)
+        log.info("Recieved: %s" % response_message)
 
         if not response_message.is_valid_response:
             raise PXPayInvalidMessageException
@@ -50,10 +57,10 @@ class ProcessResponse(BrowserView):
         order = order_manager.get(order_id)
         if order is None:
             raise PXPayException("Order id " + order_id + " not found")
-        if response_message.success:
+        if response_message.transaction_successful:
             order.finance_workflow.fireTransition('charge-charging')
         else:
-            order.finance_workflow.fireTransition('reviewing-declined')
+            order.finance_workflow.fireTransition('decline-charging')
 
         next_url = self.get_next_url(order)
         self.request.response.redirect(next_url)
