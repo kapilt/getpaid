@@ -140,7 +140,15 @@ class ARBConnection(object):
         """
         """
         xml = self.header
-
+        xml += """
+<ARBUpdateSubscriptionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">"""
+        xml += self.authentication
+        xml += """
+<refId>%s</refId>
+<subscriptionId>%s</subscriptionId>"""  % (kws.get('invoice_num', ''),
+                                           kws.get('subscription_id', ''),)
+        xml += """
+</ARBUpdateSubscriptionRequest>"""
         xml += self.footer
         return xml
 
@@ -221,6 +229,7 @@ class ARBProcessor(object):
         """
         request = self.connection.updateSubscriptionRequest(**kws)
         result = self.connection.sendTransaction(request)
+        return result
 
     def cancel(self, **kws):
         """

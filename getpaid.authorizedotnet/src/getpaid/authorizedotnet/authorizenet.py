@@ -165,7 +165,7 @@ class AuthorizeNetAdapter(object):
             total_occurrences=item.total_occurrences,
             trial_occurrences='0',
             start_date=today,
-            length=item.frecuency,
+            length=int(float(item.frecuency)),
             unit='months',
             first_name=payment.name_on_card.rsplit(' ', 1)[0],
             last_name=payment.name_on_card.rsplit(' ', 1)[1],
@@ -197,6 +197,30 @@ class AuthorizeNetAdapter(object):
     def arb_update(self, order):
         """
         """
+        annotation = IAnnotations( order )
+        options = dict(
+            invoice_num = annotation[ interfaces.keys.processor_txn_id ],
+            )
+        result = self.arb_processor.update( **options )
+
+        # result.response may be
+        # - approved
+        # - error
+        # - declined
+        # - held for review
+        #
+        # Other result fields:
+        #   result.response_reason
+        #   result.approval_code
+        #   result.trans_id
+
+        if result.response == SUCCESS:
+            annotation = IAnnotations( order )
+            annotation[ LAST_FOUR ] = payment.credit_card[-4:]
+            annotation[ APPROVAL_KEY ] = result.response_code
+            return interfaces.keys.results_success
+
+        return result.response_reason
 
     def arb_cancel(self, order):
         """
