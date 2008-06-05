@@ -1,0 +1,65 @@
+
+    >>> from zope.component import getUtility, getMultiAdapter, getAdapter
+    >>> from zope.publisher.browser import TestRequest
+    >>> from getpaid.core.interfaces import IPaymentProcessor, keys
+    >>> from getpaid.pxpay.interfaces import IPXPayStandardOptions
+    >>> from getpaid.pxpay.config import *
+
+    >>> from getpaid.pxpay.tests.utils import create_test_order, \
+    ...     print_order_workflow_log
+
+    >>> processor_options = getAdapter(self.portal,
+    ...                                IPXPayStandardOptions)
+
+    >>> processor_options
+    <getpaid.core.options.PXPayStandardOptions object at ...>
+
+    >>> processor_options.PxPayServerType = TEST_SERVER_TYPE
+    >>> processor_options.PxPayUserId = 'testid'
+    >>> processor_options.PxPayKey = 'testkey'
+    >>> processor_options.MerchantReference = 'Uber Site'
+    >>> processor_options.PxPaySiteCurrency = u"NZD"
+
+    >>> processor_options.PxPayServerType
+    u'TEST'
+    >>> processor_options.PxPayUserId
+    'testid'
+    >>> processor_options.PxPayKey
+    'testkey'
+    >>> processor_options.MerchantReference
+    'Uber Site'
+    >>> processor_options.PxPaySiteCurrency
+    u'NZD'
+
+    >>> processor = getAdapter(self.portal,
+    ...                        IPaymentProcessor,
+    ...                        name='PXPay Processor')
+
+    >>> processor
+    <getpaid.pxpay.pxpay.PXPayPaymentAdapter object at ...>
+
+    Create a test order
+
+    >>> order = create_test_order(self.portal, order_id='123456789')
+    >>> order.finance_workflow.fireTransition( "create" )
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+
+    This processor is an async processor, so it should return an async
+    key on any call to capture - see
+    http://code.google.com/p/getpaid/source/browse/trunk/getpaid.core/src/getpaid/core/payment.py?r=1576#110
+
+    >>> processor.capture(order, order.getTotalPrice()) == keys.results_async
+    True
+
+    We set the pxpay gateway to offline test mode so we get canned
+    responses, the default canned response is a successful one.
+
+    >>> processor.pxpay_gateway.set_offline_testmode(True)
+
+    >>> request = TestRequest()
+    >>> processor.authorize( order, None, request )
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CHARGEABLE
+    CHARGEABLE  -->  CHARGING

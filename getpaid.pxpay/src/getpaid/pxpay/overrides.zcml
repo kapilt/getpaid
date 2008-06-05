@@ -4,9 +4,9 @@
 
   <browser:page
      for="*"
-     name="getpaid-checkout-wizard"
-     class=".browser.checkout.PXPayCheckoutPayment"
+     name="checkout-review-pay"
+     class=".browser.checkout.PxPayCheckoutReviewAndPay"
      permission="zope2.View"
-  />
+     />
 
 </configure>

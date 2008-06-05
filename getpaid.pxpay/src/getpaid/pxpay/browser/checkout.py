@@ -1,234 +1,86 @@
+import decimal,operator
 from exceptions import Exception
 
-from zope.component import getUtility
+from zope import component
+from zope import schema
+from zope.formlib import form
+from zc.table import column
 
-from getpaid.core.interfaces import IOrderManager, IShoppingCartUtility, ILineContainerTotals
-from getpaid.pxpay.config import *
-from getpaid.pxpay.interfaces import IPXPayStandardOptions
-from getpaid.pxpay.parser import InitialRequest, InitialResponse, ReturnRequest, ReturnResponse
-import zc.ssl
-
-from Products.CMFCore.interfaces import IURLTool, IMembershipTool
-from Products.CMFPlone.utils import getToolByName
-from Products.Five import BrowserView
+from getpaid.core import interfaces, options
+from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
+from Products.PloneGetPaid.browser.checkout import CheckoutReviewAndPay, \
+     sanitize_custom_widgets, null_condition
+from Products.PloneGetPaid.browser import cart as cart_core
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
-from Products.PloneGetPaid.browser.checkout import OrderIdManagerMixin
 
-import zLOG
+from Products.PloneGetPaid.i18n import _
 
-class InvalidResponseMessageException(Exception):
-    pass
-
-class InvalidRequestMessageException(Exception):
-    pass
-
-class PXPayCheckoutPayment(OrderIdManagerMixin, BrowserView):
+class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
     """
-    This is substantially different from the normal GetPaid CheckoutWizard.
-    Our checkout steps:
-    1) Setup the transaction with PXPay server (XML conversation)
-    2) Send the user offsite to the URL that PXPay server supplies
-    3) Wait for the user to return with auth key
-    4) Talk to PXPay server to get auth key validated and transaction result returned
-    TODO: step 5 ------>
-    5) Put returned data into all the usual format / places that GetPaid expects
+    Override the default PloneGetPaid CheckoutReviewAndPay step so
+    that we can handle the details of the pxpay async processing of
+    credit card details.
     """
+    template = ZopeTwoPageTemplateFile("templates/checkout-review-pay.pt")
 
-    def __call__( self ):
-        options = IPXPayStandardOptions(self.context)
-        if not self.checkShoppingCart():
-            # Do we really want to return None here??
-            return
-        if not self.checkAuthenticated():
-            # Or here??
-            return
-        if self.request.get('result', False):
-            # The user is returning from a transaction validation
-            success, errors = self.finaliseTransaction()
-            #TODO: At this point we need to stuff data into the correct places
-            #      that GetPaid expects... For now, just stub it out :)
-            if success:
-                # Hooray, they paid :)
-                return "Thanks for paying"
-            else:
-                return "Darn, no $$"
-        else:
-            success, redir = self.setupTransaction()
-            if success:
-                self.request.RESPONSE.redirect(redir)
-            else:
-                # Meh. Need to wire this up to some sort of custom error screen.
-                # Probably there's something, somewhere in GetPaid already that
-                # fits the bill... Any takers?
-                raise "CrappyError"
+    columns = [
+        column.GetterColumn( title=_(u"Quantity"), getter=cart_core.LineItemColumn("quantity") ),
+        column.GetterColumn( title=_(u"Name"), getter=cart_core.lineItemURL ),
+        column.GetterColumn( title=_(u"Price"), getter=cart_core.lineItemPrice ),
+        column.GetterColumn( title=_(u"Total"), getter=cart_core.lineItemTotal ),
+       ]
 
-    def checkShoppingCart(self):
-        cart = getUtility(IShoppingCartUtility).get(self.context)
-        if cart is None or not len(cart):
-            self.request.response.redirect('@@empty-cart')
-            return False
-        return True
+    def setUpWidgets( self, ignore_request=False ):
+        self.adapters = self.adapters is not None and self.adapters or {}
 
-    def checkAuthenticated(self):
-        membership = getToolByName(self.context, 'portal_membership')
-        if membership.isAnonymousUser():
-            portal = getToolByName(self.context, 'portal_url').getPortalObject()
-            if IGetPaidManagementOptions(portal).allow_anonymous_checkout:
-                return True
-            self.request.response.redirect('login_form?came_from=@@getpaid-checkout-wizard')
-            return False
-        return True
+        # grab all the adapters and fields from the entire wizard form
+        # sequence (till the current step)
+        adapters = self.wizard.data_manager.adapters
+        fields   = self.wizard.data_manager.fields
 
-    def setupTransaction(self, retry=True):
-        options = IPXPayStandardOptions(self.context)
-        cart = getUtility(IShoppingCartUtility).get(self.context)
-        initialRequest = InitialRequest()
-        initialRequest.setRoot('GenerateRequest')
-        initialRequest.addNode('/', 'PxPayUserId', node_data=options.PxPayUserId)
-        initialRequest.addNode('/', 'PxPayKey', node_data=options.PxPayKey)
-        initialRequest.addNode('/', 'AmountInput', node_data=ILineContainerTotals(cart).getTotalPrice())
-        initialRequest.addNode('/', 'CurrencyInput', node_data=options.PxPaySiteCurrency)
-        initialRequest.addNode('/', 'MerchantReference', node_data="Test Transaction")
-        initialRequest.addNode('/', 'TxnType', node_data="Purchase")
-        initialRequest.addNode('/', 'TxnId', node_data=self.getOrderId())
-        initialRequest.addNode('/', 'UrlFail', node_data=self.context.portal_url()+'/@@getpaid-checkout-wizard')
-        initialRequest.addNode('/', 'UrlSuccess', node_data=self.context.portal_url()+'/@@getpaid-checkout-wizard')
-        state_valid, errors =  initialRequest.state_validate()
-        if state_valid:
-            webresponse = sendMessage(options.PxPayServerType, initialRequest.generateXML())
-            zLOG.LOG("setupTransaction", zLOG.INFO, webresponse.reason)
-            data = webresponse.read()
-            zLOG.LOG("setupTransaction", zLOG.INFO, data)
-            if webresponse.reason == 'OK':
-                # 200 OK
-                initialResponse = InitialResponse(data)
-                state_valid, errors = initialResponse.state_validate()
-                zLOG.LOG("setupTransaction", zLOG.INFO, "Errors: %s" % errors)
-                if state_valid:
-                    zLOG.LOG("setupTransaction", zLOG.INFO, "State valid")
-                    # Find out if our setup request was accepted, and then return the redirect URI: 
-                    valid = initialResponse.getRoot().get('valid', '0')
-                    # No, we're not doing any clever marshalling at this stage:
-                    if valid == '1':
-                        return (True, initialResponse.getNode('/', 'URI').text)
-                else:
-                    zLOG.LOG("setupTransaction", zLOG.INFO, "State of return message wasn't valid? %s" % errors)
-        # Policy: retry once if we make it here?
-        if retry:
-            return self.setupTransaction(retry=False)
-        else:
-            return (False, '')
+        # display widgets for bill/ship address
+        bill_ship_fields = []
+        checkout_address_form_schemas = component.getUtility(
+            interfaces.IFormSchemas,
+            name='checkout-address-form-schemas')
+        for i in (checkout_address_form_schemas.getInterface('billing_address'),
+                  checkout_address_form_schemas.getInterface('shipping_address')):
+            bill_ship_fields.append(fields.select(*schema.getFieldNamesInOrder(i)))
+        # make copies of custom widgets.. (typically for edit, we want display)
+        bill_ship_fields = sanitize_custom_widgets(
+            reduce(operator.__add__,bill_ship_fields)
+            )
 
-    def finaliseTransaction(self, retry=True):
-        options = IPXPayStandardOptions(self.context)
-        cart = getUtility(IShoppingCartUtility).get(self.context)
-        returnRequest = ReturnRequest()
-        returnRequest.setRoot('ProcessResponse')
-        returnRequest.addNode('/', 'PxPayUserId', node_data=options.PxPayUserId)
-        returnRequest.addNode('/', 'PxPayKey', node_data=options.PxPayKey)
-        returnRequest.addNode('/', 'Response',  node_data=self.request.get('result', ''))
-        state_valid, errors = returnRequest.state_validate()
-        if state_valid:
-            webresponse = sendMessage(options.PxPayServerType, returnRequest.generateXML())
-            zLOG.LOG("finaliseTransaction", zLOG.INFO, webresponse.reason)
-            data = webresponse.read()
-            zLOG.LOG("finaliseTransaction", zLOG.INFO, data)
-            if webresponse.reason == 'OK':
-                # 200 OK
-                returnResponse = ReturnResponse(data)
-                state_valid, errors = returnResponse.state_validate()
-                if state_valid:
-                    valid = returnResponse.getRoot().get('valid', '0')
-                    if valid == '1':
-                        # Ok, so the server <3 our message, but did the payment go through?
-                        if returnResponse.getNode('/', 'Success').text == '0':
-                            # FAILURE, suck.
-                            return (False, returnResponse)
-                        else:
-                            # Apparently all successful.
-                            # One last check. This protects us from one type of fraud, which the
-                            # the PXPay interface effectively exposes us to, otherwise...
-                            if returnResponse.getNode('/', 'CardNumber').text == RETURNED_TEST_CARD_NUMBER:
-                                # Someone has used the Test CC number...
-                                if options.PxPayServerType != TEST_SERVER_TYPE:
-                                    # ...and has attempted to defraud us.
-                                    zLOG.LOG("finaliseTransaction", zLOG.INFO, "FRAUD attempt - use of Test CC number in non-test environment: '%s'" % returnResponse)
-                                    return (False, returnResponse)
-                            # Hooray, they paid! :-D
-                            return (True, returnResponse)
-                else:
-                    zLOG.LOG("finaliseTransaction", zLOG.INFO, "State of return message wasn't valid? %s" % errors)
-        # Policy: retry once if we make it here?
-        if retry:
-            return self.finaliseTransaction(retry=False)
-        else:
-            return (False, '')
+        self.widgets = form.setUpEditWidgets(
+            bill_ship_fields,  self.prefix, self.context, self.request,
+            adapters=adapters, for_display=True, ignore_request=ignore_request
+            )
 
-class ValidatePaymentParameters(object):
+    @form.action(_(u"Cancel"), name="cancel", validator=null_condition )
+    def handle_cancel( self, action, data):
+        url = self.context.portal_url.getPortalObject().absolute_url()
+        url = url.replace("https://", "http://")
+        return self.request.response.redirect(url)
 
-    def getTransactionResult(self):
-        """
-        Take the 'Request' parameter value from self.REQUEST and then go
-        talk to PaymentExpress about whether the transaction succeeded or not.
-        """
-        options = IPXPayStandardOptions(self.context)
-        requestParam = self.request.get('Request', False)
-        if requestParam is False:
-            return requestParam
-        return dir(self.getCart())
-        requestQuery = ReturnRequest()
-        requestQuery.setRoot('ProcessResponse')
-        requestQuery.addNode('/', 'PxPayUserId', node_data=options.PxPayUserId)
-        requestQuery.addNode('/', 'PxPayKey', node_data=options.PxPayKey)
-        requestQuery.addNode('/', 'Response', node_data=requestParam)
-        state_valid, errors =  requestQuery.state_validate()
-        if state_valid:
-            response = sendMessage(server_url, requestQuery.generateXML())
-            return response
-            requestResponse = ReturnResponse(response)
-            state_valid, errors = requestResponse.state_validate()
-            if state_valid:
-                # Extract the actual data now.
-                pass
-            else:
-                # More serious pukage - retry?
-                raise InvalidResponseMessageException("Received invalid response message, the errors were: %s" % errors)
-        else:
-            # Serious pukage
-            raise InvalidRequestMessageException("Generated an invalid request message, the errors were: %s" % errors)
+    @form.action(_(u"Back"), name="back", validator=null_condition )
+    def handle_back( self, action, data):
+        self.next_step_name = wizard_interfaces.WIZARD_PREVIOUS_STEP
 
-
-    def extractSuccessFail(self, responsemessage):
-        state_valid, errors = responsemessage.state_validate()
-        if not state_valid:
-            # No Mercy:
-            raise InvalidResponseMessageException("Received an invalid response message, the errors were: %s" % errors)
-        valid = responsemessage.getRoot().get('valid')
-        if valid == '1':
-            valid = True
-        else:
-            valid = False
-        success = responsemessage.getNode('/', 'Success').text
-        if success == '0':
-            success = True
-        else:
-            success = False
-
-def sendMessage(server_type, message, timeout=None):
-    """
-    Creates the HTTPS/POST connection to the PaymentExpress PXPay server
-    """
-    this_server = SERVER_DETAILS.get(server_type, {})
-    server_name = this_server.get('host', 'localhost')
-    server_path = this_server.get('path', '/@@getpaid-checkout-wizard')
-    conn = zc.ssl.HTTPSConnection(server_name, timeout)
-
-    # setup the HEADERS
-    conn.putrequest('POST', server_path)
-    conn.putheader('Content-Type', 'application/x-www-form-urlencoded')
-    conn.putheader('Content-Length', len(message))
-    conn.endheaders()
-
-    zLOG.LOG("sendMessage", zLOG.INFO, "About to send: %s" % message)
-    conn.send(message)
-    return conn.getresponse()
+    @form.action(_(u"Make Payment"), name="make-payment" )
+    def makePayment( self, action, data ):
+        """ create an order, and submit to the pxpay processor """
+        manage_options = IGetPaidManagementOptions( self.context )
+        processor_name = manage_options.payment_processor
+        if not processor_name:
+            raise RuntimeError( "No Payment Processor Specified" )
+        processor = component.getAdapter( self.context,
+                                          interfaces.IPaymentProcessor,
+                                          processor_name )
+        order = self.createOrder()
+        order.processor_id = processor_name
+        order.finance_workflow.fireTransition( "create" )
+        order_manager = component.getUtility( interfaces.IOrderManager )
+        order_manager.store( order )
+        # the following will redirect to the pxpay web interface to
+        # capture creditcard details
+        processor.authorize( order, None, self.request )

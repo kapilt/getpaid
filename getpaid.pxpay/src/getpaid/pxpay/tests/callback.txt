@@ -1,0 +1,78 @@
+Test the callback handlers
+
+    >>> from zope.component import getMultiAdapter, getUtility
+    >>> from zope.publisher.browser import TestRequest
+    >>> from getpaid.core.interfaces import IOrderManager, \
+    ... IShoppingCartUtility, IOrderWorkflowLog
+    >>> from getpaid.pxpay.tests.utils import create_test_order, print_order_workflow_log
+
+Process Response
+----------------
+
+ pxppay calls back on the url given in the initial request for
+ payment, this url instantiates the TransactionResponse view which is
+ responsible for putting together the ProcessResponse (Input XML
+ Document) and interpreting the Response (Output XML Document) that
+ informs us on the success or failure of a particular payment.
+
+    >>> request = TestRequest()
+    >>> process_response = getMultiAdapter((self.portal, request),
+    ...                                    name="pxpayprocessresponse")
+    >>> process_response()
+    Traceback (most recent call last):
+    ...
+    PXPayException: 'There should be a result attribute in the form data for this view'
+
+    The request form is expected to have some data in it
+
+    >>> encrypted_data = "df6cc75b4f9e23b66c0a84955a7b1ab663f27dba0d710ac4ee911c7 48d98f8432872b2b64380e3ae39aaa0c0ba5d093c6bd8b9141a74232ca1632bf1 1f8e4ad5f5c5399d659d44b0307ffb2f44a998dd75d3c9a06c56a3672b6c1ae13 f135e8f7023c75c03401cf3334ac9021c8fa5d1be2056a35035c0dfb024d5305 9371d262bf1680fa2b6a3a8c608066e7dcf8221eb9ed6193452d09dbb6f377ea 8bfe5116fe19ef625adbc84bc3b6af9e35a0dde9fd003302da1039ff6"
+    >>> form = {'result':encrypted_data}
+    >>> request = TestRequest()
+    >>> request.form.update(form)
+
+    >>> process_response = getMultiAdapter((self.portal, request),
+    ...                                    name="pxpayprocessresponse")
+
+    We set the pxpay gateway to offline test mode so we get canned
+    responses, the default canned response is a successful one.
+
+    >>> process_response.pxpay_gateway.set_offline_testmode(True)
+
+    Call the view - which is the same as the pxpay calling back on
+    this browser view
+
+    >>> process_response()
+    Traceback (most recent call last):
+    ...
+    PXPayException: 'Order id 123456789 not found'
+
+    Ok, so we need an order that relates to this request
+
+    >>> order = create_test_order(self.portal, order_id='123456789')
+    >>> order.finance_workflow.fireTransition( "create" )
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+
+    >>> order_manager = getUtility( IOrderManager )
+    >>> order_manager.store( order )
+
+    Pretend we have authorized for payment already - this is the state
+    we expect to have moved the order to prior to redirecting the user
+    to the pxpay website interface.
+
+    >>> order.finance_workflow.fireTransition('authorize')
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CHARGEABLE
+    CHARGEABLE  -->  CHARGING
+
+    >>> process_response = getMultiAdapter((self.portal, request),
+    ...                                    name="pxpayprocessresponse")
+    >>> process_response.pxpay_gateway.set_offline_testmode(True)
+    >>> process_response()
+
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CHARGEABLE
+    CHARGEABLE  -->  CHARGING
+    CHARGING  -->  CHARGED

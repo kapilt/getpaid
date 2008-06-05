@@ -16,21 +16,24 @@
 This is a Payment Processor for the PaymentExpress PXPay hosted Payments solution
 SEE: http://www.paymentexpress.com/technical_resources/ecommerce_hosted/pxpay.html
 
-OK, where are we at... Basically: it works to authorise transactions currently.
+We hook into the last checkout and payment step of the checkout so
+that the user is redirected to the pxpay web interface to fill out
+their credit card details and the redirected back to our site where we
+handle success or failure status of the transaction.
+
 Deferred payment, repeating payments, authorisations, etc, are not yet implemented,
 but the PXPay interface supports them, so there's no reason they can't be added.
 
-Integration with the standard GetPaid exit-points from the checkout wizard is still
-required. In other words, we hook in at the beginning correctly to implement a sane
-checkout flow, but at the end, we don't yet hook back in to the GetPaid 'workflow'
-to provide notification in the usual places of succes/failure of payment.
-
-Error handling etc is still in flux. Most(?) errors probably get trapped, but choosing a
-sensible codepath at the point of failure is still very much up in the air.
-
 Requirements:
+
 1) A developer account with PaymentExpress
 2) GetPaid core
 3) zc.ssl
 4) elementtree
-5) I think that's about it.
+5) plone (tested on plone 3.1)
+
+Contributors
+------------
+
+Darryl Dixon <darryl.dixon@winterhouseconsulting.com>
+Matt Halstead <matt@elyt.com>

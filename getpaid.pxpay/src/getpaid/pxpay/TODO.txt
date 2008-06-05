@@ -1,0 +1,12 @@
+Handle exceptions nicely - some of these should redirect to an error
+page for the user.
+
+Add in tests for invalid responses from pxpay gateway
+
+Add in tests for unsuccessful transactions
+
+There are a few of dependencies on plone
+
+1) the tests - which depend on PloneGetPaid test harness
+2) PloneGetPaid product - which depends on plone
+3) grabbing a portal url in the PXPayPaymentAdapter

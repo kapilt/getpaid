@@ -16,4 +16,10 @@
      factory=".pxpay.PXPayPaymentAdapter"
      name="PXPay Processor"
      />
+
+   <adapter
+       for=".interfaces.IPXPayStandardOptions"
+       provides=".interfaces.IPXPayWebInterfaceGateway"
+       factory=".gateway.PXPayWebInterfaceGateway"
+     />
 </configure>

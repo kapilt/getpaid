@@ -1,5 +1,8 @@
-from getpaid.core import interfaces
+from zope.interface import Interface
 from zope import schema
+
+from getpaid.core import interfaces
+
 from getpaid.pxpay import _
 
 class IPXPayStandardOptions(interfaces.IPaymentProcessorOptions):
@@ -21,8 +24,31 @@ class IPXPayStandardOptions(interfaces.IPaymentProcessorOptions):
         required = True,
       )
 
+    MerchantReference = schema.ASCIILine(
+        title = _(u"Merchant Reference"),
+        description = _(u"Enter the 64 character merchant reference. This is free text to appear on transaction reports."),
+        required = False,
+      )
+
     PxPaySiteCurrency = schema.Choice(
         title = _(u"Site Currency"),
         vocabulary = "getpaid.pxpay.currencies",
        )
 
+
+class IPXPayWebInterfaceGateway( Interface ):
+    """
+    A utility for connecting to and sending XML messages to the DPS
+    pxpay web interface gateway.
+    """
+
+    def send_message(message, timeout):
+        """
+        Send a PXPay XML message to the pxpay web interface
+        """
+
+    def send_message_offline_testmode(message):
+        """
+        An offline mode that returns a canned test response to a
+        send_message.
+        """

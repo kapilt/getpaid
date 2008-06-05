@@ -20,4 +20,16 @@ def test_suite():
             test_class=PloneGetPaidTestCase,
             optionflags=optionflags,
             ),
+        ZopeTestCase.ZopeDocFileSuite(
+            'paymentprocessor.txt',
+            package='getpaid.pxpay.tests',
+            test_class=PloneGetPaidTestCase,
+            optionflags=optionflags,
+            ),
+        ZopeTestCase.ZopeDocFileSuite(
+            'callback.txt',
+            package='getpaid.pxpay.tests',
+            test_class=PloneGetPaidTestCase,
+            optionflags=optionflags,
+            ),
         ])
