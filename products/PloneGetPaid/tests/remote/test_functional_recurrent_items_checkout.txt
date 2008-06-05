@@ -82,7 +82,7 @@ Check to make sure the settings we put in Site Profile appear on this page.
 
 	 >>> browser.getLink('Home').click()
 
-Setup Donatable
+Setup Recurrent Payable
 
 	>>> browser.getLink('Make Recurrent Payable').click()
 	>>> browser.getControl(name='form.price').value = '11.00'
