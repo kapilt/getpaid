@@ -52,6 +52,12 @@
     >>> processor.capture(order, order.getTotalPrice()) == keys.results_async
     True
 
+    Make sure our request message looks ok
+
+    >>> message = processor._generate_initial_request(order)
+    >>> print message.generateXML()
+    <GenerateRequest><PxPayUserId>testid</PxPayUserId><PxPayKey>testkey</PxPayKey><AmountInput>25.00</AmountInput><CurrencyInput>NZD</CurrencyInput><MerchantReference>Uber Site</MerchantReference><TxnType>Purchase</TxnType><TxnId>123456789</TxnId><UrlFail>http://nohost/plone/@@pxpayprocessresponse</UrlFail><UrlSuccess>http://nohost/plone/@@pxpayprocessresponse</UrlSuccess></GenerateRequest>
+
     We set the pxpay gateway to offline test mode so we get canned
     responses, the default canned response is a successful one.
 
