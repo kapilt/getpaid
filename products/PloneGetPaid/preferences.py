@@ -59,28 +59,3 @@ class DefaultFormSchemas(FormSchemas):
         'payment':BillingInfo,
         }
 
-class CheckoutAddressFormSchemas(FormSchemas):
-
-    interfaces = {
-        'billing_address':core_interfaces.IBillingAddress,
-        'shipping_address':core_interfaces.IShippingAddress,
-        'contact_information':core_interfaces.IUserContactInformation,
-        }
-
-    bags = {
-        'billing_address':BillAddressInfo,
-        'shipping_address':ShipAddressInfo,
-        'contact_information':ContactInfo,
-        }
-
-
-class CheckoutReviewAndPayFormSchemas(FormSchemas):
-
-    interfaces = {
-        'payment':core_interfaces.IUserPaymentInformation,
-        }
-
-    bags = {
-        'payment':BillingInfo,
-        }
-

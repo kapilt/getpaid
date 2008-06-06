@@ -89,11 +89,6 @@
       for="getpaid.wizard.interfaces.IWizard"
       provides="getpaid.wizard.interfaces.IWizardDataManager"
       factory="getpaid.wizard.DataManager"/>
-
-  <adapter 
-      for="getpaid.wizard.interfaces.IWizard"
-      provides="..interfaces.ICreateTransientOrder"
-      factory=".checkout.CreateTransientOrder" />
       
   <browser:page
      for="*"
@@ -255,4 +250,6 @@
      />
 
 
- </configure>
+      
+
+</configure>
