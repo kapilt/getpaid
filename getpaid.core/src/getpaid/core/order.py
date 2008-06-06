@@ -79,7 +79,7 @@ class workflow_state( object ):
 
 class Order( Persistent, cart.CartItemTotals ):
 
-    implements( interfaces.IOrder, interfaces.ILineContainerTotals, IAttributeAnnotatable )
+    implements( interfaces.IOrder, IAttributeAnnotatable )
 
     _order_id = None
     shipping_address = None
@@ -119,35 +119,6 @@ class Order( Persistent, cart.CartItemTotals ):
     @property
     def fulfillment_workflow( self ):
         return component.getAdapter( self, IWorkflowInfo, "order.fulfillment")
-
-##     # ILineContainerTotals implementation
-##     def getTotalPrice( self ):
-##         if not self.shopping_cart:
-##             return 0
-
-##         total = 0
-##         total += self.getSubTotalPrice()
-##         total += self.getShippingCost()
-##         total += self.getTaxCost()
-        
-##         return float( str( total ) )            
-
-##     def getSubTotalPrice( self ):
-##         if not self.shopping_cart:
-##             return 0
-##         total = 0
-##         for item in self.shopping_cart.values():
-##             d = decimal.Decimal ( str(item.cost ) ) * item.quantity
-##             total += d        
-##         return total
-        
-##     def getShippingCost( self ):
-##         shipping_method = component.getUtility( interfaces.IShippingMethod )
-##         return shipping_method.getCost( self )
-
-##     def getTaxCost( self ):
-##         tax_utility = component.getUtility( interfaces.ITaxUtility )
-##         return tax_utility.getCost( self )
 
 
 class OrderManager( Persistent ):

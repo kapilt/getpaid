@@ -74,7 +74,8 @@ class CartItemTotals( object ):
         total = 0
         total += self.getSubTotalPrice()
         total += self.getShippingCost()
-        total += self.getTaxCost()
+        for tax in self.getTaxCost():
+            total += tax['value']
         
         return float( str( total ) )            
 
@@ -93,6 +94,7 @@ class CartItemTotals( object ):
         return decimal.Decimal( str( self.shipping_cost ) )
 
     def getTaxCost( self ):
+        """ get the list of dictionaries containing the tax info """
         tax_utility = component.getUtility( interfaces.ITaxUtility )
-        return tax_utility.getCost( self )
+        return tax_utility.getTaxes( self )
 

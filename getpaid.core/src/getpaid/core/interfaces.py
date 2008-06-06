@@ -367,7 +367,7 @@ class ILineContainerTotals( Interface ):
 
     def getTaxCost( ):
         """
-        return total tax cost for the items in the container
+        return list of dictionaries for each tax cost for the items in the container
         """
 
     def getSubTotalPrice( ):
@@ -519,9 +519,10 @@ class IShippingMethodSettings( Interface ):
 
 class ITaxUtility( Interface ):
 
-    def getCost( order ):
-        """ return the tax amount for an order
-        """
+    def getTaxes( order ):
+	 	""" return a list dictionaries of each ITax inside that applies to
+	 		the order
+		"""
         
 
 #################################

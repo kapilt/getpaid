@@ -33,7 +33,5 @@ class TaxUtility( object ):
     
     implements( interfaces.ITaxUtility )
     
-    def getCost( self, order ):
-        return 0
-
-
+    def getTaxes( self, order ):
+        return ({"name": "Tax", "value": 0, "id": "dummy"},)

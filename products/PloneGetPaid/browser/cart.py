@@ -175,25 +175,18 @@ class CartFormatter( table.StandaloneSortFormatter ):
         
         totals = self.getTotals()
 
-        tax_price, shipping_price, subtotal_price = \
-                   totals.getTaxCost(), \
-                   totals.getShippingCost(), \
-                   totals.getSubTotalPrice()
-        total_price = tax_price + decimal.Decimal( str(shipping_price) ) + subtotal_price
+        tax_list = totals.getTaxCost()
+        shipping_price = totals.getShippingCost()
+        subtotal_price = totals.getSubTotalPrice()
+        total_price = totals.getTotalPrice()
         
         buffer = [ '<div class="getpaid-totals"><table class="listing">']
         buffer.append( '<tr><th>SubTotal</th><td style="border-top:1px solid #8CACBB;">%0.2f</td></tr>'%( subtotal_price ) )
 
-        if shipping_price:
-            buffer.append( "<tr><th>Shipping</th><td>%0.2f</td></tr>"%( shipping_price ) )
-        else:
-            buffer.append( "<tr><th>Shipping</th><td>%s</td></tr>"%( u"N/A") )
+        buffer.append( "<tr><th>Shipping</th><td>%0.2f</td></tr>"%( shipping_price ) )
 
-        if tax_price:
-            buffer.append( "<tr><th>Tax</th><td>%0.2f</td></tr>"%( tax_price ) )
-        else:
-            buffer.append( "<tr><th>Tax</th><td>%s</td></tr>"%( u"N/A") )            
-            
+        for tax in tax_list:
+            buffer.append( "<tr><th>%s</th><td>%0.2f</td></tr>"%( tax['name'], tax['value'] ) )
         buffer.append( "<tr><th>Total</th><td>%0.2f</td></tr>"%( total_price ) )
         buffer.append('</table></div>')
                        

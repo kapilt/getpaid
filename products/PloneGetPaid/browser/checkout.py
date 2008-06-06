@@ -24,7 +24,7 @@ from zope.app.apidoc import interface as apidocInterface
 
 from zc.table import column
 from getpaid.wizard import Wizard, ListViewController, interfaces as wizard_interfaces
-from getpaid.core import interfaces, options, payment
+from getpaid.core import interfaces, options, payment, cart
 from getpaid.core.order import Order
 
 import Acquisition
@@ -718,7 +718,7 @@ class OrderFormatter( cart_core.CartFormatter ):
     def getTotals( self ):
         return OrderTotals( self.context, self.request)
         
-class OrderTotals( object ):
+class OrderTotals( cart.CartItemTotals ):
 
     interface.implements( interfaces.ILineContainerTotals )
     
@@ -727,36 +727,12 @@ class OrderTotals( object ):
         self.shopping_cart = context.shopping_cart
         self.request = request
 
-    def getTotalPrice( self ):
-        if not self.shopping_cart:
-            return 0
-        
-        total = 0
-        total += self.getSubTotalPrice()
-        total += self.getShippingCost()
-        total += self.getTaxCost()
-        
-        return float( str( total ) )            
-
-    def getSubTotalPrice( self ):
-        if not self.shopping_cart:
-            return 0
-        total = 0
-        for item in self.shopping_cart.values():
-            d = decimal.Decimal ( str(item.cost ) ) * item.quantity
-            total += d        
-        return total
-        
     def getShippingCost( self ):
         service_code = self.request.get('shipping_method_code')
         method = getShippingMethod( self.context, service_code )        
         if method is None:
             return 0
         return method.cost
-
-    def getTaxCost( self ):
-        tax_utility = component.getUtility( interfaces.ITaxUtility )
-        return tax_utility.getCost( self )
 
 def getShippingMethod( order, service_code ):
     """ decode a shipping code, and return the shipping method to be used or None """
