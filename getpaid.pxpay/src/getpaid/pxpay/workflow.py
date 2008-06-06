@@ -21,7 +21,7 @@ class FinanceWorkflow( workflow.Workflow ):
         super( FinanceWorkflow, self).__init__( transitions )
 
 
-FinanceWorkflowAdapter, FinanceState, FinanceInfo = workflow.ParallelWorkflow(
+FinanceWorkflowAdapter, _, _ = workflow.ParallelWorkflow(
     workflow.AdaptedWorkflow( FinanceWorkflow() ),
     workflow_states.order.finance.name,
     )
