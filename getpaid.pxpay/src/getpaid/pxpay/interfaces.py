@@ -52,3 +52,8 @@ class IPXPayWebInterfaceGateway( Interface ):
         An offline mode that returns a canned test response to a
         send_message.
         """
+
+class IPXPayCommunicationError( Interface ):
+    """ utility to provide a hanlder for pxpay communication errors,
+    since this is likely to be customised depending on what you want
+    the user to see."""

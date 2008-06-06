@@ -22,4 +22,10 @@
        provides=".interfaces.IPXPayWebInterfaceGateway"
        factory=".gateway.PXPayWebInterfaceGateway"
      />
+
+   <utility
+       provides=".interfaces.IPXPayCommunicationError"
+       factory=".errors.PXPayCommunicationError"
+     />
+
 </configure>

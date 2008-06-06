@@ -56,6 +56,15 @@ CHARGING --> CHARGED
 If the payment was unsuccessful, then we update the finance workflow:
 CHARGING --> PAYMENT_DECLINED
 
+If there is an error in the communication with pxpay, then we update
+the finance workflow: * --> CANCELLED_BY_PROCESSOR with a comment
+that this was a communication error. We don't destroy the cart though
+so the user can try again.
+
+The error handler for a communications error is a utility so that it
+can be overriden easily, for example to redirect the user to another
+view.
+
 Requirements
 ------------
 

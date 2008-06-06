@@ -9,4 +9,11 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="*"
+      name="pxpay-communication-error"
+      class=".errors.PXPAYCommunicationError"
+      permission="zope2.View"
+      />
+
 </configure>

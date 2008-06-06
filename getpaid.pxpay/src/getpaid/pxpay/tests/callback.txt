@@ -29,7 +29,6 @@ Process Response
     >>> form = {'result':encrypted_data}
     >>> request = TestRequest()
     >>> request.form.update(form)
-
     >>> process_response = getMultiAdapter((self.portal, request),
     ...                                    name="pxpayprocessresponse")
 
@@ -66,7 +65,11 @@ Process Response
     REVIEWING  -->  CHARGEABLE
     CHARGEABLE  -->  CHARGING
 
-    >>> process_response = getMultiAdapter((self.portal, request),
+    We normally return the user to a view on an order object
+
+    >>> context = self.portal.restrictedTraverse('/'.join(('@@getpaid-order',
+    ...                                                   order.order_id)))
+    >>> process_response = getMultiAdapter((context, request),
     ...                                    name="pxpayprocessresponse")
     >>> process_response.pxpay_gateway.set_offline_testmode(True)
     >>> process_response()
@@ -93,7 +96,9 @@ Test a declined payment
     REVIEWING  -->  CHARGEABLE
     CHARGEABLE  -->  CHARGING
 
-    >>> process_response = getMultiAdapter((self.portal, request),
+    >>> context = self.portal.restrictedTraverse('/'.join(('@@getpaid-order',
+    ...                                                   order.order_id)))
+    >>> process_response = getMultiAdapter((context, request),
     ...                                    name="pxpayprocessresponse")
     >>> process_response.pxpay_gateway.set_offline_testmode(
     ...     True,
@@ -105,3 +110,36 @@ Test a declined payment
     REVIEWING  -->  CHARGEABLE
     CHARGEABLE  -->  CHARGING
     CHARGING  -->  PAYMENT_DECLINED
+
+
+Test and invalid response message from pxpay gateway
+
+    >>> order = create_test_order(self.portal, order_id='345678912')
+    >>> order.finance_workflow.fireTransition( "create" )
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+
+    >>> order_manager = getUtility( IOrderManager )
+    >>> order_manager.store( order )
+    >>> order.finance_workflow.fireTransition('authorize')
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CHARGEABLE
+    CHARGEABLE  -->  CHARGING
+
+    >>> context = self.portal.restrictedTraverse('/'.join(('@@getpaid-order',
+    ...                                                   order.order_id)))
+    >>> process_response = getMultiAdapter((context, request),
+    ...                                    name="pxpayprocessresponse")
+    >>> process_response.pxpay_gateway.set_offline_testmode(
+    ...     True,
+    ...     data={'returnresponse':'invalid'})
+    >>> process_response()
+    Traceback (most recent call last):
+    ...
+    PXPayInvalidMessageException: 'invalid message recieved from pxpay order 345678912 <Response valid="0" />'
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CHARGEABLE
+    CHARGEABLE  -->  CHARGING
+    CHARGING  -->  CANCELLED_BY_PROCESSOR

@@ -9,4 +9,11 @@
      permission="zope2.View"
      />
 
+  <adapter
+     for="getpaid.core.interfaces.IOrder"
+     provides="hurry.workflow.interfaces.IWorkflow"
+     name="order.finance"
+     factory=".workflow.FinanceWorkflowAdapter"
+     />
+
 </configure>

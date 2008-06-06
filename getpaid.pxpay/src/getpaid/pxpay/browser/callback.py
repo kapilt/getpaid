@@ -4,19 +4,19 @@ result in an update on the status of an order during and after a
 payment transaction.
 """
 import logging
-
+from Acquisition import aq_inner
 from zope.component import getUtility
 
 from Products.Five.browser import BrowserView
+from Products.CMFCore.utils import getToolByName
 
 from getpaid.core.interfaces import IOrderManager, IShoppingCartUtility, \
-     workflow_states
+     workflow_states, IOrder
 
 from getpaid.pxpay import parser
 from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
-     IPXPayWebInterfaceGateway
-from getpaid.pxpay.exceptions import PXPayException, \
-     PXPayInvalidMessageException
+     IPXPayWebInterfaceGateway, IPXPayCommunicationError
+from getpaid.pxpay.exceptions import PXPayException
 
 log = logging.getLogger('getpaid.pxpay')
 
@@ -31,10 +31,16 @@ class ProcessResponse(BrowserView):
 
     def __init__(self, context, request):
         super(ProcessResponse, self).__init__(context, request)
-        self.processor_options = IPXPayStandardOptions(self.context)
+        context = aq_inner(self.context)
+        site_root = getToolByName(context, 'portal_url').getPortalObject()
+        self.processor_options = IPXPayStandardOptions(site_root)
         self.pxpay_gateway = IPXPayWebInterfaceGateway(self.processor_options)
 
     def __call__(self):
+        context = aq_inner(self.context)
+        order_id = None
+        if IOrder.providedBy(context):
+            order_id = context.order_id
         encrypted_response = self.request.form.get('result', None)
         if not encrypted_response:
             raise PXPayException("There should be a result attribute in the form data for this view")
@@ -52,7 +58,9 @@ class ProcessResponse(BrowserView):
         log.info("Recieved: %s" % response_message)
 
         if not response_message.is_valid_response:
-            raise PXPayInvalidMessageException
+            getUtility(IPXPayCommunicationError)(self.context, self.request,
+                                                 order_id=order_id,
+                                                 message=response_message)
         order_id = response_message.transaction_id
         order_manager = getUtility( IOrderManager )
         order = order_manager.get(order_id)

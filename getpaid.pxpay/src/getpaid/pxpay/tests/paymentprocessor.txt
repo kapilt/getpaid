@@ -1,7 +1,9 @@
 
     >>> from zope.component import getUtility, getMultiAdapter, getAdapter
     >>> from zope.publisher.browser import TestRequest
-    >>> from getpaid.core.interfaces import IPaymentProcessor, keys
+    >>> from getpaid.core.interfaces import IPaymentProcessor, keys, \
+    ...   IOrderManager
+
     >>> from getpaid.pxpay.interfaces import IPXPayStandardOptions
     >>> from getpaid.pxpay.config import *
 
@@ -56,7 +58,7 @@
 
     >>> message = processor._generate_initial_request(order)
     >>> print message.generateXML()
-    <GenerateRequest><PxPayUserId>testid</PxPayUserId><PxPayKey>testkey</PxPayKey><AmountInput>25.00</AmountInput><CurrencyInput>NZD</CurrencyInput><MerchantReference>Uber Site</MerchantReference><TxnType>Purchase</TxnType><TxnId>123456789</TxnId><UrlFail>http://nohost/plone/@@pxpayprocessresponse</UrlFail><UrlSuccess>http://nohost/plone/@@pxpayprocessresponse</UrlSuccess></GenerateRequest>
+    <GenerateRequest><PxPayUserId>testid</PxPayUserId><PxPayKey>testkey</PxPayKey><AmountInput>25.00</AmountInput><CurrencyInput>NZD</CurrencyInput><MerchantReference>Uber Site</MerchantReference><TxnType>Purchase</TxnType><TxnId>123456789</TxnId><UrlFail>http://nohost/plone/@@getpaid-order/123456789/@@pxpayprocessresponse</UrlFail><UrlSuccess>http://nohost/plone/@@getpaid-order/123456789/@@pxpayprocessresponse</UrlSuccess></GenerateRequest>
 
     We set the pxpay gateway to offline test mode so we get canned
     responses, the default canned response is a successful one.
@@ -69,3 +71,26 @@
     None  -->  REVIEWING
     REVIEWING  -->  CHARGEABLE
     CHARGEABLE  -->  CHARGING
+
+
+Test a message error, i.e. when what we get back from pxpay has an
+invalid message indicator
+
+
+    >>> order = create_test_order(self.portal, order_id='234567891')
+    >>> order_manager = getUtility( IOrderManager )
+    >>> order_manager.store( order )
+    >>> order.finance_workflow.fireTransition( "create" )
+    >>> processor.pxpay_gateway.set_offline_testmode(
+    ...     True,
+    ...     data={'initialresponse':'invalid'})
+
+    >>> request = TestRequest()
+    >>> processor.authorize( order, None, request )
+    Traceback (most recent call last):
+    ...
+    PXPayInvalidMessageException: 'invalid message recieved from pxpay order 234567891 <Request valid="0"><URI>https://www.paymentexpress.com/pxpayerr?UserId=testid&amp;Err=0eInvalidKey</URI></Request>'
+
+    >>> print_order_workflow_log(order)
+    None  -->  REVIEWING
+    REVIEWING  -->  CANCELLED_BY_PROCESSOR

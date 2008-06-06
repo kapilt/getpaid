@@ -1,0 +1,9 @@
+<metal:page use-macro="context/@@getpaid-content-template/macros/content_space"
+	i18n:domain="plonegetpaid">
+  <metal:block fill-slot="getpaid_content">
+    <h3 i18n:translate="payment_processor_communication_error"> Communication Error </h3>
+    <p>There has been an error while attempting to communicate with the
+      DPS payment gateway. Please record your cart details and contact us,
+      or try again soon.</p>
+  </metal:block>
+</metal:page>
