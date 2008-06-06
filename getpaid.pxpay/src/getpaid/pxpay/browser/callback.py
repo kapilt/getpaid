@@ -9,7 +9,8 @@ from zope.component import getUtility
 
 from Products.Five.browser import BrowserView
 
-from getpaid.core.interfaces import IOrderManager, workflow_states
+from getpaid.core.interfaces import IOrderManager, IShoppingCartUtility, \
+     workflow_states
 
 from getpaid.pxpay import parser
 from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
@@ -59,11 +60,18 @@ class ProcessResponse(BrowserView):
             raise PXPayException("Order id " + order_id + " not found")
         if response_message.transaction_successful:
             order.finance_workflow.fireTransition('charge-charging')
+            self.destroy_cart()
         else:
             order.finance_workflow.fireTransition('decline-charging')
-
         next_url = self.get_next_url(order)
         self.request.response.redirect(next_url)
+
+    def destroy_cart(self):
+        """
+        time to destroy the cart
+        """
+        getUtility( IShoppingCartUtility ).destroy( self.context )
+
 
     def get_next_url(self, order):
         state = order.finance_state
