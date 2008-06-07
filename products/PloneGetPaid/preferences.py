@@ -43,21 +43,6 @@ class StoreSettings( _StoreSettings ):
 
     def manage_fixupOwnershipAfterAdd( self ): pass
 
-class DefaultFormSchemas(FormSchemas):
-
-    interfaces = {
-        'billing_address':core_interfaces.IBillingAddress,
-        'shipping_address':core_interfaces.IShippingAddress,
-        'contact_information':core_interfaces.IUserContactInformation,
-        'payment':core_interfaces.IUserPaymentInformation,
-        }
-
-    bags = {
-        'billing_address':BillAddressInfo,
-        'shipping_address':ShipAddressInfo,
-        'contact_information':ContactInfo,
-        'payment':BillingInfo,
-        }
 
 class CheckoutAddressFormSchemas(FormSchemas):
 
