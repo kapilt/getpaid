@@ -40,11 +40,10 @@ class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
 
         # display widgets for bill/ship address
         bill_ship_fields = []
-        checkout_address_form_schemas = component.getUtility(
-            interfaces.IFormSchemas,
-            name='checkout-address-form-schemas')
-        for i in (checkout_address_form_schemas.getInterface('billing_address'),
-                  checkout_address_form_schemas.getInterface('shipping_address')):
+        form_schemas = component.getUtility(
+            interfaces.IFormSchemas)
+        for i in (form_schemas.getInterface('billing_address'),
+                  form_schemas.getInterface('shipping_address')):
             bill_ship_fields.append(fields.select(*schema.getFieldNamesInOrder(i)))
         # make copies of custom widgets.. (typically for edit, we want display)
         bill_ship_fields = sanitize_custom_widgets(
