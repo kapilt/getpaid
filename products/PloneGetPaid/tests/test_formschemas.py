@@ -34,8 +34,8 @@ class TestFormSchemas(PloneGetPaidTestCase):
         """Test that a cart is not instantiated if not requested
         >>> self.mySetup()
         >>> self.pprint(self.formSchemas)
-        [<Products.PloneGetPaid.preferences.CheckoutReviewAndPayFormSchemas instance at 0x5471918>,
-         <Products.PloneGetPaid.tests.test_checkout.NewCheckoutAddressFormSchemas instance at 0x5dee120>]
+        [<Products.PloneGetPaid.preferences.CheckoutReviewAndPayFormSchemas instance at ...>,
+         <Products.PloneGetPaid.tests.test_checkout.NewCheckoutAddressFormSchemas instance at ...>]
 
         """
 
