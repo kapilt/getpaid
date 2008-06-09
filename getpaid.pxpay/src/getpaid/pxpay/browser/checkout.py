@@ -7,6 +7,7 @@ from zope.formlib import form
 from zc.table import column
 
 from getpaid.core import interfaces, options
+from getpaid.wizard import interfaces as wizard_interfaces
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.PloneGetPaid.browser.checkout import CheckoutReviewAndPay, \
      sanitize_custom_widgets, null_condition
