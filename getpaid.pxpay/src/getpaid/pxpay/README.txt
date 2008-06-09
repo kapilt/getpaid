@@ -16,6 +16,23 @@
 This is a Payment Processor for the PaymentExpress PXPay hosted Payments solution
 SEE: http://www.paymentexpress.com/technical_resources/ecommerce_hosted/pxpay.html
 
+Installation
+------------
+
+You need to load both the package zcml and the overrides.zcml
+
+In buildout, make sure you have the egg getpaid.pxpay installed, in
+the zope instance configuration, add the following:
+
+eggs = getpaid.pxpay
+zcml =
+    getpaid.pxpay
+    getpaid.pxpay-overrides
+
+
+Mechanics
+---------
+
 We hook into the last checkout and payment step of the checkout so
 that the user is redirected to the pxpay web interface to fill out
 their credit card details and the redirected back to our site where we
