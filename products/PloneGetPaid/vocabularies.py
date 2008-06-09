@@ -125,6 +125,10 @@ class CountriesStatesFromFile(object):
                 res.append( n )
             elif ',' in n:
                 res.append( ( n[0], n[1].split(',')[0] ) )
+            else:
+                #This may show the countries wrongly abbreviated (in fact i am
+                #almost sure it will, but is better than not showing them at all
+                res.append( ( n[0], n[1][:18] ) )
 
         # need to pick this up some list of strings property in the admin interface
         def sorter( x, y, order=['UNITED STATES', 'UNITED KINGDOM', 'CANADA']):
