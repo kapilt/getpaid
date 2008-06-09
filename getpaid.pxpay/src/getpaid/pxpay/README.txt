@@ -1,11 +1,13 @@
 ##############################################################################
 #
-# Copyright (c) 2008 Darryl Dixon <darryl.dixon@winterhouseconsulting.com>
+# Copyright (c) 2008 Darryl Dixon <darryl.dixon@winterhouseconsulting.com>,
+# Matt Halstead <matt@elyt.com>
+#
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the GNU General Public License
 # Version 2 (GPL). A copy of the GPL should accompany this distribution.
-# 
+#
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
@@ -38,8 +40,9 @@ that the user is redirected to the pxpay web interface to fill out
 their credit card details and the redirected back to our site where we
 handle success or failure status of the transaction.
 
-Deferred payment, repeating payments, authorisations, etc, are not yet implemented,
-but the PXPay interface supports them, so there's no reason they can't be added.
+Deferred payment, repeating payments, authorisations, etc, are not yet
+implemented, but the PXPay interface supports them, so there's no
+reason they can't be added.
 
 Orders and Finance workflow
 ---------------------------
@@ -51,7 +54,8 @@ handling the finance workflow.
 
 When a user selects "make payment"
 
-- an order is created and stored in the order manager (i.e. it is now persistent in the zodb)
+- an order is created and stored in the order manager (i.e. it is now
+  persistent in the zodb)
 
 - finance workflow:  None  -->  REVIEWING
 
@@ -90,8 +94,6 @@ Requirements
 3) zc.ssl
 4) elementtree
 5) plone (tested on plone 3.1)
-
-
 
 
 Contributors
