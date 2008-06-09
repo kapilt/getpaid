@@ -364,6 +364,7 @@ class ReturnResponse(BaseMessage):
     <BillingId datatype="str" maxdata="32" />
     <DpsBillingId datatype="str" maxdata="16" />
     <CardHolderName datatype="str" maxdata="64" />
+    <CardNumber datatype="str" maxdata="20" />
     <AmountSettlement datatype="float" maxdata="13" maxval="99999.99" required="required" />
     <CurrencySettlement datatype="str" maxdata="4" datavalues="CAD CHF EUR FRF GBP HKD JPY NZD SGD USD ZAR AUD WST VUV TOP SBD PNG MYR KWD FJD" required="required" />
     <ResponseText datatype="str" maxdata="32" />
@@ -385,6 +386,7 @@ class ReturnResponse(BaseMessage):
     transaction_billing_id = MessageProperty('BillingId')
     transaction_dps_billing_id = MessageProperty('DpsBillingId')
     transaction_cardholder_name = MessageProperty('CardHolderName')
+    transaction_card_number = MessageProperty('CardNumber')
     transaction_amountsettlement = MessageProperty('AmountSettlement',
                                                    transform=to_float)
     transaction_currency_settlement = MessageProperty('CurrencySettlement')
@@ -404,6 +406,10 @@ class ReturnResponse(BaseMessage):
 
     @property
     def transaction_successful(self):
+        """
+        Returns whether DPS authorised this transaction.
+        Beware users using the Test CC number against your Production site!
+        """
         return self.success == '1'
 
 

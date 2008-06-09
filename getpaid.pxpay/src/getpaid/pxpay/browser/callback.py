@@ -17,6 +17,7 @@ from getpaid.pxpay import parser
 from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
      IPXPayWebInterfaceGateway, IPXPayCommunicationError
 from getpaid.pxpay.exceptions import PXPayException
+from getpaid.pxpay.config import RETURNED_TEST_CARD_NUMBER, TEST_SERVER_TYPE
 
 log = logging.getLogger('getpaid.pxpay')
 
@@ -66,13 +67,33 @@ class ProcessResponse(BrowserView):
         order = order_manager.get(order_id)
         if order is None:
             raise PXPayException("Order id " + order_id + " not found")
-        if response_message.transaction_successful:
+        if self.determine_success(response_message):
             order.finance_workflow.fireTransition('charge-charging')
             self.destroy_cart()
         else:
             order.finance_workflow.fireTransition('decline-charging')
         next_url = self.get_next_url(order)
         self.request.response.redirect(next_url)
+
+    def determine_success(self, response_message):
+        """
+        Wrap up some logic to reconcile DPS transaction success in terms
+        of whether we are in Test mode or not - fraud protection
+        """
+        if response_message.transaction_successful:
+            # Apparently all successful.
+            # One last check. This protects us from one type of fraud, which the
+            # the PXPay interface effectively exposes us to, otherwise...
+            if response_message.transaction_card_number == RETURNED_TEST_CARD_NUMBER:
+                # Someone has used the Test CC number...
+                if self.processor_options.PxPayServerType != TEST_SERVER_TYPE:
+                    # ...and has attempted to defraud us.
+                    log.info("FRAUD attempt - use of Test CC number in non-test environment: '%s'" % response_message)
+                    return False
+            # Otherwise all is normal and the transaction was successful 
+            return True
+        else:
+            return False
 
     def destroy_cart(self):
         """
