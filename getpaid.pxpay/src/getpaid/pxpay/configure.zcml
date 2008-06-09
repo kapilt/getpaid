@@ -12,7 +12,7 @@
 
   <adapter
      for="getpaid.core.interfaces.IStore"
-     provides="getpaid.core.interfaces.IPaymentProcessor"
+     provides=".interfaces.IPXPayPaymentProcessor"
      factory=".pxpay.PXPayPaymentAdapter"
      name="PXPay Processor"
      />
@@ -24,8 +24,14 @@
      />
 
    <utility
-       provides=".interfaces.IPXPayCommunicationError"
-       factory=".errors.PXPayCommunicationError"
+       provides=".interfaces.IPXPayInvalidMessageError"
+       factory=".errors.PXPayInvalidMessageError"
      />
+
+   <utility
+       provides=".interfaces.IPXPayNetworkError"
+       factory=".errors.PXPayNetworkError"
+     />
+
 
 </configure>

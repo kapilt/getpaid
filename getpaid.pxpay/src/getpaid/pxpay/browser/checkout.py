@@ -14,6 +14,9 @@ from Products.PloneGetPaid.browser.checkout import CheckoutReviewAndPay, \
 from Products.PloneGetPaid.browser import cart as cart_core
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
 
+from getpaid.pxpay.interfaces import IPXPayPaymentProcessor
+from getpaid.pxpay.exceptions import PXPayException
+
 from Products.PloneGetPaid.i18n import _
 
 class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
@@ -83,4 +86,8 @@ class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
         order_manager.store( order )
         # the following will redirect to the pxpay web interface to
         # capture creditcard details
-        processor.authorize( order, None, self.request )
+        if IPXPayPaymentProcessor.providedBy(processor):
+            processor.authorize( order, None, self.request )
+        else:
+            raise PXPayException("This checkout implementation requires the PXPay payment processor.")
+

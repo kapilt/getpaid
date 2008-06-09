@@ -4,7 +4,11 @@ Test the callback handlers
     >>> from zope.publisher.browser import TestRequest
     >>> from getpaid.core.interfaces import IOrderManager, \
     ... IShoppingCartUtility, IOrderWorkflowLog
-    >>> from getpaid.pxpay.tests.utils import create_test_order, print_order_workflow_log
+    >>> from getpaid.pxpay.tests.utils import create_test_order, \
+    ...    print_order_workflow_log, set_errors_to_raise_exceptions
+
+    >>> set_errors_to_raise_exceptions()
+
 
 Process Response
 ----------------
@@ -137,7 +141,8 @@ Test and invalid response message from pxpay gateway
     >>> process_response()
     Traceback (most recent call last):
     ...
-    PXPayInvalidMessageException: 'invalid message recieved from pxpay order 345678912 <Response valid="0" />'
+    PXPayInvalidMessageException: 'Invalid pxpay message for order 345678912'
+
     >>> print_order_workflow_log(order)
     None  -->  REVIEWING
     REVIEWING  -->  CHARGEABLE

@@ -7,6 +7,7 @@ from getpaid.pxpay import parser
 from getpaid.pxpay.config import *
 from getpaid.pxpay.interfaces import IPXPayWebInterfaceGateway, \
      IPXPayStandardOptions
+from getpaid.pxpay.exceptions import PXPayNetworkException
 
 log = logging.getLogger('getpaid.pxpay')
 
@@ -36,22 +37,25 @@ class PXPayWebInterfaceGateway( object ):
         if self.offline_testmode:
             # hand off to an offline test mode
             return self.send_message_offline_testmode(message)
-
         server = SERVER_DETAILS.get(self.server_type, {})
         server_name = server.get('host')
         server_path = server.get('path')
-        conn = ssl.HTTPSConnection(server_name, timeout)
+        try:
+            conn = ssl.HTTPSConnection(server_name, timeout)
 
-        # setup the HEADERS
-        conn.putrequest('POST', server_path)
-        conn.putheader('Content-Type', 'application/x-www-form-urlencoded')
-        conn.putheader('Content-Length', len(message))
-        conn.endheaders()
+            # setup the HEADERS
+            conn.putrequest('POST', server_path)
+            conn.putheader('Content-Type', 'application/x-www-form-urlencoded')
+            conn.putheader('Content-Length', len(message))
+            conn.endheaders()
 
-        log.info("About to send: %s" % message)
-        conn.send(message.generateXML())
-        return conn.getresponse().read()
-
+            log.info("About to send: %s" % message)
+            conn.send(message.generateXML())
+            return conn.getresponse().read()
+        except Exception, e:
+            errors = {'error':e,
+                      'msg': 'communication error with pxpay gateway'}
+            raise PXPayNetworkException(errors)
 
     def send_message_offline_testmode(self, message):
 

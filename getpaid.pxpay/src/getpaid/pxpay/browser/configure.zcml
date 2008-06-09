@@ -10,7 +10,7 @@
       />
 
   <browser:page
-      for="*"
+      for="getpaid.core.interfaces.IOrder"
       name="pxpay-communication-error"
       class=".errors.PXPAYCommunicationError"
       permission="zope2.View"

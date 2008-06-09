@@ -15,9 +15,12 @@ from getpaid.core.interfaces import IOrderManager, IShoppingCartUtility, \
 
 from getpaid.pxpay import parser
 from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
-     IPXPayWebInterfaceGateway, IPXPayCommunicationError
-from getpaid.pxpay.exceptions import PXPayException
+     IPXPayWebInterfaceGateway, IPXPayInvalidMessageError, \
+     IPXPayNetworkError
+from getpaid.pxpay.exceptions import PXPayException, PXPayNetworkException, \
+     PXPayInvalidMessageException
 from getpaid.pxpay.config import RETURNED_TEST_CARD_NUMBER, TEST_SERVER_TYPE
+
 
 log = logging.getLogger('getpaid.pxpay')
 
@@ -49,19 +52,27 @@ class ProcessResponse(BrowserView):
         process_response_message.pxpay_user_id = self.processor_options.PxPayUserId
         process_response_message.pxpay_key = self.processor_options.PxPayKey
         process_response_message.response = encrypted_response
+
         state_valid, errors = process_response_message.state_validate()
         if not state_valid:
             raise PXPayException(errors)
-        data = self.pxpay_gateway.send_message(process_response_message)
-        log.info("About to send: %s" % process_response_message)
 
+        try:
+            data = self.pxpay_gateway.send_message(process_response_message)
+            log.info("About to send: %s" % process_response_message)
+        except PXPayNetworkException:
+            getUtility(IPXPayNetworkError)(self.context, self.request,
+                                           order_id=order.order_id)
+            return
         response_message = parser.ReturnResponse(data)
         log.info("Recieved: %s" % response_message)
 
         if not response_message.is_valid_response:
-            getUtility(IPXPayCommunicationError)(self.context, self.request,
-                                                 order_id=order_id,
-                                                 message=response_message)
+            getUtility(IPXPayInvalidMessageError)(self.context, self.request,
+                                                  order_id=order_id,
+                                                  message=response_message)
+            return
+
         order_id = response_message.transaction_id
         order_manager = getUtility( IOrderManager )
         order = order_manager.get(order_id)

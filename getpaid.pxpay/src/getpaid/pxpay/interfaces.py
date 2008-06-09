@@ -53,7 +53,16 @@ class IPXPayWebInterfaceGateway( Interface ):
         send_message.
         """
 
-class IPXPayCommunicationError( Interface ):
-    """ utility to provide a hanlder for pxpay communication errors,
-    since this is likely to be customised depending on what you want
-    the user to see."""
+class IPXPayInvalidMessageError( Interface ):
+    """Utility to provide a hanlder for pxpay message errors,
+    """
+
+class IPXPayNetworkError( Interface ):
+    """Utility to provide a handler for pxpay network errors.
+    """
+
+
+class IPXPayPaymentProcessor( interfaces.IPaymentProcessor ):
+    """
+    PXPay payment processor
+    """

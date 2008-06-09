@@ -8,7 +8,10 @@
     >>> from getpaid.pxpay.config import *
 
     >>> from getpaid.pxpay.tests.utils import create_test_order, \
-    ...     print_order_workflow_log
+    ...     print_order_workflow_log, set_errors_to_raise_exceptions
+
+
+    >>> set_errors_to_raise_exceptions()
 
     >>> processor_options = getAdapter(self.portal,
     ...                                IPXPayStandardOptions)
@@ -86,10 +89,10 @@ invalid message indicator
     ...     data={'initialresponse':'invalid'})
 
     >>> request = TestRequest()
-    >>> processor.authorize( order, None, request )
+    >>> processor.authorize( order, None, request)
     Traceback (most recent call last):
     ...
-    PXPayInvalidMessageException: 'invalid message recieved from pxpay order 234567891 <Request valid="0"><URI>https://www.paymentexpress.com/pxpayerr?UserId=testid&amp;Err=0eInvalidKey</URI></Request>'
+    PXPayInvalidMessageException: 'Invalid pxpay message for order 234567891'
 
     >>> print_order_workflow_log(order)
     None  -->  REVIEWING

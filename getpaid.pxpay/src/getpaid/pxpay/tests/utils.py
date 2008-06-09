@@ -8,7 +8,8 @@ from getpaid.core.interfaces import IOrderManager, IShoppingCartUtility, \
      IOrderWorkflowLog
 from getpaid.core.order import Order
 from getpaid.core.item import LineItem
-
+from getpaid.pxpay.interfaces import IPXPayInvalidMessageError, \
+     IPXPayNetworkError
 
 # Standard options for DocTests
 optionflags =  (doctest.ELLIPSIS |
@@ -74,3 +75,10 @@ def print_order_workflow_log(order):
     olog = IOrderWorkflowLog(order)
     for record in list(iter(olog)):
         print record.previous_state, ' --> ', record.new_state
+
+
+def set_errors_to_raise_exceptions():
+    invalidmessage_utility = getUtility(IPXPayInvalidMessageError)
+    invalidmessage_utility.redirect = False
+    networkerror_utility = getUtility(IPXPayNetworkError)
+    networkerror_utility.redirect = False

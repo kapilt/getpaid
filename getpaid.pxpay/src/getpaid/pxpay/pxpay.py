@@ -9,8 +9,11 @@ from Products.CMFCore.utils import getToolByName
 from getpaid.core import interfaces, options
 
 from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
-     IPXPayWebInterfaceGateway, IPXPayCommunicationError
+     IPXPayWebInterfaceGateway, IPXPayInvalidMessageError, \
+     IPXPayPaymentProcessor, IPXPayNetworkError
 from getpaid.pxpay import parser
+from getpaid.pxpay.exceptions import PXPayException, \
+     PXPayInvalidMessageException, PXPayNetworkException
 
 log = logging.getLogger('getpaid.pxpay')
 
@@ -22,7 +25,7 @@ PXPayStandardOptions = options.PersistentOptions.wire(
 
 class PXPayPaymentAdapter( object ):
 
-    interface.implements( interfaces.IPaymentProcessor )
+    interface.implements( IPXPayPaymentProcessor )
 
     options_interface = IPXPayStandardOptions
 
@@ -54,17 +57,21 @@ class PXPayPaymentAdapter( object ):
             raise PXPayException(errors)
         return initial_request
 
-    def authorize( self, order, payment, request=None ):
-        # async processors need to store the order so that it is
-        # retrievable when the callback is initiated from the external
-        # site we redirect to.
+    def authorize( self, order, payment, request=None):
         initial_request = self._generate_initial_request(order)
-        data = self.pxpay_gateway.send_message(initial_request)
+        try:
+            data = self.pxpay_gateway.send_message(initial_request)
+        except PXPayNetworkException:
+            getUtility(IPXPayNetworkError)(self.context, request,
+                                           order.order_id)
+            return
+
         response_message = parser.InitialResponse(data)
         if not response_message.is_valid_response:
-            getUtility(IPXPayCommunicationError)(self.context, request,
-                                                 order.order_id,
-                                                 response_message)
+            getUtility(IPXPayInvalidMessageError)(self.context, request,
+                                                  order.order_id,
+                                                  response_message)
+            return
         log.info("Recieved: %s" % response_message)
         payment_url = response_message.request_url
         order.finance_workflow.fireTransition("authorize")
