@@ -25,6 +25,8 @@ class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
     that we can handle the details of the pxpay async processing of
     credit card details.
     """
+    sections = ()
+
     template = ZopeTwoPageTemplateFile("templates/checkout-review-pay.pt")
 
     columns = [
@@ -33,6 +35,9 @@ class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
         column.GetterColumn( title=_(u"Price"), getter=cart_core.lineItemPrice ),
         column.GetterColumn( title=_(u"Total"), getter=cart_core.lineItemTotal ),
        ]
+
+    def customise_widgets(self,fields):
+        pass
 
     def setUpWidgets( self, ignore_request=False ):
         self.adapters = self.adapters is not None and self.adapters or {}
