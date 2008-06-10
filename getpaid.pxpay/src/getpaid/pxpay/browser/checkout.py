@@ -39,6 +39,9 @@ class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
     def customise_widgets(self,fields):
         pass
 
+    def getSchemaAdapters( self ):
+        return []
+
     def setUpWidgets( self, ignore_request=False ):
         self.adapters = self.adapters is not None and self.adapters or {}
 
