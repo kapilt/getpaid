@@ -408,7 +408,6 @@ class ReturnResponse(BaseMessage):
     def transaction_successful(self):
         """
         Returns whether DPS authorised this transaction.
-        Beware users using the Test CC number against your Production site!
         """
         return self.success == '1'
 

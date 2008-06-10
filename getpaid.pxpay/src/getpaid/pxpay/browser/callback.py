@@ -89,19 +89,17 @@ class ProcessResponse(BrowserView):
     def determine_success(self, response_message):
         """
         Wrap up some logic to reconcile DPS transaction success in terms
-        of whether we are in Test mode or not - fraud protection
+        of whether we believe we are in Test mode or not
         """
         if response_message.transaction_successful:
             # Apparently all successful.
-            # One last check. This protects us from one type of fraud, which the
-            # the PXPay interface effectively exposes us to, otherwise...
+            # One last check, normally test card numbers with PXPay should only
+            # work when you are using a development account.
             if response_message.transaction_card_number == RETURNED_TEST_CARD_NUMBER:
                 # Someone has used the Test CC number...
                 if self.processor_options.PxPayServerType != TEST_SERVER_TYPE:
-                    # ...and has attempted to defraud us.
-                    log.info("FRAUD attempt - use of Test CC number in non-test environment: '%s'" % response_message)
-                    return False
-            # Otherwise all is normal and the transaction was successful 
+                    # ...and we believe that we are in Production mode - log this:
+                    log.info("Incorrect configuration? Test CC number was used for a successful transaction, but configuration indicates that we are not in Test mode: '%s'" % response_message)
             return True
         else:
             return False
