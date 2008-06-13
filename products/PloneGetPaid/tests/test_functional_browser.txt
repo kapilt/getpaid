@@ -31,7 +31,12 @@ Testing the setup aspects of GetPaid. Setting required settings.
     >>> browser.getLink('Site Profile').click()
     >>> browser.getControl('Contact Email').value = 'info@plonegetpaid.com'
     >>> browser.getControl( name="form.store_name").value = 'Test this fake company'
-    >>> browser.getControl('Contact Country').displayValue = ['UNITED STATES']
+
+Note: setting 'displayValue = ['UNITED STATES']' would give an
+AmbiguityError as the browser does not understand that we do not mean
+'UNITED STATES MINO' which is also an option.  So we set an
+unambiguous value::
+
     >>> browser.getControl('Apply').click()
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Content Types').click()

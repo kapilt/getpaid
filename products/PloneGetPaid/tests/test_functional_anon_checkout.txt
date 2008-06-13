@@ -35,7 +35,7 @@ Setting required settings. (Especially anonymous checkout)
     >>> browser.getLink('Site Profile').click()
     >>> browser.getControl('Contact Email').value = 'info@plonegetpaid.com'
     >>> browser.getControl( name="form.store_name").value = 'Test this fake company'
-    >>> browser.getControl('Contact Country').displayValue = ['UNITED STATES']
+    >>> browser.getControl('Contact Country').value = ['US']
     >>> browser.getControl('Apply').click()
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Content Types').click()
