@@ -182,4 +182,12 @@
    factory=".payment.CreditCardTypeEnumerator"
    />
 
+
+
+<subscriber
+    for="*
+         getpaid.core.interfaces.IPayableCreationEvent"
+    handler=".events.payable_created"
+    />
+ 
 </configure>
