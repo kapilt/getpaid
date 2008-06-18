@@ -69,25 +69,25 @@
 
 <!-- Content to Payable Adapters -->
 <adapter
-   for="Products.CMFCore.interfaces.IContentish"
+   for="Products.PloneGetPaid.interfaces.IBuyableMarker"
    provides="getpaid.core.interfaces.IBuyableContent"
    factory=".content.BuyableContentAdapter"
    />
 
 <adapter
-   for="Products.CMFCore.interfaces.IContentish"
+   for="Products.PloneGetPaid.interfaces.IShippableMarker"
    provides="getpaid.core.interfaces.IShippableContent"
    factory=".content.ShippableContentAdapter"
    />
 
 <adapter
-   for="Products.CMFCore.interfaces.IContentish"
+   for="Products.PloneGetPaid.interfaces.IPremiumMarker"
    provides="getpaid.core.interfaces.IPremiumContent"
    factory=".content.PremiumContentAdapter"
    />
 
 <adapter
-   for="Products.CMFCore.interfaces.IContentish"
+   for="Products.PloneGetPaid.interfaces.IDonatableMarker"
    provides="getpaid.core.interfaces.IDonationContent"
    factory=".content.DonatableContentAdapter"
   />

@@ -77,7 +77,7 @@ class IsPayableContent( BrowserView ):
 class PayableForm( PayableFormView, formbase.EditForm ):
 
     def allowed( self ):
-        adapter = component.queryAdapter( self.context, igetpaid.IBuyableContent)
+        adapter = component.queryAdapter( self.context, igetpaid.IPayable)
         return not ( adapter is None )
 
     def setUpWidgets( self, ignore_request=False ):
@@ -92,6 +92,8 @@ class PayableCreation( PayableForm ):
     actions = form.Actions()
 
     def update( self ):
+        marker.mark( self.context, self.marker)
+
         # create a temporary object so we don't have to modify context until we're ready to activate
         # it.. this creates some odd behavior on remarking though, where the user is always filling
         # in new values even though previously values are present in the underlying contxt annotation.
@@ -103,7 +105,6 @@ class PayableCreation( PayableForm ):
     @form.action(_("Activate"), condition=form.haveInputWidgets)
     def activate_payable( self, action, data):
         self.adapters = {}
-        marker.mark( self.context, self.marker)
         self.handle_edit_action.success_handler( self, action, data )
         self.adapters[ igetpaid.IPayable ].made_payable_by = getSecurityManager().getUser().getId()
         notify(

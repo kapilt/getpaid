@@ -38,7 +38,7 @@ from zope.app.intid.interfaces import IIntIds
 from getpaid.core import interfaces, item
 from getpaid.core import options
 
-from interfaces import PayableMarkerMap, IDonationLevel
+from interfaces import IDonationLevel, IPayableMarker
 from Products.PloneGetPaid import sessions
 
 class LineItemFactory( object ):
@@ -69,16 +69,9 @@ class LineItemFactory( object ):
             return True
         
     def checkPayable( self, content):
-        found = False
-        for marker, iface in PayableMarkerMap.items():
-            if marker.providedBy( content ):
-                found = True
-                break
-
-        if not found:
+        if not IPayableMarker.providedBy( content ):
             raise RuntimeError("Invalid Context For Cart Add")
-
-        return iface( content )
+        return interfaces.IPayable( content )
         
     def createLineItem( self, payable, quantity ):
         nitem = item.PayableLineItem()
