@@ -233,7 +233,7 @@ class IBuyableContent( IPayable ):
     """ Purchasable Content Delivered Virtually
     """
     
-class IPremiumContent( Interface ):
+class IPremiumContent( IPayable ):
     """ Premium Content for Subscriptions
     """
 
@@ -301,7 +301,7 @@ class IPaymentProcessor( Interface ):
         """
         reset
         """
-    
+
 class IRecurringPaymentProcessor( IPaymentProcessor ):
     """ a payment processor that can handle recurring line items
     """
