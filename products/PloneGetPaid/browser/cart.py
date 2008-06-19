@@ -254,7 +254,7 @@ class ShoppingCartActions( FormViewlet ):
     def isAnonymous( self, *args ):
         return getSecurityManager().getUser().getId() is None
 
-    @form.action(_("Continue Shopping"))
+    @form.action(_("Continue Shopping"), name='continue-shopping')
     def handle_continue_shopping( self, action, data ):
         # redirect the user to the last thing they were viewing if there is not
         # such thing to the came_from variable and if this doesn't exist neither
