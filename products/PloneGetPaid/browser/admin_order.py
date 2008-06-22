@@ -603,6 +603,8 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
 
     def getShippingAddress(self):
         infos = self.order.shipping_address
+        if infos is None:
+            return
         if infos.ship_same_billing:
             return "Same as billing"
         return {'ship_name': infos.ship_name,
