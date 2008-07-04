@@ -415,8 +415,3 @@ class INamedAddress( Interface ):
     
     __name__ = schema.TextLine(title=_(u"Name"))
     
-
-class ICreateTransientOrder(Interface):
-    """
-    A transient order used by checkout forms and finally persisted
-    """
