@@ -76,13 +76,19 @@ class ProcessResponse(BrowserView):
         order_id = response_message.transaction_id
         order_manager = getUtility( IOrderManager )
         order = order_manager.get(order_id)
+        state = order.finance_state
+        f_states = workflow_states.order.finance
         if order is None:
             raise PXPayException("Order id " + order_id + " not found")
-        if self.determine_success(response_message):
-            order.finance_workflow.fireTransition('charge-charging')
-            self.destroy_cart()
-        else:
-            order.finance_workflow.fireTransition('decline-charging')
+        # if you have Fail Proof Result Notification set on your pxpay account then this
+        # callback will be called once or more by pxpay and then also by your user
+        # when their browser is redirected by pxpy
+        if state == f_states.CHARGING:
+            if self.determine_success(response_message):
+                order.finance_workflow.fireTransition('charge-charging')
+                self.destroy_cart()
+            else:
+                order.finance_workflow.fireTransition('decline-charging')
         next_url = self.get_next_url(order)
         self.request.response.redirect(next_url)
 
