@@ -80,11 +80,12 @@ class PxPayCheckoutReviewAndPay( CheckoutReviewAndPay ):
     @form.action(_(u"Make Payment"), name="make-payment" )
     def makePayment( self, action, data ):
         """ create an order, and submit to the pxpay processor """
-        manage_options = IGetPaidManagementOptions( self.context )
+        portal = self.context.portal_url.getPortalObject()
+        manage_options = IGetPaidManagementOptions( portal )
         processor_name = manage_options.payment_processor
         if not processor_name:
             raise RuntimeError( "No Payment Processor Specified" )
-        processor = component.getAdapter( self.context,
+        processor = component.getAdapter( portal,
                                           interfaces.IPaymentProcessor,
                                           processor_name )
         order = self.createOrder()
