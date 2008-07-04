@@ -86,9 +86,11 @@ class ProcessResponse(BrowserView):
         if state == f_states.CHARGING:
             if self.determine_success(response_message):
                 order.finance_workflow.fireTransition('charge-charging')
-                self.destroy_cart()
             else:
                 order.finance_workflow.fireTransition('decline-charging')
+        if state == f_states.CHARGED:
+            self.destroy_cart()
+
         next_url = self.get_next_url(order)
         self.request.response.redirect(next_url)
 
