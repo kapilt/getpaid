@@ -18,7 +18,8 @@ class ContentControl(BrowserView):
         """  does the context implement the IPayableMarker interface
         """
         return IPayableMarker.providedBy(self.context) and \
-            not IDiscountableMarker.providedBy(self.context)
+            not IDiscountableMarker.providedBy(self.context) and \
+            not IBuyXGetXFreeableMarker.providedBy(self.context)
     
     isPossibleDiscountable.__roles__ = None
     
@@ -26,7 +27,8 @@ class ContentControl(BrowserView):
         """  does the context implement the IPayableMarker interface
         """
         return IPayableMarker.providedBy(self.context) and \
-             not IBuyXGetXFreeableMarker.providedBy(self.context)
+             not IBuyXGetXFreeableMarker.providedBy(self.context) and \
+             not IDiscountableMarker.providedBy(self.context)
     
     isPossibleBuyXGetXfreeable.__roles__ = None
     
