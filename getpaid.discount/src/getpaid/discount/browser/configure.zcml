@@ -8,20 +8,6 @@
      class="getpaid.discount.browser.contentcontrol.ContentControl"
      permission="zope2.View"
      />
-
-  <browser:page
-     for="getpaid.discount.browser.interfaces.IDiscountableMarker"
-     name="discountable-content"
-     class=".contentcontrol.IsDiscountableContent"
-     permission="zope2.View"
-     />
-     
-  <browser:page
-     for="getpaid.discount.browser.interfaces.IBuyXGetXFreeableMarker"
-     name="buyxgetxfreeable-content"
-     class=".contentcontrol.IsBuyXGetXFreeableContent"
-     permission="zope2.View"
-     />
   
   <browser:page
     for="getpaid.discount.browser.interfaces.IDiscountableMarker"

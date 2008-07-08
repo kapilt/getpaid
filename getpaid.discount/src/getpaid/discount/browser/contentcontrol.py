@@ -43,17 +43,3 @@ class ContentControl(BrowserView):
         return IBuyXGetXFreeableMarker.providedBy(self.context)
 
     isBuyXGetXfreeable.__roles__ = None
-
-class IsDiscountableContent(BrowserView):
-    """
-    """
-
-    def __call__( self ):
-        return IDiscountableMarker.providedBy(self.context)
-
-class IsBuyXGetXFreeableContent(BrowserView):
-    """
-    """
-
-    def __call__( self ):
-        return IBuyXGetXFreeableMarker.providedBy(self.context)

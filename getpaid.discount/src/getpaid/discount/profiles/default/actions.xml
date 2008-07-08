@@ -18,9 +18,6 @@
                 visible="True">
             <permission>Modify portal content</permission>
         </action>
-    </action-provider>
-    
-    <action-provider name="portal_actions">
       <action title="Make this a Buy X Get X Free Product" 
                 action_id="make_buyxgetxfreeable" 
                 category="object_buttons" 
@@ -29,9 +26,6 @@
                 visible="True">
             <permission>Modify portal content</permission>
         </action>
-    </action-provider>
-    
-    <action-provider name="portal_actions">
       <action title="Make this Not a Buy X Get X Free Product" 
                 action_id="make_not_buyxgetxfreeable" 
                 category="object_buttons" 
@@ -40,39 +34,22 @@
                 visible="True">
             <permission>Modify portal content</permission>
         </action>
+        <action title="Discountable" 
+                action_id="discountable" 
+                category="object" 
+                condition_expr="python:path('object/@@discount_content_control').isDiscountable()" 
+                url_expr="string:${object_url}/@@edit-discount" 
+                visible="True">
+            <permission>Modify portal content</permission>
+        </action>
+        <action title="Discountable" 
+                action_id="buyxgetxfreeable" 
+                category="object" 
+                condition_expr="python:path('object/@@discount_content_control').isBuyXGetXfreeable()" 
+                url_expr="string:${object_url}/@@edit-buyxgetxfree" 
+                visible="True">
+            <permission>Modify portal content</permission>
+        </action>
     </action-provider>
     
-    <object name="object" meta_type="CMF Action Category">
-      <property name="title"></property>
-      <object name="discountable" meta_type="CMF Action">
-        <property name="title">Discountable</property>
-        <property name="description"></property>
-        <property
-            name="url_expr">string:${object_url}/@@edit-discount</property>
-        <property name="icon_expr"></property>
-        <property
-            name="available_expr">object/@@discountable-content|nothing</property>
-        <property name="permissions">
-          <element value="Modify portal content"/>
-        </property>
-        <property name="visible">True</property>
-      </object>
-    </object>
-    
-    <object name="object" meta_type="CMF Action Category">
-      <property name="title"></property>
-      <object name="buyxgetxfreeable" meta_type="CMF Action">
-        <property name="title">Discountable</property>
-        <property name="description"></property>
-        <property
-            name="url_expr">string:${object_url}/@@edit-buyxgetxfree</property>
-        <property name="icon_expr"></property>
-        <property
-            name="available_expr">object/@@buyxgetxfreeable-content|nothing</property>
-        <property name="permissions">
-          <element value="Modify portal content"/>
-        </property>
-        <property name="visible">True</property>
-      </object>
-    </object>
 </object>
