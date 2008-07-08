@@ -21,7 +21,7 @@
       <action title="Make this a Buy X Get X Free Product" 
                 action_id="make_buyxgetxfreeable" 
                 category="object_buttons" 
-                condition_expr="python:path('object/@@discount_content_control').isPossibleBuyXGetXfreeable()" 
+                condition_expr="python:path('object/@@discount_content_control').isPossibleDiscountable()" 
                 url_expr="string:$object_url/@@activate-buyxgetxfreeable" 
                 visible="True">
             <permission>Modify portal content</permission>

@@ -23,15 +23,6 @@ class ContentControl(BrowserView):
     
     isPossibleDiscountable.__roles__ = None
     
-    def isPossibleBuyXGetXfreeable(self):
-        """  does the context implement the IPayableMarker interface
-        """
-        return IPayableMarker.providedBy(self.context) and \
-             not IBuyXGetXFreeableMarker.providedBy(self.context) and \
-             not IDiscountableMarker.providedBy(self.context)
-    
-    isPossibleBuyXGetXfreeable.__roles__ = None
-    
     def isDiscountable( self ):
         """  does the context implement the IDiscountableMarker interface
         """
