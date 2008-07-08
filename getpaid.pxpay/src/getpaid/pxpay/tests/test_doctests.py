@@ -32,4 +32,11 @@ def test_suite():
             test_class=PloneGetPaidTestCase,
             optionflags=optionflags,
             ),
+        ZopeTestCase.ZopeDocFileSuite(
+            'utils.txt',
+            package='getpaid.pxpay.tests',
+            test_class=PloneGetPaidTestCase,
+            optionflags=optionflags,
+            ),
+
         ])

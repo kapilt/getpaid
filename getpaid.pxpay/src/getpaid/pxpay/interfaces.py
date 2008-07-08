@@ -1,4 +1,4 @@
-from zope.interface import Interface
+from zope.interface import Interface, Attribute
 from zope import schema
 
 from getpaid.core import interfaces
@@ -66,3 +66,16 @@ class IPXPayPaymentProcessor( interfaces.IPaymentProcessor ):
     """
     PXPay payment processor
     """
+
+class ICheckoutContext(Interface):
+
+    """
+    The context where we want checkout to happen. Useful if you want
+    to use a specific context with a particular portlet arrangement.
+    """
+
+    root_object = Attribute("the checkout root object")
+
+    root_url = Attribute("the checkout root url")
+
+    store = Attribute("the store object for this site")

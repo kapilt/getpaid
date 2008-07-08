@@ -16,7 +16,7 @@ from getpaid.core.interfaces import IOrderManager, IShoppingCartUtility, \
 from getpaid.pxpay import parser
 from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
      IPXPayWebInterfaceGateway, IPXPayInvalidMessageError, \
-     IPXPayNetworkError
+     IPXPayNetworkError, ICheckoutContext
 from getpaid.pxpay.exceptions import PXPayException, PXPayNetworkException, \
      PXPayInvalidMessageException
 from getpaid.pxpay.config import RETURNED_TEST_CARD_NUMBER, TEST_SERVER_TYPE
@@ -36,8 +36,9 @@ class ProcessResponse(BrowserView):
     def __init__(self, context, request):
         super(ProcessResponse, self).__init__(context, request)
         context = aq_inner(self.context)
-        self.site_root = getToolByName(context, 'portal_url').getPortalObject()
-        self.processor_options = IPXPayStandardOptions(self.site_root)
+        self.checkout_context = ICheckoutContext(context)
+        self.store = self.checkout_context.store
+        self.processor_options = IPXPayStandardOptions(self.store)
         self.pxpay_gateway = IPXPayWebInterfaceGateway(self.processor_options)
 
     def __call__(self):
@@ -127,7 +128,7 @@ class ProcessResponse(BrowserView):
     def get_next_url(self, order):
         state = order.finance_state
         f_states = workflow_states.order.finance
-        base_url = '/'.join((self.site_root.absolute_url(),
+        base_url = '/'.join((self.checkout_context.root_url,
                              '@@getpaid-order',
                              order.order_id))
         if not 'http://' in base_url:

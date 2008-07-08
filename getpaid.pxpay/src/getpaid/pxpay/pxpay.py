@@ -3,14 +3,13 @@ import logging
 from zope import interface
 from zope.component import getUtility
 from zope.app.annotation.interfaces import IAnnotations
-
-from Products.CMFCore.utils import getToolByName
+from zope.interface import implements
 
 from getpaid.core import interfaces, options
 
 from getpaid.pxpay.interfaces import IPXPayStandardOptions, \
      IPXPayWebInterfaceGateway, IPXPayInvalidMessageError, \
-     IPXPayPaymentProcessor, IPXPayNetworkError
+     IPXPayPaymentProcessor, IPXPayNetworkError, ICheckoutContext
 from getpaid.pxpay import parser
 from getpaid.pxpay.exceptions import PXPayException, \
      PXPayInvalidMessageException, PXPayNetworkException
@@ -31,13 +30,12 @@ class PXPayPaymentAdapter( object ):
 
     def __init__( self, context ):
         self.context = context
-        self.settings = IPXPayStandardOptions( self.context )
+        self.settings = IPXPayStandardOptions(self.context)
         self.pxpay_gateway = IPXPayWebInterfaceGateway(self.settings)
-        self.site_root = getToolByName(context, 'portal_url').getPortalObject()
-        self.site_url = self.site_root.absolute_url()
+        self.checkout_context = ICheckoutContext(self.context)
 
     def _generate_initial_request(self, order):
-        return_url = '/'.join((self.site_url,
+        return_url = '/'.join((self.checkout_context.root_url,
                               '@@getpaid-order',
                                order.order_id,
                                '@@pxpayprocessresponse'))

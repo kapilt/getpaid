@@ -23,6 +23,11 @@
        factory=".gateway.PXPayWebInterfaceGateway"
      />
 
+   <adapter
+       for="*"
+       provides=".interfaces.ICheckoutContext"
+       factory=".utils.CheckoutContext"/>
+
    <utility
        provides=".interfaces.IPXPayInvalidMessageError"
        factory=".errors.PXPayInvalidMessageError"
