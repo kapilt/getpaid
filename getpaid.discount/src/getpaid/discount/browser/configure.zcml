@@ -8,21 +8,19 @@
      class="getpaid.discount.browser.contentcontrol.ContentControl"
      permission="zope2.View"
      />
-     
-  <browser:menuItem
+
+  <browser:page
      for="getpaid.discount.browser.interfaces.IDiscountableMarker"
-     menu="object"
-     title="Discountable"
-     action="edit-discount"
-     filter="python:object.portal_membership.checkPermission('Modify portal content', object)"
+     name="discountable-content"
+     class=".contentcontrol.IsDiscountableContent"
+     permission="zope2.View"
      />
      
-  <browser:menuItem
+  <browser:page
      for="getpaid.discount.browser.interfaces.IBuyXGetXFreeableMarker"
-     menu="object"
-     title="Discountable"
-     action="edit-buyxgetxfree"
-     filter="python:object.portal_membership.checkPermission('Modify portal content', object)"
+     name="buyxgetxfreeable-content"
+     class=".contentcontrol.IsBuyXGetXFreeableContent"
+     permission="zope2.View"
      />
   
   <browser:page
