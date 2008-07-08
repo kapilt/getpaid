@@ -15,14 +15,13 @@ from zope.event import notify
 #from zope.app.form.browser.sequencewidget import ListSequenceWidget
 
 from AccessControl import getSecurityManager
-from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from Products.Five.formlib import formbase
 from Products.Five.utilities import marker
-from Products.PloneGetPaid import interfaces, content
+from Products.PloneGetPaid import interfaces
 
 from base import BaseFormView
 
@@ -56,23 +55,6 @@ class PayableFormView( BaseFormView ):
     marker = None
     form_fields = form.FormFields()
     template = ZopeTwoPageTemplateFile('templates/payable-form.pt')
-
-class IsPayableContent( BrowserView ):
-    """Is this content that can be paid for?
-
-    Handy view for spots where it is not possibly to import an
-    interface to check against, like in actions.xml.
-
-    Main usecase: should a tab for the payable form be shown?
-    This solves this issue on Plone 3.0:
-    http://code.google.com/p/getpaid/issues/detail?id=152
-
-    If someone knows a better way, go ahead. [maurits]
-    """
-
-    def __call__( self ):
-        adapter = component.queryAdapter( self.context, igetpaid.IPayable)
-        return not ( adapter is None )
 
 class PayableForm( PayableFormView, formbase.EditForm ):
 

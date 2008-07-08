@@ -66,12 +66,6 @@
 
   <!-- This view exists mainly to solve this issue:
        http://code.google.com/p/getpaid/issues/detail?id=152 -->
-  <browser:page
-     for="..interfaces.IPayableMarker"
-     name="payable-content"
-     class=".content.IsPayableContent"
-     permission="zope2.View"
-     />
 
   <browser:page
      for="..interfaces.IPremiumMarker"
