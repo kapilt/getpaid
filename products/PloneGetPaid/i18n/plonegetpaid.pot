@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PloneGetPaid VERSION\n"
-"POT-Creation-Date: 2008-04-24 19:54+0000\n"
+"POT-Creation-Date: 2008-07-09 08:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Fabio Corneti <info@corneti.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
