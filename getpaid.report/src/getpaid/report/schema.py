@@ -97,8 +97,8 @@ addresses = rdb.Table(
   rdb.Column("first_line", rdb.Unicode(200), nullable=False ),
   rdb.Column("second_line", rdb.Unicode(200), nullable=True ),
   rdb.Column("city", rdb.Unicode(120), nullable=False ),
-  rdb.Column("state", rdb.String(6), nullable=False ),
-  rdb.Column("country", rdb.String(4), nullable=False ),
+  rdb.Column("state", rdb.String(20), nullable=False ),
+  rdb.Column("country", rdb.String(20), nullable=False ),
   rdb.Column("postal_code", rdb.String(10), nullable=False ),
   )
 

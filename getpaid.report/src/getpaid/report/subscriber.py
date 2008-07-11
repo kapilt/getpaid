@@ -1,8 +1,8 @@
-from sqlalchemy.orm import session
+#from sqlalchemy.orm import session
 from zope import component
 from zope.app.intid.interfaces import IIntIds
 
-import domain, sync
+import domain, sync, session
     
 def handleInventoryModified( _inventory, event ):
     """
@@ -94,17 +94,9 @@ def handleNewOrder( _order, event ):
 
 def _interact( func ):
     s = session.Session()
-    s.begin()
-
-    try:
-        value = func( s )
-    except:
-        s.rollback()
-        raise
-    else:
-        if value is not None:
-            s.save_or_update( value )
-        s.commit()
+    value = func( s )
+    if value is not None:
+        s.save_or_update( value )
     return value
 
 def _fetchSync( s, e ):
