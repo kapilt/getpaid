@@ -1,20 +1,14 @@
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:five="http://namespaces.zope.org/five"
            xmlns:cmf="http://namespaces.zope.org/cmf">
-
- <include file="profiles.zcml"/>
  
  <include package=".browser" />
+ 
+ <include file="profiles.zcml"/>
  
  <subscriber
     for="getpaid.core.interfaces.IPayableLineItem
          zope.app.container.contained.ObjectAddedEvent"
     handler="getpaid.discount.subscribers.checkDiscount"/>
-
- <cmf:registerDirectory 
-       name="skins"
-       directory="skins"
-       recursive="True"
-       />
 
 </configure>

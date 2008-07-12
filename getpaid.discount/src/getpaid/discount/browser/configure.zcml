@@ -1,7 +1,13 @@
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:five="http://namespaces.zope.org/five"
            xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:plone="http://namespaces.plone.org/plone">
+           xmlns:plone="http://namespaces.plone.org/plone"
+           xmlns:zcml="http://namespaces.zope.org/zcml">
+  
+  <browser:resourceDirectory
+    name="getpaid.discount.css"
+    directory="css"
+    />
 
   <browser:page
      for="*"
@@ -72,7 +78,7 @@
   <browser:page
     name="portlet-contentwidget"
     for="getpaid.discount.browser.interfaces.IDiscountableMarker"
-    class=".portlets.DiscountContentPortlet"
+    class="getpaid.discount.browser.portlets25.DiscountContentPortlet"
     template="templates/portlet_content_discountable.pt"
     permission="zope2.View"
     />
@@ -80,27 +86,12 @@
   <browser:page
     name="portlet-contentwidget"
     for="getpaid.discount.browser.interfaces.IBuyXGetXFreeableMarker"
-    class=".portlets.DiscountContentPortlet"
+    class="getpaid.discount.browser.portlets25.DiscountContentPortlet"
     template="templates/portlet_content_buyxgetxfreeable.pt"
     permission="zope2.View"
     />
-
-  <include package="plone.app.portlets" />
-
-  <plone:portlet
-    name="getpaid.discount.discountable"
-    interface=".portlets.IDiscountablePortlet"
-    assignment=".portlets.DiscountableAssignment"
-    renderer=".portlets.DiscountableRenderer"
-    addview=".portlets.DiscountableAddForm"
-    />
     
-  <plone:portlet
-    name="getpaid.discount.buyxgetxfreeable"
-    interface=".portlets.IBuyXGetXfreeablePortlet"
-    assignment=".portlets.BuyXGetXfreeableAssignment"
-    renderer=".portlets.BuyXGetXfreeableRenderer"
-    addview=".portlets.BuyXGetXfreeableAddForm"
-    />
+  <include zcml:condition="installed plone.app.portlets"
+      package=".portlets" />
 
 </configure>

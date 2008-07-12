@@ -1,0 +1,28 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:plone="http://namespaces.plone.org/plone">
+  
+  <!-- Discountable portlet to replace the portlet 
+       content buyable/donatable/shippable/premium when we are
+       on a discounted item -->
+
+  <include package="plone.app.portlets" />
+      
+  <plone:portlet
+    name="getpaid.discount.discountable"
+    interface=".portlets30.IDiscountablePortlet"
+    assignment=".portlets30.DiscountableAssignment"
+    renderer=".portlets30.DiscountableRenderer"
+    addview=".portlets30.DiscountableAddForm"
+    />
+    
+  <plone:portlet
+    name="getpaid.discount.buyxgetxfreeable"
+    interface=".portlets30.IBuyXGetXfreeablePortlet"
+    assignment=".portlets30.BuyXGetXfreeableAssignment"
+    renderer=".portlets30.BuyXGetXfreeableRenderer"
+    addview=".portlets30.BuyXGetXfreeableAddForm"
+    />
+
+</configure>

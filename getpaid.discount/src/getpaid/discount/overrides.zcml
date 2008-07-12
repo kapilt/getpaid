@@ -14,28 +14,28 @@
   <browser:page
     name="portlet-contentwidget"
     for="Products.PloneGetPaid.interfaces.IDonatableMarker"
-    class="getpaid.discount.browser.portlets.PGPContentPortlet"
+    class="getpaid.discount.browser.portlets25.PGPContentPortlet"
     permission="zope2.View"
     />
     
   <browser:page
     name="portlet-contentwidget"
     for="Products.PloneGetPaid.interfaces.IBuyableMarker"
-    class="getpaid.discount.browser.portlets.PGPContentPortlet"
+    class="getpaid.discount.browser.portlets25.PGPContentPortlet"
     permission="zope2.View"
     />
 
   <browser:page
     name="portlet-contentwidget"
     for="Products.PloneGetPaid.interfaces.IShippableMarker"
-    class="getpaid.discount.browser.portlets.PGPContentPortlet"
+    class="getpaid.discount.browser.portlets25.PGPContentPortlet"
     permission="zope2.View"
     />
 
   <browser:page
     name="portlet-contentwidget"
     for="Products.PloneGetPaid.interfaces.IPremiumMarker"
-    class="getpaid.discount.browser.portlets.PGPContentPortlet"
+    class="getpaid.discount.browser.portlets25.PGPContentPortlet"
     permission="zope2.View"
     />
 
@@ -44,7 +44,7 @@
       name="getpaid.shippable"
       interface="Products.PloneGetPaid.browser.portlets.ship.IShippablePortlet"
       assignment="Products.PloneGetPaid.browser.portlets.ship.Assignment"
-      renderer="getpaid.discount.browser.portlets.ShipRenderer"
+      renderer="getpaid.discount.browser.portlets.portlets30.ShipRenderer"
       addview="Products.PloneGetPaid.browser.portlets.ship.AddForm"
       />
 
@@ -52,7 +52,7 @@
       name="getpaid.buyable"
       interface="Products.PloneGetPaid.browser.portlets.buy.IBuyablePortlet"
       assignment="Products.PloneGetPaid.browser.portlets.buy.Assignment"
-      renderer="getpaid.discount.browser.portlets.BuyRenderer"
+      renderer="getpaid.discount.browser.portlets.portlets30.BuyRenderer"
       addview="Products.PloneGetPaid.browser.portlets.buy.AddForm"
       />
 
@@ -60,7 +60,7 @@
       name="getpaid.donatable"
       interface="Products.PloneGetPaid.browser.portlets.donate.IDonatablePortlet"
       assignment="Products.PloneGetPaid.browser.portlets.donate.Assignment"
-      renderer="getpaid.discount.browser.portlets.DonateRenderer"
+      renderer="getpaid.discount.browser.portlets.portlets30.DonateRenderer"
       addview="Products.PloneGetPaid.browser.portlets.donate.AddForm"
       />
 
@@ -68,7 +68,7 @@
       name="getpaid.premium"
       interface="Products.PloneGetPaid.browser.portlets.premium.IPremiumPortlet"
       assignment="Products.PloneGetPaid.browser.portlets.premium.Assignment"
-      renderer="getpaid.discount.browser.portlets.PremiumRenderer"
+      renderer="getpaid.discount.browser.portlets.portlets30.PremiumRenderer"
       addview="Products.PloneGetPaid.browser.portlets.premium.AddForm"
       />
 
