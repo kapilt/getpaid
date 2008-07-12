@@ -1,14 +1,10 @@
-from persistent.dict import PersistentDict
-
 from zope import component
 from zope import interface
 from zope.formlib import form
-from zope.schema import fieldproperty
 from zope.interface import implements
 from zope.app.annotation.interfaces import IAnnotations
 
 from Products.Five.formlib import formbase
-from Products.Five.browser import pagetemplatefile
 from Products.Five.utilities import marker
 from Products.Five.browser import BrowserView
 

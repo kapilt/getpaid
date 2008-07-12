@@ -1,0 +1,12 @@
+<portlets>
+  <portlet
+      addview="getpaid.discount.discountable"
+      title="Discountable portlet"
+      description="A portlet that handles discountable items"
+      />
+  <portlet
+      addview="getpaid.discount.buyxgetxfreeable"
+      title="BuyXGetXfreeable portlet"
+      description="A portlet that handles buyxgetxfreeable items"
+      />
+</portlets>

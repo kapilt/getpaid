@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<object name="portal_skins">
+    
+  <object
+      name="getpaid-discount-css"
+      meta_type="Filesystem Directory View"
+      directory="getpaid.discount:skins/getpaid-discount-css"
+      />
+
+  <skin-path name="*">
+    <layer name="getpaid-discount-css" insert-after="custom"/>
+  </skin-path>
+
+</object>
+ 

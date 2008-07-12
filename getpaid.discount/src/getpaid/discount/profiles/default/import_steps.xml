@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<import-steps>
+ <import-step id="getpaid.discount.setupVarious" version="20080709-01"
+              handler="getpaid.discount.setuphandlers.setupVarious"
+              title="getpaid.discount setupVarious">
+  Setup various things that are not handled by GS import/export handlers
+ </import-step>
+</import-steps>
+
