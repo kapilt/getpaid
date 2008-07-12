@@ -4,7 +4,15 @@
 
 <body>
 <div metal:define-macro="portlet" tal:condition="view/isDiscountable">
-    <style type="text/css" tal:content="string:@import url($portal_url/++resource++css/getpaid-discount.css.dtml);"></style>
+    <style type="text/css">
+      .discounted{
+          text-decoration: line-through;
+      }
+
+      .discount{
+          color: red;
+      }
+    </style>
     
     <dl class="portlet" id="portlet-cart">
         <dt class="portletHeader">

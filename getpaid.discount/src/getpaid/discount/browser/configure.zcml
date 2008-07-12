@@ -5,7 +5,7 @@
            xmlns:zcml="http://namespaces.zope.org/zcml">
   
   <browser:resourceDirectory
-    name="getpaid.discount.css"
+    name="discount-css"
     directory="css"
     />
 

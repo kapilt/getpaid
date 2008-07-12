@@ -11,11 +11,9 @@ class BaseDiscountPortlet(object):
     """
     """
     def isDiscountable(self):
-        import pdb;pdb.set_trace()
         return IDiscountableMarker.providedBy(self.context)
     
     def isBuyXGetXFreeable(self):
-        import pdb;pdb.set_trace()
         return IBuyXGetXFreeableMarker.providedBy(self.context)
     
     def getPrice(self, item):
@@ -63,7 +61,6 @@ class DiscountContentPortlet(BrowserView, BaseDiscountPortlet):
     """ Plone 2.5 View methods for the ContentPortlet """
     
     def __init__(self, *args, **kw):
-        import pdb;pdb.set_trace()
         super(BrowserView, self).__init__(*args, **kw)
         
         
@@ -71,7 +68,6 @@ class PGPContentPortlet(BrowserView):
     """ Plone 2.5 override of the View methods for the ContentPortlet """
     payable = None
     def __init__( self, *args, **kw):
-        import pdb;pdb.set_trace()
         super( BrowserView, self).__init__( *args, **kw)
 
         found = False
@@ -84,7 +80,6 @@ class PGPContentPortlet(BrowserView):
             self.payable = iface( self.context )
         
     def isPayable(self):
-        import pdb;pdb.set_trace()
         return self.payable is not None and \
             not IDiscountableMarker.providedBy(self.context) and \
             not IBuyXGetXFreeableMarker.providedBy(self.context)

@@ -13,7 +13,7 @@ class IDiscountable(Interface):
                                   required=True)
     
     discount_value = schema.Float(title=u'Value of the discount',
-                                  required=True)
+                                  required=True,)
 
 class IDiscountableMarker(Interface):
     """
