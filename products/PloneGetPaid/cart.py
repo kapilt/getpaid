@@ -36,6 +36,12 @@ class ShoppingCartUtility(Persistent):
         else:
             uid = getSecurityManager().getUser().getId()
             if uid is not None:
+                # Check if there is a session cart - if there is we need to transfer it
+                session_cart = self._getCartForSession(context, False)
+                if session_cart:
+                    session_cart.member_id = uid
+                    self._sessions[uid] = session_cart
+                    self._destroyCartForSession(context)
                 return self._getCartForUser(context, uid, create)
             else:
                 return self._getCartForSession(context, create)
