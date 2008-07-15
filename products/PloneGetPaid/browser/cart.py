@@ -4,7 +4,7 @@ Viewlet / Formlib / zc.table Based Shopping Cart
 $Id$
 """
 
-import os, decimal
+import os
 from urllib import urlencode
 
 from zope import component, interface
@@ -27,6 +27,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PloneGetPaid.interfaces import PayableMarkers, IGetPaidCartViewletManager
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IConditionalViewlet
 from Products.PloneGetPaid import sessions
+from Products.PloneGetPaid import config
 
 from Products.PloneGetPaid.i18n import _
 from Products.CMFPlone.utils import safe_unicode
@@ -220,7 +221,10 @@ class ShoppingCartListing( ContainerViewlet ):
     def isOrdered( self, *args ):
         # shopping cart should not be ordered, so override this with False
         return False
-
+    
+    def isPlone3(self):
+        return config.PLONE3
+    
     @form.action(_("Update"), condition="isNotEmpty")
     def handle_update( self, action, data ):
         try:

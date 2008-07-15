@@ -28,7 +28,9 @@
 	  </tal:loop>
   </div>
 
-  <div tal:replace="structure provider:getpaid.belowcartlisting" />
+  <tal:cond condition="view/isPlone3">
+    <div tal:replace="structure provider:getpaid.belowcartlisting" />
+  </tal:cond>
   </form>
 
  <br />
