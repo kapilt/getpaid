@@ -3,11 +3,6 @@
            xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:plone="http://namespaces.plone.org/plone"
            xmlns:zcml="http://namespaces.zope.org/zcml">
-  
-  <browser:resourceDirectory
-    name="discount-css"
-    directory="css"
-    />
 
   <browser:page
      for="*"
@@ -93,5 +88,8 @@
     
   <include zcml:condition="installed plone.app.portlets"
       package=".portlets" />
+      
+  <include zcml:condition="installed plone.app.viewletmanager"
+      package=".viewlets" />
 
 </configure>

@@ -1,0 +1,22 @@
+<br />
+<tal:def define="discounts view/getDiscounts">
+   <table class="listing" tal:condition="discounts">
+     <tr>
+       <th>
+         Discount
+       </th>
+       <th>
+         Description
+       </th>
+      </tr>
+      <tal:rep repeat="discount discounts">
+        <tr>
+         <td tal:content="discount/title" />
+         <td>
+           <span tal:content="discount/description" />
+         </td>
+        </tr>
+      </tal:rep>
+    </table>
+</tal:def>
+
