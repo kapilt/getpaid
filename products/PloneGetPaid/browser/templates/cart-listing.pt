@@ -17,6 +17,7 @@
            tal:replace="structure action/render"
            />
   -->
+  
       <tal:loop tal:repeat="action view/availableActions">
 		<input type="submit" class="button context"
 			   id="" name="" value=""
@@ -27,6 +28,7 @@
 	  </tal:loop>
   </div>
 
+  <div tal:replace="structure provider:getpaid.belowcartlisting" />
   </form>
 
  <br />
