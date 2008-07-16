@@ -54,9 +54,13 @@ buildout.cfg::
     ${googlecheckout:develop}
     ${googlecheckout:eggs}
     ${googlecheckout:zcml}
+    
+Note - during development, if you're developing locally, make sure to access
+your site via 127.0.0.1:8080/my-plone-instance instead of localhost:8080/my-plone-instance
+as the latter is considered an invalid URL by gchecky.
 
 Create a merchant account in the Google Checkout Sandbox service. See
-step 1 of `Getting Startted with Google Checkout`_.
+step 1 of `Getting Started with Google Checkout`.
 
 Configure the notification handshake for this merchant account. Set
 the API callback URL and enable checking serial numbers for
@@ -83,9 +87,9 @@ notification acknowledgments:
 
 5. Click the *Save* button to update your settings.
 
-Configure the Google Checkout processor in GetPaid with the your
+Configure the Google Checkout processor in GetPaid with the 
 Merchant ID and Merchant Key for the sandbox. You'll find these in
-"Settings" -> "Integration" of the `Google Checkout Manager`_.
+"Settings" -> "Integration" of the `Google Checkout Manager`.
 
 If you want to use this with along with Google Analytics then copy the
 following snippet to your Plone site by editing "Site Setup" -> "Site
