@@ -22,7 +22,8 @@ class ShoppingCartUtility(Persistent):
 
 
     def get(self, context, create=False, key=None):
-        """ Get the persistent cart. It does not persist for anonymous users.
+        """ Get the persistent cart. It does not persist for anonymous users or
+        one time only usage (things like one page buy and checkout)
         """
         if key is not None:
             if create:
@@ -33,6 +34,8 @@ class ShoppingCartUtility(Persistent):
                 return self._getCartForUser(context, value)
             elif name == 'session':
                 return self._getCartForSession(context, browser_id=value)
+            elif name == 'oneshot':
+                return self._getDisposableCart(context, browser_id=value)
         else:
             uid = getSecurityManager().getUser().getId()
             if uid is not None:
@@ -73,6 +76,10 @@ class ShoppingCartUtility(Persistent):
             else:
                 return None
         return session['getpaid.cart']
+
+    def _getDisposableCart(self, context, browser_id=None):
+        return ShoppingCart()
+        
 
 
     def destroy(self, context, key=None):
@@ -134,7 +141,7 @@ class ShoppingCartUtility(Persistent):
             name, value = key.split(':', 1)
         except ValueError:
             raise ValueError('Malformed key: %s' % key)
-        if name not in ['user', 'session']:
+        if name not in ['user', 'session', 'oneshot']:
             raise ValueError('Malformed key: %s' % key)
         return name, value
 

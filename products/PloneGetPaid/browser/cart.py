@@ -131,7 +131,7 @@ class ViewletManagerShoppingCart( object ):
                 
     def sort (self, viewlets ):
         """ sort by name """
-        viewlets.sort( lambda x,y: cmp( int(x[1].weight), int(y[1].weight) ) )
+        viewlets.sort( lambda x,y: cmp( int(getattr(x[1],'weight',100)), int(getattr(y[1],'weight',100)) ) )
         return viewlets
         
 ShoppingCartManager = manager.ViewletManager( "ShoppingCart",
