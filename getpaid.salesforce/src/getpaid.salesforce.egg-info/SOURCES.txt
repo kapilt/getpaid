@@ -1,0 +1,16 @@
+setup.py
+src/getpaid/__init__.py
+src/getpaid.salesforce.egg-info/PKG-INFO
+src/getpaid.salesforce.egg-info/SOURCES.txt
+src/getpaid.salesforce.egg-info/dependency_links.txt
+src/getpaid.salesforce.egg-info/namespace_packages.txt
+src/getpaid.salesforce.egg-info/not-zip-safe
+src/getpaid.salesforce.egg-info/requires.txt
+src/getpaid.salesforce.egg-info/top_level.txt
+src/getpaid/salesforce/__init__.py
+src/getpaid/salesforce/interfaces.py
+src/getpaid/salesforce/plugin.py
+src/getpaid/salesforce/salesforce.py
+src/getpaid/salesforce/tests.py
+src/getpaid/salesforce/browser/__init__.py
+src/getpaid/salesforce/browser/admin.py

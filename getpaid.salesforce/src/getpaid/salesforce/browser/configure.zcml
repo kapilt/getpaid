@@ -1,0 +1,17 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:zcml="http://namespaces.zope.org/zcml">
+
+  <!-- Management Legal Disclaimer Options -->
+  <browser:page
+     for="getpaid.core.interfaces.IStore"
+     name="manage-getpaid-salesforce"
+     class=".admin.SalesforceScreen"
+     permission="cmf.ManagePortal"
+     menu="getpaid_settings"
+     title="Salesforce Settings"
+     />
+
+
+</configure>
+
