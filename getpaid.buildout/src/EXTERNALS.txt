@@ -46,3 +46,6 @@ yoma.batching https://getpaid.googlecode.com/svn/branches/salesforce_integration
 
 # discount
 getpaid.discount https://getpaid.googlecode.com/svn/branches/salesforce_integration/getpaid.discount/
+
+#salesforce
+getpaid.salesforce https://getpaid.googlecode.com/svn/branches/salesforce_integration/getpaid.salesforce
