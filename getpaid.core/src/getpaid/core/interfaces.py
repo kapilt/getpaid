@@ -845,4 +845,26 @@ class workflow_states:
         SHIPPED = 'SHIPPED'
         SHIPPABLE = 'SHIPPABLE'
         CHARGED = 'CHARGED'
-            
+
+
+
+###########################################
+## Checkout Adapters
+
+class ICheckoutAdapter(Interface):
+    """
+    An adapter with methods that are to be called at checkout success or 
+    failure .
+    The idea behind these adapters is to submit the data somewhere else.
+    """
+    
+    def successAdapterAction(order):
+        """
+        To be called on sucess.
+        """
+
+    def failureAdapterAction(order):
+        """
+        To be called on failure.
+        """
+    
