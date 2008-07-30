@@ -501,7 +501,7 @@ class OrderSummaryComponent( viewlet.ViewletBase ):
 
         # this check really shouldn't be hardcoded here.. -kapilt
         user = pm.getAuthenticatedMember()
-        if not 'Manager' in user.getRoles():
+        if not user.has_permission('PloneGetPaid: Manage Orders',self.context):
             user_id = user.getId()
             if 'Anonymous' in user.getRoles() or user_id != self.getUserId():
                 raise Unauthorized, "Arbitrary Order Access Only for Managers"

@@ -25,6 +25,9 @@
 <include package="five.intid" file="base.zcml"/>
 <include file="intid.zcml" />
 
+<!-- permissions -->
+<include file="permissions.zcml" />
+
 <!-- Commenting on Orders 
 <include package="zc.comment" />
 -->

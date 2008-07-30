@@ -33,7 +33,7 @@
      for="*"
      name="manage-getpaid-order-template"
      template="templates/orders-template.pt"
-     permission="cmf.ManagePortal"
+     permission="plonegetpaid.ManageOrders"
      />
 
   <!-- <include file="menu.zcml" /> -->
@@ -44,7 +44,7 @@
      for="getpaid.core.interfaces.IStore"
      name="manage-getpaid-import-export"
      class=".io.AdminImportExport"
-     permission="cmf.ManagePortal"
+     permission="plonegetpaid.ManageOrders"
      menu="getpaid_settings"
      title="Import/Export"
      />
@@ -69,14 +69,14 @@
      title="Orders"
      class=".admin_order.ManageOrders"
      template="templates/orders-manage.pt"
-     permission="cmf.ManagePortal"
+     permission="plonegetpaid.ManageOrders"
      />
 
   <browser:page
      for="getpaid.core.interfaces.IStore"
      name="admin-manage-order"
      class=".admin_order.AdminOrderRoot"
-     permission="cmf.ManagePortal"
+     permission="plonegetpaid.ManageOrders"
      />
 
 
@@ -85,7 +85,7 @@
      name="admin"
      class=".admin_order.AdminOrder"
      template="templates/order-manage.pt"
-     permission="cmf.ManagePortal"
+     permission="plonegetpaid.ManageOrders"
      />
 
 
@@ -173,7 +173,7 @@
      name="order-workflow-log"
      manager="..interfaces.IAdminOrderManager"
      class=".admin_order.OrderWorkflowLog"
-     permission="cmf.ManagePortal"
+     permission="plonegetpaid.ManageOrders"
      />
 
   <!-- 
