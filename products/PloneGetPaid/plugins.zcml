@@ -44,5 +44,9 @@
 <!-- Reports - RDB Sync -->
 <include zcml:condition="installed getpaid.report"
 	 package="getpaid.report" />
+
+<!-- Salesforce Data submition -->
+<include zcml:condition="installed getpaid.salesforce"
+	 package="getpaid.salesforce" />	 
 	 
 </configure>	 
