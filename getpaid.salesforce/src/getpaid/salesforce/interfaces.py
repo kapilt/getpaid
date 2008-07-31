@@ -26,7 +26,7 @@ class ISalesforceAdapter( ICheckoutAdapter ):
         """
         pass
 
-class ISalesforceOptions( interfaces.IPersistentOptions ):
+class ISalesforceOptions( IPersistentOptions ):
     """
     Options for salesforce adapter
     """

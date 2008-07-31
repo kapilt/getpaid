@@ -1,7 +1,7 @@
 """
 $Id: $
 """
-
+from StringIO import StringIO
 from zope import component, interface
 from getpaid.core.interfaces import IPluginManager
 from getpaid.salesforce import interfaces

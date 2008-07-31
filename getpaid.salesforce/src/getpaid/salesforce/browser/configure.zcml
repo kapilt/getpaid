@@ -2,6 +2,10 @@
            xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:zcml="http://namespaces.zope.org/zcml">
 
+  <browser:menu
+     id="getpaid_salesforce"
+     title="GetPaid Salesforce"
+     />
   <!-- Management Legal Disclaimer Options -->
   <browser:page
      for="getpaid.core.interfaces.IStore"
