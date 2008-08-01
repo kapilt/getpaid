@@ -24,9 +24,9 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.3'
+version = '0.4'
 
-setup(name='itsoc.content',
+setup(name='getpaid.discount',
       version=version,
       description="package for plone getpaid handling discounts",
       long_description=open(os.path.join("src", "getpaid", "discount", "README.txt")).read(),
