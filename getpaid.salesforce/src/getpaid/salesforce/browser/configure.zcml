@@ -2,10 +2,13 @@
            xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:zcml="http://namespaces.zope.org/zcml">
 
-  <browser:menu
-     id="getpaid_salesforce"
-     title="GetPaid Salesforce"
-     />
+    <!-- Property Storage for Configuration Options -->
+  <adapter
+    for="getpaid.core.interfaces.IStore"
+    provides="..interfaces.ISalesforceOptions"
+    factory=".admin.SalesforceConfigurationPreferences"
+    />
+
   <!-- Management Legal Disclaimer Options -->
   <browser:page
      for="getpaid.core.interfaces.IStore"

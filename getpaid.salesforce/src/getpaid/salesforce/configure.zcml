@@ -4,8 +4,7 @@
 
   <i18n:registerTranslations directory="locales" />
 
-  <include package=".browser"/>
-    
+      
   <!-- Plugin Manager -->
   <adapter
      for="getpaid.core.interfaces.IStore"
@@ -21,6 +20,7 @@
      handler=".plugin.storeInstalled"
      />
 
+    <include package=".browser"/>
 
 
 </configure>
