@@ -29,8 +29,7 @@ version = '0.3'
 setup(name='itsoc.content',
       version=version,
       description="package for plone getpaid handling discounts",
-      long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+      long_description=open(os.path.join("src", "getpaid", "discount", "README.txt")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",
