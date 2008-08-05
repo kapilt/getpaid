@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PloneGetPaid VERSION\n"
-"POT-Creation-Date: 2008-04-24 19:54+0000\n"
+"POT-Creation-Date: 2008-08-05 16:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: Lucie Lejard <lucie@sixfeetup.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgstr "Une liste d'années"
 msgid "A name you remember this address by. Will not appear on shipping label."
 msgstr "Un nom pour identifier cette adresse. Cette information n'apparaîtra pas sur l'étiquette à l'envoi."
 
-#: ./browser/checkout.py:407
+#: ./browser/checkout.py:446
 msgid "A new address has been saved"
 msgstr "Une nouvelle adresse a été enregistrée"
 
@@ -41,7 +41,7 @@ msgstr "Une nouvelle adresse a été enregistrée"
 msgid "Accepted Credit Cards"
 msgstr "Cartes bancaires acceptées"
 
-#: ./browser/content.py:103
+#: ./browser/content.py:87
 msgid "Activate"
 msgstr "Activer"
 
@@ -63,12 +63,12 @@ msgstr "Montant"
 msgid "Apply"
 msgstr "Appliquer"
 
-#: ./browser/checkout.py:522
+#: ./browser/checkout.py:568
 msgid "Back"
 msgstr "Retour"
 
 #. Default: "Billing Address"
-#: ./browser/templates/checkout-review-pay.pt:22
+#: ./browser/templates/order-summary.pt:46
 msgid "Billing Address"
 msgstr "Adresse de facturation"
 
@@ -84,11 +84,11 @@ msgstr "Contenu achetable délivré sur le web/virtuellement"
 msgid "Buyable Types"
 msgstr "Types achetables"
 
-#: ./browser/checkout.py:409
+#: ./browser/checkout.py:448
 msgid "Cancel"
 msgstr "Annuler"
 
-#: ./browser/cart.py:278
+#: ./browser/cart.py:281
 msgid "Checkout"
 msgstr "Passer la commande"
 
@@ -158,19 +158,19 @@ msgstr "Types de contenu disponibles pour l'adhésion premium"
 msgid "Content Types that represent goods that can be purchased and shipped"
 msgstr "Types de contenu qui représentent des biens qui peuvent être achetés et expédiés"
 
-#: ./browser/admin_order.py:737
+#: ./browser/admin_order.py:727
 msgid "Contents"
 msgstr "Contenu"
 
-#: ./browser/checkout.py:415
+#: ./browser/checkout.py:454
 msgid "Continue"
 msgstr "Continuer"
 
-#: ./browser/cart.py:260
+#: ./browser/cart.py:261
 msgid "Continue Shopping"
 msgstr "Continuer les achats"
 
-#: ./browser/cart.py:344
+#: ./browser/cart.py:330
 msgid "Could not find order"
 msgstr "Impossible de trouver la commande"
 
@@ -264,7 +264,7 @@ msgstr "Exporter tout"
 msgid "Export Search"
 msgstr "Exporter la recherche"
 
-#: ./browser/cart.py:333
+#: ./browser/cart.py:319
 msgid "Fill"
 msgstr "Remplir"
 
@@ -280,7 +280,7 @@ msgstr "Avancement"
 msgid "Import"
 msgstr "Importer"
 
-#: ./browser/admin_order.py:724
+#: ./browser/admin_order.py:714
 msgid "Item Id"
 msgstr "Identifiant de l'article"
 
@@ -289,11 +289,11 @@ msgid "Legal Disclaimers"
 msgstr "Informations légales"
 
 #. Default: "Mailing Address"
-#: ./browser/templates/checkout-review-pay.pt:30
+#: ./browser/templates/order-summary.pt:56
 msgid "Mailing Address"
 msgstr "Adresse de livraison"
 
-#: ./browser/checkout.py:526
+#: ./browser/checkout.py:572
 msgid "Make Payment"
 msgstr "Payer"
 
@@ -305,7 +305,7 @@ msgstr "Notification par courrier électronique pour le commerçant"
 msgid "N/A"
 msgstr "N/D"
 
-#: ./browser/admin_order.py:725
+#: ./browser/admin_order.py:715
 msgid "Name"
 msgstr "Nom"
 
@@ -333,7 +333,7 @@ msgstr "Détails de la commande"
 msgid "Order Id"
 msgstr "Identification de la commande"
 
-#: ./browser/cart.py:308
+#: ./browser/cart.py:294
 msgid "Order Templates"
 msgstr "Modèles de commande"
 
@@ -384,7 +384,7 @@ msgstr ""
 msgid "Premium not implemented yet"
 msgstr ""
 
-#: ./browser/cart.py:356
+#: ./browser/cart.py:342
 msgid "Previous Order Loaded into Cart"
 msgstr "La commande précédante a été chargée dans le panier"
 
@@ -397,7 +397,7 @@ msgstr "Prix"
 msgid "Privacy Policy"
 msgstr "Politique de confidentialité"
 
-#: ./browser/admin_order.py:723
+#: ./browser/admin_order.py:713
 msgid "Quantity"
 msgstr "Quantité"
 
@@ -405,12 +405,17 @@ msgstr "Quantité"
 msgid "Sales Tax Configuration"
 msgstr "Configuration des taxes pour la vente"
 
+#. Default: "Same as billing"
+#: ./browser/templates/order-summary.pt:65
+msgid "Same as billing"
+msgstr ""
+
 #. Default: "Save to address book"
 #: ./browser/templates/checkout-address.pt:55
 msgid "Save to address book"
 msgstr "Enregistrer dans le carnet d'adresses"
 
-#: ./browser/cart.py:309
+#: ./browser/cart.py:295
 msgid "Select a previous order to fill your cart."
 msgstr "Sélectionner une commande précédante pour remplir votre panier."
 
@@ -492,7 +497,7 @@ msgstr "Le Traitement du Paiement actuellement paramétré n'a pas été trouvé
 msgid "The list of months"
 msgstr "La liste des mois"
 
-#: ./browser/admin_order.py:727
+#: ./browser/admin_order.py:717
 msgid "Total"
 msgstr "Total"
 
@@ -504,7 +509,7 @@ msgstr "Format de la monnaie Américaine"
 msgid "US Dollars"
 msgstr "Dollars Américains"
 
-#: ./browser/cart.py:227
+#: ./browser/cart.py:228
 msgid "Update"
 msgstr "Mettre à jour"
 
@@ -566,7 +571,7 @@ msgid "heading_changed_by"
 msgstr "changé par"
 
 #. Default: "Checkout"
-#: ./browser/templates/checkout-review-pay.pt:4
+#: ./browser/templates/checkout-address.pt:12
 msgid "heading_checkout"
 msgstr "Passer la commande"
 
@@ -661,7 +666,7 @@ msgid "here"
 msgstr "ici"
 
 #. Default: "Add to Cart"
-#: ./browser/templates/portlet-content-buyable.pt:40
+#: ./browser/templates/portlet-content-shippable.pt:40
 msgid "label_add_to_cart"
 msgstr "Ajouter au Panier"
 
@@ -784,17 +789,17 @@ msgid "text_finance_status"
 msgstr "Status du paiement"
 
 #. Default: "Shipping Service"
-#: ./browser/templates/order-summary.pt:95
+#: ./browser/templates/order-summary.pt:73
 msgid "text_fulfillment_shipping_method"
 msgstr "Service de livraison"
 
 #. Default: "Shipment Tracking Numbers:"
-#: ./browser/templates/order-summary.pt:104
+#: ./browser/templates/order-summary.pt:82
 msgid "text_fulfillment_shipping_track_number"
 msgstr ""
 
 #. Default: "Shipment Weight"
-#: ./browser/templates/order-summary.pt:99
+#: ./browser/templates/order-summary.pt:77
 msgid "text_fulfillment_shipping_weight"
 msgstr ""
 
@@ -809,12 +814,12 @@ msgid "text_order_id"
 msgstr "Identification de la commande"
 
 #. Default: "Price: $ ${value_price}"
-#: ./browser/templates/portlet-content-buyable.pt:33
+#: ./browser/templates/portlet-content-shippable.pt:33
 msgid "text_price"
 msgstr "Prix: $ ${value_price}"
 
 #. Default: "Product Details"
-#: ./browser/templates/portlet-content-buyable.pt:12
+#: ./browser/templates/portlet-content-shippable.pt:12
 msgid "text_product_details"
 msgstr "Détails du produit"
 
