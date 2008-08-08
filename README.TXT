@@ -1,0 +1,1 @@
+On August 8th 2009, I [lucielejard] am doing the svn refactor of getpaid. Everything is going to be moved one level up. For more information, see http://code.google.com/p/getpaid/wiki/svnrefactor.
