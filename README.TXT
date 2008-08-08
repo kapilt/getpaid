@@ -10,7 +10,7 @@ svn: Target path does not exist
 
 Do the following:
  * if you are using the anonymous buildout:
-svn switch https://getpaid.googlecode.com/svn/getpaid-anonymous-buildout/trunk/
+svn switch http://getpaid.googlecode.com/svn/getpaid-anonymous-buildout/trunk/
 
  * if you are not using the anonymous buildout:
 svn switch https://getpaid.googlecode.com/svn/getpaid.buildout/trunk/
