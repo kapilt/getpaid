@@ -58,7 +58,10 @@ def handleFufilledOrder( order, event ):
     """            
     if not event.destination in ( 
         icore.workflow_states.order.fulfillment.DELIVERED,
-        icore.workflow_states.order.fulfillment.WILL_NOT_DELIVER ):
+        icore.workflow_states.shippable_order.fulfillment.DELIVERED,
+        icore.workflow_states.order.fulfillment.WILL_NOT_DELIVER,
+        icore.workflow_states.shippable_order.fulfillment.WILL_NOT_DELIVER):
+
         return
             
     for item in order.shopping_cart.values():
