@@ -35,7 +35,7 @@ Setting required settings. (Especially anonymous checkout)
     >>> browser.getLink('Site Profile').click()
     >>> browser.getControl('Contact Email').value = 'info@plonegetpaid.com'
     >>> browser.getControl( name="form.store_name").value = 'Test this fake company'
-    >>> browser.getControl('Contact Country').displayValue = ['UNITED STATES']
+    >>> browser.getControl('Contact Country').value = ['US']
     >>> browser.getControl('Apply').click()
     >>> browser.getLink('GetPaid').click()
     >>> browser.getLink('Content Types').click()
@@ -106,7 +106,7 @@ We check that the fields are not empty since now we are logged in
     >>> browser.getControl(name='form.bill_name').value = 'username'
     >>> browser.getControl(name='form.bill_first_line').value = 'here on earth'
     >>> browser.getControl(name='form.bill_city').value = 'doctic city'
-    >>> browser.getControl(name='form.bill_country').displayValue = ['UNITED STATES']
+    >>> browser.getControl(name='form.bill_country').value = ['US']
     >>> browser.getControl(name='form.bill_state').displayValue = ['Alabama']
     >>> browser.getControl(name='form.bill_postal_code').value = '5000'
     >>> browser.getControl(name='form.ship_same_billing').value = True
