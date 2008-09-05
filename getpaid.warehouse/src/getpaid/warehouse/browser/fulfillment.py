@@ -237,6 +237,8 @@ class OrderPickList( order.OrderContentsComponent ):
             return True
         if len(self.line_items):
             return True
+        if self.status:
+            return True
         return False
 
     def render( self ):
@@ -306,6 +308,8 @@ class OrderPickList( order.OrderContentsComponent ):
 
         # clear manager item cache and fetch
         self.status = _(u"Shipment Created")
+        self.update()
+        
 
     def transitionOrder( self ):
         
