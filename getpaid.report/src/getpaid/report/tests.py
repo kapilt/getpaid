@@ -11,8 +11,8 @@ from zope.app.intid.interfaces import IIntIds
 from zope.app.testing import placelesssetup, ztapi
 from getpaid.core.tests import base, generator
 
-from sqlalchemy.orm import session
-
+import session
+import transaction
 import sqlalchemy as rdb
 
 def setUpReport( ):
@@ -44,6 +44,7 @@ class ReportTests(unittest.TestCase):
     def test_orderSerialization(self):
         order = self.orders()
         subscriber.handleNewOrder( order, None )
+        transaction.commit()
         s = session.Session()
         _order = s.query( domain.Order ).filter(
             domain.Order.order_zid == order.order_id ).first()
@@ -64,11 +65,11 @@ class ReportTests(unittest.TestCase):
             )
 
         _entry = subscriber.handleInventoryModified( inventory, event )
-
         self.assertEqual( _entry.action, u"added")
         self.assertEqual( _entry.stock, 10 )
         self.assertEqual( _entry.quantity, 10 )
         self.assertEqual( _entry.product.content_uid, product.uid )
+        transaction.abort()
         
     def test_inventoryOrderModified( self ):
 
@@ -91,7 +92,14 @@ class ReportTests(unittest.TestCase):
 
         # serialize the inventory modified event
         _entry = subscriber.handleInventoryOrderFulfilled( inventory, event )
+        
+        transaction.commit()
 
+        # resurrect the detattached instances
+        s = session.Session()
+        s.update( _order )
+        s.update( _entry )
+        
         # verify serialization
         self.assertEqual( _order.order_id, _entry.order_id )
         self.assertTrue( isinstance(_entry.product_id, int ) )
@@ -105,7 +113,7 @@ class ReportTests(unittest.TestCase):
         order.finance_workflow.fireTransition('create')
         order.fulfillment_workflow.fireTransition('create')
         subscriber.handleOrderTransition( order, None )
-
+        transaction.commit()
         s = session.Session()
         _order = s.query( domain.Order ).filter(
             domain.Order.order_zid == order.order_id ).first()

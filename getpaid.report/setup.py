@@ -7,7 +7,8 @@ setup(
     author_email='kapil.foss@gmail.com',
     description="""Relational Reports For getpaid.core.""",
     license='X11',
-    keywords="zope zope3",    
+    keywords="zope zope3",
+    url="http://code.google.com/p/getpaid",
     install_requires=['setuptools', 'getpaid.core', 'getpaid.warehouse', 'SQLAlchemy>0.4'], # use in plone means bad requires spec
     dependency_links=['http://download.zope.org/distribution/',],
     packages=find_packages('src', exclude=["*.tests", "*.ftests"]),
