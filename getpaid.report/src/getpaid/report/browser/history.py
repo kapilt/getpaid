@@ -15,6 +15,9 @@ def orderLink( item, formatter):
     if item.order_id is None:
         return item.action
     oid = item.order.order_zid
+    resolved_product = item.product.resolve()
+    if resolved_product is None:
+        return u"Not Available"
     portal_absolute_url = getToolByName(item.product.resolve(),'portal_url').getPortalObject().absolute_url()
     return u'<a href="%s/@@admin-manage-order/%s/@@fulfillment">%s</a>'%(portal_absolute_url, oid, oid)
 

@@ -5,11 +5,12 @@ from sqlalchemy import orm
 
 import schema
 
+
 class Product( object ):
     """ a product to be purchased """
 
-    def resolve( self ):
-        return component.getUtility( IIntIds ).getObject( self.content_uid )
+    def resolve( self ):  
+        return component.getUtility( IIntIds ).queryObject(self.content_uid)
         
 class InventoryEntry( object ):
     """ product inventory log entry """

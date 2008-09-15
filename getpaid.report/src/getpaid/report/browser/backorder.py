@@ -7,6 +7,15 @@ from zc.table import column, table
 from getpaid.report import report
 from getpaid.report.i18n import _
 
+#getpaid.report is too prone to find errors caused by the data on the sql db
+#not being consistent with the data.fs so instead of lambda, we need to do
+# methods with a more complex error control.
+
+def description(item,f):
+    resolved_item = item.resolve()
+    if resolved_item:
+        resolved_item = resolved_item.Title()
+    return resolved_item or "Not Available"
 
 class BackorderReport( BrowserView ):
 
@@ -14,7 +23,7 @@ class BackorderReport( BrowserView ):
     
     columns = [
         column.GetterColumn( title=_(u"Product Code"), getter=lambda i,f:i.product_code ),
-        column.GetterColumn( title=_(u"Description"), getter=lambda i,f:i.resolve().Title() ),
+        column.GetterColumn( title=_(u"Description"), getter=description ),
         column.GetterColumn( title=_(u"Total Backordered"), getter=lambda i,f:abs(i.stock_reserve) ),
         ]
 
