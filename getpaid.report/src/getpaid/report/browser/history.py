@@ -4,6 +4,8 @@ $Id: $
 
 from Products.Five.browser import BrowserView
 
+from Products.CMFCore.utils import getToolByName
+
 from zc.table import column, table
 
 from getpaid.report import report
@@ -13,7 +15,8 @@ def orderLink( item, formatter):
     if item.order_id is None:
         return item.action
     oid = item.order.order_zid
-    return u'<a href="@@admin-manage-order/%s/@@fulfillment">%s</a>'%( oid, oid )
+    portal_absolute_url = getToolByName(item.product.resolve(),'portal_url').getPortalObject().absolute_url()
+    return u'<a href="%s/@@admin-manage-order/%s/@@fulfillment">%s</a>'%(portal_absolute_url, oid, oid)
 
 class ProductHistoryReport( BrowserView ):
 
