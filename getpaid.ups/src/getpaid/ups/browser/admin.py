@@ -3,6 +3,8 @@ $Id: $
 """
 import StringIO, csv, time
 
+from math import ceil
+
 from zope import component
 from zope.app import zapi
 from zope.formlib import form
@@ -83,6 +85,8 @@ def getAddressInfo(order,field):
 
     return '%s' % order_info[field]
 
+
+
 class OrderCSVWorldShipComponent( core.ComponentViewlet ):
 
     template = ZopeTwoPageTemplateFile('templates/orders-export-worldship-csv.pt')
@@ -98,7 +102,7 @@ class OrderCSVWorldShipComponent( core.ComponentViewlet ):
         search = self.manager.get('orders-search')
         
         io = StringIO.StringIO()
-        writer = csv.writer( io )
+        writer = csv.writer(io,delimiter=',')
         
         writer.writerow( ["OrderNumber", 
                         "CompanyorName",
@@ -116,7 +120,9 @@ class OrderCSVWorldShipComponent( core.ComponentViewlet ):
                         "ShipNotifyByEmail",
                         "EMailAddress",
                         "Weight",
-                        "ServiceType"])
+                        "ServiceType",
+                        "BillingOpt",
+                        "Package"])
 
 
         field_getters = []
@@ -151,12 +157,18 @@ class OrderCSVWorldShipComponent( core.ComponentViewlet ):
         #EMailAddress
         field_getters.append(lambda x,y: getAddressInfo(x,'email'))
         #Weight
-        field_getters.append(lambda x,y: getAddressInfo(x,'weight'))
+        field_getters.append(lambda x,y:  getAddressInfo(x,'weight') != 'N/A' and ceil(float(getAddressInfo(x,'weight'))) or getAddressInfo(x,'weight'))
         #Service Type
         field_getters.append(lambda x,y: getAddressInfo(x,'service'))
+        #We need to make a conf screen for these values
+        #BillingOPT
+        field_getters.append(lambda x,y: "Prepaid")
+        #Package
+        field_getters.append(lambda x,y: "UPS PAK")
+
 
         for order in search.results:
-            writer.writerow( [getter( order, None ) for getter in field_getters ] )
+            writer.writerow( ['"%s"' % getter( order, None ) for getter in field_getters ] )
 
         # um.. send to user, we need to inform our view, to do the appropriate thing
         # since we can't directly control the response rendering from the viewlet
