@@ -137,7 +137,9 @@ class OrderCSVWorldShipComponent( core.ComponentViewlet ):
                         "Weight",
                         "ServiceType",
                         "BillingOpt",
-                        "Package"])
+                        "Package",
+                        "BillShipmentTo",
+                        "PackageType"])
 
 
         field_getters = []
@@ -180,6 +182,11 @@ class OrderCSVWorldShipComponent( core.ComponentViewlet ):
         field_getters.append(lambda x,y: "Prepaid")
         #Package
         field_getters.append(lambda x,y: "UPS PAK")
+        #BillShippmentTo
+        field_getters.append(lambda x,y: "SHP")
+        #PackageType
+        field_getters.append(lambda x,y: "CP")
+
 
 
         for order in search.results:
