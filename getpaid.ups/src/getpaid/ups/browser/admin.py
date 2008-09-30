@@ -23,6 +23,21 @@ from Products.PloneGetPaid.vocabularies import TitledVocabulary
 
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 
+UPS_SERVICES_ABBREVIATIONS = {
+ "Next Day Air":"1DA",
+ "UPS Ground" : "GND",
+ "UPS Worldwide Express" : "ES",
+ "UPS Standard" : "ST",
+ "UPS Saver" : "SV",
+ "UPS 2nd Day Air" : "2DA",
+ "UPS Worldwide Expedited" : "EX",
+ "UPS 3 Day Select" : "3DS",
+ "UPS Next Day Air Saver" : "1DP",
+ "UPS Next Day Early AM" : "1DM",
+ "UPS Worldwide Express Plus" : "EP",
+ "UPS 2nd Day Air AM" : "2DM"
+}
+
 class UPSSettings( EditFormViewlet ):
     
     form_name = _(u"UPS Settings")
@@ -159,7 +174,7 @@ class OrderCSVWorldShipComponent( core.ComponentViewlet ):
         #Weight
         field_getters.append(lambda x,y:  getAddressInfo(x,'weight') != 'N/A' and ceil(float(getAddressInfo(x,'weight'))) or getAddressInfo(x,'weight'))
         #Service Type
-        field_getters.append(lambda x,y: getAddressInfo(x,'service'))
+        field_getters.append(lambda x,y: UPS_SERVICES_ABBREVIATIONS[getAddressInfo(x,'service')])
         #We need to make a conf screen for these values
         #BillingOPT
         field_getters.append(lambda x,y: "Prepaid")
