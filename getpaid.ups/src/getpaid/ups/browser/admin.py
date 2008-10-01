@@ -24,14 +24,14 @@ from Products.PloneGetPaid.vocabularies import TitledVocabulary
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 
 UPS_SERVICES_ABBREVIATIONS = {
- "Next Day Air":"1DA",
+ "UPS Next Day Air":"1DA",
  "UPS Ground" : "GND",
  "UPS Worldwide Express" : "ES",
  "UPS Standard" : "ST",
  "UPS Saver" : "SV",
  "UPS 2nd Day Air" : "2DA",
  "UPS Worldwide Expedited" : "EX",
- "UPS 3 Day Select" : "3DS",
+ "UPS Three Day Select" : "3DS",
  "UPS Next Day Air Saver" : "1DP",
  "UPS Next Day Early AM" : "1DM",
  "UPS Worldwide Express Plus" : "EP",
