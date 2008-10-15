@@ -33,7 +33,7 @@ UPS_SERVICES_ABBREVIATIONS = {
  "UPS Worldwide Expedited" : "EX",
  "UPS Three Day Select" : "3DS",
  "UPS Next Day Air Saver" : "1DP",
- "UPS Next Day Early AM" : "1DM",
+ "UPS Next Day Air Early AM" : "1DM",
  "UPS Worldwide Express Plus" : "EP",
  "UPS 2nd Day Air AM" : "2DM"
 }
