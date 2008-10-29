@@ -1,0 +1,24 @@
+g<metal:page use-macro="context/@@manage-getpaid-settings-template/macros/admin">
+  <metal:block fill-slot="admin_content">
+	    <p>
+	      <span i18n:translate="description_getpaid_setup_documentation">Documentation
+	      on GetPaid can be found
+	      at <span i18n:name="label_plone_documentation"><a href="http://plone.org/products/getpaid/documentation">http://plone.org/products/getpaid/documentation</a></span>
+	      .</span>
+	    </p>
+
+  <div id="getpaid-admin-column-1">
+    <h3 i18n:translate="heading_configure">Fulfillment Report </h3>
+
+    <metal:block use-macro="context/@@getpaid-form/form">    
+        Form
+    </metal:block>
+
+    <div tal:condition="view/entries" 
+	 tal:replace="structure view/listing">
+        Results
+     </div>
+  </div>	    
+
+  </metal:block>
+</metal:page>

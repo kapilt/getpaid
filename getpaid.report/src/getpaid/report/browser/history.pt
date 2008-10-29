@@ -1,0 +1,12 @@
+<metal:page use-macro="context/@@getpaid-content-template/macros/content_space">
+  <metal:block fill-slot="getpaid_content">
+
+  <div id="getpaid-admin-column-1">
+    <h3 i18n:translate="heading_configure">Product Order History </h3>
+
+      <div tal:replace="structure view/listing">
+      </div>
+  </div>	    
+
+  </metal:block>
+</metal:page>

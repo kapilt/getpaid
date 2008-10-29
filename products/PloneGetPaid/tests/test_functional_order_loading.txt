@@ -1,0 +1,183 @@
+==============================================================================
+Doctest generated Mon Oct 15 2007 12:36:37 GMT+0200 (CEST)
+by cjj
+==============================================================================
+
+Create the browser object we'll be using.
+
+    >>> from Products.Five.testbrowser import Browser
+    >>> browser = Browser()
+    >>> browser.handleErrors = False
+    >>> browser.open(portal.absolute_url())
+    >>> 'Welcome to Plone' in browser.contents
+    True
+
+Testing checkout process for authenticated user (in this case, admin)
+
+     >>> membership = self.portal.portal_membership
+     >>> membership.addMember('testmanager', 'secret',
+     ...		     ['Member', 'Manager'], [])
+
+     >>> browser.getLink('Log in').click()
+     >>> browser.getControl('Login Name').value = 'testmanager'
+     >>> browser.getControl('Password').value = 'secret'
+     >>> browser.getControl('Log in').click()
+
+     >>> self.portal.portal_quickinstaller.installProduct('PloneGetPaid')
+     'Installing Dependencies\n'
+     >>> browser.getLink('Home').click()
+     
+Testing the setup aspects of GetPaid. Setting required settings. 
+
+    >>> browser.getLink('Site Setup').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Site Profile').click()
+    >>> browser.getControl('Contact Email').value = 'info@plonegetpaid.com'
+    >>> browser.getControl( name="form.store_name").value = 'Test this fake company'
+    >>> browser.getControl('Contact Country').value = ['US']
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Content Types').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Payment Options').click()
+    >>> browser.getControl(name = 'form.payment_processor').displayValue = ['Testing Processor']
+    >>> browser.getControl(name = 'form.allow_anonymous_checkout.used').value = 'on'
+    >>> browser.getControl(name = 'form.allow_anonymous_checkout').value = True
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Payment Processor Settings').click()
+    >>> browser.getControl(name="form.allow_authorization").displayValue = ['allow_authorization']
+    >>> browser.getControl(name="form.allow_capture").displayValue = ['allow_capture']
+    >>> browser.getControl(name="form.allow_refunds").displayValue = ['allow_refund']    
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Email Notifications').click()
+    >>> browser.getControl(name='form.merchant_email_notification').displayValue = ['Do not send merchant email notification of a completed transaction']
+    >>> browser.getControl(name='form.customer_email_notification').displayValue = ['Do not send customer email notification of a completed transaction']
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Legal Disclaimers').click()
+    >>> browser.getControl(name='form.disclaimer').value = 'Test disclaimer'
+    >>> browser.getControl(name='form.privacy_policy').value = 'Test privacy policy'
+    >>> browser.getControl('Apply').click()
+    >>> browser.getLink('GetPaid').click() 
+    >>> 'Test this fake company' in browser.contents
+    True
+
+Here we are setting the buyable types for use in the following tests
+  
+    >>> from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions
+    >>> options = IGetPaidManagementOptions(self.portal)
+    >>> options.buyable_types = ['Document']
+    >>> options.donate_types = ['Document']
+    >>> options.shippable_types = ['Document']
+
+Here we set up the Credit cards accepted for payment:
+
+   >>> options.accepted_credit_cards = ["Visa"]
+
+Check to make sure the settings we put in Site Profile appear on this page. 
+
+     >>> browser.getLink('Home').click()
+
+Setup Buyable
+
+    >>> browser.getLink('Make Buyable').click()
+    >>> browser.getControl('Product Code').value = 'PAY-ME'
+    >>> browser.getControl('Price').value = '42.17'
+    >>> browser.getControl('Activate').click()
+     
+Test donation checkout, which should go directly to checkout screen from the portlet. 
+
+    >>> browser.getLink('Add to Cart').click()
+
+Test no order templates if no purchase has been made
+
+    >>> "Order Templates" not in browser.contents
+    True
+
+Continue the checkout process
+
+    >>> browser.getControl('Checkout').click()
+    >>> browser.getControl('Your Name').value = 'Test'
+    >>> browser.getControl('Phone Number').value = '1234567'
+    >>> browser.getControl('Phone Number').value = '12345678'
+    >>> browser.getControl(name='form.email').value = 'test@test.com'
+    >>> browser.getControl(name='form.bill_name').value = 'Test'
+    >>> browser.getControl(name='form.bill_first_line').value = 'Test'
+    >>> browser.getControl(name='form.bill_city').value = 'Test'
+    >>> browser.getControl(name='form.bill_state').value = ('US-HI',)
+    >>> browser.getControl(name='form.bill_postal_code').value = '12345'
+    >>> browser.getControl(name='form.ship_first_line').value = 'Test'
+    >>> browser.getControl(name='form.ship_city').value = 'Test'
+    >>> browser.getControl(name='form.ship_state').value = ('US-HI',)
+    >>> browser.getControl(name='form.ship_postal_code').value = '12345'
+
+Now go to the next form.
+
+    >>> browser.getControl('Continue').click()
+    >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
+    >>> browser.getControl(name='form.cc_expiration_month').value = ('02',)
+    >>> browser.getControl(name='form.cc_expiration_year').value = ('2009',)
+    >>> browser.getControl(name='form.bill_phone_number').value = '555555555'
+
+Use real test credit card numbers, available from http://developer.authorize.net/faqs/#7429
+
+    >>> browser.getControl('Credit Card Verfication Number').value = '1234'
+    >>> browser.getControl('Credit Card Number').value = '4007000000027'
+    >>> browser.getControl('Credit Card Type').value = ('Visa',)
+    >>> browser.getControl('Make Payment').click()
+    >>> browser.open(portal.absolute_url() + '/@@getpaid-cart')
+    >>> 'Order Templates' in browser.contents
+    True
+    >>> len (browser.getControl(name="order-template-id").options)
+    1
+    
+Good, the order filling is there and has a template, does it works?
+
+    >>> browser.getControl("Fill").click()
+    >>> "Welcome to Plone" in browser.contents
+    True
+
+And if we name it?
+
+    >>> browser.getControl('Checkout').click()
+    >>> browser.getControl('Your Name').value = 'Test'
+    >>> browser.getControl('Phone Number').value = '1234567'
+    >>> browser.getControl('Phone Number').value = '12345678'
+    >>> browser.getControl(name='form.email').value = 'test@test.com'
+    >>> browser.getControl(name='form.bill_name').value = 'Test'
+    >>> browser.getControl(name='form.bill_first_line').value = 'Test'
+    >>> browser.getControl(name='form.bill_city').value = 'Test'
+    >>> browser.getControl(name='form.bill_state').value = ('US-HI',)
+    >>> browser.getControl(name='form.bill_postal_code').value = '12345'
+    >>> browser.getControl(name='form.ship_first_line').value = 'Test'
+    >>> browser.getControl(name='form.ship_city').value = 'Test'
+    >>> browser.getControl(name='form.ship_state').value = ('US-HI',)
+    >>> browser.getControl(name='form.ship_postal_code').value = '12345'
+
+Now go to the next form, again.
+
+    >>> browser.getControl('Continue').click()
+    >>> browser.getControl('Card Holder Name').value = 'Test Cardholder'
+    >>> browser.getControl(name='form.cc_expiration_month').value = ('02',)
+    >>> browser.getControl(name='form.cc_expiration_year').value = ('2009',)
+    >>> browser.getControl(name='form.bill_phone_number').value = '555555555'
+
+Use real test credit card numbers, available from http://developer.authorize.net/faqs/#7429
+
+    >>> browser.getControl('Credit Card Verfication Number').value = '1234'
+    >>> browser.getControl('Credit Card Number').value = '4007000000027'
+    >>> browser.getControl('Credit Card Type').value = ('Visa',)
+    >>> browser.getControl(name="order_template_entry_name").value = "thegreatestorderever"
+    >>> browser.getControl('Make Payment').click()
+
+Did it work, did it work?
+
+    >>> browser.open(portal.absolute_url() + '/@@getpaid-cart')
+    >>> 'Order Templates' in browser.contents
+    True
+    >>> "thegreatestorderever" in browser.getControl(name="order-template-id").displayOptions
+    True
+    
+

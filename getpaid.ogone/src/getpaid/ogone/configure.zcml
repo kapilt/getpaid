@@ -1,0 +1,18 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+  xmlns:five="http://namespaces.zope.org/five">
+
+   <adapter
+      for="getpaid.core.interfaces.IStore"
+      provides=".interfaces.IOgoneStandardOptions"
+      factory=".ogone.OgoneStandardOptions" />
+
+   <adapter
+      for="getpaid.core.interfaces.IStore"
+      provides="getpaid.core.interfaces.IPaymentProcessor"
+      name="Ogone Payments"
+      factory=".ogone.OgoneStandardProcessor" />
+
+   <include package=".browser" />
+   <include file="vocabulary.zcml" />
+
+</configure>

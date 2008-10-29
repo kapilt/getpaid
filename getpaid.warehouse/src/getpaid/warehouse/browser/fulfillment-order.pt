@@ -1,0 +1,17 @@
+<metal:page use-macro="context/@@manage-getpaid-order-template/macros/admin"
+            i18n:domain="plonegetpaid">
+
+  <metal:block fill-slot="admin_content">
+
+	<tal:block content="structure provider:getpaid.order.fulfillment">
+	</tal:block>
+
+    <div class="documentActions">
+       <a href="javascript:this.print()" i18n:domain="plone" i18n:translate="">
+           Print this page
+       </a>
+    </div>
+
+  </metal:block>
+
+</metal:page>

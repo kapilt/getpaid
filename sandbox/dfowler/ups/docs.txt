@@ -1,0 +1,17 @@
+Documentation on the UPS interface
+==================================
+By Dave Fowler
+
+
+First to run my tools you'll need lxml.  Get it easily with easy_install
+
+easy_install lxml
+
+
+UPS is kind of a pain.  You have to go through a somewhat lengthy registration process to use their tools. You need to go to the Get UPS OnLine Tools page at 
+
+http://www.ups.com/e_comm_access/gettools_index?loc=en_US
+
+And follow the "Six easy steps" to get a ups usernam, developer's key and access key.  You can also get the UPS documentation from there.  Don't forget to go all the way through and make sure you get the XML developer's key.  I beleive everyone using this utility will have to do the same so an admin interface for the tool will have to be made for the setup.
+
+

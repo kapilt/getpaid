@@ -1,0 +1,8 @@
+#
+# Apply this file: svn propset svn:externals -F EXTERNALS.txt .
+#
+
+develop-products http://getpaid.googlecode.com/svn/branches/0.6.1/products
+develop-debug http://svn.objectrealms.net/svn/public/vendor/z2_dev_bundle
+wiki http://getpaid.googlecode.com/svn/wiki
+recipes http://getpaid.googlecode.com/svn/branches/0.6.1/getpaid.buildout/recipes

@@ -1,0 +1,107 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:i18n="http://namespaces.zope.org/i18n">
+
+  <i18n:registerTranslations directory="locales" />
+  <include package=".workflow" />
+
+  <!-- Per Order Log of Workflow Events -->
+  <subscriber
+     handler=".order.recordOrderWorkflow"
+     for=".interfaces.IOrder
+          hurry.workflow.interfaces.IWorkflowTransitionEvent"
+     />
+
+  <!-- Fire Automatic finance state transitions -->
+  <subscriber
+     handler=".payment.fireAutomaticTransitions"
+     for=".interfaces.IOrder
+	  hurry.workflow.interfaces.IWorkflowTransitionEvent"
+     />
+     
+  <!-- Reindex Orders on workflow changes -->
+  <subscriber
+     for=".interfaces.IOrder
+	  hurry.workflow.interfaces.IWorkflowTransitionEvent"
+     handler=".order.reindexOrder"
+     />
+
+  <!-- Kick off Fulfillment workflow on Orders -->
+  <subscriber
+      for=".interfaces.IOrder
+           zope.app.event.interfaces.IObjectCreatedEvent"
+      handler=".order.startOrderFulfillmentWorkflow"
+      />
+
+  <!-- Payment Processor Workflow Integration -->
+  <subscriber
+     handler=".payment.processorWorkflowSubscriber"
+     for=".interfaces.IOrder
+	  hurry.workflow.interfaces.IWorkflowTransitionEvent"
+     />
+
+  <adapter
+     for=".interfaces.IOrder
+          .interfaces.IDefaultFinanceWorkflow"
+     provides=".interfaces.IWorkflowPaymentProcessorIntegration"
+     factory=".payment.DefaultFinanceProcessorIntegration"
+     />
+
+  <adapter
+     for=".interfaces.IOrder"
+     provides=".interfaces.IOrderWorkflowLog"
+     factory=".order.OrderWorkflowLog"
+     />
+     
+     
+  <!-- Misc -->
+
+  <adapter
+     for=".interfaces.IShoppingCart"
+     provides=".interfaces.ILineContainerTotals"
+     factory=".cart.CartItemTotals"
+     />
+     
+
+  <adapter
+     name="default"
+     factory=".router.OriginRouter"
+     />     
+
+  <!-- Credit card types -->
+  <adapter
+    for="*"
+    provides=".interfaces.ICreditCardTypeEnumerator"
+    factory=".payment.CreditCardTypeEnumerator"
+    />
+
+  <vocabulary
+    name="getpaid.core.credit_card_types"
+    factory=".vocabularies.CreditCardTypes"
+    />
+
+  <vocabulary
+    name="getpaid.core.accepted_credit_card_types"
+    factory=".vocabularies.AcceptedCreditCardTypes"
+    />
+
+  <!-- Reports -->
+  <adapter
+	 for=".interfaces.IStore"
+	 provides=".interfaces.IOrderSetReport"
+	 factory=".reports.AttributeCSVSetReport"
+	 name="default-csv"
+	 />
+
+  <!-- Taxes -->
+  <utility
+     provides=".interfaces.ITaxUtility"
+     factory=".tax.TaxUtility"
+     />
+
+  <!-- Shipping -->
+  <utility
+     provides=".interfaces.IShippingMethod"
+     factory=".shipping.ShippingMethod"
+     />
+
+</configure>

@@ -1,0 +1,333 @@
+==================
+Formatter Batching
+==================
+
+Batching support for zc.table formatters.
+
+
+------------
+Paging tests
+------------
+
+A paginator object provides navigation parameters from batch paramaters.
+A batch navigation renderer produces the html from a paginator
+
+    >>> from yoma.batching import Paginator
+    >>> from yoma.batching import RenderNav
+
+    >>> class Request(dict):
+    ...
+    ...     def __init__(self, url, **kw):
+    ...         super(Request, self).__init__(kw)
+    ...         self.url = url
+    ...
+    ...     def getURL(self):
+    ...         return self.url
+
+    >>> render = RenderNav(None, Request(u'http://host/@@search.html'))
+
+start...
+
+    >>> p = Paginator(bstart=0, bsize=3, nitems=23)
+    >>> print p.pre, p.cur, p.post
+    [] (1, 0) [(2, 3), (3, 6), (4, 9), (5, 12), (6, 15), (7, 18), (8, 21)]
+
+    >>> print p.prev, p.next
+    None None
+
+    >>> print render(p)
+    <div class="batch navigation">
+    <span class="current">1</span>
+    <a href="http://host/@@search.html?bstart=3">2</a>
+    <a href="http://host/@@search.html?bstart=6">3</a>
+    <a href="http://host/@@search.html?bstart=9">4</a>
+    <a href="http://host/@@search.html?bstart=12">5</a>
+    <a href="http://host/@@search.html?bstart=15">6</a>
+    <a href="http://host/@@search.html?bstart=18">7</a>
+    <a href="http://host/@@search.html?bstart=21">8</a>
+    </div>
+    <BLANKLINE>
+
+
+with margin...
+
+    >>> p = Paginator(bstart=0, bsize=3, nitems=31, margin=2)
+    >>> print p.pre, p.cur, p.post
+    [] (1, 0) [(2, 3), (3, 6), (4, 9), (5, 12)]
+
+    >>> print p.prev, p.next
+    None (6, 15)
+
+    >>> print render(p)
+    <div class="batch navigation">
+    <span class="current">1</span>
+    <a href="http://host/@@search.html?bstart=3">2</a>
+    <a href="http://host/@@search.html?bstart=6">3</a>
+    <a href="http://host/@@search.html?bstart=9">4</a>
+    <a href="http://host/@@search.html?bstart=12">5</a>
+    <a href="http://host/@@search.html?bstart=15">Next</a>
+    </div>
+    <BLANKLINE>
+
+
+next page...
+
+    >>> p = Paginator(bstart=3, bsize=3, nitems=31, margin=3)
+    >>> print p.pre, p.cur, p.post
+    [(1, 0)] (2, 3) [(3, 6), (4, 9), (5, 12), (6, 15), (7, 18)]
+
+    >>> print p.prev, p.next
+    None (8, 21)
+
+    >>> print render(p)
+    <div class="batch navigation">
+    <a href="http://host/@@search.html?bstart=0">1</a>
+    <span class="current">2</span>
+    <a href="http://host/@@search.html?bstart=6">3</a>
+    <a href="http://host/@@search.html?bstart=9">4</a>
+    <a href="http://host/@@search.html?bstart=12">5</a>
+    <a href="http://host/@@search.html?bstart=15">6</a>
+    <a href="http://host/@@search.html?bstart=18">7</a>
+    <a href="http://host/@@search.html?bstart=21">Next</a>
+    </div>
+    <BLANKLINE>
+
+
+next... page...
+
+    >>> p = Paginator(bstart=9, bsize=3, nitems=31, margin=3)
+    >>> print p.pre, p.cur, p.post
+    [(1, 0), (2, 3), (3, 6)] (4, 9) [(5, 12), (6, 15), (7, 18)]
+
+    >>> print p.prev, p.next
+    None (8, 21)
+
+    >>> p = Paginator(bstart=18, bsize=3, nitems=31, margin=3)
+    >>> print p.pre, p.cur, p.post
+    [(4, 9), (5, 12), (6, 15)] (7, 18) [(8, 21), (9, 24), (10, 27)]
+
+    >>> print p.prev, p.next
+    (1, 0) (11, 30)
+
+    >>> print render(p)
+    <div class="batch navigation">
+    <a href="http://host/@@search.html?bstart=0">Prev</a>
+    <a href="http://host/@@search.html?bstart=9">4</a>
+    <a href="http://host/@@search.html?bstart=12">5</a>
+    <a href="http://host/@@search.html?bstart=15">6</a>
+    <span class="current">7</span>
+    <a href="http://host/@@search.html?bstart=21">8</a>
+    <a href="http://host/@@search.html?bstart=24">9</a>
+    <a href="http://host/@@search.html?bstart=27">10</a>
+    <a href="http://host/@@search.html?bstart=30">Next</a>
+    </div>
+    <BLANKLINE>
+
+
+last page...
+
+    >>> p = Paginator(bstart=30, bsize=3, nitems=31, margin=3)
+    >>> print p.pre, p.cur, p.post
+    [(5, 12), (6, 15), (7, 18), (8, 21), (9, 24), (10, 27)] (11, 30) []
+
+    >>> print p.prev, p.next
+    (2, 3) None
+
+    >>> print render(p)
+    <div class="batch navigation">
+    <a href="http://host/@@search.html?bstart=3">Prev</a>
+    <a href="http://host/@@search.html?bstart=12">5</a>
+    <a href="http://host/@@search.html?bstart=15">6</a>
+    <a href="http://host/@@search.html?bstart=18">7</a>
+    <a href="http://host/@@search.html?bstart=21">8</a>
+    <a href="http://host/@@search.html?bstart=24">9</a>
+    <a href="http://host/@@search.html?bstart=27">10</a>
+    <span class="current">11</span>
+    </div>
+    <BLANKLINE>
+
+
+wacko start past end...
+
+    >>> p = Paginator(bstart=36, bsize=3, nitems=31, margin=2)
+    >>> print p.pre, p.cur, p.post
+    [(7, 18), (8, 21), (9, 24), (10, 27)] (11, 30) []
+
+    >>> print p.prev, p.next
+    (5, 12) None
+
+wacko negative start...
+
+    >>> p = Paginator(bstart=-5, bsize=3, nitems=31, margin=2)
+    >>> print p.pre, p.cur, p.post
+    [] (1, 0) [(2, 3), (3, 6), (4, 9), (5, 12)]
+
+    >>> print p.prev, p.next
+    None (6, 15)
+
+wacko unaligned start...
+
+    >>> p = Paginator(bstart=5, bsize=3, nitems=31, margin=2)
+    >>> print p.pre, p.cur, p.post
+    [(1, 0)] (2, 3) [(3, 6), (4, 9), (5, 12)]
+
+    >>> print p.prev, p.next
+    None (6, 15)
+
+no batch size...
+
+    >>> p = Paginator(bstart=0, bsize=0, nitems=10, margin=2)
+    >>> print p.pre, p.cur, p.post
+    [] (1, 0) []
+
+    >>> print p.prev, p.next
+    None None
+
+    >>> print render(p)
+    <div class="batch navigation">
+    <span class="current">1</span>
+    </div>
+    <BLANKLINE>
+
+    >>> p = Paginator(bstart=15, bsize=0, nitems=10, margin=2)
+    >>> print p.pre, p.cur, p.post
+    [] (1, 0) []
+
+    >>> print p.prev, p.next
+    None None
+
+    >>> p = Paginator(bstart=-100, bsize=None, nitems=10, margin=2)
+    >>> print p.pre, p.cur, p.post
+    [] (1, 0) []
+
+    >>> print p.prev, p.next
+    None None
+
+
+Mixin class
+-----------
+
+    >>> import string
+    >>> from zc.table import Formatter
+    >>> from zc.table.column import GetterColumn
+    >>> from yoma.batching import BatchingMixin
+
+    >>> context = None
+    >>> request = Request(url='http://host/search')
+    >>> items = string.letters
+    >>> columns = (GetterColumn('Letters'),)
+
+    >>> class BatchedFormatter(BatchingMixin, Formatter):
+    ...     pass
+
+
+From the start..
+
+    >>> f = BatchedFormatter(context, request, items, batch_size=2,
+    ...                      columns=columns)
+    >>> print f() #doctest: +ELLIPSIS
+    <div class="batch navigation">
+    <span class="current">1</span>
+    <a href="http://host/search?bstart=2">2</a>
+    <a href="http://host/search?bstart=4">3</a>
+    <a href="http://host/search?bstart=6">4</a>
+    <a href="http://host/search?bstart=8">5</a>
+    <a href="http://host/search?bstart=10">6</a>
+    <a href="http://host/search?bstart=12">7</a>
+    <a href="http://host/search?bstart=14">8</a>
+    <a href="http://host/search?bstart=16">9</a>
+    <a href="http://host/search?bstart=18">Next</a>
+    </div>
+    <BLANKLINE>
+    <BLANKLINE>
+    <table>
+      <thead>
+        <tr>
+          <th>
+            Letters
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          a
+        </td>
+      </tr>
+      <tr>
+        <td>
+          b
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="batch navigation">
+    <span class="current">1</span>
+    <a href="http://host/search?bstart=2">2</a>
+    <a href="http://host/search?bstart=4">3</a>
+    <a href="http://host/search?bstart=6">4</a>
+    <a href="http://host/search?bstart=8">5</a>
+    <a href="http://host/search?bstart=10">6</a>
+    <a href="http://host/search?bstart=12">7</a>
+    <a href="http://host/search?bstart=14">8</a>
+    <a href="http://host/search?bstart=16">9</a>
+    <a href="http://host/search?bstart=18">Next</a>
+    </div>
+    <BLANKLINE>
+
+
+With a batch start:
+
+    >>> request = Request(url='http://host/search?bstart=10', bstart='10')
+
+    >>> f = BatchedFormatter(context, request, items, batch_size=2,
+    ...                      columns=columns)
+    >>> print f() #doctest: +ELLIPSIS
+    <div class="batch navigation">
+    <a href="http://host/search?bstart=2">2</a>
+    <a href="http://host/search?bstart=4">3</a>
+    <a href="http://host/search?bstart=6">4</a>
+    <a href="http://host/search?bstart=8">5</a>
+    <span class="current">6</span>
+    <a href="http://host/search?bstart=12">7</a>
+    <a href="http://host/search?bstart=14">8</a>
+    <a href="http://host/search?bstart=16">9</a>
+    <a href="http://host/search?bstart=18">10</a>
+    <a href="http://host/search?bstart=20">Next</a>
+    </div>
+    <BLANKLINE>
+    <BLANKLINE>
+    <table>
+      <thead>
+        <tr>
+          <th>
+            Letters
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>
+          k
+        </td>
+      </tr>
+      <tr>
+        <td>
+          l
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="batch navigation">
+    <a href="http://host/search?bstart=2">2</a>
+    <a href="http://host/search?bstart=4">3</a>
+    <a href="http://host/search?bstart=6">4</a>
+    <a href="http://host/search?bstart=8">5</a>
+    <span class="current">6</span>
+    <a href="http://host/search?bstart=12">7</a>
+    <a href="http://host/search?bstart=14">8</a>
+    <a href="http://host/search?bstart=16">9</a>
+    <a href="http://host/search?bstart=18">10</a>
+    <a href="http://host/search?bstart=20">Next</a>
+    </div>
+    <BLANKLINE>

@@ -1,0 +1,31 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:i18n="http://namespaces.zope.org/i18n">
+
+   <i18n:registerTranslations directory="locales" />
+
+   <include package=".browser" />
+   <include file="vocabulary.zcml" />
+
+   <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      provides=".interfaces.IGoogleCheckoutOptions"
+      factory=".GoogleCheckoutOptions" />
+
+   <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      provides="getpaid.core.interfaces.IPaymentProcessor"
+      name="Google Checkout"
+      factory=".googlecheckout.GoogleCheckoutProcessor" />
+
+   <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      provides=".interfaces.IGoogleCheckoutController"
+      factory=".controller.GoogleCheckoutController" />
+
+   <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      provides=".interfaces.IGoogleCheckoutShipping"
+      factory=".shipping.GoogleCheckoutShipping" />
+
+</configure>

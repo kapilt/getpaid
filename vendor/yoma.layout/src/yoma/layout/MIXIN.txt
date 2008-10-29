@@ -1,0 +1,76 @@
+========================
+Layout Mixin for formlib
+========================
+
+Example layout and formlib:
+
+    >>> from zope import schema
+    >>> from zope.formlib import form
+    >>> from zope.publisher.browser import TestRequest
+    >>> from yoma.layout import LayoutMixin, GridLayout
+
+    >>> class Form(LayoutMixin, form.AddForm):
+    ...
+    ...     form_fields=form.Fields(
+    ...         schema.Int(__name__='id', title=u"Id"),
+    ...         schema.TextLine(__name__='title', title=u"Title"),
+    ...         )
+    ...     form_layout=GridLayout(
+    ...         ).addText('Example', 0, 0, colspan=5,
+    ...         ).addWidget('id', 1, 0,
+    ...         ).addWidget('title', 1, 2,
+    ...         ).addAction('add', 1, 4, colspan=5,
+    ...         )
+
+    >>> f = Form(site, TestRequest())
+    >>> print f()
+    <BLANKLINE>
+    <table>
+    <tr>
+    <td colspan="5">Example</td>
+    </tr>
+    <tr>
+    <td>Id</td>
+    <td><input class="textType" id="form.id" name="form.id" size="10" type="text" value=""  /></td>
+    <td>Title</td>
+    <td><input class="textType" id="form.title" name="form.title" size="20" type="text" value=""  /></td>
+    <td colspan="5"><input type="submit" id="form.actions.add" name="form.actions.add" value="Add" class="button" /></td>
+    </tr>
+    </table>
+    <BLANKLINE>
+
+
+Another way...
+
+    >>> from yoma.layout import HorzLayout, VertLayout
+
+    >>> Form.form_layout=VertLayout(
+    ...     ).addText('Example 2',
+    ...     ).add('id', 'title', HorzLayout().add('action.add'),
+    ...     )
+
+    >>> print f()
+    <BLANKLINE>
+    <table>
+    <tr>
+    <td colspan="2">Example 2</td>
+    </tr>
+    <tr>
+    <td>Id</td>
+    <td><input class="textType" id="form.id" name="form.id" size="10" type="text" value=""  /></td>
+    </tr>
+    <tr>
+    <td>Title</td>
+    <td><input class="textType" id="form.title" name="form.title" size="20" type="text" value=""  /></td>
+    </tr>
+    <tr>
+    <td colspan="2">
+    <table>
+    <tr>
+    <td><input type="submit" id="form.actions.add" name="form.actions.add" value="Add" class="button" /></td>
+    </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+    <BLANKLINE>

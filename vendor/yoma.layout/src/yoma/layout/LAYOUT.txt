@@ -1,0 +1,195 @@
+===========
+Form Layout
+===========
+
+A very simple layout of text items:
+
+    >>> from yoma.layout import GridLayout
+    >>> layout = GridLayout()
+
+
+Adding Layout Items
+-------------------
+
+    >>> l = layout.addText('Hello', 0, 0)
+    >>> l is layout
+    True
+
+This can be used to construct 'compact' expressions:
+
+    >>> layout.addText('Wide cell', 1, 0, 1, 2,
+    ...     ).addText('Tall Wide cell', 2, 0, 3, 2,
+    ...     ).addText('Aside', 1, 2,
+    ...     )                                           #doctest: +ELLIPSIS
+    <yoma.layout.layout.GridLayout object at ...>
+
+
+Render the layout
+-----------------
+
+Note: text items don't require a form for resolving
+
+    >>> print layout.render(form=None)
+    <BLANKLINE>
+    <table>
+    <tr>
+    <td>Hello</td>
+    </tr>
+    <tr>
+    <td colspan="2">Wide cell</td>
+    <td>Aside</td>
+    </tr>
+    <tr>
+    <td colspan="2" rowspan="3">Tall Wide cell</td>
+    </tr>
+    </table>
+    <BLANKLINE>
+
+
+Adding/embedding layouts
+------------------------
+
+    >>> layout.addLayout(
+    ...     GridLayout(
+    ...         ).addText('A', 0, 0,
+    ...         ).addText('B', 0, 1,
+    ...         ).addText('C', 1, 0, colspan=2,
+    ...         ), 0, 1
+    ...     )                                           #doctest: +ELLIPSIS
+    <yoma.layout.layout.GridLayout object at ...>
+
+    >>> print layout.render(form=None)
+    <BLANKLINE>
+    <table>
+    <tr>
+    <td>Hello</td>
+    <td>
+    <table>
+    <tr>
+    <td>A</td>
+    <td>B</td>
+    </tr>
+    <tr>
+    <td colspan="2">C</td>
+    </tr>
+    </table>
+    </td>
+    </tr>
+    <tr>
+    <td colspan="2">Wide cell</td>
+    <td>Aside</td>
+    </tr>
+    <tr>
+    <td colspan="2" rowspan="3">Tall Wide cell</td>
+    </tr>
+    </table>
+    <BLANKLINE>
+
+
+Adding Widgets
+--------------
+
+Setup fake form with widgets and actions:
+
+    >>> class Form:
+    ...     def __init__(self):
+    ...         self.widgets = {}
+    ...         self.actions = {}
+
+    >>> class Widget:
+    ...     def __init__(self, name, label=u'', hint=u''):
+    ...         self.name, self.label, self.hint = name, label, hint
+    ...     def __call__(self):
+    ...         return u'%s(%s)' % (self.__class__.__name__, repr(self.name))
+
+    >>> class Action:
+    ...     def __init__(self, label):
+    ...         self.label = label
+    ...     def render(self):
+    ...         return u'%s(%s)' % (self.__class__.__name__, repr(self.label))
+
+    >>> form = Form()
+    >>> form.widgets['w1'] = Widget(1, 'Label 1')
+    >>> form.widgets['w2'] = Widget(2, 'Label 2')
+    >>> form.widgets['w3'] = Widget(3, hint='Hint 3')
+    >>> form.actions['form.actions.cancel'] = Action('Cancel')
+    >>> form.actions['form.actions.ok'] = Action('OK')
+
+
+Add the widgets/actions to a layout.  Note layout widget items steal
+one column for a label.  Unfortunately you need to manually allow for
+this.
+
+    >>> layout = GridLayout(
+    ...     ).addText('Title', 0, 0, colspan=2,
+    ...     ).addWidget('w1', 1, 0,
+    ...     ).addWidget('w2', 2, 0,
+    ...     ).addWidget('w3', 3, 0,
+    ...     ).addLayout(GridLayout(
+    ...         ).addAction('cancel', 0, 0, colspan=3,
+    ...         ).addAction('ok', 0, 3,
+    ...         ), 4, 0, colspan=2,
+    ...     )
+
+    >>> print layout.render(form)
+    <BLANKLINE>
+    <table>
+    <tr>
+    <td colspan="2">Title</td>
+    </tr>
+    <tr>
+    <td>Label 1</td>
+    <td>Widget(1)</td>
+    </tr>
+    <tr>
+    <td>Label 2</td>
+    <td>Widget(2)</td>
+    </tr>
+    <tr>
+    <td></td>
+    <td>Widget(3)
+    <div>Hint 3</div></td>
+    </tr>
+    <tr>
+    <td colspan="2">
+    <table>
+    <tr>
+    <td colspan="3">Action('Cancel')</td>
+    <td>Action('OK')</td>
+    </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+    <BLANKLINE>
+
+
+Some tricks - hiding/collapsing a label cell, overriding label/hints:
+
+    >>> layout = GridLayout(
+    ...     ).addText('Title', 0, 0, colspan=2,
+    ...     ).addWidget('w1', 1, 0, label='Custom Label',
+    ...     ).addWidget('w2', 2, 0,
+    ...     ).addWidget('w3', 3, 0, label=None, hint='Custom Hint',
+    ...     )
+    >>> print layout.render(form)
+    <BLANKLINE>
+    <table>
+    <tr>
+    <td colspan="2">Title</td>
+    </tr>
+    <tr>
+    <td>Custom Label</td>
+    <td>Widget(1)</td>
+    </tr>
+    <tr>
+    <td>Label 2</td>
+    <td>Widget(2)</td>
+    </tr>
+    <tr>
+    <td colspan="2">Widget(3)
+    <div>Custom Hint</div></td>
+    </tr>
+    </table>
+    <BLANKLINE>
+

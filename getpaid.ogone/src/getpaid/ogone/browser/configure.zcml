@@ -1,0 +1,28 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five">
+
+  <browser:page
+     for="*"
+     name="getpaid-ogone-check"
+     class=".check.OgoneCheck"
+     permission="zope2.View"
+     />
+
+  <browser:page
+     for="*"
+     name="getpaid-ogone-accepted-payment"
+     template="templates/accepted.pt"
+     class=".postProcess.OgonePostProcessAccepted"
+     permission="zope2.View"
+     />
+
+  <browser:page
+     for="*"
+     name="getpaid-ogone-cancelled-payment"
+     template="templates/cancelled.pt"
+     class=".postProcess.OgonePostProcessCancelled"
+     permission="zope2.View"
+     />
+
+</configure>

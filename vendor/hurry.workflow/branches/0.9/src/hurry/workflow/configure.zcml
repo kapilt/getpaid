@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    >
+
+  <localUtility class=".workflow.Workflow">
+    <factory
+        id="hurry.workflow.Workflow"
+        />
+    <require
+        interface=".interfaces.IWorkflow"
+        permission="zope.Public"
+        />
+  </localUtility>
+
+</configure>

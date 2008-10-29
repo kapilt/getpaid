@@ -1,0 +1,84 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <browser:page
+     for="*"
+     name="discount_content_control"
+     class="getpaid.discount.browser.contentcontrol.ContentControl"
+     permission="zope2.View"
+     />
+     
+  <browser:menuItem
+     for="getpaid.discount.browser.interfaces.IDiscountableMarker"
+     menu="object"
+     title="Discountable"
+     action="edit-discount"
+     filter="python:object.portal_membership.checkPermission('Modify portal content', object)"
+     />
+     
+  <browser:menuItem
+     for="getpaid.discount.browser.interfaces.IBuyXGetXFreeableMarker"
+     menu="object"
+     title="Discountable"
+     action="edit-buyxgetxfree"
+     filter="python:object.portal_membership.checkPermission('Modify portal content', object)"
+     />
+  
+  <browser:page
+    for="getpaid.discount.browser.interfaces.IDiscountableMarker"
+    name="edit-discount"
+    class="getpaid.discount.browser.discount.DiscountEdit"
+    permission="cmf.ModifyPortalContent"
+    />
+    
+  <browser:page
+    for="getpaid.discount.browser.interfaces.IBuyXGetXFreeableMarker"
+    name="edit-buyxgetxfree"
+    class="getpaid.discount.browser.discount.BuyXGetXFreeEdit"
+    permission="cmf.ModifyPortalContent"
+    />
+    
+  <browser:page
+     for="*"
+     name="activate-discountable"
+     class="getpaid.discount.browser.discount.DiscountCreation"
+     permission="cmf.ModifyPortalContent"
+     />
+  
+  <browser:page
+     for="*"
+     name="deactivate-discountable"
+     class="getpaid.discount.browser.discount.DiscountDestruction"
+     permission="cmf.ModifyPortalContent"
+     />
+     
+  <browser:page
+     for="*"
+     name="activate-buyxgetxfreeable"
+     class="getpaid.discount.browser.discount.BuyXGetXFreeCreation"
+     permission="cmf.ModifyPortalContent"
+     />
+     
+   <browser:page
+     for="*"
+     name="deactivate-buyxgetxfreeable"
+     class="getpaid.discount.browser.discount.BuyXGetXFreeDestruction"
+     permission="cmf.ModifyPortalContent"
+     />
+  
+  <adapter
+      for="Products.PloneGetPaid.interfaces.IPayableMarker"
+      provides="getpaid.discount.browser.interfaces.IDiscountable"
+      factory="getpaid.discount.browser.discount.DiscountAdapter"
+      trusted="true"
+  />
+  
+  <adapter
+      for="Products.PloneGetPaid.interfaces.IPayableMarker"
+      provides="getpaid.discount.browser.interfaces.IBuyXGetXFreeable"
+      factory="getpaid.discount.browser.discount.BuyXGetXFreeAdapter"
+      trusted="true"
+  />
+
+</configure>

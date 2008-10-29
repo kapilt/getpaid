@@ -1,0 +1,36 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <include package=".browser" />
+
+  <subscriber
+     for="getpaid.warehouse.interfaces.IProductInventory
+	  getpaid.warehouse.interfaces.IInventoryModified"
+     handler=".subscriber.handleInventoryModified"
+     />
+
+  <subscriber
+     for="getpaid.warehouse.interfaces.IProductInventory
+	  getpaid.warehouse.interfaces.IInventoryOrderFulfilled"
+     handler=".subscriber.handleInventoryOrderFulfilled"
+     />
+
+  <subscriber
+     for="getpaid.warehouse.interfaces.IProductInventory
+	  getpaid.warehouse.interfaces.IInventoryAvailabilityModified"
+     handler=".subscriber.handleInventoryAvailabilityModified"
+     />
+
+  <subscriber
+     for="getpaid.core.interfaces.IOrder
+          zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+     handler=".subscriber.handleNewOrder"
+     />
+
+  <subscriber
+     for="getpaid.core.interfaces.IOrder
+          hurry.workflow.interfaces.IWorkflowTransitionEvent"
+     handler=".subscriber.handleOrderTransition"
+     />
+     <!-- Here we register the profile for this package so we have actions  -->
+ <include file="profiles.zcml"/>
+</configure>

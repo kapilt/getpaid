@@ -1,0 +1,48 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <browser:menu
+     id="getpaid_reports"
+     title="GetPaid Reports"
+     />
+
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-reports"
+    title="Reports"
+    menu="getpaid_settings"
+    template="report-listing.pt"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:page
+     name="report-backordered-products"
+     for="getpaid.core.interfaces.IStore"
+     menu="getpaid_reports"
+     title="Backordered Products"
+     class=".backorder.BackorderReport"
+     template="backorder.pt"
+     permission="cmf.ManagePortal"
+     />
+
+  <browser:page
+     name="report-order-history"
+     for="Products.PloneGetPaid.interfaces.IShippableMarker"
+     menu="object_tabs"
+     title="Order History"
+     class=".history.ProductHistoryReport"
+     template="history.pt"
+     permission="cmf.ManagePortal"
+     />
+
+  <browser:page
+     name="report-fulfillment"
+     for="getpaid.core.interfaces.IStore"
+     menu="getpaid_reports"
+     title="Fulfillment"
+     class=".fulfillment.FulfillmentReport"
+     template="fulfillment.pt"
+     permission="cmf.ManagePortal"
+     />
+
+</configure>

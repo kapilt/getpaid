@@ -1,0 +1,3 @@
+<tal:block define="widget view/widget">
+  <span tal:replace="structure widget" />
+</tal:block>

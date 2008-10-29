@@ -1,0 +1,153 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <browser:page
+    for="Products.PloneGetPaid.interfaces.IShippableMarker"
+    name="inventory"
+    menu="object_tabs"
+    title="Inventory"
+    class=".content.ContentInventory"
+    permission="cmf.ManagePortal"
+    />
+
+  <!-- Warehouse Fulfillment -->
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-warehouse-fulfillment"
+    title="Fulfillment"
+    menu="getpaid_settings"
+    class=".fulfillment.WarehouseFulfillment"
+    template="fulfillment-warehouse.pt"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:viewletManager
+     name="getpaid.warehouse.fulfillment"
+     permission="cmf.ManagePortal"
+     provides="..interfaces.IWarehouseFulfillmentVM"
+     class=".fulfillment.WarehouseFulfillmentVM"
+     />
+  
+  <browser:viewlet
+     name="orders-search"
+     manager="..interfaces.IWarehouseFulfillmentVM"
+     class=".fulfillment.FulfillmentOrderSearch"
+     permission="cmf.ManagePortal"
+     />
+  <browser:viewlet
+     name="orders-listing"
+     manager="..interfaces.IWarehouseFulfillmentVM"
+     class=".fulfillment.FulfillmentOrderListing"
+     permission="cmf.ManagePortal"
+    />
+
+  <!-- Order Fulfillment -->
+  <browser:page
+    for="getpaid.core.interfaces.IOrder"
+    name="fulfillment"
+    class=".fulfillment.OrderFulfillment"
+    template="fulfillment-order.pt"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:viewletManager
+     name="getpaid.order.fulfillment"
+     permission="cmf.ManagePortal"
+     provides="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.OrderFulfillmentVM"
+     />
+
+  <browser:viewlet
+     name="order-summary"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.OrderSummary"
+     permission="cmf.ManagePortal"
+     order="10"
+    />
+
+  <browser:viewlet
+     name="order-backorder"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.BackorderList"
+     permission="cmf.ManagePortal"
+     order="20"
+     />
+
+  <browser:viewlet
+     name="order-picklist"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.OrderPickList"
+     permission="cmf.ManagePortal"
+     order="30"
+     />
+
+  <browser:viewlet
+     name="order-shipments"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.OrderShipments"
+     permission="cmf.ManagePortal"
+     order="40"
+     />
+
+  <browser:viewlet
+     name="order-shipped"
+     manager="..interfaces.IOrderFulfillmentVM"
+     class=".fulfillment.ShippedItems"
+     permission="cmf.ManagePortal"
+     order="50"
+     />
+
+  <!-- Warehouse Administration -->
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-warehouse-admin"
+    menu="getpaid_settings"
+    title="Warehouses"
+    class=".warehouse.Container"
+    permission="cmf.ManagePortal"
+    template="warehouse-container.pt"
+    />
+
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-add-warehouse"
+    class=".warehouse.Add"
+    permission="cmf.ManagePortal"
+    />
+    
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-view-warehouse"
+    class=".warehouse.View"
+    permission="cmf.ManagePortal"
+    />    
+    
+  <browser:page
+    for="getpaid.core.interfaces.IStore"
+    name="pgp-edit-warehouse"
+    class=".warehouse.Edit"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:viewletManager
+    name="getpaid.warehouse.container"
+    permission="cmf.ManagePortal"
+    provides="..interfaces.IWarehouseContainerVM"
+    class=".warehouse.ContainerVM"
+    />
+
+  <browser:viewlet
+    name="warehouse-listing"
+    manager="..interfaces.IWarehouseContainerVM"
+    class=".warehouse.Listing"
+    permission="cmf.ManagePortal"
+    />
+
+  <browser:viewlet
+     name="order-warehouse"
+     manager="Products.PloneGetPaid.interfaces.IAdminOrderManager"
+     class=".order.WarehouseInfo"
+     permission="zope2.View"
+     />
+
+</configure>           

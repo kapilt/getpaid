@@ -1,0 +1,266 @@
+Functional browser tests for Google Checkout processor.
+
+General configuration
+=====================
+
+Create an admin user for managing the site:
+
+    >>> membership = self.portal.portal_membership
+    >>> membership.addMember('admin', 'secret', ['Member', 'Manager'], [])
+
+Create the browser object we'll be using:
+
+    >>> from Products.Five.testbrowser import Browser
+    >>> browser = Browser()
+    >>> browser.handleErrors = False
+
+Login as the site admin user:
+
+    >>> browser.open(portal.absolute_url())
+    >>> browser.getLink('Log in').click()
+    >>> browser.getControl('Login Name').value = 'admin'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Log in').click()
+
+General configuration of GetPaid:
+
+    >>> browser.getLink('Site Setup').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Content Types').click()
+    >>> from getpaid.googlecheckout.tests.utils import setSelectWidget
+    >>> setSelectWidget(browser, 'form.buyable_types', ['Page'])
+    >>> browser.getControl('Apply').click()
+
+Make the site front page buyable so that we have something to add to
+the shopping cart for testing:
+
+    >>> browser.getLink('Home').click()
+    >>> browser.getLink('Make Buyable').click()
+    >>> browser.getControl(name='form.product_code').value = '1234-ADSF'
+    >>> browser.getControl(name='form.price').value = '10.00'
+    >>> browser.getControl('Activate').click()
+
+
+Google Checkout processor configuration
+=======================================
+
+Configure GetPaid to use Google Checkout (and allow anonymous checkouts):
+
+    >>> browser.getLink('Site Setup').click()
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Payment Options').click()
+    >>> browser.getControl(name='form.payment_processor').value = [
+    ...     'Google Checkout']
+    >>> browser.getControl(name='form.allow_anonymous_checkout').value = 'on'
+    >>> browser.getControl('Apply').click()
+
+Configure Google Checkout processor:
+
+    >>> browser.getLink('GetPaid').click()
+    >>> browser.getLink('Payment Processor Settings').click()
+    >>> browser.getControl(name="form.server_url").value = ['Sandbox']
+    >>> browser.getControl(name="form.merchant_id").value = '1234567890'
+    >>> browser.getControl(
+    ...     name="form.merchant_key").value = 'HsYXFoZfHAqyLcCRYeH8qQ'
+    >>> browser.getControl(name="form.currency").value = ['British pound']
+    >>> browser.getControl('Apply').click()
+
+Finished with the configuration so we can now log out:
+
+    >>> browser.getLink('Log out').click()
+
+
+Checkout process
+================
+
+Visit the home page and add to the cart:
+
+    >>> browser.getLink('Home').click()
+    >>> browser.getLink('Add to Cart').click()
+
+Which renders the populated cart for the visitor with a Google
+Checkout button:
+
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...<h3>Your Shopping Cart</h3>...
+    ...<th>Total</th><td>10.00</td>...
+    ...<form method="post"
+             class="googlecheckout"
+             action="http://nohost/plone/google-checkout">
+         <input type="hidden" name="analyticsdata" value="" />
+         <input type="image" id="cart-google-checkout"
+                name="Google Checkout"
+                alt="Fast checkout through Google"
+                src="http://sandbox.google.com/checkout/buttons/checkout.gif?merchant_id=1234567890&amp;w=160&amp;h=43&amp;style=white&amp;variant=text&amp;loc=en_GB" />
+       </form>...
+
+Note the there is a hidden input to support integration with Google
+Analytics. This input is populated via JavaScript before the form is
+submitted. For demonstration lets populate that with some data:
+
+    >>> browser.getControl(name='analyticsdata').value = '00000000'
+
+The checkout action redirects the user to Google Checkout.
+
+    >>> browser.getControl(name='Google Checkout').click()
+    >>> browser.url
+    'http://sandbox.google.com/checkout'
+
+For demonstration purposes the request to Google Checkout has been
+intercepted and a fabricated response returned. (Normally the
+redirection URL is HTTPS and includes a couple of query string
+parameters.) The target of the redirect simply echos the original
+request:
+
+    >>> print browser.contents
+    <?xml version="1.0" encoding="utf-8" ?>
+    <checkout-shopping-cart xmlns="http://checkout.google.com/schema/2">
+      <shopping-cart>
+        <items>
+          <item>
+            <item-description>
+              Congratulations! You have successfully installed Plone.
+            </item-description>
+            <quantity>
+              1
+            </quantity>
+            <unit-price currency="GBP">
+              10.000
+            </unit-price>
+            <merchant-item-id>
+              1234-ADSF
+            </merchant-item-id>
+            <item-name>
+              Welcome to Plone
+            </item-name>
+          </item>
+        </items>
+        <merchant-private-data>
+          <__cart-key>
+            session:...
+          </__cart-key>
+        </merchant-private-data>
+      </shopping-cart>
+      <checkout-flow-support>
+        <merchant-checkout-flow-support>
+          <edit-cart-url>
+            http://nohost/plone/getpaid-cart
+          </edit-cart-url>
+          <continue-shopping-url>
+            http://nohost/plone
+          </continue-shopping-url>
+          <analytics-data>
+            00000000
+          </analytics-data>
+        </merchant-checkout-flow-support>
+      </checkout-flow-support>
+    </checkout-shopping-cart>
+
+Google Checkout will return all of ``merchant-private-data`` back to
+the server in the notification message. The embedded ``cart-key`` is
+used by getpaid.googlecheckout to clear the shopping cart upon
+completion of the checkout process. We need to extract the embedded
+``cart-key`` so that it can be used later when fabricating the Google
+Checkout notification message.
+
+    >>> cart_key = self.extract_data(browser.contents, '__cart-key')
+
+The contents of the cart have now been uploaded to Google Checkout and
+the user has been redirected there to complete the checkout. However
+the user can still go back edit the cart:
+
+    >>> edit_cart_url = self.extract_data(browser.contents, 'edit-cart-url')
+    >>> browser.open(edit_cart_url)
+    >>> print browser.contents
+    <!DOCTYPE html ...
+    ...<h3>Your Shopping Cart</h3>...
+    ...<th>Total</th><td>10.00</td>...
+
+Upon completion of the of transaction Google Checkout sends a
+notification message to the site detailing the new order:
+
+    >>> google = Browser()
+    >>> google.handleErrors = False
+
+    >>> new_order_notification = """<?xml version="1.0" ?>
+    ... <new-order-notification
+    ...     xmlns="http://checkout.google.com/schema/2"
+    ...     serial-number="123456789012345-00001-7">
+    ...   <timestamp>2008-01-11T07:49:33.000Z</timestamp>
+    ...   <shopping-cart>
+    ...     <items>
+    ...       <item>
+    ...         <item-name>Welcome to Plone</item-name>
+    ...         <item-description>
+    ...           Congratulations! You have successfully installed Plone.
+    ...         </item-description>
+    ...         <unit-price currency="GBP">10.00</unit-price>
+    ...         <merchant-item-id>1234-ADSF</merchant-item-id>
+    ...         <quantity>1</quantity>
+    ...       </item>
+    ...     </items>
+    ...     <merchant-private-data>
+    ...       <__cart-key>%s</__cart-key>
+    ...     </merchant-private-data>
+    ...   </shopping-cart>
+    ...   <order-adjustment>
+    ...     <merchant-codes />
+    ...     <total-tax currency="GBP">0.0</total-tax>
+    ...     <adjustment-total currency="GBP">9.0</adjustment-total>
+    ...   </order-adjustment>
+    ...   <buyer-id>123412342134</buyer-id>
+    ...   <google-order-number>4321432143214321</google-order-number>
+    ...   <buyer-shipping-address>
+    ...     <contact-name>Michael</contact-name>
+    ...     <company-name></company-name>
+    ...     <email>michael.dunstan@gmail.com</email>
+    ...     <phone></phone>
+    ...     <fax></fax>
+    ...     <address1>51 Rayner Road</address1>
+    ...     <address2></address2>
+    ...     <city>Piha</city>
+    ...     <country-code>NZ</country-code>
+    ...     <region></region>
+    ...     <postal-code>1010</postal-code>
+    ...   </buyer-shipping-address>
+    ...   <buyer-billing-address>
+    ...     <contact-name>Michael</contact-name>
+    ...     <company-name></company-name>
+    ...     <email>michael.dunstan@elyt.com</email>
+    ...     <phone></phone>
+    ...     <fax></fax>
+    ...     <address1>51 Rayner Road</address1>
+    ...     <address2></address2>
+    ...     <city>Piha</city>
+    ...     <country-code>NZ</country-code>
+    ...     <region></region>
+    ...     <postal-code>1010</postal-code>
+    ...   </buyer-billing-address>
+    ...   <buyer-marketing-preferences>
+    ...     <email-allowed>true</email-allowed>
+    ...   </buyer-marketing-preferences>
+    ...   <order-total currency="GBP">19.00</order-total>
+    ...   <fulfillment-order-state>NEW</fulfillment-order-state>
+    ...   <financial-order-state>REVIEWING</financial-order-state>
+    ... </new-order-notification>""" % cart_key
+
+    >>> google.addHeader('Authorization',
+    ...                  'Basic 1234567890:HsYXFoZfHAqyLcCRYeH8qQ')
+    >>> google.addHeader('Content-type', 'application/xml;charset=UTF-8')
+    >>> google.addHeader('Accept', 'application/xml;charset=UTF-8')
+    >>> google.open('%s/google-checkout-notification'
+    ...             % portal.absolute_url(),
+    ...             new_order_notification)
+
+    >>> print google.contents
+    <?xml version="1.0" ?><notification-acknowledgment
+        serial-number="123456789012345-00001-7"
+        xmlns="http://checkout.google.com/schema/2"/>
+
+The checkout process has been completed now. The users cart has been
+emptied out. Lets check that is the case:
+
+    >>> browser.open('%s/getpaid-cart' % portal.absolute_url())
+    >>> 'name="Google Checkout"' in browser.contents
+    False

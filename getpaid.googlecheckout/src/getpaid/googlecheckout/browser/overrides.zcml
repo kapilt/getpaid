@@ -1,0 +1,14 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five">
+
+  <!-- number prefix on 'name' determines the order they show up in the cart -->
+  <browser:viewlet
+     name="cart-actions"
+     manager="Products.PloneGetPaid.interfaces.IGetPaidCartViewletManager"
+     class=".cart.Actions"
+     permission="zope2.View"
+     weight="20"
+     />
+
+</configure>
