@@ -39,6 +39,8 @@ from Products.CMFCore.utils import getToolByName
 
 from Products.PloneGetPaid.interfaces import IGetPaidManagementOptions, IAddressBookUtility
 from Products.PloneGetPaid.i18n import _
+# Bruno - missing import for INamedOrderUtility
+from Products.PloneGetPaid.interfaces import INamedOrderUtility
 
 
 from base import BaseFormView
