@@ -1,0 +1,3 @@
+For any content object in a site, a Payment option can be attached. The site admin simply views the object, and then clicks "action"--> "Make Payable". That adds schema elements to the object for setting the price on the object.
+
+Deferred: Schema also adds a rich text box for a teaser description on a purchasable object (We don't have zope3 widget editors for rich text that are available in plone (since zcresourcelibrary not available in zope2)...integator can override the view to directly include rich text widget to include relevant javascript or we can create the widget)

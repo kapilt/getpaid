@@ -1,0 +1,1 @@
+See the product Readme (for online viewing: http://getpaid.googlecode.com/svn/trunk/products/PloneGetPaid/readme.txt )

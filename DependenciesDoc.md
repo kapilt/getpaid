@@ -1,0 +1,1 @@
+Transfered to http://plone.org/products/getpaid/documentation/faq/what-are-the-dependencies-for-the-product

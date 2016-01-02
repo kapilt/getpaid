@@ -1,0 +1,23 @@
+#summary Red Ochre Status
+#labels Featured
+
+
+Milestone 1 - Red Ochre
+
+=Features=
+
+= Status =
+
+[http://code.google.com/p/getpaid/issues/list?can=2&q=milestone:M1&sort=priority+milestone&colspec=ID%20Type%20Status%20Priority%20Milestone%20Owner%20Summary%20Component Issues]
+
+=Screenshots=
+
+http://getpaid.googlecode.com/files/order-admin-collection-screenshot.png
+http://getpaid.googlecode.com/files/order-admin-screenshot.png
+
+=Workflows=
+
+http://getpaid.googlecode.com/files/workflow-finance.png
+http://getpaid.googlecode.com/files/workflow-fulfillment.png
+http://getpaid.googlecode.com/files/workflow-fulfillment.png
+

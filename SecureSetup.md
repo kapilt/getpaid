@@ -1,0 +1,1 @@
+Moved to http://plone.org/products/getpaid/documentation
